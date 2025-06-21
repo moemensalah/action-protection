@@ -43,50 +43,32 @@ export function LogoSection() {
 
   const currentSlogans = slogans[language];
 
-  // Typing animation state
+  // Continuous typing animation state
   const [currentSloganIndex, setCurrentSloganIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
-  const [isTyping, setIsTyping] = useState(true);
-  const [isPaused, setIsPaused] = useState(false);
+  const [charIndex, setCharIndex] = useState(0);
 
   useEffect(() => {
-    const currentSlogan = currentSlogans[currentSloganIndex];
+    const allSlogans = currentSlogans.join(' • '); // Join all slogans with separator
     
-    if (isTyping && !isPaused) {
-      if (displayedText.length < currentSlogan.length) {
-        const timeout = setTimeout(() => {
-          setDisplayedText(currentSlogan.slice(0, displayedText.length + 1));
-        }, 80); // Slightly faster typing
-        return () => clearTimeout(timeout);
+    const timeout = setTimeout(() => {
+      if (charIndex < allSlogans.length) {
+        setDisplayedText(allSlogans.slice(0, charIndex + 1));
+        setCharIndex(charIndex + 1);
       } else {
-        // Finished typing, pause before erasing
-        setIsPaused(true);
-        const timeout = setTimeout(() => {
-          setIsTyping(false);
-          setIsPaused(false);
-        }, 3000); // Longer pause to read
-        return () => clearTimeout(timeout);
+        // Reset to beginning for infinite loop
+        setCharIndex(0);
+        setDisplayedText('');
       }
-    } else if (!isTyping && !isPaused) {
-      if (displayedText.length > 0) {
-        const timeout = setTimeout(() => {
-          setDisplayedText(displayedText.slice(0, -1));
-        }, 40); // Faster erasing
-        return () => clearTimeout(timeout);
-      } else {
-        // Finished erasing, move to next slogan and continue infinitely
-        setCurrentSloganIndex((prev) => (prev + 1) % currentSlogans.length);
-        setIsTyping(true);
-      }
-    }
-  }, [displayedText, isTyping, isPaused, currentSlogans, currentSloganIndex]);
+    }, 120); // Typing speed
+
+    return () => clearTimeout(timeout);
+  }, [charIndex, currentSlogans]);
 
   // Reset animation when language changes
   useEffect(() => {
-    setCurrentSloganIndex(0);
+    setCharIndex(0);
     setDisplayedText('');
-    setIsTyping(true);
-    setIsPaused(false);
   }, [language]);
 
   return (
@@ -103,7 +85,7 @@ export function LogoSection() {
         </div>
         
         {/* Typing Animation Slogans */}
-        <div className="bg-transparent border-2 border-amber-300 dark:border-amber-600 rounded-lg py-6 shadow-lg min-h-[80px] flex items-center justify-center backdrop-blur-sm">
+        <div className="py-6 min-h-[80px] flex items-center justify-center">
           <div className="text-center px-4">
             <div className="text-lg md:text-xl font-semibold text-amber-900 dark:text-amber-100 min-h-[28px] flex items-center justify-center">
               <span className="typing-text">

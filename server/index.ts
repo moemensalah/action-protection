@@ -70,6 +70,19 @@ app.use((req, res, next) => {
       res.sendFile(path.join(__dirname, "manifest.json"));
     });
     
+    // Ensure specific logo assets are served with proper headers
+    app.get("/assets/english-dark_1750523791780.png", (req: Request, res: Response) => {
+      res.setHeader('Content-Type', 'image/png');
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+      res.sendFile(path.join(__dirname, "assets", "english-dark_1750523791780.png"));
+    });
+    
+    app.get("/assets/english-white_1750523827323.png", (req: Request, res: Response) => {
+      res.setHeader('Content-Type', 'image/png');
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+      res.sendFile(path.join(__dirname, "assets", "english-white_1750523827323.png"));
+    });
+    
     // Handle client-side routing
     app.get("*", (req: Request, res: Response) => {
       if (req.path.startsWith("/api")) {

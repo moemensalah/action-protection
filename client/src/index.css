@@ -71,7 +71,7 @@
   
   /* Enhanced Arabic font support */
   .font-arabic {
-    font-family: 'Tajawal', 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Amiri', Arial, sans-serif;
+    font-family: 'Noto Sans Arabic', 'Tajawal', 'IBM Plex Sans Arabic', 'Amiri', Arial, sans-serif;
     font-weight: 400;
     line-height: 1.7;
     letter-spacing: 0.025em;
@@ -79,13 +79,13 @@
   
   /* Premium Arabic typography for headings */
   .font-arabic h1, .font-arabic h2, .font-arabic h3 {
-    font-family: 'Amiri', 'Tajawal', 'IBM Plex Sans Arabic', Arial, sans-serif;
+    font-family: 'Noto Sans Arabic', 'Amiri', 'Tajawal', 'IBM Plex Sans Arabic', Arial, sans-serif;
     font-weight: 700;
     line-height: 1.4;
   }
   
   .font-arabic h4, .font-arabic h5, .font-arabic h6 {
-    font-family: 'Tajawal', 'IBM Plex Sans Arabic', 'Noto Sans Arabic', Arial, sans-serif;
+    font-family: 'Noto Sans Arabic', 'Tajawal', 'IBM Plex Sans Arabic', Arial, sans-serif;
     font-weight: 600;
     line-height: 1.5;
   }
@@ -118,7 +118,7 @@
   
   /* Arabic brand name styling */
   .arabic-brand {
-    font-family: 'Amiri', 'Tajawal', serif;
+    font-family: 'Noto Sans Arabic', 'Amiri', 'Tajawal', serif;
     font-weight: 700;
     font-size: 1.5rem;
     line-height: 1.2;

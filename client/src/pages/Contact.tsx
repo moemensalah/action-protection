@@ -14,6 +14,11 @@ import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 export default function Contact() {
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
+  
+  const breadcrumbItems = [
+    { name: t("home"), url: "/" },
+    { name: t("contact"), url: "/contact" }
+  ];
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -77,6 +82,20 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
+      <SEO 
+        title={isRTL ? "اتصل بنا" : "Contact Us"}
+        description={isRTL 
+          ? "تواصل مع ليت لاونج - نحن هنا لخدمتك. اتصل بنا أو زر موقعنا للاستمتاع بأفضل تجربة قهوة. مفتوح يومياً من 6 صباحاً حتى 11 مساءً."
+          : "Contact LateLounge - We're here to serve you. Call us or visit our location for the finest coffee experience. Open daily from 6 AM to 11 PM."
+        }
+        keywords={isRTL
+          ? "اتصل بنا, عنوان ليت لاونج, رقم الهاتف, البريد الإلكتروني, ساعات العمل, موقعنا"
+          : "contact us, LateLounge address, phone number, email, opening hours, location"
+        }
+        url="/contact"
+        type="website"
+        structuredData={getBreadcrumbSchema(breadcrumbItems)}
+      />
       <AnimatedBackground />
       {/* Hero Section */}
       <section className="relative h-64 gradient-hero overflow-hidden">

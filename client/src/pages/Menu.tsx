@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, Loader2, Search } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -19,7 +18,14 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useLanguage } from "@/hooks/useLanguage";
-import type { Product, Category } from "@shared/schema";
+import { 
+  getAllProducts, 
+  getCategoriesByActive, 
+  getProductsByCategorySlug,
+  getCategoryBySlug,
+  type Product, 
+  type Category 
+} from "@/data/staticData";
 
 interface ProductsResponse {
   products: Product[];

@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CategoryCard } from "@/components/CategoryCard";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
@@ -8,7 +7,7 @@ import { Footer } from "@/components/Footer";
 import { SEO, getOrganizationSchema, getBreadcrumbSchema } from "@/components/SEO";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useLocation } from "wouter";
-import type { Category } from "@shared/schema";
+import { getCategoriesByActive, type Category } from "@/data/staticData";
 
 export default function Home() {
   const { t, isRTL } = useLanguage();
@@ -18,21 +17,11 @@ export default function Home() {
     { name: t("home"), url: "/" }
   ];
 
-  const { data: categories, isLoading } = useQuery<Category[]>({
-    queryKey: ["/api/categories"],
-  });
+  const categories = getCategoriesByActive();
 
   const handleCategoryClick = (category: Category) => {
     setLocation(`/menu?category=${category.slug}`);
   };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">

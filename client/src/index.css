@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -65,7 +69,19 @@
   
   /* Arabic font support */
   .font-arabic {
-    font-family: 'Cairo', 'Noto Sans Arabic', 'Amiri', 'Scheherazade New', Arial, sans-serif;
+    font-family: 'Noto Sans Arabic', 'Amiri', 'Tajawal', 'IBM Plex Sans Arabic', 'Cairo', Arial, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+  
+  /* Enhanced Arabic typography */
+  .font-arabic h1, .font-arabic h2, .font-arabic h3, .font-arabic h4, .font-arabic h5, .font-arabic h6 {
+    font-family: 'Amiri', 'Noto Sans Arabic', 'Tajawal', Arial, sans-serif;
+    font-weight: 700;
+  }
+  
+  .font-arabic .text-lg, .font-arabic .text-xl, .font-arabic .text-2xl {
+    line-height: 1.8;
   }
   
   /* RTL support */

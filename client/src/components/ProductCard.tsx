@@ -1,16 +1,16 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { Product } from "@shared/schema";
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart?: (product: Product) => void;
+  onViewDetails?: (product: Product) => void;
 }
 
-export function ProductCard({ product, onAddToCart }: ProductCardProps) {
+export function ProductCard({ product, onViewDetails }: ProductCardProps) {
   const { language, t } = useLanguage();
 
   return (
@@ -48,11 +48,11 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           </span>
           
           <Button
-            onClick={() => onAddToCart?.(product)}
+            onClick={() => onViewDetails?.(product)}
             className="gap-2 bg-primary hover:bg-primary/90"
           >
-            <ShoppingCart className="h-4 w-4" />
-            {t("addToCart")}
+            <Eye className="h-4 w-4" />
+            View Details
           </Button>
         </div>
       </CardContent>

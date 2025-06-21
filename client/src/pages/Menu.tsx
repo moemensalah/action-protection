@@ -4,6 +4,7 @@ import { useLocation } from "wouter";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductModal } from "@/components/ProductModal";
 import {
   Pagination,
   PaginationContent,
@@ -31,6 +32,8 @@ export default function Menu() {
   const { t, isRTL } = useLanguage();
   const [, setLocation] = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Get category from URL params
   const urlParams = new URLSearchParams(window.location.search);
@@ -66,9 +69,9 @@ export default function Menu() {
     enabled: !!categorySlug,
   });
 
-  const handleAddToCart = (product: Product) => {
-    // TODO: Implement cart functionality
-    console.log('Added to cart:', product);
+  const handleViewDetails = (product: Product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
   };
 
   const handlePageChange = (page: number) => {

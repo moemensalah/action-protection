@@ -21,23 +21,23 @@ export function LogoSection() {
     return theme === 'dark' ? englishDarkModeLogo : englishDarkLogo;
   };
 
-  // Marquee slogans in both languages
+  // Typing slogans with multiple words
   const slogans = {
     en: [
-      "Premium Coffee Experience",
-      "Artisan Beverages & Delights",
-      "Where Quality Meets Comfort",
-      "Fresh Roasted Daily",
-      "Your Perfect Coffee Destination",
-      "Exceptional Taste, Every Time"
+      "Premium Coffee Experience for Coffee Lovers",
+      "Artisan Beverages & Delicious Fresh Treats",
+      "Where Quality Always Meets Perfect Comfort",
+      "Fresh Roasted Daily with Premium Beans",
+      "Your Perfect Coffee Destination Every Day",
+      "Exceptional Taste Every Single Time"
     ],
     ar: [
-      "تجربة قهوة مميزة",
-      "مشروبات وحلويات حرفية",
-      "حيث تلتقي الجودة بالراحة",
-      "محمصة طازجة يومياً",
-      "وجهتك المثالية للقهوة",
-      "طعم استثنائي في كل مرة"
+      "تجربة قهوة مميزة لعشاق القهوة الأصيلة",
+      "مشروبات حرفية وحلويات طازجة لذيذة",
+      "حيث تلتقي الجودة دائماً بالراحة المثالية",
+      "محمصة طازجة يومياً بحبوب مميزة",
+      "وجهتك المثالية للقهوة في كل يوم",
+      "طعم استثنائي في كل مرة ولحظة"
     ]
   };
 
@@ -56,7 +56,7 @@ export function LogoSection() {
       if (displayedText.length < currentSlogan.length) {
         const timeout = setTimeout(() => {
           setDisplayedText(currentSlogan.slice(0, displayedText.length + 1));
-        }, 100);
+        }, 80); // Slightly faster typing
         return () => clearTimeout(timeout);
       } else {
         // Finished typing, pause before erasing
@@ -64,22 +64,30 @@ export function LogoSection() {
         const timeout = setTimeout(() => {
           setIsTyping(false);
           setIsPaused(false);
-        }, 2000);
+        }, 3000); // Longer pause to read
         return () => clearTimeout(timeout);
       }
     } else if (!isTyping && !isPaused) {
       if (displayedText.length > 0) {
         const timeout = setTimeout(() => {
           setDisplayedText(displayedText.slice(0, -1));
-        }, 50);
+        }, 40); // Faster erasing
         return () => clearTimeout(timeout);
       } else {
-        // Finished erasing, move to next slogan
+        // Finished erasing, move to next slogan and continue infinitely
         setCurrentSloganIndex((prev) => (prev + 1) % currentSlogans.length);
         setIsTyping(true);
       }
     }
   }, [displayedText, isTyping, isPaused, currentSlogans, currentSloganIndex]);
+
+  // Reset animation when language changes
+  useEffect(() => {
+    setCurrentSloganIndex(0);
+    setDisplayedText('');
+    setIsTyping(true);
+    setIsPaused(false);
+  }, [language]);
 
   return (
     <div className="relative py-16 md:py-24 bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-amber-900/20">
@@ -95,12 +103,12 @@ export function LogoSection() {
         </div>
         
         {/* Typing Animation Slogans */}
-        <div className="bg-gradient-to-r from-amber-100 to-orange-100 dark:from-gray-800 dark:to-amber-900/30 rounded-full py-6 shadow-lg min-h-[80px] flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-lg md:text-xl font-semibold text-amber-800 dark:text-amber-200 min-h-[28px] flex items-center justify-center">
+        <div className="bg-transparent border-2 border-amber-300 dark:border-amber-600 rounded-lg py-6 shadow-lg min-h-[80px] flex items-center justify-center backdrop-blur-sm">
+          <div className="text-center px-4">
+            <div className="text-lg md:text-xl font-semibold text-amber-900 dark:text-amber-100 min-h-[28px] flex items-center justify-center">
               <span className="typing-text">
                 {displayedText}
-                <span className="typing-cursor animate-pulse">|</span>
+                <span className="typing-cursor">|</span>
               </span>
             </div>
           </div>
@@ -118,12 +126,7 @@ export function LogoSection() {
           </Button>
         </div>
 
-        {/* Decorative Elements */}
-        <div className="mt-8 flex justify-center space-x-4">
-          <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
-          <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse delay-150"></div>
-          <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse delay-300"></div>
-        </div>
+
       </div>
     </div>
   );

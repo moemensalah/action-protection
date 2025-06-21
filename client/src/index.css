@@ -216,6 +216,11 @@
     }
   }
   
+  /* Radial gradient for hero blending */
+  .bg-radial-gradient {
+    background: radial-gradient(ellipse at center, var(--tw-gradient-stops));
+  }
+
   /* Slide up animation */
   .slide-up {
     animation: slideUp 0.6s ease-out;

@@ -91,28 +91,35 @@ export function LogoSection() {
   }, [language]);
 
   return (
-    <div className="relative py-16 md:py-24 bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-amber-900/20 overflow-hidden">
-      {/* Coffee overlay images on sides */}
+    <div className="relative py-16 md:py-24 overflow-hidden">
+      {/* Full background with coffee images */}
       <div className="absolute inset-0 z-0">
         {/* Left side coffee overlay */}
-        <div className="absolute left-0 top-0 w-1/3 h-full">
+        <div className="absolute left-0 top-0 w-1/2 h-full">
           <img 
-            src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=800"
+            src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800"
             alt="Coffee beans"
-            className="w-full h-full object-cover opacity-15 dark:opacity-10"
+            className="w-full h-full object-cover opacity-20 dark:opacity-15"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-50/80 via-amber-50/60 to-transparent dark:from-gray-900/80 dark:via-gray-900/60 dark:to-transparent"></div>
         </div>
         
         {/* Right side coffee overlay */}
-        <div className="absolute right-0 top-0 w-1/3 h-full">
+        <div className="absolute right-0 top-0 w-1/2 h-full">
           <img 
-            src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=800"
+            src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800"
             alt="Coffee cup"
-            className="w-full h-full object-cover opacity-15 dark:opacity-10"
+            className="w-full h-full object-cover opacity-20 dark:opacity-15"
           />
-          <div className="absolute inset-0 bg-gradient-to-l from-amber-50/80 via-amber-50/60 to-transparent dark:from-gray-900/80 dark:via-gray-900/60 dark:to-transparent"></div>
         </div>
+        
+        {/* Seamless gradient overlay - no hard edges */}
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-50/70 via-white/90 via-white/90 to-amber-50/70 dark:from-gray-900/70 dark:via-gray-800/90 dark:via-gray-800/90 dark:to-gray-900/70"></div>
+        
+        {/* Center radial gradient for natural blending */}
+        <div className="absolute inset-0 bg-radial-gradient from-white/60 via-white/30 to-transparent dark:from-gray-800/60 dark:via-gray-800/30 dark:to-transparent"></div>
+        
+        {/* Additional horizontal blur effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent dark:via-gray-800/20"></div>
       </div>
       {/* Main Logo */}
       <div className="container mx-auto px-4 text-center relative z-10">

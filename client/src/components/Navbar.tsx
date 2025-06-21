@@ -6,12 +6,26 @@ import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useTheme } from "@/components/ThemeProvider";
+import englishDarkLogo from "@assets/english-dark_1750521542838.png";
+import englishWhiteLogo from "@assets/english-white_1750516260876.png";
+import arabicDarkLogo from "@assets/arabic-dark_1750516613229.png";
+import arabicWhiteLogo from "@assets/arabic-white_1750516260877.png";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { t, isRTL } = useLanguage();
+  const { theme } = useTheme();
   const [location] = useLocation();
+
+  const getLogoSrc = () => {
+    if (isRTL) {
+      return theme === 'dark' ? arabicWhiteLogo : arabicDarkLogo;
+    } else {
+      return theme === 'dark' ? englishWhiteLogo : englishDarkLogo;
+    }
+  };
 
   const navLinks = [
     { href: "/", label: t("home") },

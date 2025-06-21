@@ -60,61 +60,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-12 border-t border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Brand */}
-            <div className="md:col-span-2">
-              <div className="flex items-center space-x-3 rtl:space-x-reverse mb-4">
-                <div className="w-12 h-12 gradient-cafe rounded-full flex items-center justify-center">
-                  <Coffee className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h3 className={`font-bold text-2xl text-amber-600 dark:text-amber-400 ${isRTL ? 'arabic-brand' : ''}`}>
-                    {isRTL ? "لاونج" : "Lounge"}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
-                    {t("brandSubtitle")}
-                  </p>
-                </div>
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 mb-4 max-w-md">
-                {t("brandDescription")}
-              </p>
-              <div className="flex space-x-4 rtl:space-x-reverse">
-                <SocialIcon href="#" icon="facebook" />
-                <SocialIcon href="#" icon="instagram" />
-                <SocialIcon href="#" icon="twitter" />
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div>
-              <h4 className="font-semibold text-lg mb-4">{t("quickLinks")}</h4>
-              <ul className="space-y-2">
-                <FooterLink href="/menu" label={t("menu")} />
-                <FooterLink href="/about" label={t("about")} />
-                <FooterLink href="/contact" label={t("contact")} />
-              </ul>
-            </div>
-
-            {/* Contact Info */}
-            <div>
-              <h4 className="font-semibold text-lg mb-4">{t("contactInfo")}</h4>
-              <div className="space-y-3">
-                <ContactItem icon="📍" text={t("address")} />
-                <ContactItem icon="📞" text="+1 (555) 123-4567" />
-                <ContactItem icon="✉️" text="info@cafearabica.com" />
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p className="text-gray-400">{t("rights")}</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

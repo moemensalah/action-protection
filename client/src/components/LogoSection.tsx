@@ -95,23 +95,23 @@ export function LogoSection() {
       {/* Coffee overlay images on sides */}
       <div className="absolute inset-0 z-0">
         {/* Left side coffee overlay */}
-        <div className="absolute left-0 top-0 w-1/4 h-full">
+        <div className="absolute left-0 top-0 w-1/3 h-full">
           <img 
             src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=800"
             alt="Coffee beans"
-            className="w-full h-full object-cover opacity-20 dark:opacity-15"
+            className="w-full h-full object-cover opacity-15 dark:opacity-10"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-amber-50 dark:to-gray-900"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-50/80 via-amber-50/60 to-transparent dark:from-gray-900/80 dark:via-gray-900/60 dark:to-transparent"></div>
         </div>
         
         {/* Right side coffee overlay */}
-        <div className="absolute right-0 top-0 w-1/4 h-full">
+        <div className="absolute right-0 top-0 w-1/3 h-full">
           <img 
             src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=800"
             alt="Coffee cup"
-            className="w-full h-full object-cover opacity-20 dark:opacity-15"
+            className="w-full h-full object-cover opacity-15 dark:opacity-10"
           />
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent to-amber-50 dark:to-gray-900"></div>
+          <div className="absolute inset-0 bg-gradient-to-l from-amber-50/80 via-amber-50/60 to-transparent dark:from-gray-900/80 dark:via-gray-900/60 dark:to-transparent"></div>
         </div>
       </div>
       {/* Main Logo */}

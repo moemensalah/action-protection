@@ -43,32 +43,48 @@ export function LogoSection() {
 
   const currentSlogans = slogans[language];
 
-  // Continuous typing animation state
+  // Individual slogan typing animation state
   const [currentSloganIndex, setCurrentSloganIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
   const [charIndex, setCharIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    const allSlogans = currentSlogans.join(' • '); // Join all slogans with separator
+    const currentSlogan = currentSlogans[currentSloganIndex];
     
-    const timeout = setTimeout(() => {
-      if (charIndex < allSlogans.length) {
-        setDisplayedText(allSlogans.slice(0, charIndex + 1));
-        setCharIndex(charIndex + 1);
+    if (isTyping && !isPaused) {
+      if (charIndex < currentSlogan.length) {
+        const timeout = setTimeout(() => {
+          setDisplayedText(currentSlogan.slice(0, charIndex + 1));
+          setCharIndex(charIndex + 1);
+        }, 100); // Typing speed
+        return () => clearTimeout(timeout);
       } else {
-        // Reset to beginning for infinite loop
-        setCharIndex(0);
-        setDisplayedText('');
+        // Finished typing current slogan, pause before moving to next
+        setIsPaused(true);
+        const timeout = setTimeout(() => {
+          setIsTyping(false);
+          setIsPaused(false);
+        }, 2500); // Pause to read
+        return () => clearTimeout(timeout);
       }
-    }, 120); // Typing speed
-
-    return () => clearTimeout(timeout);
-  }, [charIndex, currentSlogans]);
+    } else if (!isTyping && !isPaused) {
+      // Clear text and move to next slogan
+      setDisplayedText('');
+      setCharIndex(0);
+      setCurrentSloganIndex((prev) => (prev + 1) % currentSlogans.length);
+      setIsTyping(true);
+    }
+  }, [charIndex, isTyping, isPaused, currentSlogans, currentSloganIndex]);
 
   // Reset animation when language changes
   useEffect(() => {
-    setCharIndex(0);
+    setCurrentSloganIndex(0);
     setDisplayedText('');
+    setCharIndex(0);
+    setIsTyping(true);
+    setIsPaused(false);
   }, [language]);
 
   return (

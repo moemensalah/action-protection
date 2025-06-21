@@ -43,6 +43,21 @@ try {
     // Method 3: Manual build process
     console.log('Using manual build process...');
     
+    // Copy assets first
+    console.log('Copying image assets...');
+    fs.mkdirSync('dist/assets', { recursive: true });
+    
+    if (fs.existsSync('attached_assets')) {
+      const assetFiles = fs.readdirSync('attached_assets').filter(file => 
+        file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.svg')
+      );
+      
+      for (const file of assetFiles) {
+        fs.copyFileSync(path.join('attached_assets', file), path.join('dist/assets', file));
+      }
+      console.log(`Copied ${assetFiles.length} image assets`);
+    }
+    
     // Create HTML file
     const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
@@ -58,10 +73,9 @@ try {
 </html>`;
     
     fs.writeFileSync('dist/index.html', htmlTemplate);
-    fs.mkdirSync('dist/assets', { recursive: true });
     
-    // Bundle with esbuild
-    const esbuildCmd = `npx esbuild client/src/main.tsx --bundle --outfile=dist/assets/main.js --format=iife --target=es2020 --minify --define:process.env.NODE_ENV='"production"' --loader:.tsx=tsx --loader:.ts=tsx --loader:.css=css --external:none`;
+    // Bundle with esbuild - exclude image assets from bundling
+    const esbuildCmd = `npx esbuild client/src/main.tsx --bundle --outfile=dist/assets/main.js --format=iife --target=es2020 --minify --define:process.env.NODE_ENV='"production"' --loader:.tsx=tsx --loader:.ts=tsx --loader:.css=css --loader:.png=file --loader:.jpg=file --loader:.jpeg=file --loader:.svg=file --public-path=/assets/ --asset-names=[name]`;
     runCommand(esbuildCmd, 'Building client with esbuild');
   }
 
@@ -69,6 +83,18 @@ try {
   console.log('Building server...');
   const serverCmd = 'npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --outfile=dist/index.js --target=node18 --external:express --external:tsx';
   runCommand(serverCmd, 'Building server bundle');
+
+  // Ensure assets directory exists and copy all assets
+  console.log('Setting up assets directory...');
+  if (fs.existsSync('attached_assets')) {
+    const assetFiles = fs.readdirSync('attached_assets');
+    for (const file of assetFiles) {
+      if (file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.svg')) {
+        fs.copyFileSync(path.join('attached_assets', file), path.join('dist/assets', file));
+      }
+    }
+    console.log(`Copied ${assetFiles.length} assets to dist/assets/`);
+  }
 
   // Create production files
   const packageJson = {

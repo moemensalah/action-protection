@@ -266,6 +266,87 @@ export const products: Product[] = [
     isActive: true,
     isFeatured: false,
     isAvailable: true
+  },
+  // Additional Coffee Options
+  {
+    id: 14,
+    nameEn: "Turkish Coffee",
+    nameAr: "قهوة تركية",
+    descriptionEn: "Traditional Turkish coffee served with authentic preparation",
+    descriptionAr: "قهوة تركية تقليدية تُقدم بالتحضير الأصيل",
+    price: 20,
+    categoryId: 1,
+    image: "https://images.unsplash.com/photo-1559496417-e7f25cb247cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    isActive: true,
+    isFeatured: true,
+    isAvailable: true
+  },
+  {
+    id: 15,
+    nameEn: "Arabic Coffee",
+    nameAr: "قهوة عربية",
+    descriptionEn: "Traditional Arabic coffee with cardamom and dates",
+    descriptionAr: "قهوة عربية تقليدية مع الهيل والتمر",
+    price: 18,
+    categoryId: 1,
+    image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    isActive: true,
+    isFeatured: true,
+    isAvailable: true
+  },
+  // Additional Hot Beverages
+  {
+    id: 16,
+    nameEn: "Moroccan Mint Tea",
+    nameAr: "شاي النعناع المغربي",
+    descriptionEn: "Refreshing mint tea with traditional Moroccan preparation",
+    descriptionAr: "شاي النعناع المنعش بالتحضير المغربي التقليدي",
+    price: 22,
+    categoryId: 2,
+    image: "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    isActive: true,
+    isFeatured: true,
+    isAvailable: true
+  },
+  {
+    id: 17,
+    nameEn: "Hot Chocolate",
+    nameAr: "شوكولاتة ساخنة",
+    descriptionEn: "Rich hot chocolate with whipped cream and marshmallows",
+    descriptionAr: "شوكولاتة ساخنة غنية مع كريمة مخفوقة ومارشميلو",
+    price: 25,
+    categoryId: 2,
+    image: "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    isActive: true,
+    isFeatured: false,
+    isAvailable: true
+  },
+  // Additional Cold Beverages
+  {
+    id: 18,
+    nameEn: "Fresh Orange Juice",
+    nameAr: "عصير برتقال طازج",
+    descriptionEn: "Freshly squeezed orange juice with natural pulp",
+    descriptionAr: "عصير برتقال طازج مع اللب الطبيعي",
+    price: 16,
+    categoryId: 3,
+    image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    isActive: true,
+    isFeatured: false,
+    isAvailable: true
+  },
+  {
+    id: 19,
+    nameEn: "Iced Tea",
+    nameAr: "شاي مثلج",
+    descriptionEn: "Refreshing iced tea with lemon and mint",
+    descriptionAr: "شاي مثلج منعش مع الليمون والنعناع",
+    price: 15,
+    categoryId: 3,
+    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    isActive: true,
+    isFeatured: false,
+    isAvailable: true
   }
 ];
 

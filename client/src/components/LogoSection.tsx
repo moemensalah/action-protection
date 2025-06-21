@@ -91,9 +91,31 @@ export function LogoSection() {
   }, [language]);
 
   return (
-    <div className="relative py-16 md:py-24 bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-amber-900/20">
+    <div className="relative py-16 md:py-24 bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-amber-900/20 overflow-hidden">
+      {/* Coffee overlay images on sides */}
+      <div className="absolute inset-0 z-0">
+        {/* Left side coffee overlay */}
+        <div className="absolute left-0 top-0 w-1/4 h-full">
+          <img 
+            src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=800"
+            alt="Coffee beans"
+            className="w-full h-full object-cover opacity-20 dark:opacity-15"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-amber-50 dark:to-gray-900"></div>
+        </div>
+        
+        {/* Right side coffee overlay */}
+        <div className="absolute right-0 top-0 w-1/4 h-full">
+          <img 
+            src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=800"
+            alt="Coffee cup"
+            className="w-full h-full object-cover opacity-20 dark:opacity-15"
+          />
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent to-amber-50 dark:to-gray-900"></div>
+        </div>
+      </div>
       {/* Main Logo */}
-      <div className="container mx-auto px-4 text-center">
+      <div className="container mx-auto px-4 text-center relative z-10">
         <div className="animate-bounce-slow mb-8">
           <img 
             src={getLogo()} 

@@ -7,6 +7,8 @@ import englishDarkLogo from "@assets/english-dark_1750516197108.png";
 import arabicDarkLogo from "@assets/arabic-dark_1750516197109.png";
 import englishWhiteLogo from "@assets/english-white_1750516260876.png";
 import arabicWhiteLogo from "@assets/arabic-white_1750516260877.png";
+import englishDarkModeLogo from "@assets/english-dark_1750516613230.png";
+import arabicDarkModelogo from "@assets/arabic-dark_1750516613229.png";
 
 export function LogoSection() {
   const { language, t, isRTL } = useLanguage();
@@ -16,9 +18,9 @@ export function LogoSection() {
   // Select the appropriate logo based on language and theme
   const getLogo = () => {
     if (language === 'ar') {
-      return theme === 'dark' ? arabicWhiteLogo : arabicDarkLogo;
+      return theme === 'dark' ? arabicDarkModelogo : arabicDarkLogo;
     } else {
-      return theme === 'dark' ? englishWhiteLogo : englishDarkLogo;
+      return theme === 'dark' ? englishDarkModeLogo : englishDarkLogo;
     }
   };
 
@@ -53,12 +55,7 @@ export function LogoSection() {
             src={getLogo()} 
             alt="Lounge Logo"
             className="h-32 md:h-48 lg:h-56 mx-auto object-contain filter drop-shadow-2xl"
-            onError={(e) => {
-              console.error('Logo failed to load:', e.target.src);
-            }}
-            onLoad={() => {
-              console.log('Logo loaded successfully:', getLogo(), 'Theme:', theme, 'Language:', language);
-            }}
+
           />
         </div>
         

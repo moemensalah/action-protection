@@ -3,6 +3,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CategoryCard } from "@/components/CategoryCard";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { LogoSection } from "@/components/LogoSection";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useLocation } from "wouter";
 import type { Category } from "@shared/schema";
@@ -30,37 +31,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
       <AnimatedBackground />
-      {/* Hero Section */}
-      <section className="relative h-96 gradient-hero overflow-hidden">
-        <div className="absolute inset-0 bg-black/40"></div>
-        <div 
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=800')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        />
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
-          <div className="text-white slide-up">
-            <h1 className="hero-title text-5xl md:text-6xl font-bold mb-4">
-              {t("welcomeTitle")}
-            </h1>
-            <p className="hero-subtitle text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl">
-              {t("welcomeSubtitle")}
-            </p>
-            <Button
-              size="lg"
-              className="bg-accent hover:bg-accent/90 text-white gap-2 transform hover:scale-105 transition-all duration-300"
-              onClick={() => setLocation("/menu")}
-            >
-              {t("exploreMenu")}
-              <ArrowRight className={`h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
-            </Button>
-          </div>
-        </div>
-      </section>
+      {/* Logo Section */}
+      <LogoSection />
 
       {/* Categories Section */}
       <section className="py-16 bg-white dark:bg-gray-900 theme-transition">

@@ -280,88 +280,108 @@
   
   /* Coffee Cup Animation */
   .coffee-float {
-    position: absolute;
+    position: fixed;
     animation: coffeeFloat 15s linear infinite;
-    opacity: 0.1;
-    z-index: -1;
+    opacity: 0.3;
+    z-index: 1;
+    pointer-events: none;
   }
   
   .dark .coffee-float {
-    opacity: 0.15;
+    opacity: 0.4;
   }
   
   .coffee-float:nth-child(1) {
     top: 10%;
-    left: -10%;
+    left: -100px;
     animation-delay: 0s;
     animation-duration: 20s;
   }
   
   .coffee-float:nth-child(2) {
     top: 60%;
-    left: -10%;
+    left: -100px;
     animation-delay: 7s;
     animation-duration: 25s;
   }
   
   .coffee-float:nth-child(3) {
     top: 30%;
-    left: -10%;
+    left: -100px;
     animation-delay: 14s;
     animation-duration: 18s;
   }
   
   @keyframes coffeeFloat {
     0% {
-      transform: translateX(-100px) rotate(0deg);
+      transform: translateX(0px) rotate(0deg);
+      opacity: 0.3;
+    }
+    10% {
+      opacity: 0.6;
     }
     50% {
       transform: translateX(50vw) rotate(180deg);
+      opacity: 0.4;
+    }
+    90% {
+      opacity: 0.2;
     }
     100% {
-      transform: translateX(120vw) rotate(360deg);
+      transform: translateX(100vw) rotate(360deg);
+      opacity: 0;
     }
   }
   
   /* Food Elements Animation */
   .food-float {
-    position: absolute;
+    position: fixed;
     animation: foodFloat 25s linear infinite;
-    opacity: 0.08;
-    z-index: -1;
+    opacity: 0.25;
+    z-index: 1;
+    pointer-events: none;
   }
   
   .dark .food-float {
-    opacity: 0.12;
+    opacity: 0.35;
   }
   
   .food-float:nth-child(1) {
     top: 20%;
-    right: -10%;
+    right: -100px;
     animation-delay: 3s;
   }
   
   .food-float:nth-child(2) {
     top: 70%;
-    right: -10%;
+    right: -100px;
     animation-delay: 12s;
   }
   
   .food-float:nth-child(3) {
     top: 45%;
-    right: -10%;
+    right: -100px;
     animation-delay: 18s;
   }
   
   @keyframes foodFloat {
     0% {
-      transform: translateX(100px) rotate(0deg) scale(0.8);
+      transform: translateX(0px) rotate(0deg) scale(0.8);
+      opacity: 0.25;
+    }
+    10% {
+      opacity: 0.5;
     }
     50% {
       transform: translateX(-50vw) rotate(-180deg) scale(1.2);
+      opacity: 0.3;
+    }
+    90% {
+      opacity: 0.15;
     }
     100% {
-      transform: translateX(-120vw) rotate(-360deg) scale(0.8);
+      transform: translateX(-100vw) rotate(-360deg) scale(0.8);
+      opacity: 0;
     }
   }
 }

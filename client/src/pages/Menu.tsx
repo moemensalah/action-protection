@@ -144,13 +144,13 @@ export default function Menu() {
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search Bar */}
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 rtl:right-3 rtl:left-auto top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 type="text"
                 placeholder={t("searchProducts") || "Search products..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 rtl:pr-10 rtl:pl-3"
               />
             </div>
             

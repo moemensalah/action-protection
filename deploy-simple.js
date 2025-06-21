@@ -12,7 +12,8 @@ try {
     fs.rmSync('dist', { recursive: true, force: true });
   }
   fs.mkdirSync('dist', { recursive: true });
-  fs.mkdirSync('dist/assets', { recursive: true });
+  fs.mkdirSync('dist/public', { recursive: true });
+  fs.mkdirSync('dist/public/assets', { recursive: true });
   fs.mkdirSync('logs', { recursive: true });
 
   // Copy essential logo assets with proper permissions
@@ -23,7 +24,7 @@ try {
   
   for (const file of logoFiles) {
     const srcPath = path.join('attached_assets', file);
-    const destPath = path.join('dist/assets', file);
+    const destPath = path.join('dist/public/assets', file);
     if (fs.existsSync(srcPath)) {
       fs.copyFileSync(srcPath, destPath);
       // Set proper file permissions for web serving
@@ -171,7 +172,7 @@ function renderMenu() {
 }
 `;
   
-  fs.writeFileSync('dist/assets/app.js', appJsContent);
+  fs.writeFileSync('dist/public/assets/app.js', appJsContent);
 
   // Build server
   console.log('Building server...');

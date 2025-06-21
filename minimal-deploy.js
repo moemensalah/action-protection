@@ -4,13 +4,13 @@ import fs from 'fs';
 console.log('Creating ultra-minimal deployment...');
 
 fs.rmSync('dist', { recursive: true, force: true });
-fs.mkdirSync('dist/assets', { recursive: true });
+fs.mkdirSync('dist/public/assets', { recursive: true });
 
-// Copy only essential assets
-fs.copyFileSync('attached_assets/english-dark_1750523791780.png', 'dist/assets/english-dark_1750523791780.png');
-fs.copyFileSync('attached_assets/english-white_1750523827323.png', 'dist/assets/english-white_1750523827323.png');
-fs.chmodSync('dist/assets/english-dark_1750523791780.png', 0o644);
-fs.chmodSync('dist/assets/english-white_1750523827323.png', 0o644);
+// Copy only essential assets to correct location
+fs.copyFileSync('attached_assets/english-dark_1750523791780.png', 'dist/public/assets/english-dark_1750523791780.png');
+fs.copyFileSync('attached_assets/english-white_1750523827323.png', 'dist/public/assets/english-white_1750523827323.png');
+fs.chmodSync('dist/public/assets/english-dark_1750523791780.png', 0o644);
+fs.chmodSync('dist/public/assets/english-white_1750523827323.png', 0o644);
 
 // Minimal HTML with embedded styles and no external dependencies
 fs.writeFileSync('dist/index.html', `<!DOCTYPE html>
@@ -69,13 +69,14 @@ body{font-family:Arial,sans-serif;background:#1a1a1a;color:#fff;padding:20px}
 </body>
 </html>`);
 
-// Ultra-simple server with no error-prone features
+// Ultra-simple server serving from public directory
 fs.writeFileSync('dist/server.js', `const express = require('express');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname));
 
 app.get('*', (req, res) => {

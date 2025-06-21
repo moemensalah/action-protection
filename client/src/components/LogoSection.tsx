@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
-import englishDarkLogo from "@assets/english-dark_1750523791780.png";
-import englishWhiteLogo from "@assets/english-white_1750523827323.png";
+// Production-compatible asset paths
+const englishDarkLogo = "/assets/english-dark_1750523791780.png";
+const englishWhiteLogo = "/assets/english-white_1750523827323.png";
 
 export function LogoSection() {
   const { language, t, isRTL } = useLanguage();

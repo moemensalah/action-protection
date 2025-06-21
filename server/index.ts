@@ -37,6 +37,11 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Serve static assets in development
+  if (process.env.NODE_ENV === "development") {
+    app.use('/assets', express.static('attached_assets'));
+  }
+
   // Register API routes first
   const server = await registerRoutes(app);
 

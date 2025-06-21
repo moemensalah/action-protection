@@ -4,22 +4,17 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
-import englishDarkLogo from "@assets/english-dark_1750516197108.png";
-import arabicDarkLogo from "@assets/arabic-dark_1750516197109.png";
-import englishWhiteLogo from "@assets/english-white_1750516260876.png";
-import arabicWhiteLogo from "@assets/arabic-white_1750516260877.png";
-import englishDarkModeLogo from "@assets/english-dark_1750516613230.png";
-import arabicDarkModelogo from "@assets/arabic-dark_1750516613229.png";
-import englishNewDarkModeLogo from "@assets/english-dark_1750521542838.png";
+import englishDarkLogo from "@assets/english-dark_1750523791780.png";
+import englishWhiteLogo from "@assets/english-white_1750523827323.png";
 
 export function LogoSection() {
   const { language, t, isRTL } = useLanguage();
   const { theme } = useTheme();
   const [, setLocation] = useLocation();
 
-  // Select the appropriate logo based on theme (always English)
+  // Select the appropriate logo based on theme (always English for both languages)
   const getLogo = () => {
-    return theme === 'dark' ? englishNewDarkModeLogo : englishWhiteLogo;
+    return theme === 'dark' ? englishDarkLogo : englishWhiteLogo;
   };
 
   // Typing slogans with multiple words

@@ -9,8 +9,6 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useTheme } from "@/components/ThemeProvider";
 import englishDarkLogo from "@assets/english-dark_1750523791780.png";
 import englishWhiteLogo from "@assets/english-white_1750523827323.png";
-import arabicDarkLogo from "@assets/arabic-dark_1750516613229.png";
-import arabicWhiteLogo from "@assets/arabic-white_1750516260877.png";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,11 +18,7 @@ export function Navbar() {
   const [location] = useLocation();
 
   const getLogoSrc = () => {
-    if (isRTL) {
-      return theme === 'dark' ? arabicDarkLogo : arabicWhiteLogo;
-    } else {
-      return theme === 'dark' ? englishDarkLogo : englishWhiteLogo;
-    }
+    return theme === 'dark' ? englishDarkLogo : englishWhiteLogo;
   };
 
   const navLinks = [

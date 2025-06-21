@@ -16,13 +16,9 @@ export function LogoSection() {
   const { theme } = useTheme();
   const [, setLocation] = useLocation();
 
-  // Select the appropriate logo based on language and theme
+  // Select the appropriate logo based on theme (always English)
   const getLogo = () => {
-    if (language === 'ar') {
-      return theme === 'dark' ? arabicDarkModelogo : arabicDarkLogo;
-    } else {
-      return theme === 'dark' ? englishDarkModeLogo : englishDarkLogo;
-    }
+    return theme === 'dark' ? englishDarkModeLogo : englishDarkLogo;
   };
 
   // Marquee slogans in both languages

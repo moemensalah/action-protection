@@ -2,10 +2,16 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { Card, CardContent } from "@/components/ui/card";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { Footer } from "@/components/Footer";
+import { SEO, getBreadcrumbSchema } from "@/components/SEO";
 import { Coffee, Users, Award, Clock } from "lucide-react";
 
 export default function About() {
   const { t, isRTL } = useLanguage();
+  
+  const breadcrumbItems = [
+    { name: t("home"), url: "/" },
+    { name: t("about"), url: "/about" }
+  ];
 
   const features = [
     {
@@ -40,6 +46,20 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
+      <SEO 
+        title={isRTL ? "من نحن" : "About Us"}
+        description={isRTL 
+          ? "تعرف على قصة ليت لاونج وشغفنا بتقديم أفضل تجربة قهوة. فريقنا المتخصص يعمل على تحضير أجود أنواع القهوة والمأكولات في بيئة مريحة ودافئة."
+          : "Learn about LateLounge's story and our passion for delivering the finest coffee experience. Our dedicated team crafts premium coffee and culinary delights in a comfortable, welcoming environment."
+        }
+        keywords={isRTL
+          ? "من نحن, قصة ليت لاونج, فريق العمل, تجربة القهوة, جودة الخدمة, بيئة مريحة"
+          : "about us, LateLounge story, team, coffee experience, quality service, comfortable environment"
+        }
+        url="/about"
+        type="website"
+        structuredData={getBreadcrumbSchema(breadcrumbItems)}
+      />
       <AnimatedBackground />
       {/* Hero Section */}
       <section className="relative h-64 gradient-hero overflow-hidden">

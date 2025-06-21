@@ -46,6 +46,11 @@ export default function Menu() {
   const urlParams = new URLSearchParams(window.location.search);
   const categorySlug = urlParams.get('category') || "all";
 
+  const breadcrumbItems = [
+    { name: t("home"), url: "/" },
+    { name: t("menu"), url: "/menu" }
+  ];
+
   const { data: productsData, isLoading: productsLoading } = useQuery<ProductsResponse>({
     queryKey: ["/api/products", { category: categorySlug, page: currentPage, limit: 12 }],
     queryFn: async () => {
@@ -117,6 +122,23 @@ export default function Menu() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
+      <SEO 
+        title={isRTL ? "القائمة" : "Menu"}
+        description={isRTL 
+          ? "استكشف قائمة ليت لاونج الشاملة مع أفضل أنواع القهوة والمشروبات والمأكولات. من الإسبريسو المحضر بخبرة إلى الحلويات الطازجة والأطباق الرئيسية اللذيذة."
+          : "Explore LateLounge's comprehensive menu featuring premium coffee, beverages, and culinary delights. From expertly crafted espresso to fresh desserts and delicious main dishes."
+        }
+        keywords={isRTL
+          ? "قائمة الطعام, قهوة, إسبريسو, مشروبات باردة, إفطار, حلويات, أطباق رئيسية, ليت لاونج"
+          : "menu, coffee, espresso, cold drinks, breakfast, desserts, main dishes, LateLounge"
+        }
+        url="/menu"
+        type="restaurant.menu"
+        structuredData={{
+          ...getMenuSchema(isRTL),
+          ...getBreadcrumbSchema(breadcrumbItems)
+        }}
+      />
       <AnimatedBackground />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Categories Navigation */}

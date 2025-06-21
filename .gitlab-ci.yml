@@ -1,0 +1,23 @@
+stages:
+  - sync
+
+sync_from_github:
+  stage: sync
+  script:
+    - git config --global user.email "moemen.salah@hmaserv.com"
+    - git config --global user.name "root"
+    # Add GitHub remote and sync
+    - git remote add github https://$GITHUB_TOKEN@github.com/moemensalah/Late-Lounge.git
+    - git fetch github
+    - git reset --hard github/main
+    # Push to GitLab via SSH
+    - git remote set-url origin git@gitlab.hmaserv.online:root/late-lounge.git
+    - git push origin HEAD:main --force
+    - ssh root@178.162.240.111 '
+        cd /var/www/html/Late-Lounge &&
+        git pull &&
+        npm install &&
+        npm run build
+      '
+  only:
+    - triggers

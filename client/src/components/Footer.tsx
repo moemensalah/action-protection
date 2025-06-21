@@ -49,7 +49,7 @@ export function Footer() {
             </div>
             
             {/* Social Media Icons */}
-            <div className="flex space-x-4 pt-4">
+            <div className="flex space-x-4 rtl:space-x-reverse pt-4">
               <a 
                 href="https://instagram.com" 
                 target="_blank" 

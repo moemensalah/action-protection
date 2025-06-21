@@ -116,6 +116,58 @@
     letter-spacing: 0.01em;
   }
   
+  /* RTL Select Component Fixes */
+  [dir="rtl"] [data-radix-select-content] {
+    text-align: right;
+  }
+  
+  [dir="rtl"] [data-radix-select-item] {
+    text-align: right;
+    justify-content: flex-end;
+    padding-left: 0.5rem;
+    padding-right: 2rem;
+  }
+  
+  [dir="rtl"] [data-radix-select-trigger] {
+    text-align: right;
+  }
+  
+  [dir="rtl"] [data-radix-select-trigger] > span {
+    text-align: right;
+  }
+  
+  /* RTL Dropdown Menu Fixes */
+  .rtl-dropdown [data-radix-select-content] {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  .rtl-dropdown [data-radix-select-item] {
+    direction: rtl;
+    text-align: right;
+    justify-content: flex-start;
+    padding-right: 2rem;
+    padding-left: 0.5rem;
+  }
+  
+  .rtl-dropdown [data-radix-select-trigger] {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  .rtl-dropdown [data-radix-select-trigger] span {
+    direction: rtl;
+    text-align: right;
+    width: 100%;
+    display: block;
+  }
+  
+  /* Fix RTL Select Value positioning */
+  .rtl-select [data-radix-select-value] {
+    text-align: right;
+    direction: rtl;
+  }
+  
   /* Arabic brand name styling */
   .arabic-brand {
     font-family: 'Noto Sans Arabic', 'Amiri', 'Tajawal', serif;

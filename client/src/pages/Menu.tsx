@@ -178,15 +178,17 @@ export default function Menu() {
             </div>
             
             {/* Category Dropdown */}
-            <div className="md:w-64">
+            <div className={`md:w-64 ${isRTL ? "rtl-dropdown rtl-select" : ""}`}>
               <Select value={categorySlug || "all"} onValueChange={handleCategoryChange}>
-                <SelectTrigger>
+                <SelectTrigger className={`${isRTL ? "text-right" : ""}`} dir={isRTL ? "rtl" : "ltr"}>
                   <SelectValue placeholder={t("selectCategory") || "Select Category"} />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("allCategories") || "All Categories"}</SelectItem>
+                <SelectContent className={`${isRTL ? "text-right" : ""}`} dir={isRTL ? "rtl" : "ltr"}>
+                  <SelectItem value="all" className={`${isRTL ? "text-right" : ""}`}>
+                    {t("allCategories") || "All Categories"}
+                  </SelectItem>
                   {categories?.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.slug}>
+                    <SelectItem key={cat.id} value={cat.slug} className={`${isRTL ? "text-right" : ""}`}>
                       {isRTL ? cat.nameAr : cat.nameEn}
                     </SelectItem>
                   ))}

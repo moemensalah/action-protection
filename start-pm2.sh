@@ -10,7 +10,7 @@ pm2 stop latelounge-cafe 2>/dev/null || true
 pm2 delete latelounge-cafe 2>/dev/null || true
 
 # Start the application
-pm2 start ecosystem.config.js --env production
+pm2 start ecosystem.config.cjs --env production
 
 # Save PM2 process list
 pm2 save

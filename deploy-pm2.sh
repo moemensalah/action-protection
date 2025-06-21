@@ -31,7 +31,7 @@ pm2 delete latelounge-cafe 2>/dev/null || true
 
 # Start with PM2
 echo "▶️ Starting application with PM2..."
-NODE_ENV=production pm2 start ecosystem.config.js --env production
+NODE_ENV=production pm2 start ecosystem.config.cjs --env production
 
 # Save PM2 configuration
 pm2 save

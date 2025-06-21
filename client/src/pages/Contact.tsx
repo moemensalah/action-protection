@@ -203,6 +203,8 @@ export default function Contact() {
                           onChange={(e) => handleChange("name", e.target.value)}
                           required
                           placeholder={isRTL ? "اسمك الكامل" : "Your full name"}
+                          className={isRTL ? "text-right" : ""}
+                          dir={isRTL ? "rtl" : "ltr"}
                         />
                       </div>
                       
@@ -216,6 +218,8 @@ export default function Contact() {
                           value={formData.phone}
                           onChange={(e) => handleChange("phone", e.target.value)}
                           placeholder={isRTL ? "رقم هاتفك" : "Your phone number"}
+                          className={isRTL ? "text-right" : ""}
+                          dir={isRTL ? "rtl" : "ltr"}
                         />
                       </div>
                     </div>
@@ -231,6 +235,8 @@ export default function Contact() {
                         onChange={(e) => handleChange("email", e.target.value)}
                         required
                         placeholder={isRTL ? "بريدك الإلكتروني" : "Your email address"}
+                        className={isRTL ? "text-right" : ""}
+                        dir={isRTL ? "rtl" : "ltr"}
                       />
                     </div>
 
@@ -248,6 +254,8 @@ export default function Contact() {
                           ? "اكتب رسالتك هنا..."
                           : "Write your message here..."
                         }
+                        className={isRTL ? "text-right" : ""}
+                        dir={isRTL ? "rtl" : "ltr"}
                       />
                     </div>
 

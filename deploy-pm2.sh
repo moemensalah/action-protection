@@ -19,7 +19,7 @@ fi
 
 # Build the application
 echo "🏗️ Building application..."
-npm run build
+node build-prod.js
 
 # Create logs directory
 mkdir -p logs

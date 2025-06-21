@@ -15,11 +15,11 @@ try {
 
   // Build client
   console.log('📦 Building client...');
-  execSync('vite build', { stdio: 'inherit' });
+  execSync('npx vite build', { stdio: 'inherit' });
 
   // Build server
   console.log('🚀 Building server...');
-  execSync('esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --outfile=dist/server.js', { stdio: 'inherit' });
+  execSync('npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --outfile=dist/server.js', { stdio: 'inherit' });
 
   // Copy package.json for production dependencies
   const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));

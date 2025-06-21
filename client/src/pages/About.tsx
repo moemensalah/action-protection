@@ -1,5 +1,6 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { Card, CardContent } from "@/components/ui/card";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { Coffee, Users, Award, Clock } from "lucide-react";
 
 export default function About() {
@@ -38,6 +39,7 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
+      <AnimatedBackground />
       {/* Hero Section */}
       <section className="relative h-64 gradient-hero overflow-hidden">
         <div className="absolute inset-0 bg-black/50"></div>

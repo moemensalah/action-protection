@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CategoryCard } from "@/components/CategoryCard";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useLocation } from "wouter";
 import type { Category } from "@shared/schema";
@@ -28,6 +29,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
+      <AnimatedBackground />
       {/* Hero Section */}
       <section className="relative h-96 gradient-hero overflow-hidden">
         <div className="absolute inset-0 bg-black/40"></div>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { useToast } from "@/hooks/use-toast";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 
@@ -74,6 +75,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
+      <AnimatedBackground />
       {/* Hero Section */}
       <section className="relative h-64 gradient-hero overflow-hidden">
         <div className="absolute inset-0 bg-black/50"></div>

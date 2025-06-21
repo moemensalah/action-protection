@@ -231,6 +231,139 @@
       opacity: 1;
     }
   }
+  
+  /* Animated Background Elements */
+  .animated-bg {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .animated-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.1) 2px, transparent 2px),
+      radial-gradient(circle at 80% 40%, rgba(160, 82, 45, 0.08) 1px, transparent 1px),
+      radial-gradient(circle at 40% 80%, rgba(210, 180, 140, 0.06) 1.5px, transparent 1.5px),
+      radial-gradient(circle at 60% 10%, rgba(222, 184, 135, 0.05) 1px, transparent 1px);
+    background-size: 100px 100px, 150px 150px, 200px 200px, 120px 120px;
+    animation: float 20s ease-in-out infinite;
+    z-index: -1;
+  }
+  
+  .dark .animated-bg::before {
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.15) 2px, transparent 2px),
+      radial-gradient(circle at 80% 40%, rgba(160, 82, 45, 0.12) 1px, transparent 1px),
+      radial-gradient(circle at 40% 80%, rgba(210, 180, 140, 0.08) 1.5px, transparent 1.5px),
+      radial-gradient(circle at 60% 10%, rgba(222, 184, 135, 0.06) 1px, transparent 1px);
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    25% {
+      transform: translateY(-10px) translateX(5px);
+    }
+    50% {
+      transform: translateY(-5px) translateX(-5px);
+    }
+    75% {
+      transform: translateY(-15px) translateX(3px);
+    }
+  }
+  
+  /* Coffee Cup Animation */
+  .coffee-float {
+    position: absolute;
+    animation: coffeeFloat 15s linear infinite;
+    opacity: 0.1;
+    z-index: -1;
+  }
+  
+  .dark .coffee-float {
+    opacity: 0.15;
+  }
+  
+  .coffee-float:nth-child(1) {
+    top: 10%;
+    left: -10%;
+    animation-delay: 0s;
+    animation-duration: 20s;
+  }
+  
+  .coffee-float:nth-child(2) {
+    top: 60%;
+    left: -10%;
+    animation-delay: 7s;
+    animation-duration: 25s;
+  }
+  
+  .coffee-float:nth-child(3) {
+    top: 30%;
+    left: -10%;
+    animation-delay: 14s;
+    animation-duration: 18s;
+  }
+  
+  @keyframes coffeeFloat {
+    0% {
+      transform: translateX(-100px) rotate(0deg);
+    }
+    50% {
+      transform: translateX(50vw) rotate(180deg);
+    }
+    100% {
+      transform: translateX(120vw) rotate(360deg);
+    }
+  }
+  
+  /* Food Elements Animation */
+  .food-float {
+    position: absolute;
+    animation: foodFloat 25s linear infinite;
+    opacity: 0.08;
+    z-index: -1;
+  }
+  
+  .dark .food-float {
+    opacity: 0.12;
+  }
+  
+  .food-float:nth-child(1) {
+    top: 20%;
+    right: -10%;
+    animation-delay: 3s;
+  }
+  
+  .food-float:nth-child(2) {
+    top: 70%;
+    right: -10%;
+    animation-delay: 12s;
+  }
+  
+  .food-float:nth-child(3) {
+    top: 45%;
+    right: -10%;
+    animation-delay: 18s;
+  }
+  
+  @keyframes foodFloat {
+    0% {
+      transform: translateX(100px) rotate(0deg) scale(0.8);
+    }
+    50% {
+      transform: translateX(-50vw) rotate(-180deg) scale(1.2);
+    }
+    100% {
+      transform: translateX(-120vw) rotate(-360deg) scale(0.8);
+    }
+  }
 }
 
 /* Responsive typography */

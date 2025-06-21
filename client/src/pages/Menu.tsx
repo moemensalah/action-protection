@@ -5,6 +5,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductModal } from "@/components/ProductModal";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 import {
   Pagination,
   PaginationContent,
@@ -92,6 +93,7 @@ export default function Menu() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
+      <AnimatedBackground />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Categories Navigation */}
         {!categorySlug && (

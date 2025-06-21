@@ -20,9 +20,9 @@ echo "Stopping existing processes..."
 pkill -f "node server.js" 2>/dev/null || true
 pm2 delete latelounge-cafe 2>/dev/null || true
 
-# Start with PM2
+# Start with PM2 from dist directory
 echo "Starting with PM2..."
-pm2 start ../ecosystem.config.cjs --env production
+pm2 start server.js --name latelounge-cafe --env production
 
 # Save PM2 configuration
 pm2 save

@@ -40,7 +40,7 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
             
             <div className="absolute top-4 right-4 flex gap-2">
               <Badge className="bg-accent hover:bg-accent/90 text-white">
-                {product.price} SAR
+                {product.price} {t("sar")}
               </Badge>
               {product.isFeatured && (
                 <Badge className="bg-primary hover:bg-primary/90 text-white">

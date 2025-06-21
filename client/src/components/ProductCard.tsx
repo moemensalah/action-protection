@@ -23,7 +23,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
         />
         
         <Badge className="absolute top-4 right-4 rtl:right-auto rtl:left-4 bg-accent hover:bg-accent/90 text-white">
-          {product.price} SAR
+          {product.price} {t("sar")}
         </Badge>
         
         {product.isFeatured && (
@@ -44,7 +44,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
         
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold text-primary">
-            {product.price} SAR
+            {product.price} {t("sar")}
           </span>
           
           <Button

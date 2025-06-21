@@ -36,6 +36,8 @@ export const translations = {
     searchProducts: "Search products...",
     selectCategory: "Select Category",
     allCategories: "All Categories",
+    price: "Price",
+    sar: "SAR",
     viewDetails: "View Details",
     
     // Pagination
@@ -101,6 +103,8 @@ export const translations = {
     searchProducts: "البحث في المنتجات...",
     selectCategory: "اختر الفئة",
     allCategories: "جميع الفئات",
+    price: "السعر",
+    sar: "ريال",
     viewDetails: "عرض التفاصيل",
     
     // Pagination

@@ -9,7 +9,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+
   const { t, isRTL } = useLanguage();
   const [location] = useLocation();
 
@@ -56,20 +56,8 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* Search, Language & Theme Controls */}
+          {/* Language & Theme Controls */}
           <div className="flex items-center space-x-4 rtl:space-x-reverse">
-            {/* Search */}
-            <div className="hidden sm:block relative">
-              <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder={t("search")}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-48 pl-10 rtl:pl-4 rtl:pr-10 h-9"
-              />
-            </div>
-
             <LanguageToggle />
             <ThemeToggle />
 
@@ -108,17 +96,7 @@ export function Navbar() {
                 </Link>
               ))}
               
-              {/* Mobile Search */}
-              <div className="relative">
-                <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder={t("search")}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 rtl:pl-4 rtl:pr-10"
-                />
-              </div>
+
             </div>
           </div>
         )}

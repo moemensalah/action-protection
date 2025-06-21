@@ -15,7 +15,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
 
   return (
     <Card className="product-card group overflow-hidden shadow-lg hover:shadow-xl">
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden cursor-pointer" onClick={() => onViewDetails?.(product)}>
         <img
           src={product.image}
           alt={language === "ar" ? product.nameAr : product.nameEn}

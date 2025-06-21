@@ -39,6 +39,9 @@ export const translations = {
     price: "Price",
     sar: "SAR",
     viewDetails: "View Details",
+    availableNow: "Available now",
+    inStock: "In Stock",
+    outOfStock: "Out of Stock",
     
     // Pagination
     page: "Page",
@@ -106,6 +109,9 @@ export const translations = {
     price: "السعر",
     sar: "ريال",
     viewDetails: "عرض التفاصيل",
+    availableNow: "متوفر الآن",
+    inStock: "متوفر",
+    outOfStock: "غير متوفر",
     
     // Pagination
     page: "صفحة",

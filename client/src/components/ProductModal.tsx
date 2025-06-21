@@ -3,6 +3,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,17 +18,20 @@ interface ProductModalProps {
 }
 
 export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
-  const { language, t } = useLanguage();
+  const { language, t, isRTL } = useLanguage();
 
   if (!product) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className={`max-w-2xl max-h-[90vh] overflow-y-auto ${isRTL ? 'text-right' : ''}`} dir={isRTL ? "rtl" : "ltr"}>
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold mb-4">
+          <DialogTitle className={`text-2xl font-bold mb-4 ${isRTL ? 'text-right' : ''}`}>
             {language === "ar" ? product.nameAr : product.nameEn}
           </DialogTitle>
+          <DialogDescription className={`${isRTL ? 'text-right' : ''}`}>
+            {language === "ar" ? product.descriptionAr : product.descriptionEn}
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
@@ -38,7 +42,7 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
               className="w-full h-64 sm:h-80 object-cover rounded-lg"
             />
             
-            <div className="absolute top-4 right-4 flex gap-2">
+            <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'} flex gap-2`}>
               <Badge className="bg-accent hover:bg-accent/90 text-white">
                 {product.price} {t("sar")}
               </Badge>
@@ -69,15 +73,15 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
                   </span>
                 </div>
                 
-                <div className="text-right">
+                <div className={`${isRTL ? 'text-left' : 'text-right'}`}>
                   <p className="text-sm text-muted-foreground mb-2">
-                    Available now
+                    {t("availableNow")}
                   </p>
                   <Badge 
                     variant={product.isActive ? "default" : "secondary"}
                     className={product.isActive ? "bg-green-500 hover:bg-green-600" : ""}
                   >
-                    {product.isActive ? "In Stock" : "Out of Stock"}
+                    {product.isActive ? t("inStock") : t("outOfStock")}
                   </Badge>
                 </div>
               </div>

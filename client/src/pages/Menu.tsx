@@ -51,7 +51,7 @@ export default function Menu() {
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: "12",
-        ...(categorySlug && { category: categorySlug }),
+        ...(categorySlug && categorySlug !== "all" && { category: categorySlug }),
       });
       
       const response = await fetch(`/api/products?${params}`);

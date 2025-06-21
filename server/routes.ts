@@ -31,7 +31,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { category, page = 1, limit = 12 } = req.query;
       let products;
       
-      if (category) {
+      if (category && category !== "all") {
         products = await storage.getProductsByCategorySlug(category as string);
       } else {
         products = await storage.getProducts();

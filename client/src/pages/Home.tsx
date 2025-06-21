@@ -61,7 +61,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 dark:bg-black text-white py-12 theme-transition">
+      <footer className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-12 border-t border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Brand */}
@@ -71,15 +71,15 @@ export default function Home() {
                   <Coffee className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className={`font-bold text-2xl text-primary-300 ${isRTL ? 'arabic-brand' : ''}`}>
+                  <h3 className={`font-bold text-2xl text-amber-600 dark:text-amber-400 ${isRTL ? 'arabic-brand' : ''}`}>
                     {isRTL ? "لاونج" : "Lounge"}
                   </h3>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">
                     {t("brandSubtitle")}
                   </p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-4 max-w-md">
+              <p className="text-gray-600 dark:text-gray-300 mb-4 max-w-md">
                 {t("brandDescription")}
               </p>
               <div className="flex space-x-4 rtl:space-x-reverse">

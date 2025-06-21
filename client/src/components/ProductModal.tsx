@@ -63,9 +63,9 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
             <div className="border-t pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Price</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t("price")}</p>
                   <span className="text-3xl font-bold text-primary">
-                    {product.price} SAR
+                    {product.price} {t("sar")}
                   </span>
                 </div>
                 

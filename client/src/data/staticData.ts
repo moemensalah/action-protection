@@ -71,7 +71,7 @@ export const categories: Category[] = [
     descriptionEn: "Hearty meals and savory delights",
     descriptionAr: "وجبات شهية ولذائذ مالحة",
     slug: "main-dishes",
-    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
     isActive: true
   },
   {
@@ -150,7 +150,7 @@ export const products: Product[] = [
     descriptionAr: "شاي أسود كلاسيكي مع زيت البرغموت",
     price: 20,
     categoryId: 2,
-    image: "https://images.unsplash.com/photo-1594631661960-e67b8a75d5d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
     isActive: true,
     isFeatured: false,
     isAvailable: true
@@ -178,7 +178,7 @@ export const products: Product[] = [
     descriptionAr: "إسبريسو بارد مع حليب مبرد على الثلج",
     price: 25,
     categoryId: 3,
-    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
     isActive: true,
     isFeatured: false,
     isAvailable: true
@@ -206,7 +206,7 @@ export const products: Product[] = [
     descriptionAr: "معجنات فرنسية مقرمشة بالزبدة مخبوزة طازجة يومياً",
     price: 15,
     categoryId: 4,
-    image: "https://images.unsplash.com/photo-1555507036-ab794f575adb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    image: "https://images.unsplash.com/photo-1549903072-7e6e0bedb7fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
     isActive: true,
     isFeatured: false,
     isAvailable: true
@@ -221,7 +221,7 @@ export const products: Product[] = [
     descriptionAr: "دجاج مشوي طري مع خضروات طازجة",
     price: 45,
     categoryId: 5,
-    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    image: "https://images.unsplash.com/photo-1567234669003-dce7a7a88821?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
     isActive: true,
     isFeatured: true,
     isAvailable: true
@@ -234,7 +234,7 @@ export const products: Product[] = [
     descriptionAr: "خس روماني مقرمش مع البارميزان والخبز المحمص",
     price: 35,
     categoryId: 5,
-    image: "https://images.unsplash.com/photo-1551248429-40975aa4de74?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    image: "https://images.unsplash.com/photo-1546793665-c74683f339c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
     isActive: true,
     isFeatured: false,
     isAvailable: true

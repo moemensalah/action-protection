@@ -223,7 +223,7 @@ const htmlContent = `<!DOCTYPE html>
                             descEn: "Classic black tea with bergamot oil",
                             descAr: "شاي أسود كلاسيكي مع زيت البرغموت",
                             price: 20,
-                            image: "https://images.unsplash.com/photo-1594631661960-e67b8a75d5d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
+                            image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
                         },
                         {
                             nameEn: "Moroccan Mint Tea", nameAr: "شاي النعناع المغربي",

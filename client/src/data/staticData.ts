@@ -276,7 +276,7 @@ export const products: Product[] = [
     descriptionAr: "قهوة تركية تقليدية تُقدم بالتحضير الأصيل",
     price: 20,
     categoryId: 1,
-    image: "https://images.unsplash.com/photo-1559496417-e7f25cb247cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    image: "https://images.unsplash.com/photo-1497636577773-f1231844b336?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
     isActive: true,
     isFeatured: true,
     isAvailable: true

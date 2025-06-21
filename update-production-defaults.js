@@ -194,7 +194,7 @@ const htmlContent = `<!DOCTYPE html>
                             descEn: "Traditional Turkish coffee served with authentic preparation",
                             descAr: "قهوة تركية تقليدية تُقدم بالتحضير الأصيل",
                             price: 20,
-                            image: "https://images.unsplash.com/photo-1559496417-e7f25cb247cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
+                            image: "https://images.unsplash.com/photo-1497636577773-f1231844b336?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
                         },
                         {
                             nameEn: "Arabic Coffee", nameAr: "قهوة عربية",

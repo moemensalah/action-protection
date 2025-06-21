@@ -7,8 +7,8 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useTheme } from "@/components/ThemeProvider";
-import englishDarkLogo from "@assets/english-dark_1750521542838.png";
-import englishWhiteLogo from "@assets/english-white_1750516260876.png";
+import englishDarkLogo from "@assets/english-dark_1750523791780.png";
+import englishWhiteLogo from "@assets/english-white_1750523827323.png";
 import arabicDarkLogo from "@assets/arabic-dark_1750516613229.png";
 import arabicWhiteLogo from "@assets/arabic-white_1750516260877.png";
 
@@ -21,9 +21,9 @@ export function Navbar() {
 
   const getLogoSrc = () => {
     if (isRTL) {
-      return theme === 'dark' ? arabicWhiteLogo : arabicDarkLogo;
+      return theme === 'dark' ? arabicDarkLogo : arabicWhiteLogo;
     } else {
-      return theme === 'dark' ? englishWhiteLogo : englishDarkLogo;
+      return theme === 'dark' ? englishDarkLogo : englishWhiteLogo;
     }
   };
 

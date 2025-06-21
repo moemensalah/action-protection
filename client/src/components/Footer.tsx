@@ -1,5 +1,5 @@
 import { useLanguage } from "@/hooks/useLanguage";
-import { Facebook, Instagram, Twitter } from "lucide-react";
+import { Facebook, Instagram } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
 
 export function Footer() {
@@ -74,14 +74,7 @@ export function Footer() {
               >
                 <Facebook className="h-6 w-6" />
               </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-400 transition-colors"
-              >
-                <Twitter className="h-6 w-6" />
-              </a>
+
             </div>
           </div>
         </div>

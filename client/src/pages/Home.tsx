@@ -76,9 +76,6 @@ export default function Home() {
   );
 }
 
-// Helper Components
-import { Coffee } from "lucide-react";
-
 function SocialIcon({ href, icon }: { href: string; icon: string }) {
   const iconMap = {
     facebook: "👥",

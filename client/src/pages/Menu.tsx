@@ -56,6 +56,10 @@ export default function Menu() {
     },
   });
 
+  const { data: categories } = useQuery<Category[]>({
+    queryKey: ["/api/categories"],
+  });
+
   const { data: category } = useQuery<Category>({
     queryKey: ["/api/categories", categorySlug],
     queryFn: async () => {
@@ -89,6 +93,27 @@ export default function Menu() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Categories Navigation */}
+        {!categorySlug && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-foreground mb-6">{t("ourCategories")}</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+              {categories?.map((cat) => (
+                <Button
+                  key={cat.id}
+                  variant="outline"
+                  className="h-auto p-4 flex flex-col gap-2 hover:bg-primary hover:text-white transition-colors"
+                  onClick={() => setLocation(`/menu?category=${cat.slug}`)}
+                >
+                  <span className="font-medium text-sm">
+                    {isRTL ? cat.nameAr : cat.nameEn}
+                  </span>
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -107,11 +132,11 @@ export default function Menu() {
           
           <Button
             variant="outline"
-            onClick={() => setLocation("/")}
+            onClick={() => categorySlug ? setLocation("/menu") : setLocation("/")}
             className="gap-2"
           >
             <ArrowLeft className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} />
-            {categorySlug ? t("backToCategories") : t("home")}
+            {categorySlug ? "All Categories" : t("home")}
           </Button>
         </div>
 
@@ -123,7 +148,7 @@ export default function Menu() {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onAddToCart={handleAddToCart}
+                  onViewDetails={handleViewDetails}
                 />
               ))}
             </div>
@@ -183,6 +208,13 @@ export default function Menu() {
             </p>
           </div>
         )}
+
+        {/* Product Modal */}
+        <ProductModal
+          product={selectedProduct}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
     </div>
   );

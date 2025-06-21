@@ -64,6 +64,12 @@ app.use((req, res, next) => {
     // Serve static files from current directory (dist)
     app.use(express.static(__dirname));
     
+    // Serve manifest.json with proper MIME type
+    app.get("/manifest.json", (req: Request, res: Response) => {
+      res.setHeader('Content-Type', 'application/json');
+      res.sendFile(path.join(__dirname, "manifest.json"));
+    });
+    
     // Handle client-side routing
     app.get("*", (req: Request, res: Response) => {
       if (req.path.startsWith("/api")) {

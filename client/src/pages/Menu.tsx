@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductModal } from "@/components/ProductModal";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
@@ -35,10 +37,12 @@ export default function Menu() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   
   // Get category from URL params
   const urlParams = new URLSearchParams(window.location.search);
-  const categorySlug = urlParams.get('category');
+  const categorySlug = urlParams.get('category') || "all";
 
   const { data: productsData, isLoading: productsLoading } = useQuery<ProductsResponse>({
     queryKey: ["/api/products", { category: categorySlug, page: currentPage, limit: 12 }],
@@ -64,15 +68,33 @@ export default function Menu() {
   const { data: category } = useQuery<Category>({
     queryKey: ["/api/categories", categorySlug],
     queryFn: async () => {
-      if (!categorySlug) return null;
+      if (!categorySlug || categorySlug === "all") return null;
       const response = await fetch(`/api/categories/${categorySlug}`);
       if (!response.ok) {
         throw new Error('Failed to fetch category');
       }
       return response.json();
     },
-    enabled: !!categorySlug,
+    enabled: !!categorySlug && categorySlug !== "all",
   });
+
+  // Filter products based on search query
+  const filteredProducts = productsData?.products.filter(product => {
+    const matchesSearch = searchQuery === "" || 
+      product.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.nameAr.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
+  }) || [];
+
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value);
+    setCurrentPage(1);
+    if (value === "all") {
+      setLocation('/menu');
+    } else {
+      setLocation(`/menu?category=${value}`);
+    }
+  };
 
   const handleViewDetails = (product: Product) => {
     setSelectedProduct(product);
@@ -116,6 +138,40 @@ export default function Menu() {
           </div>
         )}
 
+        {/* Search and Filter Section */}
+        <div className="mb-8 space-y-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* Search Bar */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder={t("searchProducts") || "Search products..."}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            {/* Category Dropdown */}
+            <div className="md:w-64">
+              <Select value={categorySlug || "all"} onValueChange={handleCategoryChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t("selectCategory") || "Select Category"} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t("allCategories") || "All Categories"}</SelectItem>
+                  {categories?.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.slug}>
+                      {isRTL ? cat.nameAr : cat.nameEn}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -143,10 +199,10 @@ export default function Menu() {
         </div>
 
         {/* Products Grid */}
-        {productsData?.products?.length ? (
+        {filteredProducts?.length ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-              {productsData.products.map((product) => (
+              {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}

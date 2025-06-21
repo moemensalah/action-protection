@@ -33,6 +33,10 @@ export const translations = {
     products: "Products",
     noProducts: "No products found",
     productNotFound: "Product not found",
+    searchProducts: "Search products...",
+    selectCategory: "Select Category",
+    allCategories: "All Categories",
+    viewDetails: "View Details",
     
     // Pagination
     page: "Page",
@@ -94,6 +98,10 @@ export const translations = {
     products: "المنتجات",
     noProducts: "لم يتم العثور على منتجات",
     productNotFound: "المنتج غير موجود",
+    searchProducts: "البحث في المنتجات...",
+    selectCategory: "اختر الفئة",
+    allCategories: "جميع الفئات",
+    viewDetails: "عرض التفاصيل",
     
     // Pagination
     page: "صفحة",

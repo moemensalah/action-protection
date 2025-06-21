@@ -259,7 +259,7 @@ const htmlContent = `<!DOCTYPE html>
                             descEn: "Cold espresso with chilled milk over ice",
                             descAr: "إسبريسو بارد مع حليب مبرد على الثلج",
                             price: 25,
-                            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
+                            image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
                         },
                         {
                             nameEn: "Fresh Orange Juice", nameAr: "عصير برتقال طازج",
@@ -274,6 +274,50 @@ const htmlContent = `<!DOCTYPE html>
                             descAr: "شاي مثلج منعش مع الليمون والنعناع",
                             price: 15,
                             image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
+                        }
+                    ]
+                },
+                {
+                    id: 4,
+                    nameEn: "Breakfast Items",
+                    nameAr: "أصناف الإفطار",
+                    image: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+                    products: [
+                        {
+                            nameEn: "Avocado Toast", nameAr: "توست الأفوكادو",
+                            descEn: "Fresh avocado on toasted artisan bread with herbs",
+                            descAr: "أفوكادو طازج على خبز حرفي محمص مع الأعشاب",
+                            price: 28,
+                            image: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
+                        },
+                        {
+                            nameEn: "Croissant", nameAr: "كرواسون",
+                            descEn: "Buttery, flaky French pastry baked fresh daily",
+                            descAr: "معجنات فرنسية مقرمشة بالزبدة مخبوزة طازجة يومياً",
+                            price: 15,
+                            image: "https://images.unsplash.com/photo-1549903072-7e6e0bedb7fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
+                        }
+                    ]
+                },
+                {
+                    id: 5,
+                    nameEn: "Main Dishes",
+                    nameAr: "الأطباق الرئيسية",
+                    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+                    products: [
+                        {
+                            nameEn: "Grilled Chicken Sandwich", nameAr: "ساندويتش دجاج مشوي",
+                            descEn: "Tender grilled chicken with fresh vegetables",
+                            descAr: "دجاج مشوي طري مع خضروات طازجة",
+                            price: 45,
+                            image: "https://images.unsplash.com/photo-1567234669003-dce7a7a88821?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
+                        },
+                        {
+                            nameEn: "Caesar Salad", nameAr: "سلطة قيصر",
+                            descEn: "Crisp romaine lettuce with parmesan and croutons",
+                            descAr: "خس روماني مقرمش مع البارميزان والخبز المحمص",
+                            price: 35,
+                            image: "https://images.unsplash.com/photo-1546793665-c74683f339c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
                         }
                     ]
                 }

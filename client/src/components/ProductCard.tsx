@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
-import type { Product } from "@shared/schema";
+import type { Product } from "@/data/staticData";
 
 interface ProductCardProps {
   product: Product;

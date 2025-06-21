@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
-import type { Product } from "@shared/schema";
+import type { Product } from "@/data/staticData";
 
 interface ProductModalProps {
   product: Product | null;

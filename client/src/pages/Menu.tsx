@@ -57,47 +57,44 @@ export default function Menu() {
     { name: t("menu"), url: "/menu" }
   ];
 
-  const { data: productsData, isLoading: productsLoading } = useQuery<ProductsResponse>({
-    queryKey: ["/api/products", { category: categorySlug, page: currentPage, limit: 12 }],
-    queryFn: async () => {
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: "12",
-        ...(categorySlug && categorySlug !== "all" && { category: categorySlug }),
-      });
-      
-      const response = await fetch(`/api/products?${params}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch products');
-      }
-      return response.json();
-    },
-  });
+  const categories = getCategoriesByActive();
+  const category = categorySlug !== "all" ? getCategoryBySlug(categorySlug) : null;
+  
+  // Get products based on filters and pagination
+  const allProducts = useMemo(() => {
+    let filtered = categorySlug === "all" ? getAllProducts() : getProductsByCategorySlug(categorySlug);
+    
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(product => 
+        product.nameEn.toLowerCase().includes(query) ||
+        product.nameAr.toLowerCase().includes(query) ||
+        product.descriptionEn.toLowerCase().includes(query) ||
+        product.descriptionAr.toLowerCase().includes(query)
+      );
+    }
+    
+    return filtered;
+  }, [categorySlug, searchQuery]);
 
-  const { data: categories } = useQuery<Category[]>({
-    queryKey: ["/api/categories"],
-  });
+  // Pagination logic
+  const itemsPerPage = 12;
+  const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = allProducts.slice(startIndex, startIndex + itemsPerPage);
 
-  const { data: category } = useQuery<Category>({
-    queryKey: ["/api/categories", categorySlug],
-    queryFn: async () => {
-      if (!categorySlug || categorySlug === "all") return null;
-      const response = await fetch(`/api/categories/${categorySlug}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch category');
-      }
-      return response.json();
-    },
-    enabled: !!categorySlug && categorySlug !== "all",
-  });
-
-  // Filter products based on search query
-  const filteredProducts = productsData?.products.filter(product => {
-    const matchesSearch = searchQuery === "" || 
-      product.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.nameAr.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
-  }) || [];
+  const productsData = {
+    products: paginatedProducts,
+    pagination: {
+      page: currentPage,
+      limit: itemsPerPage,
+      total: allProducts.length,
+      totalPages,
+      hasNext: currentPage < totalPages,
+      hasPrev: currentPage > 1
+    }
+  };
 
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value);
@@ -117,14 +114,6 @@ export default function Menu() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
-  if (productsLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
@@ -231,10 +220,10 @@ export default function Menu() {
         </div>
 
         {/* Products Grid */}
-        {filteredProducts?.length ? (
+        {productsData.products?.length ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-              {filteredProducts.map((product) => (
+              {productsData.products.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}

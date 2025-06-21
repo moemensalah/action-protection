@@ -220,7 +220,7 @@ export default function Menu() {
             className="gap-2"
           >
             <ArrowLeft className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} />
-            {categorySlug ? "All Categories" : t("home")}
+            {categorySlug ? t("allCategories") : t("home")}
           </Button>
         </div>
 

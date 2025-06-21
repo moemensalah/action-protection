@@ -46,8 +46,21 @@ try {
     runSafeCommand('npm install', 'Installing dependencies');
   }
 
-  // Try Vite build first
+  // Try Vite build first (with correct output directory handling)
   let buildSuccess = runSafeCommand('npx vite build', 'Building with Vite');
+  
+  // If Vite build succeeds, move files from dist/public to dist
+  if (buildSuccess && fs.existsSync('dist/public')) {
+    const publicFiles = fs.readdirSync('dist/public');
+    for (const file of publicFiles) {
+      fs.renameSync(
+        path.join('dist/public', file),
+        path.join('dist', file)
+      );
+    }
+    fs.rmSync('dist/public', { recursive: true, force: true });
+    console.log('✓ Moved Vite build files to correct location');
+  }
   
   if (!buildSuccess) {
     console.log('Vite build failed, using manual approach...');
@@ -79,7 +92,7 @@ try {
     
     fs.writeFileSync('dist/index.html', htmlContent);
     
-    // Build client bundle with esbuild
+    // Build client bundle with esbuild - mark assets as external
     const clientBuildCmd = [
       'npx esbuild client/src/main.tsx',
       '--bundle',
@@ -92,11 +105,8 @@ try {
       '--loader:.tsx=tsx',
       '--loader:.ts=tsx',
       '--loader:.css=css',
-      '--loader:.png=dataurl',
-      '--loader:.jpg=dataurl',
-      '--loader:.jpeg=dataurl',
-      '--loader:.svg=text',
-      '--external:none'
+      '--external:@assets/*',
+      '--alias:@assets=./assets'
     ].join(' ');
     
     buildSuccess = runSafeCommand(clientBuildCmd, 'Building client with esbuild');

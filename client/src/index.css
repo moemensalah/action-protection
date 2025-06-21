@@ -168,6 +168,38 @@
     direction: rtl;
   }
   
+  /* Additional RTL fixes for select components */
+  [dir="rtl"] .rtl-dropdown [data-radix-select-content] {
+    text-align: right;
+  }
+  
+  [dir="rtl"] .rtl-dropdown [data-radix-select-item] {
+    text-align: right;
+    direction: rtl;
+    padding-right: 2rem;
+    padding-left: 0.5rem;
+  }
+  
+  [dir="rtl"] .rtl-dropdown [data-radix-select-trigger] {
+    text-align: right;
+    direction: rtl;
+  }
+  
+  [dir="rtl"] .rtl-dropdown [data-radix-select-value] {
+    text-align: right;
+    direction: rtl;
+    width: 100%;
+    display: block;
+  }
+  
+  /* Force RTL for Arabic text in dropdowns */
+  .rtl-dropdown select,
+  .rtl-dropdown [role="combobox"],
+  .rtl-dropdown [role="listbox"] {
+    direction: rtl;
+    text-align: right;
+  }
+  
   /* Arabic brand name styling */
   .arabic-brand {
     font-family: 'Noto Sans Arabic', 'Amiri', 'Tajawal', serif;

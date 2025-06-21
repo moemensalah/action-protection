@@ -28,14 +28,6 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
           <DialogTitle className="text-2xl font-bold mb-4">
             {language === "ar" ? product.nameAr : product.nameEn}
           </DialogTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4 h-6 w-6"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </DialogHeader>
         
         <div className="space-y-6">

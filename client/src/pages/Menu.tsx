@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ProductCard } from "@/components/ProductCard";
 import { ProductModal } from "@/components/ProductModal";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { Footer } from "@/components/Footer";
 import {
   Pagination,
   PaginationContent,
@@ -274,6 +275,7 @@ export default function Menu() {
           onClose={() => setIsModalOpen(false)}
         />
       </div>
+      <Footer />
     </div>
   );
 }

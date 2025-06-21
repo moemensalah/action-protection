@@ -48,7 +48,7 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
               </Badge>
               {product.isFeatured && (
                 <Badge className="bg-primary hover:bg-primary/90 text-white">
-                  ⭐ Featured
+                  ⭐ {t("featured")}
                 </Badge>
               )}
             </div>

@@ -28,7 +28,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
         
         {product.isFeatured && (
           <Badge className="absolute top-4 left-4 rtl:left-auto rtl:right-4 bg-primary hover:bg-primary/90 text-white">
-            ⭐ Featured
+            ⭐ {t("featured")}
           </Badge>
         )}
       </div>

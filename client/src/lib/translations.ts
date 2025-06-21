@@ -42,6 +42,7 @@ export const translations = {
     availableNow: "Available now",
     inStock: "In Stock",
     outOfStock: "Out of Stock",
+    featured: "Featured",
     
     // Pagination
     page: "Page",
@@ -112,6 +113,7 @@ export const translations = {
     availableNow: "متوفر الآن",
     inStock: "متوفر",
     outOfStock: "غير متوفر",
+    featured: "مميز",
     
     // Pagination
     page: "صفحة",

@@ -40,17 +40,11 @@ export function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-            <div className="w-10 h-10 gradient-cafe rounded-full flex items-center justify-center logo-bounce">
-              <Coffee className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h1 className={`font-bold text-xl text-primary ${isRTL ? 'arabic-brand' : ''}`}>
-                {isRTL ? "لاونج" : "Lounge"}
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                {t("brandSubtitle")}
-              </p>
-            </div>
+            <img 
+              src={getLogoSrc()} 
+              alt={isRTL ? "ليت لاونج" : "LateLounge"}
+              className="h-12 w-auto object-contain logo-bounce"
+            />
           </Link>
 
           {/* Desktop Navigation */}

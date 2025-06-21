@@ -119,7 +119,7 @@ export function LogoSection() {
         <div className="animate-bounce-slow mb-8">
           <img 
             src={getLogo()} 
-            alt="Lounge Logo"
+            alt={isRTL ? "ليت لاونج" : "LateLounge"}
             className="h-32 md:h-48 lg:h-56 mx-auto object-contain filter drop-shadow-2xl"
 
           />

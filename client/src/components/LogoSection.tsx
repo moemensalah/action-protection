@@ -3,6 +3,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useLocation } from "wouter";
+import { useState, useEffect } from "react";
 import englishDarkLogo from "@assets/english-dark_1750516197108.png";
 import arabicDarkLogo from "@assets/arabic-dark_1750516197109.png";
 import englishWhiteLogo from "@assets/english-white_1750516260876.png";
@@ -46,6 +47,44 @@ export function LogoSection() {
 
   const currentSlogans = slogans[language];
 
+  // Typing animation state
+  const [currentSloganIndex, setCurrentSloganIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    const currentSlogan = currentSlogans[currentSloganIndex];
+    
+    if (isTyping && !isPaused) {
+      if (displayedText.length < currentSlogan.length) {
+        const timeout = setTimeout(() => {
+          setDisplayedText(currentSlogan.slice(0, displayedText.length + 1));
+        }, 100);
+        return () => clearTimeout(timeout);
+      } else {
+        // Finished typing, pause before erasing
+        setIsPaused(true);
+        const timeout = setTimeout(() => {
+          setIsTyping(false);
+          setIsPaused(false);
+        }, 2000);
+        return () => clearTimeout(timeout);
+      }
+    } else if (!isTyping && !isPaused) {
+      if (displayedText.length > 0) {
+        const timeout = setTimeout(() => {
+          setDisplayedText(displayedText.slice(0, -1));
+        }, 50);
+        return () => clearTimeout(timeout);
+      } else {
+        // Finished erasing, move to next slogan
+        setCurrentSloganIndex((prev) => (prev + 1) % currentSlogans.length);
+        setIsTyping(true);
+      }
+    }
+  }, [displayedText, isTyping, isPaused, currentSlogans, currentSloganIndex]);
+
   return (
     <div className="relative py-16 md:py-24 bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-amber-900/20">
       {/* Main Logo */}
@@ -59,29 +98,14 @@ export function LogoSection() {
           />
         </div>
         
-        {/* Animated Marquee Slogans */}
-        <div className="overflow-hidden bg-gradient-to-r from-amber-100 to-orange-100 dark:from-gray-800 dark:to-amber-900/30 rounded-full py-4 shadow-lg">
-          <div className="marquee-container">
-            <div className="marquee-content">
-              {currentSlogans.map((slogan, index) => (
-                <span 
-                  key={index}
-                  className="inline-block mx-8 text-lg md:text-xl font-semibold text-amber-800 dark:text-amber-200 whitespace-nowrap"
-                >
-                  {slogan}
-                  <span className="mx-4 text-amber-600 dark:text-amber-400">•</span>
-                </span>
-              ))}
-              {/* Duplicate for seamless loop */}
-              {currentSlogans.map((slogan, index) => (
-                <span 
-                  key={`duplicate-${index}`}
-                  className="inline-block mx-8 text-lg md:text-xl font-semibold text-amber-800 dark:text-amber-200 whitespace-nowrap"
-                >
-                  {slogan}
-                  <span className="mx-4 text-amber-600 dark:text-amber-400">•</span>
-                </span>
-              ))}
+        {/* Typing Animation Slogans */}
+        <div className="bg-gradient-to-r from-amber-100 to-orange-100 dark:from-gray-800 dark:to-amber-900/30 rounded-full py-6 shadow-lg min-h-[80px] flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-lg md:text-xl font-semibold text-amber-800 dark:text-amber-200 min-h-[28px] flex items-center justify-center">
+              <span className="typing-text">
+                {displayedText}
+                <span className="typing-cursor animate-pulse">|</span>
+              </span>
             </div>
           </div>
         </div>

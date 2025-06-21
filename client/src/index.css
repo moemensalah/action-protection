@@ -432,6 +432,27 @@
       transform: translateX(50%);
     }
   }
+
+  /* Typing Animation */
+  .typing-text {
+    font-family: 'Courier New', monospace;
+    display: inline-block;
+  }
+
+  .typing-cursor {
+    font-weight: 100;
+    color: currentColor;
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 50% {
+      opacity: 1;
+    }
+    51%, 100% {
+      opacity: 0;
+    }
+  }
 }
 
 /* Responsive typography */

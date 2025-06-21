@@ -15,7 +15,7 @@ try {
   fs.mkdirSync('dist/assets', { recursive: true });
   fs.mkdirSync('logs', { recursive: true });
 
-  // Copy essential logo assets
+  // Copy essential logo assets with proper permissions
   const logoFiles = [
     'english-dark_1750523791780.png',
     'english-white_1750523827323.png'
@@ -23,11 +23,17 @@ try {
   
   for (const file of logoFiles) {
     const srcPath = path.join('attached_assets', file);
+    const destPath = path.join('dist/assets', file);
     if (fs.existsSync(srcPath)) {
-      fs.copyFileSync(srcPath, path.join('dist/assets', file));
+      fs.copyFileSync(srcPath, destPath);
+      // Set proper file permissions for web serving
+      fs.chmodSync(destPath, 0o644);
+      console.log(`Copied and set permissions for ${file}`);
+    } else {
+      console.warn(`Warning: ${file} not found in attached_assets`);
     }
   }
-  console.log('Logo assets copied');
+  console.log('Logo assets copied with proper permissions');
 
   // Create HTML file
   const htmlContent = `<!DOCTYPE html>

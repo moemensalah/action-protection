@@ -31,6 +31,12 @@ if [ ! -d "node_modules" ]; then
     npm install --production --silent
 fi
 
+# Fix asset permissions for web serving
+echo "Setting proper asset permissions..."
+chmod 644 assets/*.png 2>/dev/null || true
+chmod 644 assets/*.jpg 2>/dev/null || true
+chmod 644 assets/*.jpeg 2>/dev/null || true
+
 # Stop any existing processes
 echo "Stopping existing processes..."
 pkill -f "node server.js" 2>/dev/null || true

@@ -96,8 +96,8 @@ export default function Home() {
                   <Coffee className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-2xl text-primary-300">
-                    {isRTL ? "كافيه عربيكا" : "Café Arabica"}
+                  <h3 className={`font-bold text-2xl text-primary-300 ${isRTL ? 'arabic-brand' : ''}`}>
+                    {isRTL ? "لاونج" : "Lounge"}
                   </h3>
                   <p className="text-gray-400 text-sm">
                     {t("brandSubtitle")}

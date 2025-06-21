@@ -30,8 +30,8 @@ export function Navbar() {
               <Coffee className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-xl text-primary">
-                {isRTL ? "كافيه عربيكا" : "Café Arabica"}
+              <h1 className={`font-bold text-xl text-primary ${isRTL ? 'arabic-brand' : ''}`}>
+                {isRTL ? "لاونج" : "Lounge"}
               </h1>
               <p className="text-xs text-muted-foreground">
                 {t("brandSubtitle")}

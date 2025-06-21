@@ -19,7 +19,7 @@ export const translations = {
     showLess: "Show Less",
     
     // Hero section
-    welcomeTitle: "Welcome to Café Arabica",
+    welcomeTitle: "Welcome to Lounge",
     welcomeSubtitle: "Discover the finest coffee and authentic cuisine in a warm, welcoming atmosphere",
     exploreMenu: "Explore Our Menu",
     
@@ -44,7 +44,7 @@ export const translations = {
     quickLinks: "Quick Links",
     contactInfo: "Contact Info",
     address: "123 Coffee Street, City",
-    rights: "© 2024 Café Arabica. All rights reserved.",
+    rights: "© 2024 Lounge. All rights reserved.",
     
     // Categories
     coffee: "Coffee & Espresso",
@@ -80,7 +80,7 @@ export const translations = {
     showLess: "عرض أقل",
     
     // Hero section
-    welcomeTitle: "أهلاً بكم في كافيه عربيكا",
+    welcomeTitle: "أهلاً بكم في لاونج",
     welcomeSubtitle: "اكتشف أجود أنواع القهوة والمأكولات الأصيلة في جو دافئ ومرحب",
     exploreMenu: "استكشف قائمتنا",
     
@@ -105,7 +105,7 @@ export const translations = {
     quickLinks: "روابط سريعة",
     contactInfo: "معلومات الاتصال",
     address: "123 شارع القهوة، المدينة",
-    rights: "© 2024 كافيه عربيكا. جميع الحقوق محفوظة.",
+    rights: "© 2024 لاونج. جميع الحقوق محفوظة.",
     
     // Categories
     coffee: "القهوة والإسبريسو",

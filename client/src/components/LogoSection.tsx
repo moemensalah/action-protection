@@ -18,7 +18,7 @@ export function LogoSection() {
 
   // Select the appropriate logo based on theme (always English)
   const getLogo = () => {
-    return theme === 'dark' ? englishDarkModeLogo : englishDarkLogo;
+    return theme === 'dark' ? englishWhiteLogo : englishDarkLogo;
   };
 
   // Typing slogans with multiple words

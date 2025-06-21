@@ -1,6 +1,7 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { Card, CardContent } from "@/components/ui/card";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { Footer } from "@/components/Footer";
 import { Coffee, Users, Award, Clock } from "lucide-react";
 
 export default function About() {
@@ -146,6 +147,7 @@ export default function About() {
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

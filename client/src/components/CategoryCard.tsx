@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/hooks/useLanguage";
-import type { Category } from "@shared/schema";
+import type { Category } from "@/data/staticData";
 
 interface CategoryCardProps {
   category: Category;

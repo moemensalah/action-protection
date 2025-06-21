@@ -10,6 +10,7 @@ import englishWhiteLogo from "@assets/english-white_1750516260876.png";
 import arabicWhiteLogo from "@assets/arabic-white_1750516260877.png";
 import englishDarkModeLogo from "@assets/english-dark_1750516613230.png";
 import arabicDarkModelogo from "@assets/arabic-dark_1750516613229.png";
+import englishNewDarkModeLogo from "@assets/english-dark_1750521542838.png";
 
 export function LogoSection() {
   const { language, t, isRTL } = useLanguage();
@@ -18,7 +19,7 @@ export function LogoSection() {
 
   // Select the appropriate logo based on theme (always English)
   const getLogo = () => {
-    return theme === 'dark' ? englishWhiteLogo : englishDarkLogo;
+    return theme === 'dark' ? englishNewDarkModeLogo : englishWhiteLogo;
   };
 
   // Typing slogans with multiple words

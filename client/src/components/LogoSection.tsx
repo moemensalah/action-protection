@@ -53,30 +53,32 @@ export function LogoSection() {
   useEffect(() => {
     const currentSlogan = currentSlogans[currentSloganIndex];
     
-    if (isTyping && !isPaused) {
-      if (charIndex < currentSlogan.length) {
-        const timeout = setTimeout(() => {
+    if (!currentSlogan) return;
+    
+    const timeout = setTimeout(() => {
+      if (isTyping && !isPaused) {
+        if (charIndex < currentSlogan.length) {
           setDisplayedText(currentSlogan.slice(0, charIndex + 1));
-          setCharIndex(charIndex + 1);
-        }, 100); // Typing speed
-        return () => clearTimeout(timeout);
-      } else {
-        // Finished typing current slogan, pause before moving to next
-        setIsPaused(true);
-        const timeout = setTimeout(() => {
-          setIsTyping(false);
-          setIsPaused(false);
-        }, 2500); // Pause to read
-        return () => clearTimeout(timeout);
+          setCharIndex(prev => prev + 1);
+        } else {
+          // Finished typing, start pause
+          setIsPaused(true);
+          setTimeout(() => {
+            setIsPaused(false);
+            setIsTyping(false);
+          }, 2500);
+        }
+      } else if (!isTyping && !isPaused) {
+        // Clear and move to next slogan
+        setDisplayedText('');
+        setCharIndex(0);
+        setCurrentSloganIndex(prev => (prev + 1) % currentSlogans.length);
+        setIsTyping(true);
       }
-    } else if (!isTyping && !isPaused) {
-      // Clear text and move to next slogan
-      setDisplayedText('');
-      setCharIndex(0);
-      setCurrentSloganIndex((prev) => (prev + 1) % currentSlogans.length);
-      setIsTyping(true);
-    }
-  }, [charIndex, isTyping, isPaused, currentSlogans, currentSloganIndex]);
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, [charIndex, isTyping, isPaused, currentSloganIndex, currentSlogans]);
 
   // Reset animation when language changes
   useEffect(() => {

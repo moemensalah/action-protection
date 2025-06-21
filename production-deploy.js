@@ -81,7 +81,7 @@ try {
 
   // Build server
   console.log('Building server...');
-  const serverCmd = 'npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --outfile=dist/index.js --target=node18 --external:express --external:tsx';
+  const serverCmd = 'npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js --target=node18 --external:express --external:tsx';
   runCommand(serverCmd, 'Building server bundle');
 
   // Ensure assets directory exists and copy all assets

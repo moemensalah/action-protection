@@ -1,0 +1,66 @@
+ [ERROR] Could not resolve "@assets/english-white_1750523827323.png"
+
+    client/src/components/LogoSection.tsx:8:29:
+      8 │ ...rt englishWhiteLogo from "@assets/english-white_1750523827323.png";
+        ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  You can mark the path "@assets/english-white_1750523827323.png" as external to
+  exclude it from the bundle, which will remove this error and leave the
+  unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "@assets/english-dark_1750523791780.png"
+
+    client/src/components/Navbar.tsx:10:28:
+      10 │ import englishDarkLogo from "@assets/english-dark_1750523791780.png";
+         ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  You can mark the path "@assets/english-dark_1750523791780.png" as external to
+  exclude it from the bundle, which will remove this error and leave the
+  unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "@assets/english-white_1750523827323.png"
+
+    client/src/components/Navbar.tsx:11:29:
+      11 │ ...t englishWhiteLogo from "@assets/english-white_1750523827323.png";
+         ╵                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  You can mark the path "@assets/english-white_1750523827323.png" as external to
+  exclude it from the bundle, which will remove this error and leave the
+  unresolved path in the bundle.
+
+4 errors
+Failed: Building client with esbuild
+Building server...
+Building server bundle
+✘ [ERROR] Cannot use both "outfile" and "outdir"
+
+1 error
+Failed: Building server bundle
+Setting up assets directory...
+Copied 11 assets to dist/assets/
+Production build completed successfully!
+
+Deployment files created:
+- dist/index.html (client)
+- dist/index.js (server)
+- dist/package.json (production dependencies)
+- dist/start.sh (startup script)
+
+To deploy:
+1. cd dist && npm install
+2. NODE_ENV=production node index.js
+Or use PM2: pm2 start ../ecosystem.config.js
+🔄 Stopping existing processes...
+▶️ Starting application with PM2...
+[PM2][ERROR] File ecosystem.config.js malformated
+ReferenceError: module is not defined
+    at file:///var/www/html/Late-Lounge/ecosystem.config.js:1:1
+    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
+    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
+    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
+    at Module._compile (node:internal/modules/cjs/loader:1511:5)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at require (node:internal/modules/helpers:182:18)

@@ -2,9 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'latelounge-cafe',
-      script: 'server/index.ts',
-      interpreter: 'node',
-      interpreter_args: '--loader tsx/esm',
+      script: 'dist/server.js',
       instances: 1, // or 'max' for cluster mode
       exec_mode: 'fork', // or 'cluster' for load balancing
       env: {

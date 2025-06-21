@@ -5,6 +5,7 @@ import { CategoryCard } from "@/components/CategoryCard";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { LogoSection } from "@/components/LogoSection";
 import { Footer } from "@/components/Footer";
+import { SEO, getOrganizationSchema, getBreadcrumbSchema } from "@/components/SEO";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useLocation } from "wouter";
 import type { Category } from "@shared/schema";
@@ -12,6 +13,10 @@ import type { Category } from "@shared/schema";
 export default function Home() {
   const { t, isRTL } = useLanguage();
   const [, setLocation] = useLocation();
+  
+  const breadcrumbItems = [
+    { name: t("home"), url: "/" }
+  ];
 
   const { data: categories, isLoading } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
@@ -31,6 +36,23 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
+      <SEO 
+        title={isRTL ? "الرئيسية" : "Home"}
+        description={isRTL 
+          ? "مرحباً بكم في ليت لاونج - تجربة قهوة مميزة مع أفضل المشروبات والمأكولات في أجواء دافئة ومريحة. اكتشف قائمتنا المتنوعة من القهوة المميزة والحلويات الطازجة."
+          : "Welcome to LateLounge - Premium coffee experience with the finest beverages and culinary delights in a warm, inviting atmosphere. Discover our diverse menu of specialty coffee and fresh desserts."
+        }
+        keywords={isRTL
+          ? "ليت لاونج, قهوة مميزة, مقهى الرياض, قهوة طازجة, إفطار, حلويات, مشروبات ساخنة, مشروبات باردة"
+          : "LateLounge, premium coffee, Riyadh cafe, fresh coffee, breakfast, desserts, hot beverages, cold drinks"
+        }
+        url="/"
+        type="website"
+        structuredData={{
+          ...getOrganizationSchema(isRTL),
+          ...getBreadcrumbSchema(breadcrumbItems)
+        }}
+      />
       <AnimatedBackground />
       {/* Logo Section */}
       <LogoSection />

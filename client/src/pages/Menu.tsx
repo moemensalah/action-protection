@@ -9,6 +9,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { ProductModal } from "@/components/ProductModal";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { Footer } from "@/components/Footer";
+import { SEO, getMenuSchema, getBreadcrumbSchema } from "@/components/SEO";
 import {
   Pagination,
   PaginationContent,

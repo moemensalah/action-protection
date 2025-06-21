@@ -99,8 +99,10 @@ export function LogoSection() {
           <img 
             src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800"
             alt="Coffee beans"
-            className="w-full h-full object-cover opacity-20 dark:opacity-15"
+            className="w-full h-full object-cover opacity-40 dark:opacity-30"
           />
+          {/* Gradient mask for left side */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>
         </div>
         
         {/* Right side coffee overlay */}
@@ -108,18 +110,17 @@ export function LogoSection() {
           <img 
             src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800"
             alt="Coffee cup"
-            className="w-full h-full object-cover opacity-20 dark:opacity-15"
+            className="w-full h-full object-cover opacity-40 dark:opacity-30"
           />
+          {/* Gradient mask for right side */}
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>
         </div>
         
-        {/* Seamless gradient overlay - no hard edges */}
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-50/70 via-white/90 via-white/90 to-amber-50/70 dark:from-gray-900/70 dark:via-gray-800/90 dark:via-gray-800/90 dark:to-gray-900/70"></div>
+        {/* Subtle center overlay for content readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent dark:via-gray-800/70"></div>
         
         {/* Center radial gradient for natural blending */}
-        <div className="absolute inset-0 bg-radial-gradient from-white/60 via-white/30 to-transparent dark:from-gray-800/60 dark:via-gray-800/30 dark:to-transparent"></div>
-        
-        {/* Additional horizontal blur effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent dark:via-gray-800/20"></div>
+        <div className="absolute inset-0 bg-radial-gradient from-white/50 via-white/20 to-transparent dark:from-gray-800/50 dark:via-gray-800/20 dark:to-transparent"></div>
       </div>
       {/* Main Logo */}
       <div className="container mx-auto px-4 text-center relative z-10">

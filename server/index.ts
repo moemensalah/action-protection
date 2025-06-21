@@ -60,17 +60,16 @@ app.use((req, res, next) => {
     
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
-    const distPath = path.resolve(__dirname, "../dist");
     
-    // Serve static files
-    app.use(express.static(distPath));
+    // Serve static files from current directory (dist)
+    app.use(express.static(__dirname));
     
     // Handle client-side routing
     app.get("*", (req: Request, res: Response) => {
       if (req.path.startsWith("/api")) {
         res.status(404).json({ error: "API endpoint not found" });
       } else {
-        res.sendFile(path.join(distPath, "index.html"));
+        res.sendFile(path.join(__dirname, "index.html"));
       }
     });
     

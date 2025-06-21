@@ -35,13 +35,17 @@ try {
   }
   console.log('Logo assets copied with proper permissions');
 
-  // Create HTML file
+  // Create HTML file with proper manifest and meta tags
   const htmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LateLounge - Premium Coffee Experience</title>
+    <meta name="description" content="Premium bilingual cafe experience with Arabic and English menus, dark theme, and exquisite coffee selections" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#d4af37" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -62,6 +66,31 @@ try {
 </html>`;
   
   fs.writeFileSync('dist/index.html', htmlContent);
+
+  // Create manifest.json
+  const manifestContent = {
+    "name": "LateLounge - Premium Coffee Experience",
+    "short_name": "LateLounge",
+    "description": "Bilingual cafe website featuring premium coffee and menu items",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#1a1a1a",
+    "theme_color": "#d4af37",
+    "orientation": "portrait-primary",
+    "icons": [
+      {
+        "src": "/assets/english-dark_1750523791780.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/assets/english-white_1750523827323.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  };
+  fs.writeFileSync('dist/manifest.json', JSON.stringify(manifestContent, null, 2));
 
   // Skip complex client build, use simple static approach
   console.log('Creating static client application...');

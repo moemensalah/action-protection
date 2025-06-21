@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CategoryCard } from "@/components/CategoryCard";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { LogoSection } from "@/components/LogoSection";
+import { Footer } from "@/components/Footer";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useLocation } from "wouter";
 import type { Category } from "@shared/schema";

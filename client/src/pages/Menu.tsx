@@ -213,7 +213,7 @@ export default function Menu() {
             </div>
 
             {/* Pagination */}
-            {productsData.pagination.totalPages > 1 && (
+            {productsData && productsData.pagination.totalPages > 1 && (
               <div className="flex justify-center">
                 <Pagination>
                   <PaginationContent>

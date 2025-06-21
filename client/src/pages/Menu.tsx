@@ -217,7 +217,7 @@ export default function Menu() {
               <div className="flex justify-center">
                 <Pagination>
                   <PaginationContent>
-                    {productsData.pagination.hasPrev && (
+                    {productsData && productsData.pagination.hasPrev && (
                       <PaginationItem>
                         <PaginationPrevious 
                           onClick={() => handlePageChange(currentPage - 1)}
@@ -226,7 +226,7 @@ export default function Menu() {
                       </PaginationItem>
                     )}
                     
-                    {Array.from({ length: productsData.pagination.totalPages }, (_, i) => i + 1)
+                    {productsData && Array.from({ length: productsData.pagination.totalPages }, (_, i) => i + 1)
                       .filter(page => 
                         page === 1 || 
                         page === productsData.pagination.totalPages || 
@@ -247,7 +247,7 @@ export default function Menu() {
                         </PaginationItem>
                       ))}
                     
-                    {productsData.pagination.hasNext && (
+                    {productsData && productsData.pagination.hasNext && (
                       <PaginationItem>
                         <PaginationNext 
                           onClick={() => handlePageChange(currentPage + 1)}

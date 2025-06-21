@@ -47,7 +47,7 @@ export const translations = {
     brandDescription: "Experience the finest coffee and authentic cuisine in our welcoming atmosphere. Every cup tells a story, every meal creates memories.",
     quickLinks: "Quick Links",
     contactInfo: "Contact Info",
-    address: "123 Coffee Street, City",
+    address: "123 Coffee Street, Downtown, Riyadh",
     rights: "© 2024 Lounge. All rights reserved.",
     
     // Categories

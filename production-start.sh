@@ -9,7 +9,23 @@ node deploy-simple.js
 # Navigate to production directory
 cd dist
 
-# Install production dependencies if needed
+# Create package.json with only essential dependencies
+cat > package.json << 'EOF'
+{
+  "name": "latelounge-cafe",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
+EOF
+
+# Install minimal production dependencies
 if [ ! -d "node_modules" ]; then
     echo "Installing production dependencies..."
     npm install --production --silent

@@ -14,6 +14,7 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { apiRequest } from "@/lib/queryClient";
+import { getImageUrl } from "@/lib/utils";
 
 interface Category {
   id: number;
@@ -491,7 +492,7 @@ export function CategoriesManagement() {
                           <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                             {category.image ? (
                               <img 
-                                src={category.image} 
+                                src={getImageUrl(category.image)} 
                                 alt={isRTL ? category.nameAr : category.nameEn}
                                 className="w-full h-full object-cover"
                               />
@@ -552,7 +553,7 @@ export function CategoriesManagement() {
                           <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                             {category.image ? (
                               <img 
-                                src={category.image} 
+                                src={getImageUrl(category.image)} 
                                 alt={isRTL ? category.nameAr : category.nameEn}
                                 className="w-full h-full object-cover"
                               />

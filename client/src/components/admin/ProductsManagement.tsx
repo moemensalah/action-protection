@@ -656,7 +656,7 @@ export function ProductsManagement() {
                           <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                             {product.image ? (
                               <img 
-                                src={product.image} 
+                                src={getImageUrl(product.image)} 
                                 alt={isRTL ? product.nameAr : product.nameEn}
                                 className="w-full h-full object-cover"
                               />
@@ -717,7 +717,7 @@ export function ProductsManagement() {
                           <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                             {product.image ? (
                               <img 
-                                src={product.image} 
+                                src={getImageUrl(product.image)} 
                                 alt={isRTL ? product.nameAr : product.nameEn}
                                 className="w-full h-full object-cover"
                               />

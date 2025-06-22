@@ -127,50 +127,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   async reorderCategory(id: number, direction: 'up' | 'down'): Promise<void> {
-    // Get current category
-    const [currentCategory] = await db.select().from(categories).where(eq(categories.id, id));
-    if (!currentCategory) return;
-
-    const currentOrder = currentCategory.sortOrder || 0;
-
-    if (direction === 'up') {
-      // Find the category with the next lower sort order
-      const [targetCategory] = await db
-        .select()
-        .from(categories)
-        .where(lt(categories.sortOrder, currentOrder))
-        .orderBy(desc(categories.sortOrder))
-        .limit(1);
-
-      if (targetCategory) {
-        // Swap the sort orders
-        await db.update(categories)
-          .set({ sortOrder: targetCategory.sortOrder })
-          .where(eq(categories.id, id));
-        
-        await db.update(categories)
-          .set({ sortOrder: currentOrder })
-          .where(eq(categories.id, targetCategory.id));
-      }
-    } else {
-      // Find the category with the next higher sort order
-      const [targetCategory] = await db
-        .select()
-        .from(categories)
-        .where(gt(categories.sortOrder, currentOrder))
-        .orderBy(asc(categories.sortOrder))
-        .limit(1);
-
-      if (targetCategory) {
-        // Swap the sort orders
-        await db.update(categories)
-          .set({ sortOrder: targetCategory.sortOrder })
-          .where(eq(categories.id, id));
-        
-        await db.update(categories)
-          .set({ sortOrder: currentOrder })
-          .where(eq(categories.id, targetCategory.id));
-      }
+    // Get all categories ordered by sortOrder
+    const allCategories = await db.select().from(categories).orderBy(asc(categories.sortOrder));
+    const currentIndex = allCategories.findIndex(cat => cat.id === id);
+    
+    if (currentIndex === -1) return;
+    
+    let targetIndex = -1;
+    if (direction === 'up' && currentIndex > 0) {
+      targetIndex = currentIndex - 1;
+    } else if (direction === 'down' && currentIndex < allCategories.length - 1) {
+      targetIndex = currentIndex + 1;
+    }
+    
+    if (targetIndex >= 0) {
+      const currentCategory = allCategories[currentIndex];
+      const targetCategory = allCategories[targetIndex];
+      
+      // Swap the sort orders
+      await db.update(categories)
+        .set({ sortOrder: targetCategory.sortOrder })
+        .where(eq(categories.id, currentCategory.id));
+      
+      await db.update(categories)
+        .set({ sortOrder: currentCategory.sortOrder })
+        .where(eq(categories.id, targetCategory.id));
     }
   }
 

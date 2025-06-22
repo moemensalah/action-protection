@@ -215,7 +215,7 @@ export default function AdminPanel() {
               <TabsContent value="content" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                       <FileText className="h-5 w-5" />
                       {isRTL ? "إدارة المحتوى" : "Content Management"}
                     </CardTitle>
@@ -229,7 +229,7 @@ export default function AdminPanel() {
               <TabsContent value="users" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                       <Users className="h-5 w-5" />
                       {isRTL ? "إدارة المستخدمين" : "Users Management"}
                     </CardTitle>

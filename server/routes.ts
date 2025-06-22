@@ -420,29 +420,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin Users Management (Administrator only)
   app.get("/api/admin/users", requireAdmin, async (req, res) => {
     try {
-      // Mock users data - in production, fetch from database
-      const users = [
-        {
-          id: "admin1",
-          email: "admin@latelounge.sa",
-          firstName: "System",
-          lastName: "Administrator",
-          role: "administrator",
-          isActive: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        },
-        {
-          id: "mod1",
-          email: "moderator@latelounge.sa", 
-          firstName: "Content",
-          lastName: "Moderator",
-          role: "moderator",
-          isActive: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      ];
+      const users = await storage.getAllUsers();
       res.json(users);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -453,13 +431,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/users", requireAdmin, async (req, res) => {
     try {
       const userData = req.body;
-      // Mock user creation - in production, save to database
-      const newUser = {
+      const newUser = await storage.createUser({
         id: `user_${Date.now()}`,
-        ...userData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        profileImageUrl: null,
+        role: userData.role,
+        isActive: userData.isActive
+      });
       res.status(201).json(newUser);
     } catch (error) {
       console.error("Error creating user:", error);
@@ -471,12 +451,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.params.id;
       const userData = req.body;
-      // Mock user update - in production, update in database
-      const updatedUser = {
-        id: userId,
-        ...userData,
-        updatedAt: new Date().toISOString()
-      };
+      const updatedUser = await storage.updateUser(userId, userData);
       res.json(updatedUser);
     } catch (error) {
       console.error("Error updating user:", error);

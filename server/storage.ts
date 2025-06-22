@@ -382,6 +382,56 @@ export class DatabaseStorage implements IStorage {
       return created;
     }
   }
+
+  // Privacy Policy
+  async getPrivacyPolicy(): Promise<PrivacyPolicy | undefined> {
+    const [privacyPolicyData] = await db.select().from(privacyPolicy).where(eq(privacyPolicy.isActive, true));
+    return privacyPolicyData;
+  }
+
+  async createOrUpdatePrivacyPolicy(privacyData: InsertPrivacyPolicy): Promise<PrivacyPolicy> {
+    const existing = await this.getPrivacyPolicy();
+    
+    if (existing) {
+      const [updated] = await db
+        .update(privacyPolicy)
+        .set({ ...privacyData, updatedAt: new Date(), lastUpdated: new Date() })
+        .where(eq(privacyPolicy.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(privacyPolicy)
+        .values(privacyData)
+        .returning();
+      return created;
+    }
+  }
+
+  // Terms of Service
+  async getTermsOfService(): Promise<TermsOfService | undefined> {
+    const [termsData] = await db.select().from(termsOfService).where(eq(termsOfService.isActive, true));
+    return termsData;
+  }
+
+  async createOrUpdateTermsOfService(termsData: InsertTermsOfService): Promise<TermsOfService> {
+    const existing = await this.getTermsOfService();
+    
+    if (existing) {
+      const [updated] = await db
+        .update(termsOfService)
+        .set({ ...termsData, updatedAt: new Date(), lastUpdated: new Date() })
+        .where(eq(termsOfService.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(termsOfService)
+        .values(termsData)
+        .returning();
+      return created;
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();

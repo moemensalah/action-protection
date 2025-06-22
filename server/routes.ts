@@ -178,6 +178,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/privacy-policy", async (req, res) => {
+    try {
+      const privacyPolicy = await storage.getPrivacyPolicy();
+      res.json(privacyPolicy);
+    } catch (error) {
+      console.error("Error fetching privacy policy:", error);
+      res.status(500).json({ message: "Failed to fetch privacy policy" });
+    }
+  });
+
+  app.get("/api/terms-of-service", async (req, res) => {
+    try {
+      const termsOfService = await storage.getTermsOfService();
+      res.json(termsOfService);
+    } catch (error) {
+      console.error("Error fetching terms of service:", error);
+      res.status(500).json({ message: "Failed to fetch terms of service" });
+    }
+  });
+
   // Simple admin authentication middleware (mock for development)
   const requireAdmin = (req: any, res: any, next: any) => {
     // For now, allow all admin requests - in production, check JWT/session
@@ -361,6 +381,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating footer content:", error);
       res.status(500).json({ message: "Failed to update footer content" });
+    }
+  });
+
+  app.put("/api/admin/privacy-policy", requireAdmin, async (req, res) => {
+    try {
+      const privacyData = req.body;
+      const privacyPolicy = await storage.createOrUpdatePrivacyPolicy(privacyData);
+      res.json(privacyPolicy);
+    } catch (error) {
+      console.error("Error updating privacy policy:", error);
+      res.status(500).json({ message: "Failed to update privacy policy" });
+    }
+  });
+
+  app.put("/api/admin/terms-of-service", requireAdmin, async (req, res) => {
+    try {
+      const termsData = req.body;
+      const termsOfService = await storage.createOrUpdateTermsOfService(termsData);
+      res.json(termsOfService);
+    } catch (error) {
+      console.error("Error updating terms of service:", error);
+      res.status(500).json({ message: "Failed to update terms of service" });
     }
   });
 

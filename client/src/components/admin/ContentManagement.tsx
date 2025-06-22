@@ -107,26 +107,42 @@ export function ContentManagement() {
   });
 
   // Fetch data
-  const { data: aboutUs } = useQuery({
+  const { data: aboutUs } = useQuery<AboutUs>({
     queryKey: ["/api/about"],
-    onSuccess: (data: AboutUs) => {
-      if (data) setAboutData(data);
-    }
   });
 
-  const { data: contactUs } = useQuery({
+  const { data: contactUs } = useQuery<ContactUs>({
     queryKey: ["/api/contact"],
-    onSuccess: (data: ContactUs) => {
-      if (data) setContactData(data);
-    }
   });
 
-  const { data: footerContent } = useQuery({
+  const { data: footerContent } = useQuery<FooterContent>({
     queryKey: ["/api/footer"],
-    onSuccess: (data: FooterContent) => {
-      if (data) setFooterData(data);
-    }
   });
+
+  const { data: privacyPolicy } = useQuery({
+    queryKey: ["/api/privacy-policy"],
+  });
+
+  const { data: termsOfService } = useQuery({
+    queryKey: ["/api/terms-of-service"],
+  });
+
+  // Update states when data loads
+  if (aboutUs && aboutUs !== aboutData) {
+    setAboutData(aboutUs);
+  }
+  if (contactUs && contactUs !== contactData) {
+    setContactData(contactUs);
+  }
+  if (footerContent && footerContent !== footerData) {
+    setFooterData(footerContent);
+  }
+  if (privacyPolicy && privacyPolicy !== privacyData) {
+    setPrivacyData(privacyPolicy);
+  }
+  if (termsOfService && termsOfService !== termsData) {
+    setTermsData(termsOfService);
+  }
 
   // Update mutations
   const updateAboutMutation = useMutation({
@@ -205,11 +221,11 @@ export function ContentManagement() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+      <div className={isRTL ? 'text-right' : 'text-left'}>
+        <h2 className={`text-2xl font-bold text-gray-900 dark:text-white ${isRTL ? 'text-right' : 'text-left'}`}>
           {isRTL ? "إدارة المحتوى" : "Content Management"}
         </h2>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className={`text-gray-600 dark:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
           {isRTL ? "إدارة محتوى الصفحات والمعلومات الثابتة" : "Manage page content and static information"}
         </p>
       </div>
@@ -227,7 +243,7 @@ export function ContentManagement() {
         <TabsContent value="about">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                 <FileText className="h-5 w-5" />
                 {isRTL ? "صفحة من نحن" : "About Us Page"}
               </CardTitle>
@@ -236,7 +252,7 @@ export function ContentManagement() {
               <form onSubmit={(e) => { e.preventDefault(); updateAboutMutation.mutate(aboutData); }} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="aboutTitleEn">{isRTL ? "العنوان بالإنجليزية" : "Title (English)"}</Label>
+                    <Label htmlFor="aboutTitleEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "العنوان بالإنجليزية" : "Title (English)"}</Label>
                     <Input
                       id="aboutTitleEn"
                       value={aboutData.titleEn}

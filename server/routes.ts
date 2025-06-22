@@ -7,8 +7,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Categories API
   app.get("/api/categories", async (req, res) => {
     try {
-      const categories = await storage.getCategories();
-      res.json(categories);
+      const { page = 1, limit = 12, search } = req.query;
+      const pageNum = parseInt(page as string);
+      const limitNum = parseInt(limit as string);
+
+      let categories = await storage.getCategories();
+
+      // Apply search filter if provided
+      if (search) {
+        const searchTerm = (search as string).toLowerCase();
+        categories = categories.filter(category => 
+          category.nameEn.toLowerCase().includes(searchTerm) ||
+          category.nameAr.toLowerCase().includes(searchTerm) ||
+          category.descriptionEn?.toLowerCase().includes(searchTerm) ||
+          category.descriptionAr?.toLowerCase().includes(searchTerm)
+        );
+      }
+
+      // Calculate pagination
+      const total = categories.length;
+      const totalPages = Math.ceil(total / limitNum);
+      const startIndex = (pageNum - 1) * limitNum;
+      const endIndex = startIndex + limitNum;
+      const paginatedCategories = categories.slice(startIndex, endIndex);
+
+      res.json({
+        categories: paginatedCategories,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages,
+          hasNext: pageNum < totalPages,
+          hasPrev: pageNum > 1,
+        },
+      });
     } catch (error) {
       console.error("Error fetching categories:", error);
       res.status(500).json({ message: "Failed to fetch categories" });

@@ -6,6 +6,8 @@ import {
   contactUs,
   footerContent,
   widgetSettings,
+  privacyPolicy,
+  termsOfService,
   type User,
   type UpsertUser,
   type Category,
@@ -14,12 +16,16 @@ import {
   type ContactUs,
   type FooterContent,
   type WidgetSettings,
+  type PrivacyPolicy,
+  type TermsOfService,
   type InsertCategory,
   type InsertProduct,
   type InsertAboutUs,
   type InsertContactUs,
   type InsertFooterContent,
   type InsertWidgetSettings,
+  type InsertPrivacyPolicy,
+  type InsertTermsOfService,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, lt, gt, desc, asc } from "drizzle-orm";
@@ -66,6 +72,14 @@ export interface IStorage {
   getWidgetSettings(): Promise<WidgetSettings[]>;
   getWidgetByName(name: string): Promise<WidgetSettings | undefined>;
   createOrUpdateWidget(widgetData: InsertWidgetSettings): Promise<WidgetSettings>;
+  
+  // Privacy Policy
+  getPrivacyPolicy(): Promise<PrivacyPolicy | undefined>;
+  createOrUpdatePrivacyPolicy(privacyData: InsertPrivacyPolicy): Promise<PrivacyPolicy>;
+  
+  // Terms of Service
+  getTermsOfService(): Promise<TermsOfService | undefined>;
+  createOrUpdateTermsOfService(termsData: InsertTermsOfService): Promise<TermsOfService>;
 }
 
 export class DatabaseStorage implements IStorage {

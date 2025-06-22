@@ -126,6 +126,32 @@ export const widgetSettings = pgTable("widget_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Privacy Policy content table
+export const privacyPolicy = pgTable("privacy_policy", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  titleEn: varchar("title_en", { length: 255 }).notNull(),
+  titleAr: varchar("title_ar", { length: 255 }).notNull(),
+  contentEn: text("content_en").notNull(),
+  contentAr: text("content_ar").notNull(),
+  lastUpdated: timestamp("last_updated").defaultNow(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Terms of Service content table
+export const termsOfService = pgTable("terms_of_service", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  titleEn: varchar("title_en", { length: 255 }).notNull(),
+  titleAr: varchar("title_ar", { length: 255 }).notNull(),
+  contentEn: text("content_en").notNull(),
+  contentAr: text("content_ar").notNull(),
+  lastUpdated: timestamp("last_updated").defaultNow(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const categoriesRelations = relations(categories, ({ many }) => ({
   products: many(products),
@@ -175,6 +201,18 @@ export const insertWidgetSettingsSchema = createInsertSchema(widgetSettings).omi
   updatedAt: true,
 });
 
+export const insertPrivacyPolicySchema = createInsertSchema(privacyPolicy).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertTermsOfServiceSchema = createInsertSchema(termsOfService).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const upsertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
 });
@@ -188,6 +226,8 @@ export type AboutUs = typeof aboutUs.$inferSelect;
 export type ContactUs = typeof contactUs.$inferSelect;
 export type FooterContent = typeof footerContent.$inferSelect;
 export type WidgetSettings = typeof widgetSettings.$inferSelect;
+export type PrivacyPolicy = typeof privacyPolicy.$inferSelect;
+export type TermsOfService = typeof termsOfService.$inferSelect;
 
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
 export type InsertProduct = z.infer<typeof insertProductSchema>;
@@ -195,3 +235,5 @@ export type InsertAboutUs = z.infer<typeof insertAboutUsSchema>;
 export type InsertContactUs = z.infer<typeof insertContactUsSchema>;
 export type InsertFooterContent = z.infer<typeof insertFooterContentSchema>;
 export type InsertWidgetSettings = z.infer<typeof insertWidgetSettingsSchema>;
+export type InsertPrivacyPolicy = z.infer<typeof insertPrivacyPolicySchema>;
+export type InsertTermsOfService = z.infer<typeof insertTermsOfServiceSchema>;

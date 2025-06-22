@@ -77,8 +77,7 @@ export function ContentManagement() {
     titleAr: "",
     contentEn: "",
     contentAr: "",
-    featuresEn: "",
-    featuresAr: "",
+    features: [],
     missionEn: "",
     missionAr: "",
     image: "",
@@ -165,8 +164,7 @@ export function ContentManagement() {
         titleAr: aboutUs.titleAr || "",
         contentEn: aboutUs.contentEn || "",
         contentAr: aboutUs.contentAr || "",
-        featuresEn: aboutUs.featuresEn || "",
-        featuresAr: aboutUs.featuresAr || "",
+        features: aboutUs.features || [],
         missionEn: aboutUs.missionEn || "",
         missionAr: aboutUs.missionAr || "",
         image: aboutUs.image || "",
@@ -247,8 +245,7 @@ export function ContentManagement() {
         titleAr: data.titleAr,
         contentEn: data.contentEn,
         contentAr: data.contentAr,
-        featuresEn: data.featuresEn,
-        featuresAr: data.featuresAr,
+        features: data.features,
         missionEn: data.missionEn,
         missionAr: data.missionAr,
         image: data.image,
@@ -507,28 +504,137 @@ export function ContentManagement() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="aboutFeaturesEn" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "المميزات بالإنجليزية" : "Features (English)"}</Label>
-                    <Textarea
-                      id="aboutFeaturesEn"
-                      value={aboutData.featuresEn || ""}
-                      onChange={(e) => setAboutData(prev => ({ ...prev, featuresEn: e.target.value }))}
-                      rows={5}
-                      placeholder="Our special features and offerings..."
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="aboutFeaturesAr" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "المميزات بالعربية" : "Features (Arabic)"}</Label>
-                    <Textarea
-                      id="aboutFeaturesAr"
-                      value={aboutData.featuresAr || ""}
-                      onChange={(e) => setAboutData(prev => ({ ...prev, featuresAr: e.target.value }))}
-                      rows={5}
-                      placeholder="مميزاتنا وخدماتنا الخاصة..."
-                      dir="rtl"
-                    />
-                  </div>
+                {/* Features Management */}
+                <div className="space-y-4">
+                  <Label className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {isRTL ? "المميزات (ما يميزنا)" : "Features (What Makes Us Special)"}
+                  </Label>
+                  
+                  {aboutData.features.map((feature, index) => (
+                    <div key={index} className="border rounded-lg p-4 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-medium">{isRTL ? `المميزة ${index + 1}` : `Feature ${index + 1}`}</h4>
+                        <Button 
+                          type="button"
+                          variant="destructive" 
+                          size="sm"
+                          onClick={() => {
+                            const newFeatures = aboutData.features.filter((_, i) => i !== index);
+                            setAboutData(prev => ({ ...prev, features: newFeatures }));
+                          }}
+                        >
+                          {isRTL ? "حذف" : "Delete"}
+                        </Button>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor={`feature-icon-${index}`} className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {isRTL ? "الأيقونة" : "Icon"}
+                          </Label>
+                          <select
+                            id={`feature-icon-${index}`}
+                            value={feature.icon}
+                            onChange={(e) => {
+                              const newFeatures = [...aboutData.features];
+                              newFeatures[index] = { ...feature, icon: e.target.value };
+                              setAboutData(prev => ({ ...prev, features: newFeatures }));
+                            }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="Coffee">Coffee</option>
+                            <option value="Users">Users</option>
+                            <option value="Award">Award</option>
+                            <option value="Clock">Clock</option>
+                          </select>
+                        </div>
+                        <div></div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor={`feature-title-en-${index}`} className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {isRTL ? "العنوان بالإنجليزية" : "Title (English)"}
+                          </Label>
+                          <Input
+                            id={`feature-title-en-${index}`}
+                            value={feature.titleEn}
+                            onChange={(e) => {
+                              const newFeatures = [...aboutData.features];
+                              newFeatures[index] = { ...feature, titleEn: e.target.value };
+                              setAboutData(prev => ({ ...prev, features: newFeatures }));
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor={`feature-title-ar-${index}`} className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {isRTL ? "العنوان بالعربية" : "Title (Arabic)"}
+                          </Label>
+                          <Input
+                            id={`feature-title-ar-${index}`}
+                            value={feature.titleAr}
+                            onChange={(e) => {
+                              const newFeatures = [...aboutData.features];
+                              newFeatures[index] = { ...feature, titleAr: e.target.value };
+                              setAboutData(prev => ({ ...prev, features: newFeatures }));
+                            }}
+                            dir="rtl"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor={`feature-desc-en-${index}`} className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {isRTL ? "الوصف بالإنجليزية" : "Description (English)"}
+                          </Label>
+                          <Textarea
+                            id={`feature-desc-en-${index}`}
+                            value={feature.descEn}
+                            onChange={(e) => {
+                              const newFeatures = [...aboutData.features];
+                              newFeatures[index] = { ...feature, descEn: e.target.value };
+                              setAboutData(prev => ({ ...prev, features: newFeatures }));
+                            }}
+                            rows={3}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor={`feature-desc-ar-${index}`} className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {isRTL ? "الوصف بالعربية" : "Description (Arabic)"}
+                          </Label>
+                          <Textarea
+                            id={`feature-desc-ar-${index}`}
+                            value={feature.descAr}
+                            onChange={(e) => {
+                              const newFeatures = [...aboutData.features];
+                              newFeatures[index] = { ...feature, descAr: e.target.value };
+                              setAboutData(prev => ({ ...prev, features: newFeatures }));
+                            }}
+                            rows={3}
+                            dir="rtl"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  <Button 
+                    type="button"
+                    variant="outline" 
+                    onClick={() => {
+                      const newFeature: Feature = {
+                        icon: "Coffee",
+                        titleEn: "",
+                        titleAr: "",
+                        descEn: "",
+                        descAr: ""
+                      };
+                      setAboutData(prev => ({ ...prev, features: [...prev.features, newFeature] }));
+                    }}
+                  >
+                    {isRTL ? "إضافة مميزة جديدة" : "Add New Feature"}
+                  </Button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

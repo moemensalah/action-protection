@@ -218,6 +218,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // SMTP Settings routes
+  app.get('/api/admin/smtp', isAuthenticated, async (req, res) => {
+    try {
+      const settings = await storage.getSmtpSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error("Error fetching SMTP settings:", error);
+      res.status(500).json({ error: "Failed to fetch SMTP settings" });
+    }
+  });
+
+  app.put('/api/admin/smtp', isAuthenticated, async (req, res) => {
+    try {
+      const settings = await storage.createOrUpdateSmtpSettings(req.body);
+      res.json(settings);
+    } catch (error) {
+      console.error("Error updating SMTP settings:", error);
+      res.status(500).json({ error: "Failed to update SMTP settings" });
+    }
+  });
+
   const requireModerator = (req: any, res: any, next: any) => {
     // For now, allow all moderator requests - in production, check JWT/session
     req.user = { role: 'moderator', id: 'mod1' };

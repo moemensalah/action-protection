@@ -28,6 +28,7 @@ import {
   type InsertWidgetSettings,
   type InsertPrivacyPolicy,
   type InsertTermsOfService,
+  type InsertSmtpSettings,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, lt, gt, desc, asc } from "drizzle-orm";

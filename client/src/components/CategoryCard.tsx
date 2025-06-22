@@ -1,7 +1,16 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/hooks/useLanguage";
-import type { Category } from "@/data/staticData";
+interface Category {
+  id: number;
+  nameEn: string;
+  nameAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  slug: string;
+  image: string;
+  isActive: boolean;
+}
 
 interface CategoryCardProps {
   category: Category;

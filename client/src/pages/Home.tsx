@@ -33,7 +33,7 @@ export default function Home() {
     queryKey: ["/api/categories"],
   });
 
-  const activeCategories = categories.filter((cat: Category) => cat.isActive);
+  const activeCategories = categories.filter((cat: any) => cat.isActive) as Category[];
 
   const handleCategoryClick = (category: Category) => {
     setLocation(`/menu?category=${category.slug}`);

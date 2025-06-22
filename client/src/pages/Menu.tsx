@@ -77,7 +77,7 @@ export default function Menu() {
     queryKey: ["/api/products", { category: categorySlug, search: searchQuery, page: currentPage }],
   });
 
-  const activeCategories = categories.filter((cat: Category) => cat.isActive);
+  const activeCategories = (categories as any[]).filter((cat: any) => cat.isActive) as Category[];
   const currentCategory = categorySlug !== "all" ? activeCategories.find((cat: Category) => cat.slug === categorySlug) : null;
 
   const handleViewDetails = (product: Product) => {
@@ -102,8 +102,8 @@ export default function Menu() {
   };
 
   const isLoading = categoriesLoading || productsLoading;
-  const products = productsResponse?.products || [];
-  const pagination = productsResponse?.pagination;
+  const products = (productsResponse as any)?.products || [];
+  const pagination = (productsResponse as any)?.pagination;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
@@ -139,7 +139,7 @@ export default function Menu() {
               className="flex items-center gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              {t("backToHome")}
+              {t("back")}
             </Button>
           </div>
 
@@ -150,7 +150,7 @@ export default function Menu() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               {currentCategory 
                 ? (isRTL ? currentCategory.descriptionAr : currentCategory.descriptionEn)
-                : t("menuSubtitle")
+                : "Discover our carefully crafted menu of specialty coffee, fresh food, and delightful treats"
               }
             </p>
           </div>
@@ -198,8 +198,8 @@ export default function Menu() {
           <div className="text-center py-12">
             <p className="text-gray-500 dark:text-gray-400 text-lg">
               {searchQuery 
-                ? t("noProductsFound") 
-                : t("noProductsInCategory")
+                ? "No products found matching your search" 
+                : "No products available in this category"
               }
             </p>
           </div>

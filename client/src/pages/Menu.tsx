@@ -151,7 +151,10 @@ export default function Menu() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               {currentCategory 
                 ? (isRTL ? currentCategory.descriptionAr : currentCategory.descriptionEn)
-                : "Discover our carefully crafted menu of specialty coffee, fresh food, and delightful treats"
+                : (isRTL 
+                    ? "اكتشف قائمتنا المصممة بعناية من القهوة المختصة والطعام الطازج والحلويات اللذيذة"
+                    : "Discover our carefully crafted menu of specialty coffee, fresh food, and delightful treats"
+                  )
               }
             </p>
           </div>

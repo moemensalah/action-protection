@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/SEO";
+import { Footer } from "@/components/Footer";
 import { useLanguage } from "@/hooks/useLanguage";
 
 interface PrivacyPolicy {
@@ -79,6 +80,7 @@ export default function PrivacyPolicy() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }

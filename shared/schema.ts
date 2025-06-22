@@ -82,6 +82,7 @@ export const aboutUs = pgTable("about_us", {
   contentEn: text("content_en").notNull(),
   contentAr: text("content_ar").notNull(),
   image: text("image"),
+  mapUrl: text("map_url"),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

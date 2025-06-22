@@ -35,6 +35,12 @@ export function Footer() {
               <a href="/contact" className="block text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
                 {t("contact")}
               </a>
+              <a href="/privacy-policy" className="block text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
+                {isRTL ? "سياسة الخصوصية" : "Privacy Policy"}
+              </a>
+              <a href="/terms-of-service" className="block text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
+                {isRTL ? "شروط الخدمة" : "Terms of Service"}
+              </a>
             </div>
           </div>
 

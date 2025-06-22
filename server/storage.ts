@@ -346,7 +346,7 @@ export class DatabaseStorage implements IStorage {
     if (existing) {
       const [updated] = await db
         .update(contactUs)
-        .set({ ...contactData, updatedAt: new Date() })
+        .set(contactData)
         .where(eq(contactUs.id, existing.id))
         .returning();
       return updated;
@@ -371,7 +371,7 @@ export class DatabaseStorage implements IStorage {
     if (existing) {
       const [updated] = await db
         .update(footerContent)
-        .set({ ...footerData, updatedAt: new Date() })
+        .set(footerData)
         .where(eq(footerContent.id, existing.id))
         .returning();
       return updated;

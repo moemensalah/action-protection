@@ -283,11 +283,11 @@ export function UsersManagement() {
                 <Key className="h-4 w-4" />
                 <span>{isRTL ? "جميع الصلاحيات" : "Full system access"}</span>
               </div>
-              <ul className={`list-disc text-gray-600 dark:text-gray-400 space-y-1 ${isRTL ? 'list-inside text-right mr-0 ml-4' : 'list-inside mr-4'}`}>
-                <li>{isRTL ? "إدارة المستخدمين" : "Manage users"}</li>
-                <li>{isRTL ? "إدارة المحتوى" : "Manage content"}</li>
-                <li>{isRTL ? "إدارة المنتجات والفئات" : "Manage products & categories"}</li>
-                <li>{isRTL ? "إعدادات النظام" : "System settings"}</li>
+              <ul className={`text-gray-600 dark:text-gray-400 space-y-1 ${isRTL ? 'text-right' : 'text-left list-disc ml-4'}`} style={isRTL ? { listStyle: 'arabic-indic', paddingRight: '1rem' } : {}}>
+                <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "إدارة المستخدمين" : "Manage users"}</li>
+                <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "إدارة المحتوى" : "Manage content"}</li>
+                <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "إدارة المنتجات والفئات" : "Manage products & categories"}</li>
+                <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "إعدادات النظام" : "System settings"}</li>
               </ul>
             </div>
           </CardContent>
@@ -306,10 +306,10 @@ export function UsersManagement() {
                 <Key className="h-4 w-4" />
                 <span>{isRTL ? "صلاحيات محدودة" : "Limited access"}</span>
               </div>
-              <ul className={`list-disc text-gray-600 dark:text-gray-400 space-y-1 ${isRTL ? 'list-inside text-right mr-0 ml-4' : 'list-inside mr-4'}`}>
-                <li>{isRTL ? "إدارة المنتجات" : "Manage products"}</li>
-                <li>{isRTL ? "إدارة الفئات" : "Manage categories"}</li>
-                <li>{isRTL ? "عرض التقارير" : "View reports"}</li>
+              <ul className={`text-gray-600 dark:text-gray-400 space-y-1 ${isRTL ? 'text-right' : 'text-left list-disc ml-4'}`} style={isRTL ? { listStyle: 'arabic-indic', paddingRight: '1rem' } : {}}>
+                <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "إدارة المنتجات" : "Manage products"}</li>
+                <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "إدارة الفئات" : "Manage categories"}</li>
+                <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "عرض التقارير" : "View reports"}</li>
               </ul>
               <p className={`text-xs text-amber-600 dark:text-amber-400 mt-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                 {isRTL ? "لا يمكن إدارة المستخدمين أو المحتوى الثابت" : "Cannot manage users or static content"}

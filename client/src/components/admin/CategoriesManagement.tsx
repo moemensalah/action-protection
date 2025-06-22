@@ -383,130 +383,266 @@ export function CategoriesManagement() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className={isRTL ? "text-right" : "text-left"}>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الترتيب" : "Order"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الصورة" : "Image"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الاسم" : "Name"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الوصف" : "Description"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "المنتجات" : "Products"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الحالة" : "Status"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الإجراءات" : "Actions"}</TableHead>
+                <TableRow className={isRTL ? "text-right" : "text-left"} dir={isRTL ? "rtl" : "ltr"}>
+                  {isRTL ? (
+                    // RTL order: Actions, Status, Products, Description, Name, Image, Order
+                    <>
+                      <TableHead className="text-right">{isRTL ? "الإجراءات" : "Actions"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "الحالة" : "Status"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "المنتجات" : "Products"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "الوصف" : "Description"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "الاسم" : "Name"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "الصورة" : "Image"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "الترتيب" : "Order"}</TableHead>
+                    </>
+                  ) : (
+                    // LTR order: Order, Image, Name, Description, Products, Status, Actions
+                    <>
+                      <TableHead className="text-left">{isRTL ? "الترتيب" : "Order"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "الصورة" : "Image"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "الاسم" : "Name"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "الوصف" : "Description"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "المنتجات" : "Products"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "الحالة" : "Status"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "الإجراءات" : "Actions"}</TableHead>
+                    </>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {sortedCategories.map((category: Category, index: number) => (
-                  <TableRow key={category.id} className={isRTL ? "text-right" : "text-left"}>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleReorder(category.id, 'up')}
-                          disabled={index === 0 || reorderMutation.isPending}
-                          className="p-1 h-6 w-6"
-                        >
-                          <ChevronUp className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleReorder(category.id, 'down')}
-                          disabled={index === sortedCategories.length - 1 || reorderMutation.isPending}
-                          className="p-1 h-6 w-6"
-                        >
-                          <ChevronDown className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                        {category.image ? (
-                          <img 
-                            src={category.image} 
-                            alt={isRTL ? category.nameAr : category.nameEn}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <ImageIcon className="h-6 w-6 text-gray-400" />
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <div>
-                        <div className="font-medium text-gray-900 dark:text-white">
-                          {isRTL ? category.nameAr : category.nameEn}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {isRTL ? category.nameEn : category.nameAr}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <div className={`max-w-xs truncate text-gray-600 dark:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
-                        {isRTL ? category.descriptionAr : category.descriptionEn}
-                      </div>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <Badge variant="outline">
-                        {getProductCount(category.id)} {isRTL ? "منتج" : "products"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <Badge variant={category.isActive ? "default" : "secondary"}>
-                        {category.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <div className={`flex items-center gap-2 ${isRTL ? 'justify-end' : 'justify-start'}`}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(category)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
+                  <TableRow key={category.id} className={isRTL ? "text-right" : "text-left"} dir={isRTL ? "rtl" : "ltr"}>
+                    {isRTL ? (
+                      // RTL order: Actions, Status, Products, Description, Name, Image, Order
+                      <>
+                        <TableCell className="text-right">
+                          <div className="flex items-center gap-2 justify-end">
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                              onClick={() => handleEdit(category)}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Edit className="h-4 w-4" />
                             </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent className={isRTL ? "text-right" : "text-left"}>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle className={isRTL ? "text-right" : "text-left"}>
-                                {isRTL ? "تأكيد حذف الفئة" : "Confirm Delete Category"}
-                              </AlertDialogTitle>
-                              <AlertDialogDescription className={isRTL ? "text-right" : "text-left"}>
-                                {isRTL 
-                                  ? `هل أنت متأكد من حذف فئة "${category.nameAr}"؟ سيتم حذف جميع المنتجات التابعة لهذه الفئة (${getProductCount(category.id)} منتج). هذا الإجراء لا يمكن التراجع عنه.`
-                                  : `Are you sure you want to delete category "${category.nameEn}"? This will also delete all products in this category (${getProductCount(category.id)} products). This action cannot be undone.`
-                                }
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter className={isRTL ? "flex-row-reverse" : ""}>
-                              <AlertDialogCancel>
-                                {isRTL ? "إلغاء" : "Cancel"}
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDelete(category)}
-                                className="bg-red-600 hover:bg-red-700"
-                                disabled={deleteMutation.isPending}
-                              >
-                                {deleteMutation.isPending 
-                                  ? (isRTL ? "جاري الحذف..." : "Deleting...")
-                                  : (isRTL ? "حذف" : "Delete")
-                                }
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </TableCell>
+                            
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="text-right">
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className="text-right">
+                                    {isRTL ? "تأكيد حذف الفئة" : "Confirm Delete Category"}
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription className="text-right">
+                                    {isRTL 
+                                      ? `هل أنت متأكد من حذف فئة "${category.nameAr}"؟ سيتم حذف جميع المنتجات التابعة لهذه الفئة (${getProductCount(category.id)} منتج). هذا الإجراء لا يمكن التراجع عنه.`
+                                      : `Are you sure you want to delete category "${category.nameEn}"? This will also delete all products in this category (${getProductCount(category.id)} products). This action cannot be undone.`
+                                    }
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter className="flex-row-reverse">
+                                  <AlertDialogCancel>
+                                    {isRTL ? "إلغاء" : "Cancel"}
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(category)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                    disabled={deleteMutation.isPending}
+                                  >
+                                    {deleteMutation.isPending 
+                                      ? (isRTL ? "جاري الحذف..." : "Deleting...")
+                                      : (isRTL ? "حذف" : "Delete")
+                                    }
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant={category.isActive ? "default" : "secondary"}>
+                            {category.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant="outline">
+                            {getProductCount(category.id)} {isRTL ? "منتج" : "products"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="max-w-xs truncate text-gray-600 dark:text-gray-400 text-right">
+                            {isRTL ? category.descriptionAr : category.descriptionEn}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div>
+                            <div className="font-medium text-gray-900 dark:text-white">
+                              {isRTL ? category.nameAr : category.nameEn}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {isRTL ? category.nameEn : category.nameAr}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                            {category.image ? (
+                              <img 
+                                src={category.image} 
+                                alt={isRTL ? category.nameAr : category.nameEn}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <ImageIcon className="h-6 w-6 text-gray-400" />
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center gap-1 justify-end">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleReorder(category.id, 'up')}
+                              disabled={index === 0 || reorderMutation.isPending}
+                              className="p-1 h-6 w-6"
+                            >
+                              <ChevronUp className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleReorder(category.id, 'down')}
+                              disabled={index === sortedCategories.length - 1 || reorderMutation.isPending}
+                              className="p-1 h-6 w-6"
+                            >
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </>
+                    ) : (
+                      // LTR order: Order, Image, Name, Description, Products, Status, Actions
+                      <>
+                        <TableCell className="text-left">
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleReorder(category.id, 'up')}
+                              disabled={index === 0 || reorderMutation.isPending}
+                              className="p-1 h-6 w-6"
+                            >
+                              <ChevronUp className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleReorder(category.id, 'down')}
+                              disabled={index === sortedCategories.length - 1 || reorderMutation.isPending}
+                              className="p-1 h-6 w-6"
+                            >
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                            {category.image ? (
+                              <img 
+                                src={category.image} 
+                                alt={isRTL ? category.nameAr : category.nameEn}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <ImageIcon className="h-6 w-6 text-gray-400" />
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <div>
+                            <div className="font-medium text-gray-900 dark:text-white">
+                              {isRTL ? category.nameAr : category.nameEn}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {isRTL ? category.nameEn : category.nameAr}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <div className="max-w-xs truncate text-gray-600 dark:text-gray-400 text-left">
+                            {isRTL ? category.descriptionAr : category.descriptionEn}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <Badge variant="outline">
+                            {getProductCount(category.id)} {isRTL ? "منتج" : "products"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <Badge variant={category.isActive ? "default" : "secondary"}>
+                            {category.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <div className="flex items-center gap-2 justify-start">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(category)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="text-left">
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className="text-left">
+                                    {isRTL ? "تأكيد حذف الفئة" : "Confirm Delete Category"}
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription className="text-left">
+                                    {isRTL 
+                                      ? `هل أنت متأكد من حذف فئة "${category.nameAr}"؟ سيتم حذف جميع المنتجات التابعة لهذه الفئة (${getProductCount(category.id)} منتج). هذا الإجراء لا يمكن التراجع عنه.`
+                                      : `Are you sure you want to delete category "${category.nameEn}"? This will also delete all products in this category (${getProductCount(category.id)} products). This action cannot be undone.`
+                                    }
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>
+                                    {isRTL ? "إلغاء" : "Cancel"}
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(category)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                    disabled={deleteMutation.isPending}
+                                  >
+                                    {deleteMutation.isPending 
+                                      ? (isRTL ? "جاري الحذف..." : "Deleting...")
+                                      : (isRTL ? "حذف" : "Delete")
+                                    }
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>

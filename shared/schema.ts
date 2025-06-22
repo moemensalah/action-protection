@@ -120,8 +120,10 @@ export const footerContent = pgTable("footer_content", {
 // Widget settings table (for Tawk.to and other widgets)
 export const widgetSettings = pgTable("widget_settings", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-  widgetName: varchar("widget_name", { length: 100 }).notNull(),
-  widgetKey: text("widget_key").notNull(),
+  name: varchar("name", { length: 100 }).notNull().unique(),
+  titleEn: varchar("title_en", { length: 255 }).notNull(),
+  titleAr: varchar("title_ar", { length: 255 }).notNull(),
+  settings: jsonb("settings").notNull(), // Store widget configuration as JSON
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

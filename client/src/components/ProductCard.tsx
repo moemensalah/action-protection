@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
+import { getImageUrl } from "@/lib/utils";
 
 interface Product {
   id: number;
@@ -30,7 +31,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
     <Card className="product-card group overflow-hidden shadow-lg hover:shadow-xl">
       <div className="relative overflow-hidden cursor-pointer" onClick={() => onViewDetails?.(product)}>
         <img
-          src={product.image}
+          src={getImageUrl(product.image)}
           alt={language === "ar" ? product.nameAr : product.nameEn}
           className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
         />

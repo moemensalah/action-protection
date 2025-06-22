@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/hooks/useLanguage";
+import { getImageUrl } from "@/lib/utils";
 interface Category {
   id: number;
   nameEn: string;
@@ -28,7 +29,7 @@ export function CategoryCard({ category, productCount, onClick }: CategoryCardPr
     >
       <div className="relative h-full">
         <img
-          src={category.image}
+          src={getImageUrl(category.image)}
           alt={language === "ar" ? category.nameAr : category.nameEn}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />

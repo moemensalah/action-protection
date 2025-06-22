@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import type { WidgetSettings } from '@shared/schema';
 
 declare global {
   interface Window {
@@ -9,7 +10,7 @@ declare global {
 }
 
 export function TawkWidget() {
-  const { data: tawkConfig } = useQuery({
+  const { data: tawkConfig } = useQuery<WidgetSettings>({
     queryKey: ["/api/widgets/tawk_chat"],
     retry: false,
     refetchOnWindowFocus: false,
@@ -17,7 +18,8 @@ export function TawkWidget() {
 
   useEffect(() => {
     // Only load if widget is active and has valid configuration
-    if (!tawkConfig?.isActive || !tawkConfig?.settings?.propertyId || !tawkConfig?.settings?.widgetId) {
+    const settings = tawkConfig?.settings as { propertyId?: string; widgetId?: string } | undefined;
+    if (!tawkConfig?.isActive || !settings?.propertyId || !settings?.widgetId) {
       return;
     }
 
@@ -35,7 +37,7 @@ export function TawkWidget() {
     const script = document.createElement('script');
     script.id = 'tawk-script';
     script.async = true;
-    script.src = `https://embed.tawk.to/${tawkConfig.settings.propertyId}/${tawkConfig.settings.widgetId}`;
+    script.src = `https://embed.tawk.to/${settings.propertyId!}/${settings.widgetId!}`;
     script.charset = 'UTF-8';
     script.setAttribute('crossorigin', '*');
 

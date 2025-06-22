@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, Image as ImageIcon, ArrowUpDown, Move, Package } from "lucide-react";
+import { Plus, Edit, Trash2, Image as ImageIcon, ArrowUpDown, Move, Package, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -27,6 +28,7 @@ interface Product {
   isActive: boolean;
   isFeatured: boolean;
   isAvailable: boolean;
+  sortOrder?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -89,15 +91,26 @@ export function ProductsManagement() {
   });
 
   const filteredProducts = selectedCategory === "all" 
-    ? productsData.products || []
-    : productsData.products?.filter((product: Product) => 
-        categories.find((cat: Category) => cat.id === product.categoryId)?.slug === selectedCategory
+    ? (productsData as any)?.products || []
+    : (productsData as any)?.products?.filter((product: Product) => 
+        (categories as any[]).find((cat: any) => cat.id === product.categoryId)?.slug === selectedCategory
       ) || [];
 
   const getCategoryName = (categoryId: number) => {
-    const category = categories.find((cat: Category) => cat.id === categoryId);
+    const category = (categories as any[]).find((cat: any) => cat.id === categoryId);
     return category ? (isRTL ? category.nameAr : category.nameEn) : '';
   };
+
+  const handleDelete = (product: Product) => {
+    deleteMutation.mutate(product.id);
+  };
+
+  const handleReorder = (productId: number, direction: 'up' | 'down') => {
+    reorderMutation.mutate({ id: productId, direction });
+  };
+
+  // Sort products by sortOrder for display
+  const sortedProducts = [...filteredProducts].sort((a: Product, b: Product) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
   // Create product mutation
   const createMutation = useMutation({
@@ -149,6 +162,54 @@ export function ProductsManagement() {
       toast({
         title: isRTL ? "خطأ" : "Error",
         description: isRTL ? "فشل في تحديث المنتج" : "Failed to update product",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Delete product mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest(`/api/admin/products/${id}`, {
+        method: "DELETE",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      toast({
+        title: isRTL ? "تم حذف المنتج" : "Product Deleted",
+        description: isRTL ? "تم حذف المنتج بنجاح" : "Product deleted successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: isRTL ? "خطأ" : "Error",
+        description: isRTL ? "فشل في حذف المنتج" : "Failed to delete product",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Reorder product mutation
+  const reorderMutation = useMutation({
+    mutationFn: async ({ id, direction }: { id: number; direction: 'up' | 'down' }) => {
+      return await apiRequest(`/api/admin/products/${id}/reorder`, {
+        method: "PATCH",
+        body: JSON.stringify({ direction }),
+        headers: { "Content-Type": "application/json" }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      toast({
+        title: isRTL ? "تم إعادة الترتيب" : "Reordered",
+        description: isRTL ? "تم إعادة ترتيب المنتجات بنجاح" : "Products reordered successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: isRTL ? "خطأ" : "Error",
+        description: isRTL ? "فشل في إعادة الترتيب" : "Failed to reorder products",
         variant: "destructive",
       });
     }
@@ -247,19 +308,19 @@ export function ProductsManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={isRTL ? 'text-right' : 'text-left'}>
+          <h2 className={`text-2xl font-bold text-gray-900 dark:text-white ${isRTL ? 'text-right' : 'text-left'}`}>
             {isRTL ? "إدارة المنتجات" : "Products Management"}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className={`text-gray-600 dark:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
             {isRTL ? "إدارة جميع المنتجات والأسعار والمخزون" : "Manage all products, prices, and inventory"}
           </p>
         </div>
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={resetForm} className="flex items-center gap-2">
+            <Button onClick={resetForm} className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Plus className="h-4 w-4" />
               {isRTL ? "إضافة منتج" : "Add Product"}
             </Button>
@@ -457,28 +518,29 @@ export function ProductsManagement() {
       {/* Products Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
             <Package className="h-5 w-5" />
             {isRTL ? "قائمة المنتجات" : "Products List"}
-            <Badge variant="secondary">{filteredProducts.length}</Badge>
+            <Badge variant="secondary">{sortedProducts.length}</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>{isRTL ? "الصورة" : "Image"}</TableHead>
-                  <TableHead>{isRTL ? "الاسم" : "Name"}</TableHead>
-                  <TableHead>{isRTL ? "الفئة" : "Category"}</TableHead>
-                  <TableHead>{isRTL ? "السعر" : "Price"}</TableHead>
-                  <TableHead>{isRTL ? "المخزون" : "Stock"}</TableHead>
-                  <TableHead>{isRTL ? "الحالة" : "Status"}</TableHead>
-                  <TableHead>{isRTL ? "الإجراءات" : "Actions"}</TableHead>
+                <TableRow className={isRTL ? "text-right" : "text-left"}>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الترتيب" : "Order"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الصورة" : "Image"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الاسم" : "Name"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الفئة" : "Category"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "السعر" : "Price"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "المخزون" : "Stock"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الحالة" : "Status"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الإجراءات" : "Actions"}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts.map((product: Product) => (
+                {sortedProducts.map((product: Product, index: number) => (
                   <TableRow key={product.id}>
                     <TableCell>
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">

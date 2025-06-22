@@ -274,11 +274,11 @@ export function UsersManagement() {
               </div>
               
               <div className={`flex items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg ${isRTL ? 'flex-row-reverse justify-between' : 'justify-between'}`}>
-                <div className={`flex flex-col ${isRTL ? 'items-end order-2' : 'items-start order-1'}`}>
-                  <Label htmlFor="isActive" className={`font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
+                <div className={`flex flex-col ${isRTL ? 'items-end order-2' : 'items-start order-1'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                  <Label htmlFor="isActive" className={`font-medium ${isRTL ? 'text-right w-full' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                     {isRTL ? "حالة المستخدم" : "User Status"}
                   </Label>
-                  <p className={`text-sm text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <p className={`text-sm text-gray-500 ${isRTL ? 'text-right w-full' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                     {isRTL ? "تحديد ما إذا كان المستخدم نشطًا أم لا" : "Determine if the user account is active"}
                   </p>
                 </div>

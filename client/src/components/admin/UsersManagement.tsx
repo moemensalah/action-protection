@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { apiRequest } from "@/lib/queryClient";
@@ -48,33 +49,66 @@ export function UsersManagement() {
     isActive: true
   });
 
-  // Mock users data for demonstration (in real app, fetch from API)
-  const mockUsers: User[] = [
-    {
-      id: "admin1",
-      email: "admin@latelounge.sa",
-      firstName: "System",
-      lastName: "Administrator",
-      profileImageUrl: "",
-      role: "administrator",
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    {
-      id: "mod1",
-      email: "moderator@latelounge.sa",
-      firstName: "Content",
-      lastName: "Moderator",
-      profileImageUrl: "",
-      role: "moderator",
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
-  ];
+  // Fetch users from API
+  const { data: users = [], isLoading, refetch } = useQuery<User[]>({
+    queryKey: ['/api/admin/users'],
+  });
 
-  const users = mockUsers; // In real app: useQuery to fetch users
+  // Create user mutation
+  const createUserMutation = useMutation({
+    mutationFn: async (userData: UserForm) => {
+      return apiRequest('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      toast({
+        title: isRTL ? "تم إنشاء المستخدم" : "User Created",
+        description: isRTL ? "تم إنشاء المستخدم بنجاح" : "User created successfully",
+      });
+      setIsDialogOpen(false);
+      setEditingUser(null);
+      resetForm();
+    },
+    onError: (error) => {
+      toast({
+        title: isRTL ? "خطأ" : "Error",
+        description: isRTL ? "فشل في إنشاء المستخدم" : "Failed to create user",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Update user mutation
+  const updateUserMutation = useMutation({
+    mutationFn: async ({ id, userData }: { id: string; userData: UserForm }) => {
+      return apiRequest(`/api/admin/users/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      toast({
+        title: isRTL ? "تم تحديث المستخدم" : "User Updated",
+        description: isRTL ? "تم تحديث المستخدم بنجاح" : "User updated successfully",
+      });
+      setIsDialogOpen(false);
+      setEditingUser(null);
+      resetForm();
+    },
+    onError: (error) => {
+      toast({
+        title: isRTL ? "خطأ" : "Error",
+        description: isRTL ? "فشل في تحديث المستخدم" : "Failed to update user",
+        variant: "destructive",
+      });
+    },
+  });
 
   const getRoleBadge = (role: string) => {
     if (role === "administrator") {
@@ -129,17 +163,11 @@ export function UsersManagement() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Mock implementation - in real app, call API
-    toast({
-      title: isRTL ? "تم الحفظ" : "Saved",
-      description: editingUser 
-        ? (isRTL ? "تم تحديث المستخدم بنجاح" : "User updated successfully")
-        : (isRTL ? "تم إنشاء المستخدم بنجاح" : "User created successfully"),
-    });
-    
-    setIsDialogOpen(false);
-    setEditingUser(null);
-    resetForm();
+    if (editingUser) {
+      updateUserMutation.mutate({ id: editingUser.id, userData: formData });
+    } else {
+      createUserMutation.mutate(formData);
+    }
   };
 
   return (
@@ -241,15 +269,25 @@ export function UsersManagement() {
                 </p>
               </div>
               
-              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
-                <input
-                  type="checkbox"
-                  id="isActive"
-                  checked={formData.isActive}
-                  onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
-                  className="rounded border-gray-300"
-                />
-                <Label htmlFor="isActive" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "نشط" : "Active"}</Label>
+              <div className={`flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={`flex flex-col ${isRTL ? 'items-end' : 'items-start'}`}>
+                  <Label htmlFor="isActive" className={`font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {isRTL ? "حالة المستخدم" : "User Status"}
+                  </Label>
+                  <p className={`text-sm text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {isRTL ? "تحديد ما إذا كان المستخدم نشطًا أم لا" : "Determine if the user account is active"}
+                  </p>
+                </div>
+                <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <span className={`text-sm ${formData.isActive ? 'text-green-600' : 'text-gray-500'}`}>
+                    {formData.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
+                  </span>
+                  <Switch
+                    id="isActive"
+                    checked={formData.isActive}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
+                  />
+                </div>
               </div>
               
               <div className={`flex gap-2 pt-4 ${isRTL ? 'justify-start flex-row-reverse' : 'justify-end'}`}>

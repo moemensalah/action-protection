@@ -397,9 +397,9 @@ export function UsersManagement() {
       {/* System Note */}
       <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
         <CardContent className="pt-6">
-          <div className="flex items-start gap-3">
+          <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <Shield className="h-5 w-5 text-amber-600 mt-0.5" />
-            <div className="text-sm">
+            <div className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
               <p className="font-medium text-amber-800 dark:text-amber-200 mb-1">
                 {isRTL ? "ملاحظة أمنية" : "Security Note"}
               </p>

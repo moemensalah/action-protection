@@ -475,13 +475,6 @@ export function UsersManagement() {
                         <>
                           <TableCell className="text-right">
                             <div className="flex items-center gap-2 justify-end">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleEdit(user)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
                               {canDeleteUser(user) && (
                                 <Button
                                   variant="outline"
@@ -492,6 +485,13 @@ export function UsersManagement() {
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               )}
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEdit(user)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
                             </div>
                           </TableCell>
                           <TableCell className="text-right">
@@ -615,9 +615,18 @@ export function UsersManagement() {
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <DialogContent className="max-w-md" dir={isRTL ? 'rtl' : 'ltr'}>
           <DialogHeader className={isRTL ? 'text-right' : 'text-left'}>
-            <DialogTitle className={`flex items-center gap-2 text-red-600 dark:text-red-400 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
-              <Trash2 className="h-5 w-5" />
-              {isRTL ? "تأكيد الحذف" : "Confirm Delete"}
+            <DialogTitle className={`flex items-center gap-2 text-red-600 dark:text-red-400 ${isRTL ? 'text-right' : 'text-left'}`}>
+              {isRTL ? (
+                <>
+                  <Trash2 className="h-5 w-5 order-1" />
+                  <span className="order-2">تأكيد الحذف</span>
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-5 w-5" />
+                  <span>Confirm Delete</span>
+                </>
+              )}
             </DialogTitle>
           </DialogHeader>
           <div className={`py-4 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>

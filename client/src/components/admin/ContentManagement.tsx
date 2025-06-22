@@ -497,7 +497,7 @@ export function ContentManagement() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="workingHours" className="flex items-center gap-2">
+                    <Label htmlFor="workingHours" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                       <Clock className="h-4 w-4" />
                       {isRTL ? "ساعات العمل بالإنجليزية" : "Working Hours (English)"}
                     </Label>
@@ -509,7 +509,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="workingHoursAr" className="flex items-center gap-2">
+                    <Label htmlFor="workingHoursAr" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                       <Clock className="h-4 w-4" />
                       {isRTL ? "ساعات العمل بالعربية" : "Working Hours (Arabic)"}
                     </Label>
@@ -524,7 +524,7 @@ export function ContentManagement() {
                 </div>
 
                 <div>
-                  <Label className="flex items-center gap-2">
+                  <Label className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                     <Globe className="h-4 w-4" />
                     {isRTL ? "روابط وسائل التواصل الاجتماعي" : "Social Media Links"}
                   </Label>
@@ -577,7 +577,8 @@ export function ContentManagement() {
         <TabsContent value="footer">
           <Card>
             <CardHeader>
-              <CardTitle>
+              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                <FileText className="h-5 w-5" />
                 {isRTL ? "محتوى التذييل" : "Footer Content"}
               </CardTitle>
             </CardHeader>
@@ -585,7 +586,7 @@ export function ContentManagement() {
               <form onSubmit={(e) => { e.preventDefault(); updateFooterMutation.mutate(footerData); }} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="companyNameEn">{isRTL ? "اسم الشركة بالإنجليزية" : "Company Name (English)"}</Label>
+                    <Label htmlFor="companyNameEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "اسم الشركة بالإنجليزية" : "Company Name (English)"}</Label>
                     <Input
                       id="companyNameEn"
                       value={footerData.companyNameEn}
@@ -594,7 +595,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="companyNameAr">{isRTL ? "اسم الشركة بالعربية" : "Company Name (Arabic)"}</Label>
+                    <Label htmlFor="companyNameAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "اسم الشركة بالعربية" : "Company Name (Arabic)"}</Label>
                     <Input
                       id="companyNameAr"
                       value={footerData.companyNameAr}
@@ -607,7 +608,7 @@ export function ContentManagement() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="descriptionEn">{isRTL ? "الوصف بالإنجليزية" : "Description (English)"}</Label>
+                    <Label htmlFor="descriptionEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الوصف بالإنجليزية" : "Description (English)"}</Label>
                     <Textarea
                       id="descriptionEn"
                       value={footerData.descriptionEn}
@@ -616,7 +617,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="descriptionAr">{isRTL ? "الوصف بالعربية" : "Description (Arabic)"}</Label>
+                    <Label htmlFor="descriptionAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الوصف بالعربية" : "Description (Arabic)"}</Label>
                     <Textarea
                       id="descriptionAr"
                       value={footerData.descriptionAr}
@@ -628,7 +629,7 @@ export function ContentManagement() {
                 </div>
 
                 <div>
-                  <Label htmlFor="copyright">{isRTL ? "نص حقوق النشر" : "Copyright Text"}</Label>
+                  <Label htmlFor="copyright" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "نص حقوق النشر" : "Copyright Text"}</Label>
                   <Input
                     id="copyright"
                     value={footerData.copyrightText}
@@ -639,7 +640,7 @@ export function ContentManagement() {
 
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <Label>{isRTL ? "الروابط السريعة" : "Quick Links"}</Label>
+                    <Label className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الروابط السريعة" : "Quick Links"}</Label>
                     <Button type="button" variant="outline" size="sm" onClick={addQuickLink}>
                       {isRTL ? "إضافة رابط" : "Add Link"}
                     </Button>
@@ -690,7 +691,8 @@ export function ContentManagement() {
         <TabsContent value="terms">
           <Card>
             <CardHeader>
-              <CardTitle>
+              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                <FileText className="h-5 w-5" />
                 {isRTL ? "شروط الخدمة" : "Terms of Service"}
               </CardTitle>
             </CardHeader>

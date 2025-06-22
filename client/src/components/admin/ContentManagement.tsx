@@ -18,6 +18,7 @@ interface AboutUs {
   contentEn: string;
   contentAr: string;
   image: string;
+  mapUrl?: string;
   isActive: boolean;
 }
 
@@ -65,6 +66,7 @@ export function ContentManagement() {
     contentEn: "",
     contentAr: "",
     image: "",
+    mapUrl: "",
     isActive: true
   });
 
@@ -106,6 +108,13 @@ export function ContentManagement() {
     contentAr: ""
   });
 
+  // Tawk.to Chat Widget state
+  const [tawkData, setTawkData] = useState({
+    propertyId: "",
+    widgetId: "",
+    isActive: false
+  });
+
   // Fetch data
   const { data: aboutUs } = useQuery<AboutUs>({
     queryKey: ["/api/about"],
@@ -125,6 +134,10 @@ export function ContentManagement() {
 
   const { data: termsOfService } = useQuery({
     queryKey: ["/api/terms-of-service"],
+  });
+
+  const { data: tawkWidget } = useQuery({
+    queryKey: ["/api/widgets/tawk_chat"],
   });
 
   // Update states when data loads
@@ -161,6 +174,16 @@ export function ContentManagement() {
       });
     }
   }, [termsOfService]);
+
+  useEffect(() => {
+    if (tawkWidget) {
+      setTawkData({
+        propertyId: tawkWidget.settings?.propertyId || "",
+        widgetId: tawkWidget.settings?.widgetId || "",
+        isActive: tawkWidget.isActive || false
+      });
+    }
+  }, [tawkWidget]);
 
   // Update mutations
   const updateAboutMutation = useMutation({
@@ -248,6 +271,32 @@ export function ContentManagement() {
     }
   });
 
+  const updateTawkMutation = useMutation({
+    mutationFn: async (data: any) => {
+      return await apiRequest("/api/admin/widgets", {
+        method: "PUT",
+        body: JSON.stringify({
+          name: "tawk_chat",
+          titleEn: "Tawk.to Chat Widget",
+          titleAr: "ودجة الدردشة",
+          settings: {
+            propertyId: data.propertyId,
+            widgetId: data.widgetId
+          },
+          isActive: data.isActive
+        }),
+        headers: { "Content-Type": "application/json" }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/widgets/tawk_chat"] });
+      toast({
+        title: isRTL ? "تم التحديث" : "Updated",
+        description: isRTL ? "تم تحديث إعدادات الدردشة بنجاح" : "Chat widget settings updated successfully",
+      });
+    }
+  });
+
   const addQuickLink = () => {
     setFooterData(prev => ({
       ...prev,
@@ -283,12 +332,13 @@ export function ContentManagement() {
       </div>
 
       <Tabs defaultValue="about" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="about">{isRTL ? "من نحن" : "About Us"}</TabsTrigger>
           <TabsTrigger value="contact">{isRTL ? "اتصل بنا" : "Contact"}</TabsTrigger>
           <TabsTrigger value="footer">{isRTL ? "التذييل" : "Footer"}</TabsTrigger>
           <TabsTrigger value="terms">{isRTL ? "الشروط" : "Terms"}</TabsTrigger>
           <TabsTrigger value="privacy">{isRTL ? "الخصوصية" : "Privacy"}</TabsTrigger>
+          <TabsTrigger value="chat">{isRTL ? "الدردشة" : "Chat"}</TabsTrigger>
         </TabsList>
 
         {/* About Us */}

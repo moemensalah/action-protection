@@ -353,7 +353,7 @@ export function ContentManagement() {
               <form onSubmit={(e) => { e.preventDefault(); updateAboutMutation.mutate(aboutData); }} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="aboutTitleEn" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-left">{isRTL ? "العنوان بالإنجليزية" : "Title (English)"}</Label>
+                    <Label htmlFor="aboutTitleEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "العنوان بالإنجليزية" : "Title (English)"}</Label>
                     <Input
                       id="aboutTitleEn"
                       value={aboutData.titleEn}

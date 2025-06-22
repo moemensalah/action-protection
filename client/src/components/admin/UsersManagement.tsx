@@ -279,7 +279,7 @@ export function UsersManagement() {
           </CardHeader>
           <CardContent>
             <div className={`space-y-2 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Key className="h-4 w-4" />
                 <span>{isRTL ? "جميع الصلاحيات" : "Full system access"}</span>
               </div>
@@ -302,7 +302,7 @@ export function UsersManagement() {
           </CardHeader>
           <CardContent>
             <div className={`space-y-2 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Key className="h-4 w-4" />
                 <span>{isRTL ? "صلاحيات محدودة" : "Limited access"}</span>
               </div>

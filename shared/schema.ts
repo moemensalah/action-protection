@@ -94,8 +94,8 @@ export const aboutUs = pgTable("about_us", {
 // Contact Us information table
 export const contactUs = pgTable("contact_us", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-  phone: varchar("phone", { length: 20 }),
-  whatsapp: varchar("whatsapp", { length: 20 }), // Separate WhatsApp number
+  phone: varchar("phone", { length: 50 }),
+  whatsapp: varchar("whatsapp", { length: 50 }), // Separate WhatsApp number
   email: varchar("email", { length: 255 }),
   address: text("address"),
   addressAr: text("address_ar"),

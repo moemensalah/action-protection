@@ -9,12 +9,13 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { Footer } from "@/components/Footer";
 import { SEO, getBreadcrumbSchema } from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, MessageCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 interface ContactUs {
   id: number;
   phone: string;
+  whatsapp: string;
   email: string;
   address: string;
   addressAr: string;
@@ -85,6 +86,13 @@ export default function Contact() {
       titleAr: "الهاتف",
       valueEn: contactData?.phone || "+1 (555) 123-4567",
       valueAr: contactData?.phone || "+1 (555) 123-4567",
+    },
+    {
+      icon: MessageCircle,
+      titleEn: "WhatsApp",
+      titleAr: "واتساب",
+      valueEn: contactData?.whatsapp || "+1 (555) 123-4567",
+      valueAr: contactData?.whatsapp || "+1 (555) 123-4567",
     },
     {
       icon: Mail,

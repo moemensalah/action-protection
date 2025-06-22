@@ -1,9 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getImageUrl } from "@/lib/utils";
 
 interface FileUploadProps {
   label: string;
@@ -28,6 +29,11 @@ export function FileUpload({
   const [preview, setPreview] = useState<string | null>(value || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // Sync preview with value prop when it changes
+  useEffect(() => {
+    setPreview(value || null);
+  }, [value]);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -148,7 +154,7 @@ export function FileUpload({
           <div className="relative">
             <div className="w-full h-32 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
               <img 
-                src={preview} 
+                src={getImageUrl(preview)} 
                 alt="Preview"
                 className="w-full h-full object-cover"
               />

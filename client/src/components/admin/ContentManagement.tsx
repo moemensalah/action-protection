@@ -700,7 +700,7 @@ export function ContentManagement() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="termsContentEn">{isRTL ? "المحتوى بالإنجليزية" : "Content (English)"}</Label>
+                    <Label htmlFor="termsContentEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "المحتوى بالإنجليزية" : "Content (English)"}</Label>
                     <Textarea
                       id="termsContentEn"
                       value={termsData.contentEn}
@@ -710,7 +710,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="termsContentAr">{isRTL ? "المحتوى بالعربية" : "Content (Arabic)"}</Label>
+                    <Label htmlFor="termsContentAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "المحتوى بالعربية" : "Content (Arabic)"}</Label>
                     <Textarea
                       id="termsContentAr"
                       value={termsData.contentAr}

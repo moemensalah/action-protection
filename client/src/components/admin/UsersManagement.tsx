@@ -191,8 +191,8 @@ export function UsersManagement() {
             </Button>
           </DialogTrigger>
           
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
+          <DialogContent className="max-w-2xl" dir={isRTL ? 'rtl' : 'ltr'}>
+            <DialogHeader className={isRTL ? 'text-right' : 'text-left'}>
               <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
                 {editingUser 
                   ? (isRTL ? "تعديل المستخدم" : "Edit User")
@@ -201,55 +201,59 @@ export function UsersManagement() {
               </DialogTitle>
             </DialogHeader>
             
-            <form onSubmit={handleSubmit} className={`space-y-4 ${isRTL ? 'text-right' : 'text-left'}`}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الاسم الأول" : "First Name"}</Label>
+            <form onSubmit={handleSubmit} className={`space-y-4 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+              <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${isRTL ? 'md:grid-flow-col-dense' : ''}`}>
+                <div className={isRTL ? 'md:order-2' : ''}>
+                  <Label htmlFor="firstName" className={`block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "الاسم الأول" : "First Name"}</Label>
                   <Input
                     id="firstName"
                     value={formData.firstName}
                     onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                     required
-                    className={isRTL ? 'text-right' : 'text-left'}
+                    className={isRTL ? 'text-right [&:focus]:text-right' : 'text-left'}
+                    dir={isRTL ? 'rtl' : 'ltr'}
                   />
                 </div>
                 
-                <div>
-                  <Label htmlFor="lastName" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الاسم الأخير" : "Last Name"}</Label>
+                <div className={isRTL ? 'md:order-1' : ''}>
+                  <Label htmlFor="lastName" className={`block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "الاسم الأخير" : "Last Name"}</Label>
                   <Input
                     id="lastName"
                     value={formData.lastName}
                     onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                     required
-                    className={isRTL ? 'text-right' : 'text-left'}
+                    className={isRTL ? 'text-right [&:focus]:text-right' : 'text-left'}
+                    dir={isRTL ? 'rtl' : 'ltr'}
                   />
                 </div>
               </div>
               
               <div>
-                <Label htmlFor="email" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "البريد الإلكتروني" : "Email"}</Label>
+                <Label htmlFor="email" className={`block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "البريد الإلكتروني" : "Email"}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   required
-                  className={isRTL ? 'text-right' : 'text-left'}
+                  className={isRTL ? 'text-right [&:focus]:text-right' : 'text-left'}
+                  dir={isRTL ? 'rtl' : 'ltr'}
                 />
               </div>
               
               <div>
-                <Label htmlFor="role" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الدور" : "Role"}</Label>
+                <Label htmlFor="role" className={`block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "الدور" : "Role"}</Label>
                 <Select 
                   value={formData.role} 
                   onValueChange={(value: "administrator" | "moderator") => 
                     setFormData(prev => ({ ...prev, role: value }))
                   }
+                  dir={isRTL ? 'rtl' : 'ltr'}
                 >
-                  <SelectTrigger className={isRTL ? 'text-right [&>span]:text-right' : 'text-left'}>
+                  <SelectTrigger className={isRTL ? 'text-right [&>span]:text-right [&>svg]:order-first' : 'text-left'} dir={isRTL ? 'rtl' : 'ltr'}>
                     <SelectValue placeholder={isRTL ? "اختر الدور" : "Select role"} />
                   </SelectTrigger>
-                  <SelectContent className={isRTL ? '[&_*]:text-right' : ''}>
+                  <SelectContent className={isRTL ? '[&_*]:text-right' : ''} dir={isRTL ? 'rtl' : 'ltr'}>
                     <SelectItem value="moderator" className={isRTL ? 'text-right' : ''}>
                       <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
                         <Shield className="h-4 w-4" />

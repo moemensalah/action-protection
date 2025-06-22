@@ -639,7 +639,7 @@ export function ContentManagement() {
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between mb-4">
+                  <div className={`flex items-center justify-between mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Label className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الروابط السريعة" : "Quick Links"}</Label>
                     <Button type="button" variant="outline" size="sm" onClick={addQuickLink}>
                       {isRTL ? "إضافة رابط" : "Add Link"}
@@ -821,7 +821,7 @@ export function ContentManagement() {
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-2">
+                <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <input
                     type="checkbox"
                     id="tawkActive"
@@ -835,10 +835,10 @@ export function ContentManagement() {
                 </div>
 
                 <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+                  <h4 className={`font-medium text-blue-900 dark:text-blue-100 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                     {isRTL ? "كيفية الحصول على معرفات Tawk.to" : "How to get Tawk.to IDs"}
                   </h4>
-                  <ol className="list-decimal list-inside text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                  <ol className={`list-decimal text-sm text-blue-800 dark:text-blue-200 space-y-1 ${isRTL ? 'list-inside text-right' : 'list-inside text-left'}`}>
                     <li>{isRTL ? "سجل دخول إلى حساب Tawk.to" : "Login to your Tawk.to account"}</li>
                     <li>{isRTL ? "اذهب إلى Administration > Chat Widget" : "Go to Administration > Chat Widget"}</li>
                     <li>{isRTL ? "انسخ Property ID و Widget ID من الكود المضمن" : "Copy Property ID and Widget ID from the embed code"}</li>

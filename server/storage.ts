@@ -31,7 +31,7 @@ import {
   type InsertSmtpSettings,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, lt, gt, desc, asc } from "drizzle-orm";
+import { eq, lt, gt, desc, asc, and } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -274,13 +274,17 @@ export class DatabaseStorage implements IStorage {
     if (!product) throw new Error('Product not found');
 
     const currentOrder = product.sortOrder ?? 0;
+    const categoryId = product.categoryId;
     
     if (direction === 'up') {
-      // Find the product with the next lower sortOrder
+      // Find the product with the next lower sortOrder within the same category
       const [prevProduct] = await db
         .select()
         .from(products)
-        .where(lt(products.sortOrder, currentOrder))
+        .where(and(
+          eq(products.categoryId, categoryId),
+          lt(products.sortOrder, currentOrder)
+        ))
         .orderBy(desc(products.sortOrder))
         .limit(1);
       
@@ -295,11 +299,14 @@ export class DatabaseStorage implements IStorage {
           .where(eq(products.id, prevProduct.id));
       }
     } else {
-      // Find the product with the next higher sortOrder
+      // Find the product with the next higher sortOrder within the same category
       const [nextProduct] = await db
         .select()
         .from(products)
-        .where(gt(products.sortOrder, currentOrder))
+        .where(and(
+          eq(products.categoryId, categoryId),
+          gt(products.sortOrder, currentOrder)
+        ))
         .orderBy(asc(products.sortOrder))
         .limit(1);
       

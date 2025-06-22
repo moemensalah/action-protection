@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { FileText, Save, Globe, Phone, Mail, MapPin, Clock } from "lucide-react";
+import { FileText, Save, Globe, Phone, Mail, MapPin, Clock, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -152,15 +152,51 @@ export function ContentManagement() {
 
   // Update states when data loads
   useEffect(() => {
-    if (aboutUs) setAboutData(aboutUs);
+    if (aboutUs) {
+      setAboutData({
+        titleEn: aboutUs.titleEn || "",
+        titleAr: aboutUs.titleAr || "",
+        contentEn: aboutUs.contentEn || "",
+        contentAr: aboutUs.contentAr || "",
+        featuresEn: aboutUs.featuresEn || "",
+        featuresAr: aboutUs.featuresAr || "",
+        missionEn: aboutUs.missionEn || "",
+        missionAr: aboutUs.missionAr || "",
+        image: aboutUs.image || "",
+        mapUrl: aboutUs.mapUrl || "",
+        isActive: aboutUs.isActive ?? true
+      });
+    }
   }, [aboutUs]);
 
   useEffect(() => {
-    if (contactUs) setContactData(contactUs);
+    if (contactUs) {
+      setContactData({
+        phone: contactUs.phone || "",
+        whatsapp: contactUs.whatsapp || "",
+        email: contactUs.email || "",
+        address: contactUs.address || "",
+        addressAr: contactUs.addressAr || "",
+        workingHours: contactUs.workingHours || "",
+        workingHoursAr: contactUs.workingHoursAr || "",
+        socialMediaLinks: contactUs.socialMediaLinks || {},
+        isActive: contactUs.isActive ?? true
+      });
+    }
   }, [contactUs]);
 
   useEffect(() => {
-    if (footerContent) setFooterData(footerContent);
+    if (footerContent) {
+      setFooterData({
+        companyNameEn: footerContent.companyNameEn || "",
+        companyNameAr: footerContent.companyNameAr || "",
+        descriptionEn: footerContent.descriptionEn || "",
+        descriptionAr: footerContent.descriptionAr || "",
+        copyrightText: footerContent.copyrightText || "",
+        quickLinks: footerContent.quickLinks || [],
+        isActive: footerContent.isActive ?? true
+      });
+    }
   }, [footerContent]);
 
   useEffect(() => {
@@ -186,10 +222,10 @@ export function ContentManagement() {
   }, [termsOfService]);
 
   useEffect(() => {
-    if (tawkWidget) {
+    if (tawkWidget && tawkWidget.settings) {
       setTawkData({
-        propertyId: tawkWidget.settings?.propertyId || "6856e499f4cfc5190e97ea98",
-        widgetId: tawkWidget.settings?.widgetId || "1iu9mpub8",
+        propertyId: tawkWidget.settings.propertyId || "6856e499f4cfc5190e97ea98",
+        widgetId: tawkWidget.settings.widgetId || "1iu9mpub8",
         isActive: tawkWidget.isActive !== undefined ? tawkWidget.isActive : true
       });
     }

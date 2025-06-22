@@ -22,7 +22,7 @@ import {
   type InsertWidgetSettings,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, lt, gt, desc, asc } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -117,6 +117,61 @@ export class DatabaseStorage implements IStorage {
       .where(eq(categories.id, id))
       .returning();
     return category;
+  }
+
+  async deleteCategory(id: number): Promise<void> {
+    // First delete all products in this category
+    await db.delete(products).where(eq(products.categoryId, id));
+    // Then delete the category
+    await db.delete(categories).where(eq(categories.id, id));
+  }
+
+  async reorderCategory(id: number, direction: 'up' | 'down'): Promise<void> {
+    // Get current category
+    const [currentCategory] = await db.select().from(categories).where(eq(categories.id, id));
+    if (!currentCategory) return;
+
+    const currentOrder = currentCategory.sortOrder || 0;
+
+    if (direction === 'up') {
+      // Find the category with the next lower sort order
+      const [targetCategory] = await db
+        .select()
+        .from(categories)
+        .where(lt(categories.sortOrder, currentOrder))
+        .orderBy(desc(categories.sortOrder))
+        .limit(1);
+
+      if (targetCategory) {
+        // Swap the sort orders
+        await db.update(categories)
+          .set({ sortOrder: targetCategory.sortOrder })
+          .where(eq(categories.id, id));
+        
+        await db.update(categories)
+          .set({ sortOrder: currentOrder })
+          .where(eq(categories.id, targetCategory.id));
+      }
+    } else {
+      // Find the category with the next higher sort order
+      const [targetCategory] = await db
+        .select()
+        .from(categories)
+        .where(gt(categories.sortOrder, currentOrder))
+        .orderBy(asc(categories.sortOrder))
+        .limit(1);
+
+      if (targetCategory) {
+        // Swap the sort orders
+        await db.update(categories)
+          .set({ sortOrder: targetCategory.sortOrder })
+          .where(eq(categories.id, id));
+        
+        await db.update(categories)
+          .set({ sortOrder: currentOrder })
+          .where(eq(categories.id, targetCategory.id));
+      }
+    }
   }
 
   // Products

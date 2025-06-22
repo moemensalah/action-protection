@@ -50,6 +50,7 @@ export const categories = pgTable("categories", {
   slug: varchar("slug", { length: 255 }).unique().notNull(),
   image: text("image"),
   isActive: boolean("is_active").default(true),
+  sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

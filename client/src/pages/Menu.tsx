@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -137,9 +137,13 @@ export default function Menu() {
             <Button
               variant="ghost"
               onClick={() => setLocation("/")}
-              className="flex items-center gap-2"
+              className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
             >
-              <ArrowLeft className="h-4 w-4" />
+              {isRTL ? (
+                <ArrowRight className="h-4 w-4" />
+              ) : (
+                <ArrowLeft className="h-4 w-4" />
+              )}
               {t("back")}
             </Button>
           </div>

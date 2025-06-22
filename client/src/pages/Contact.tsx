@@ -192,21 +192,24 @@ export default function Contact() {
                   <Button 
                     variant="outline" 
                     className="w-full justify-start gap-3"
-                    onClick={() => window.open('tel:+15551234567')}
+                    onClick={() => window.open(`tel:${contactData?.phone || '+1 (555) 123-4567'}`)}
                   >
                     <Phone className="h-4 w-4" />
                     {isRTL ? "اتصال عادي" : "Regular Call"}
-                    <span className="ml-auto text-muted-foreground">+1 (555) 123-4567</span>
+                    <span className="ml-auto text-muted-foreground">{contactData?.phone || "+1 (555) 123-4567"}</span>
                   </Button>
                   
                   <Button 
                     variant="outline" 
                     className="w-full justify-start gap-3"
-                    onClick={() => window.open('https://wa.me/15551234567')}
+                    onClick={() => {
+                      const whatsappNumber = contactData?.whatsapp?.replace(/[^\d]/g, '') || '15551234567';
+                      window.open(`https://wa.me/${whatsappNumber}`);
+                    }}
                   >
                     <span className="text-green-500">📱</span>
                     {isRTL ? "واتساب" : "WhatsApp"}
-                    <span className="ml-auto text-muted-foreground">+1 (555) 123-4567</span>
+                    <span className="ml-auto text-muted-foreground">{contactData?.whatsapp || "+1 (555) 123-4567"}</span>
                   </Button>
                 </div>
               </div>

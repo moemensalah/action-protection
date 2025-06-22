@@ -18,14 +18,32 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useLanguage } from "@/hooks/useLanguage";
-import { 
-  getAllProducts, 
-  getCategoriesByActive, 
-  getProductsByCategorySlug,
-  getCategoryBySlug,
-  type Product, 
-  type Category 
-} from "@/data/staticData";
+import { useQuery } from "@tanstack/react-query";
+
+interface Product {
+  id: number;
+  nameEn: string;
+  nameAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  price: string;
+  categoryId: number;
+  image: string;
+  isActive: boolean;
+  isFeatured: boolean;
+  isAvailable: boolean;
+}
+
+interface Category {
+  id: number;
+  nameEn: string;
+  nameAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  slug: string;
+  image: string;
+  isActive: boolean;
+}
 
 interface ProductsResponse {
   products: Product[];

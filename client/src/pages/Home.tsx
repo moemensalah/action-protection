@@ -7,7 +7,18 @@ import { Footer } from "@/components/Footer";
 import { SEO, getOrganizationSchema, getBreadcrumbSchema } from "@/components/SEO";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useLocation } from "wouter";
-import { getCategoriesByActive, type Category } from "@/data/staticData";
+import { useQuery } from "@tanstack/react-query";
+
+interface Category {
+  id: number;
+  nameEn: string;
+  nameAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  slug: string;
+  image: string;
+  isActive: boolean;
+}
 
 export default function Home() {
   const { t, isRTL } = useLanguage();
@@ -17,7 +28,12 @@ export default function Home() {
     { name: t("home"), url: "/" }
   ];
 
-  const categories = getCategoriesByActive();
+  // Fetch categories from database API
+  const { data: categories = [], isLoading } = useQuery({
+    queryKey: ["/api/categories"],
+  });
+
+  const activeCategories = categories.filter((cat: Category) => cat.isActive);
 
   const handleCategoryClick = (category: Category) => {
     setLocation(`/menu?category=${category.slug}`);
@@ -58,16 +74,22 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories?.map((category) => (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                productCount={category.id === 1 ? 6 : category.id === 2 ? 6 : category.id === 3 ? 6 : category.id === 4 ? 3 : category.id === 5 ? 2 : 6} // Mock counts
-                onClick={() => handleCategoryClick(category)}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {activeCategories.map((category: Category) => (
+                <CategoryCard
+                  key={category.id}
+                  category={category}
+                  productCount={0}
+                  onClick={() => handleCategoryClick(category)}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

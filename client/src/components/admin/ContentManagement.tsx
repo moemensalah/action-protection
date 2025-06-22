@@ -188,9 +188,19 @@ export function ContentManagement() {
   // Update mutations
   const updateAboutMutation = useMutation({
     mutationFn: async (data: AboutUs) => {
+      // Filter out database-only fields to prevent timestamp errors
+      const cleanData = {
+        titleEn: data.titleEn,
+        titleAr: data.titleAr,
+        contentEn: data.contentEn,
+        contentAr: data.contentAr,
+        image: data.image,
+        mapUrl: data.mapUrl,
+        isActive: data.isActive
+      };
       return await apiRequest("/api/admin/about", {
         method: "PUT",
-        body: JSON.stringify(data),
+        body: JSON.stringify(cleanData),
         headers: { "Content-Type": "application/json" }
       });
     },
@@ -205,9 +215,20 @@ export function ContentManagement() {
 
   const updateContactMutation = useMutation({
     mutationFn: async (data: ContactUs) => {
+      // Filter out database-only fields to prevent timestamp errors
+      const cleanData = {
+        phone: data.phone,
+        email: data.email,
+        address: data.address,
+        addressAr: data.addressAr,
+        workingHours: data.workingHours,
+        workingHoursAr: data.workingHoursAr,
+        socialMediaLinks: data.socialMediaLinks,
+        isActive: data.isActive
+      };
       return await apiRequest("/api/admin/contact", {
         method: "PUT",
-        body: JSON.stringify(data),
+        body: JSON.stringify(cleanData),
         headers: { "Content-Type": "application/json" }
       });
     },
@@ -222,9 +243,19 @@ export function ContentManagement() {
 
   const updateFooterMutation = useMutation({
     mutationFn: async (data: FooterContent) => {
+      // Filter out database-only fields to prevent timestamp errors
+      const cleanData = {
+        companyNameEn: data.companyNameEn,
+        companyNameAr: data.companyNameAr,
+        descriptionEn: data.descriptionEn,
+        descriptionAr: data.descriptionAr,
+        copyrightText: data.copyrightText,
+        quickLinks: data.quickLinks,
+        isActive: data.isActive
+      };
       return await apiRequest("/api/admin/footer", {
         method: "PUT",
-        body: JSON.stringify(data),
+        body: JSON.stringify(cleanData),
         headers: { "Content-Type": "application/json" }
       });
     },

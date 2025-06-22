@@ -4,6 +4,35 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Auth middleware
+  await setupAuth(app);
+
+  // Admin middleware - requires authentication and administrator role
+  const requireAdmin = async (req: any, res: any, next: any) => {
+    try {
+      await isAuthenticated(req, res, () => {
+        const userRole = req.user?.claims?.role || 'guest';
+        if (userRole !== 'administrator') {
+          return res.status(403).json({ message: "Administrator access required" });
+        }
+        next();
+      });
+    } catch (error) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+  };
+
+  // Auth routes
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
 
   // Categories API
   app.get("/api/categories", async (req, res) => {
@@ -198,13 +227,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch terms of service" });
     }
   });
-
-  // Simple admin authentication middleware (mock for development)
-  const requireAdmin = (req: any, res: any, next: any) => {
-    // For now, allow all admin requests - in production, check JWT/session
-    req.user = { role: 'administrator', id: 'admin1' };
-    next();
-  };
 
   const requireModerator = (req: any, res: any, next: any) => {
     // For now, allow all moderator requests - in production, check JWT/session

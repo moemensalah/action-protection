@@ -160,7 +160,7 @@ export default function Menu() {
           </div>
 
           {/* Filters */}
-          <div className={`flex flex-col sm:flex-row gap-4 mb-8 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+          <div className={`flex flex-col sm:flex-row gap-4 mb-8 ${isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row-reverse'}`}>
             {/* Search Bar - Left in RTL, Right in LTR */}
             <div className="flex-1">
               <div className="relative">

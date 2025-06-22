@@ -246,12 +246,23 @@ export default function Menu() {
                   <PaginationContent className={isRTL ? 'flex-row-reverse' : ''}>
                     {currentPage > 1 && (
                       <PaginationItem>
-                        <PaginationPrevious 
+                        <PaginationLink
                           onClick={() => setCurrentPage(currentPage - 1)}
-                          className={`${isRTL ? 'text-right flex-row-reverse' : 'text-left'}`}
+                          className={`gap-1 pl-2.5 ${isRTL ? 'flex-row-reverse pr-2.5 pl-0' : ''}`}
+                          size="default"
                         >
-                          {t("previous")}
-                        </PaginationPrevious>
+                          {isRTL ? (
+                            <>
+                              <span>{t("previous")}</span>
+                              <ArrowRight className="h-4 w-4" />
+                            </>
+                          ) : (
+                            <>
+                              <ArrowLeft className="h-4 w-4" />
+                              <span>{t("previous")}</span>
+                            </>
+                          )}
+                        </PaginationLink>
                       </PaginationItem>
                     )}
 
@@ -269,12 +280,23 @@ export default function Menu() {
 
                     {currentPage < pagination.totalPages && (
                       <PaginationItem>
-                        <PaginationNext 
+                        <PaginationLink
                           onClick={() => setCurrentPage(currentPage + 1)}
-                          className={`${isRTL ? 'text-right flex-row-reverse' : 'text-left'}`}
+                          className={`gap-1 pr-2.5 ${isRTL ? 'flex-row-reverse pl-2.5 pr-0' : ''}`}
+                          size="default"
                         >
-                          {t("next")}
-                        </PaginationNext>
+                          {isRTL ? (
+                            <>
+                              <ArrowLeft className="h-4 w-4" />
+                              <span>{t("next")}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>{t("next")}</span>
+                              <ArrowRight className="h-4 w-4" />
+                            </>
+                          )}
+                        </PaginationLink>
                       </PaginationItem>
                     )}
                   </PaginationContent>

@@ -187,7 +187,7 @@ export default function AdminPanel() {
               <TabsContent value="categories" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                       <FolderOpen className="h-5 w-5" />
                       {isRTL ? "إدارة الفئات" : "Categories Management"}
                     </CardTitle>
@@ -201,7 +201,7 @@ export default function AdminPanel() {
               <TabsContent value="products" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                       <Package className="h-5 w-5" />
                       {isRTL ? "إدارة المنتجات" : "Products Management"}
                     </CardTitle>

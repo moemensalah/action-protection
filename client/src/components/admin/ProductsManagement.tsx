@@ -15,6 +15,7 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { apiRequest } from "@/lib/queryClient";
+import { getImageUrl } from "@/lib/utils";
 
 interface Product {
   id: number;

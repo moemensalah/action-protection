@@ -230,14 +230,17 @@ export default function Menu() {
 
             {/* Pagination */}
             {pagination && pagination.totalPages > 1 && (
-              <div className="flex justify-center">
+              <div className={`flex justify-center ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                 <Pagination>
-                  <PaginationContent>
-                    {pagination.hasPrev && (
+                  <PaginationContent className={isRTL ? 'flex-row-reverse' : ''}>
+                    {currentPage > 1 && (
                       <PaginationItem>
                         <PaginationPrevious 
                           onClick={() => setCurrentPage(currentPage - 1)}
-                        />
+                          className={isRTL ? 'text-right' : 'text-left'}
+                        >
+                          {isRTL ? t("previous") : t("previous")}
+                        </PaginationPrevious>
                       </PaginationItem>
                     )}
 
@@ -246,17 +249,21 @@ export default function Menu() {
                         <PaginationLink
                           onClick={() => setCurrentPage(page)}
                           isActive={page === currentPage}
+                          className={isRTL ? 'text-right' : 'text-left'}
                         >
                           {page}
                         </PaginationLink>
                       </PaginationItem>
                     ))}
 
-                    {pagination.hasNext && (
+                    {currentPage < pagination.totalPages && (
                       <PaginationItem>
                         <PaginationNext 
                           onClick={() => setCurrentPage(currentPage + 1)}
-                        />
+                          className={isRTL ? 'text-right' : 'text-left'}
+                        >
+                          {isRTL ? t("next") : t("next")}
+                        </PaginationNext>
                       </PaginationItem>
                     )}
                   </PaginationContent>

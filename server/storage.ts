@@ -47,6 +47,8 @@ export interface IStorage {
   getProductsByCategorySlug(slug: string): Promise<Product[]>;
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product>;
+  deleteProduct(id: number): Promise<void>;
+  reorderProduct(id: number, direction: 'up' | 'down'): Promise<void>;
   
   // About Us
   getAboutUs(): Promise<AboutUs | undefined>;
@@ -198,6 +200,57 @@ export class DatabaseStorage implements IStorage {
       .where(eq(products.id, id))
       .returning();
     return product;
+  }
+
+  async deleteProduct(id: number): Promise<void> {
+    await db.delete(products).where(eq(products.id, id));
+  }
+
+  async reorderProduct(id: number, direction: 'up' | 'down'): Promise<void> {
+    const product = await this.getProductById(id);
+    if (!product) throw new Error('Product not found');
+
+    const currentOrder = product.sortOrder || 0;
+    
+    if (direction === 'up') {
+      // Find the product with the next lower sortOrder
+      const [prevProduct] = await db
+        .select()
+        .from(products)
+        .where(lt(products.sortOrder, currentOrder))
+        .orderBy(desc(products.sortOrder))
+        .limit(1);
+      
+      if (prevProduct) {
+        // Swap sort orders
+        await db.update(products)
+          .set({ sortOrder: prevProduct.sortOrder })
+          .where(eq(products.id, id));
+        
+        await db.update(products)
+          .set({ sortOrder: currentOrder })
+          .where(eq(products.id, prevProduct.id));
+      }
+    } else {
+      // Find the product with the next higher sortOrder
+      const [nextProduct] = await db
+        .select()
+        .from(products)
+        .where(gt(products.sortOrder, currentOrder))
+        .orderBy(asc(products.sortOrder))
+        .limit(1);
+      
+      if (nextProduct) {
+        // Swap sort orders
+        await db.update(products)
+          .set({ sortOrder: nextProduct.sortOrder })
+          .where(eq(products.id, id));
+        
+        await db.update(products)
+          .set({ sortOrder: currentOrder })
+          .where(eq(products.id, nextProduct.id));
+      }
+    }
   }
 
   // About Us

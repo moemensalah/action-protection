@@ -28,7 +28,7 @@ interface Product {
   isActive: boolean;
   isFeatured: boolean;
   isAvailable: boolean;
-  sortOrder?: number;
+  sortOrder: number;
   createdAt: string;
   updatedAt: string;
 }

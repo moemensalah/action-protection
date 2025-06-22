@@ -69,6 +69,7 @@ export const products = pgTable("products", {
   isActive: boolean("is_active").default(true),
   isFeatured: boolean("is_featured").default(false),
   isAvailable: boolean("is_available").default(true),
+  sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

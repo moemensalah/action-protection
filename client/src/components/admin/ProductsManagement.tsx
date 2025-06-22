@@ -81,9 +81,10 @@ export function ProductsManagement() {
   });
 
   // Fetch categories
-  const { data: categories = [] } = useQuery({
+  const { data: categoriesResponse } = useQuery<{ categories: Category[] }>({
     queryKey: ["/api/categories"],
   });
+  const categories = categoriesResponse?.categories || [];
 
   // Fetch products
   const { data: productsData = { products: [] }, isLoading } = useQuery({

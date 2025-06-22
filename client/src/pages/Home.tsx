@@ -29,11 +29,12 @@ export default function Home() {
   ];
 
   // Fetch categories from database API
-  const { data: categories = [], isLoading } = useQuery({
+  const { data: categoriesResponse, isLoading } = useQuery<{ categories: Category[] }>({
     queryKey: ["/api/categories"],
   });
 
-  const activeCategories = categories.filter((cat: any) => cat.isActive) as Category[];
+  const categories = categoriesResponse?.categories || [];
+  const activeCategories = categories.filter((cat: Category) => cat.isActive);
 
   const handleCategoryClick = (category: Category) => {
     setLocation(`/menu?category=${category.slug}`);

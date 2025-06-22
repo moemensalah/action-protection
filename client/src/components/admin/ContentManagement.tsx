@@ -128,21 +128,39 @@ export function ContentManagement() {
   });
 
   // Update states when data loads
-  if (aboutUs && aboutUs !== aboutData) {
-    setAboutData(aboutUs);
-  }
-  if (contactUs && contactUs !== contactData) {
-    setContactData(contactUs);
-  }
-  if (footerContent && footerContent !== footerData) {
-    setFooterData(footerContent);
-  }
-  if (privacyPolicy && privacyPolicy !== privacyData) {
-    setPrivacyData(privacyPolicy);
-  }
-  if (termsOfService && termsOfService !== termsData) {
-    setTermsData(termsOfService);
-  }
+  useEffect(() => {
+    if (aboutUs) setAboutData(aboutUs);
+  }, [aboutUs]);
+
+  useEffect(() => {
+    if (contactUs) setContactData(contactUs);
+  }, [contactUs]);
+
+  useEffect(() => {
+    if (footerContent) setFooterData(footerContent);
+  }, [footerContent]);
+
+  useEffect(() => {
+    if (privacyPolicy) {
+      setPrivacyData({
+        titleEn: privacyPolicy.titleEn || "Privacy Policy",
+        titleAr: privacyPolicy.titleAr || "سياسة الخصوصية",
+        contentEn: privacyPolicy.contentEn || "",
+        contentAr: privacyPolicy.contentAr || ""
+      });
+    }
+  }, [privacyPolicy]);
+
+  useEffect(() => {
+    if (termsOfService) {
+      setTermsData({
+        titleEn: termsOfService.titleEn || "Terms of Service",
+        titleAr: termsOfService.titleAr || "شروط الخدمة",
+        contentEn: termsOfService.contentEn || "",
+        contentAr: termsOfService.contentAr || ""
+      });
+    }
+  }, [termsOfService]);
 
   // Update mutations
   const updateAboutMutation = useMutation({

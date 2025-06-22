@@ -186,9 +186,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createProduct(productData: InsertProduct): Promise<Product> {
+    // Get the maximum sortOrder for new products
+    const [maxOrder] = await db
+      .select({ maxSort: products.sortOrder })
+      .from(products)
+      .orderBy(desc(products.sortOrder))
+      .limit(1);
+    
+    const nextSortOrder = (maxOrder?.maxSort ?? 0) + 1;
+    
     const [product] = await db
       .insert(products)
-      .values(productData)
+      .values({ ...productData, sortOrder: nextSortOrder })
       .returning();
     return product;
   }
@@ -210,7 +219,7 @@ export class DatabaseStorage implements IStorage {
     const product = await this.getProductById(id);
     if (!product) throw new Error('Product not found');
 
-    const currentOrder = product.sortOrder || 0;
+    const currentOrder = product.sortOrder ?? 0;
     
     if (direction === 'up') {
       // Find the product with the next lower sortOrder
@@ -224,11 +233,11 @@ export class DatabaseStorage implements IStorage {
       if (prevProduct) {
         // Swap sort orders
         await db.update(products)
-          .set({ sortOrder: prevProduct.sortOrder })
+          .set({ sortOrder: prevProduct.sortOrder, updatedAt: new Date() })
           .where(eq(products.id, id));
         
         await db.update(products)
-          .set({ sortOrder: currentOrder })
+          .set({ sortOrder: currentOrder, updatedAt: new Date() })
           .where(eq(products.id, prevProduct.id));
       }
     } else {
@@ -243,11 +252,11 @@ export class DatabaseStorage implements IStorage {
       if (nextProduct) {
         // Swap sort orders
         await db.update(products)
-          .set({ sortOrder: nextProduct.sortOrder })
+          .set({ sortOrder: nextProduct.sortOrder, updatedAt: new Date() })
           .where(eq(products.id, id));
         
         await db.update(products)
-          .set({ sortOrder: currentOrder })
+          .set({ sortOrder: currentOrder, updatedAt: new Date() })
           .where(eq(products.id, nextProduct.id));
       }
     }

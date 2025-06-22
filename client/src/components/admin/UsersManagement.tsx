@@ -290,7 +290,8 @@ export function UsersManagement() {
                     id="isActive"
                     checked={formData.isActive}
                     onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
-                    className={`${isRTL ? 'order-1' : 'order-2'}`}
+                    className={`${isRTL ? 'order-1 [&>span]:!justify-start' : 'order-2'}`}
+                    dir="ltr"
                   />
                 </div>
               </div>

@@ -384,11 +384,16 @@ export async function seedDatabase() {
       isActive: true
     });
 
-    // Seed Widget Settings
-    console.log("🔧 Seeding Widget settings...");
+    // Seed Tawk.to Chat Widget
+    console.log("🔧 Seeding Tawk.to Chat Widget...");
     await storage.createOrUpdateWidget({
-      widgetName: "tawk_to",
-      widgetKey: "6856e499f4cfc5190e97ea98/1iu9mpub8",
+      name: "tawk_chat",
+      titleEn: "Tawk.to Chat Widget",
+      titleAr: "ودجة الدردشة",
+      settings: {
+        propertyId: "6856e499f4cfc5190e97ea98",
+        widgetId: "1iu9mpub8"
+      },
       isActive: true
     });
 

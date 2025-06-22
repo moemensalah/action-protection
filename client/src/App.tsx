@@ -6,6 +6,7 @@ import { LanguageProvider } from "@/hooks/useLanguage";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navbar } from "@/components/Navbar";
+import { TawkWidget } from "@/components/TawkWidget";
 import Home from "@/pages/Home";
 import Menu from "@/pages/Menu";
 import About from "@/pages/About";
@@ -39,6 +40,7 @@ function App() {
             <div className="min-h-screen bg-background theme-transition">
               <Navbar />
               <Router />
+              <TawkWidget />
               <Toaster />
             </div>
           </TooltipProvider>

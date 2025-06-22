@@ -110,9 +110,9 @@ export function ContentManagement() {
 
   // Tawk.to Chat Widget state
   const [tawkData, setTawkData] = useState({
-    propertyId: "",
-    widgetId: "",
-    isActive: false
+    propertyId: "6856e499f4cfc5190e97ea98",
+    widgetId: "1iu9mpub8",
+    isActive: true
   });
 
   // Fetch data
@@ -178,9 +178,9 @@ export function ContentManagement() {
   useEffect(() => {
     if (tawkWidget) {
       setTawkData({
-        propertyId: tawkWidget.settings?.propertyId || "",
-        widgetId: tawkWidget.settings?.widgetId || "",
-        isActive: tawkWidget.isActive || false
+        propertyId: tawkWidget.settings?.propertyId || "6856e499f4cfc5190e97ea98",
+        widgetId: tawkWidget.settings?.widgetId || "1iu9mpub8",
+        isActive: tawkWidget.isActive !== undefined ? tawkWidget.isActive : true
       });
     }
   }, [tawkWidget]);

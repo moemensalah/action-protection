@@ -11,6 +11,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FileUpload } from "@/components/ui/file-upload";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { apiRequest } from "@/lib/queryClient";
@@ -430,15 +431,12 @@ export function ProductsManagement() {
                 </div>
               </div>
               
-              <div>
-                <Label htmlFor="image" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "رابط الصورة" : "Image URL"}</Label>
-                <Input
-                  id="image"
-                  value={formData.image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://..."
-                />
-              </div>
+              <FileUpload
+                label={isRTL ? "صورة المنتج" : "Product Image"}
+                value={formData.image}
+                onChange={(url) => setFormData(prev => ({ ...prev, image: url }))}
+                isRTL={isRTL}
+              />
               
               <div className={`flex flex-wrap gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>

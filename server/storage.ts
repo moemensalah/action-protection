@@ -36,6 +36,8 @@ export interface IStorage {
   getCategoryBySlug(slug: string): Promise<Category | undefined>;
   createCategory(category: InsertCategory): Promise<Category>;
   updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category>;
+  deleteCategory(id: number): Promise<void>;
+  reorderCategory(id: number, direction: 'up' | 'down'): Promise<void>;
   
   // Products
   getProducts(): Promise<Product[]>;

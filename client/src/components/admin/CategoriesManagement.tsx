@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, Image as ImageIcon, Package } from "lucide-react";
+import { Plus, Edit, Trash2, Image as ImageIcon, Package, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +23,7 @@ interface Category {
   slug: string;
   image: string;
   isActive: boolean;
+  sortOrder?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -64,8 +66,19 @@ export function CategoriesManagement() {
   });
 
   const getProductCount = (categoryId: number) => {
-    return productsData.products?.filter((product: any) => product.categoryId === categoryId).length || 0;
+    return (productsData as any)?.products?.filter((product: any) => product.categoryId === categoryId).length || 0;
   };
+
+  const handleDelete = (category: Category) => {
+    deleteMutation.mutate(category.id);
+  };
+
+  const handleReorder = (categoryId: number, direction: 'up' | 'down') => {
+    reorderMutation.mutate({ id: categoryId, direction });
+  };
+
+  // Sort categories by sortOrder for display
+  const sortedCategories = [...(categories as Category[])].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
   // Create category mutation
   const createMutation = useMutation({
@@ -117,6 +130,55 @@ export function CategoriesManagement() {
       toast({
         title: isRTL ? "خطأ" : "Error",
         description: isRTL ? "فشل في تحديث الفئة" : "Failed to update category",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Delete category mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest(`/api/admin/categories/${id}`, {
+        method: "DELETE",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      toast({
+        title: isRTL ? "تم حذف الفئة" : "Category Deleted",
+        description: isRTL ? "تم حذف الفئة وجميع منتجاتها بنجاح" : "Category and all its products deleted successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: isRTL ? "خطأ" : "Error",
+        description: isRTL ? "فشل في حذف الفئة" : "Failed to delete category",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Reorder category mutation
+  const reorderMutation = useMutation({
+    mutationFn: async ({ id, direction }: { id: number; direction: 'up' | 'down' }) => {
+      return await apiRequest(`/api/admin/categories/${id}/reorder`, {
+        method: "PATCH",
+        body: JSON.stringify({ direction }),
+        headers: { "Content-Type": "application/json" }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      toast({
+        title: isRTL ? "تم إعادة الترتيب" : "Reordered",
+        description: isRTL ? "تم إعادة ترتيب الفئات بنجاح" : "Categories reordered successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: isRTL ? "خطأ" : "Error",
+        description: isRTL ? "فشل في إعادة الترتيب" : "Failed to reorder categories",
         variant: "destructive",
       });
     }
@@ -310,26 +372,49 @@ export function CategoriesManagement() {
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
             {isRTL ? "قائمة الفئات" : "Categories List"}
-            <Badge variant="secondary">{categories.length}</Badge>
+            <Badge variant="secondary">{(categories as Category[]).length}</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>{isRTL ? "الصورة" : "Image"}</TableHead>
-                  <TableHead>{isRTL ? "الاسم" : "Name"}</TableHead>
-                  <TableHead>{isRTL ? "الوصف" : "Description"}</TableHead>
-                  <TableHead>{isRTL ? "المنتجات" : "Products"}</TableHead>
-                  <TableHead>{isRTL ? "الحالة" : "Status"}</TableHead>
-                  <TableHead>{isRTL ? "الإجراءات" : "Actions"}</TableHead>
+                <TableRow className={isRTL ? "text-right" : "text-left"}>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الترتيب" : "Order"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الصورة" : "Image"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الاسم" : "Name"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الوصف" : "Description"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "المنتجات" : "Products"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الحالة" : "Status"}</TableHead>
+                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الإجراءات" : "Actions"}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {categories.map((category: Category) => (
-                  <TableRow key={category.id}>
-                    <TableCell>
+                {sortedCategories.map((category: Category, index: number) => (
+                  <TableRow key={category.id} className={isRTL ? "text-right" : "text-left"}>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleReorder(category.id, 'up')}
+                          disabled={index === 0 || reorderMutation.isPending}
+                          className="p-1 h-6 w-6"
+                        >
+                          <ChevronUp className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleReorder(category.id, 'down')}
+                          disabled={index === sortedCategories.length - 1 || reorderMutation.isPending}
+                          className="p-1 h-6 w-6"
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                         {category.image ? (
                           <img 
@@ -342,7 +427,7 @@ export function CategoriesManagement() {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
                       <div>
                         <div className="font-medium text-gray-900 dark:text-white">
                           {isRTL ? category.nameAr : category.nameEn}
@@ -352,23 +437,23 @@ export function CategoriesManagement() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="max-w-xs truncate text-gray-600 dark:text-gray-400">
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
+                      <div className={`max-w-xs truncate text-gray-600 dark:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
                         {isRTL ? category.descriptionAr : category.descriptionEn}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
                       <Badge variant="outline">
                         {getProductCount(category.id)} {isRTL ? "منتج" : "products"}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
                       <Badge variant={category.isActive ? "default" : "secondary"}>
                         {category.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
+                      <div className={`flex items-center gap-2 ${isRTL ? 'justify-end' : 'justify-start'}`}>
                         <Button
                           variant="outline"
                           size="sm"
@@ -376,6 +461,46 @@ export function CategoriesManagement() {
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
+                        
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent className={isRTL ? "text-right" : "text-left"}>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle className={isRTL ? "text-right" : "text-left"}>
+                                {isRTL ? "تأكيد حذف الفئة" : "Confirm Delete Category"}
+                              </AlertDialogTitle>
+                              <AlertDialogDescription className={isRTL ? "text-right" : "text-left"}>
+                                {isRTL 
+                                  ? `هل أنت متأكد من حذف فئة "${category.nameAr}"؟ سيتم حذف جميع المنتجات التابعة لهذه الفئة (${getProductCount(category.id)} منتج). هذا الإجراء لا يمكن التراجع عنه.`
+                                  : `Are you sure you want to delete category "${category.nameEn}"? This will also delete all products in this category (${getProductCount(category.id)} products). This action cannot be undone.`
+                                }
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter className={isRTL ? "flex-row-reverse" : ""}>
+                              <AlertDialogCancel>
+                                {isRTL ? "إلغاء" : "Cancel"}
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(category)}
+                                className="bg-red-600 hover:bg-red-700"
+                                disabled={deleteMutation.isPending}
+                              >
+                                {deleteMutation.isPending 
+                                  ? (isRTL ? "جاري الحذف..." : "Deleting...")
+                                  : (isRTL ? "حذف" : "Delete")
+                                }
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </TableCell>
                   </TableRow>

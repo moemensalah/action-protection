@@ -192,6 +192,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin Categories endpoint (includes all categories, sorted)
+  app.get("/api/admin/categories", requireModerator, async (req, res) => {
+    try {
+      const categories = await storage.getAllCategories();
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching admin categories:", error);
+      res.status(500).json({ message: "Failed to fetch categories" });
+    }
+  });
+
   // Admin Categories CRUD
   app.post("/api/admin/categories", requireModerator, async (req, res) => {
     try {

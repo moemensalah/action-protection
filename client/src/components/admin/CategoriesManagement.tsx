@@ -55,9 +55,9 @@ export function CategoriesManagement() {
     isActive: true
   });
 
-  // Fetch categories
+  // Fetch categories from admin endpoint (includes all categories, properly sorted)
   const { data: categories = [], isLoading } = useQuery({
-    queryKey: ["/api/categories"],
+    queryKey: ["/api/admin/categories"],
   });
 
   // Fetch products count for each category
@@ -90,6 +90,7 @@ export function CategoriesManagement() {
       });
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/categories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
       setIsDialogOpen(false);
       resetForm();
@@ -117,6 +118,7 @@ export function CategoriesManagement() {
       });
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/categories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
       setIsDialogOpen(false);
       setEditingCategory(null);

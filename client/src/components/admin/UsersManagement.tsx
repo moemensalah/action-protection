@@ -283,7 +283,7 @@ export function UsersManagement() {
                 <Key className="h-4 w-4" />
                 <span>{isRTL ? "جميع الصلاحيات" : "Full system access"}</span>
               </div>
-              <ul className={`text-gray-600 dark:text-gray-400 space-y-1 ${isRTL ? 'text-right' : 'text-left list-disc ml-4'}`} style={isRTL ? { listStyle: 'arabic-indic', paddingRight: '1rem' } : {}}>
+              <ul className={`text-gray-600 dark:text-gray-400 space-y-1 ${isRTL ? 'text-right' : 'text-left list-disc ml-4'}`}>
                 <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "إدارة المستخدمين" : "Manage users"}</li>
                 <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "إدارة المحتوى" : "Manage content"}</li>
                 <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "إدارة المنتجات والفئات" : "Manage products & categories"}</li>
@@ -306,7 +306,7 @@ export function UsersManagement() {
                 <Key className="h-4 w-4" />
                 <span>{isRTL ? "صلاحيات محدودة" : "Limited access"}</span>
               </div>
-              <ul className={`text-gray-600 dark:text-gray-400 space-y-1 ${isRTL ? 'text-right' : 'text-left list-disc ml-4'}`} style={isRTL ? { listStyle: 'arabic-indic', paddingRight: '1rem' } : {}}>
+              <ul className={`text-gray-600 dark:text-gray-400 space-y-1 ${isRTL ? 'text-right' : 'text-left list-disc ml-4'}`}>
                 <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "إدارة المنتجات" : "Manage products"}</li>
                 <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "إدارة الفئات" : "Manage categories"}</li>
                 <li className={isRTL ? 'relative pr-4' : ''}>{isRTL && <span className="absolute right-0 top-0">•</span>}{isRTL ? "عرض التقارير" : "View reports"}</li>

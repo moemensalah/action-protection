@@ -246,20 +246,20 @@ export function UsersManagement() {
                     setFormData(prev => ({ ...prev, role: value }))
                   }
                 >
-                  <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
-                    <SelectValue />
+                  <SelectTrigger className={isRTL ? 'text-right [&>span]:text-right' : 'text-left'}>
+                    <SelectValue placeholder={isRTL ? "اختر الدور" : "Select role"} />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="moderator">
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <SelectContent className={isRTL ? '[&_*]:text-right' : ''}>
+                    <SelectItem value="moderator" className={isRTL ? 'text-right' : ''}>
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
                         <Shield className="h-4 w-4" />
-                        {isRTL ? "مشرف" : "Moderator"}
+                        <span>{isRTL ? "مشرف" : "Moderator"}</span>
                       </div>
                     </SelectItem>
-                    <SelectItem value="administrator">
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <SelectItem value="administrator" className={isRTL ? 'text-right' : ''}>
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
                         <Crown className="h-4 w-4" />
-                        {isRTL ? "مدير" : "Administrator"}
+                        <span>{isRTL ? "مدير" : "Administrator"}</span>
                       </div>
                     </SelectItem>
                   </SelectContent>
@@ -269,8 +269,8 @@ export function UsersManagement() {
                 </p>
               </div>
               
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div className={`flex flex-col ${isRTL ? 'items-end' : 'items-start'}`}>
+              <div className={`flex items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg ${isRTL ? 'flex-row-reverse justify-between' : 'justify-between'}`}>
+                <div className={`flex flex-col ${isRTL ? 'items-end order-2' : 'items-start order-1'}`}>
                   <Label htmlFor="isActive" className={`font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
                     {isRTL ? "حالة المستخدم" : "User Status"}
                   </Label>
@@ -278,30 +278,16 @@ export function UsersManagement() {
                     {isRTL ? "تحديد ما إذا كان المستخدم نشطًا أم لا" : "Determine if the user account is active"}
                   </p>
                 </div>
-                <div className={`flex items-center gap-3 ${isRTL ? '' : 'flex-row'}`}>
-                  {isRTL ? (
-                    <>
-                      <Switch
-                        id="isActive"
-                        checked={formData.isActive}
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
-                      />
-                      <span className={`text-sm ${formData.isActive ? 'text-green-600' : 'text-gray-500'}`}>
-                        {formData.isActive ? "نشط" : "غير نشط"}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <span className={`text-sm ${formData.isActive ? 'text-green-600' : 'text-gray-500'}`}>
-                        {formData.isActive ? "Active" : "Inactive"}
-                      </span>
-                      <Switch
-                        id="isActive"
-                        checked={formData.isActive}
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
-                      />
-                    </>
-                  )}
+                <div className={`flex items-center gap-3 ${isRTL ? 'order-1' : 'order-2'}`}>
+                  <span className={`text-sm ${formData.isActive ? 'text-green-600' : 'text-gray-500'} ${isRTL ? 'order-2' : 'order-1'}`}>
+                    {formData.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
+                  </span>
+                  <Switch
+                    id="isActive"
+                    checked={formData.isActive}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
+                    className={`${isRTL ? 'order-1' : 'order-2'}`}
+                  />
                 </div>
               </div>
               

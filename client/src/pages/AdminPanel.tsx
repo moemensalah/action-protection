@@ -9,13 +9,54 @@ import { CategoriesManagement } from "@/components/admin/CategoriesManagement";
 import { ProductsManagement } from "@/components/admin/ProductsManagement";
 import { ContentManagement } from "@/components/admin/ContentManagement";
 import { UsersManagement } from "@/components/admin/UsersManagement";
-import { AdminNavigation } from "@/components/admin/AdminNavigation";
+import { AdminLogin } from "@/components/admin/AdminLogin";
 
 export default function AdminPanel() {
   const { t, isRTL } = useLanguage();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("categories");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check for existing login
+    const token = localStorage.getItem("admin_token");
+    const userData = localStorage.getItem("admin_user");
+    
+    if (token && userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (error) {
+        localStorage.removeItem("admin_token");
+        localStorage.removeItem("admin_user");
+      }
+    }
+    setIsLoading(false);
+  }, []);
+
+  const handleLogin = (userData: any) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_user");
+    setUser(null);
+    setLocation("/");
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AdminLogin onLogin={handleLogin} />;
+  }
 
   const adminSections = [
     {
@@ -76,7 +117,23 @@ export default function AdminPanel() {
           </div>
 
           <div className="flex items-center gap-4">
-            <AdminNavigation />
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <Shield className="h-4 w-4" />
+              <span>{user.firstName} {user.lastName}</span>
+              <span className="text-xs px-2 py-1 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 rounded">
+                {user.role === 'administrator' ? (isRTL ? 'مدير' : 'Admin') : (isRTL ? 'مشرف' : 'Moderator')}
+              </span>
+            </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              {isRTL ? "تسجيل خروج" : "Logout"}
+            </Button>
             
             <Button
               variant="outline"

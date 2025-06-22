@@ -263,7 +263,7 @@ export function CategoriesManagement() {
           
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>
+              <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
                 {editingCategory 
                   ? (isRTL ? "تعديل الفئة" : "Edit Category")
                   : (isRTL ? "إضافة فئة جديدة" : "Add New Category")

@@ -330,7 +330,7 @@ export function ProductsManagement() {
           
           <DialogContent className="max-w-4xl">
             <DialogHeader>
-              <DialogTitle>
+              <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
                 {editingProduct 
                   ? (isRTL ? "تعديل المنتج" : "Edit Product")
                   : (isRTL ? "إضافة منتج جديد" : "Add New Product")
@@ -341,7 +341,7 @@ export function ProductsManagement() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="nameEn">{isRTL ? "الاسم بالإنجليزية" : "Name (English)"}</Label>
+                  <Label htmlFor="nameEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الاسم بالإنجليزية" : "Name (English)"}</Label>
                   <Input
                     id="nameEn"
                     value={formData.nameEn}
@@ -351,7 +351,7 @@ export function ProductsManagement() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="nameAr">{isRTL ? "الاسم بالعربية" : "Name (Arabic)"}</Label>
+                  <Label htmlFor="nameAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الاسم بالعربية" : "Name (Arabic)"}</Label>
                   <Input
                     id="nameAr"
                     value={formData.nameAr}
@@ -364,7 +364,7 @@ export function ProductsManagement() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="descEn">{isRTL ? "الوصف بالإنجليزية" : "Description (English)"}</Label>
+                  <Label htmlFor="descEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الوصف بالإنجليزية" : "Description (English)"}</Label>
                   <Textarea
                     id="descEn"
                     value={formData.descriptionEn}
@@ -374,7 +374,7 @@ export function ProductsManagement() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="descAr">{isRTL ? "الوصف بالعربية" : "Description (Arabic)"}</Label>
+                  <Label htmlFor="descAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الوصف بالعربية" : "Description (Arabic)"}</Label>
                   <Textarea
                     id="descAr"
                     value={formData.descriptionAr}
@@ -387,15 +387,15 @@ export function ProductsManagement() {
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="category">{isRTL ? "الفئة" : "Category"}</Label>
+                  <Label htmlFor="category" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الفئة" : "Category"}</Label>
                   <Select 
                     value={formData.categoryId.toString()} 
                     onValueChange={(value) => setFormData(prev => ({ ...prev, categoryId: parseInt(value) }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
                       <SelectValue placeholder={isRTL ? "اختر الفئة" : "Select category"} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className={isRTL ? 'text-right' : 'text-left'}>
                       {categories.map((category: Category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
                           {isRTL ? category.nameAr : category.nameEn}
@@ -406,7 +406,7 @@ export function ProductsManagement() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="price">{isRTL ? "السعر (ريال)" : "Price (SAR)"}</Label>
+                  <Label htmlFor="price" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "السعر (ريال)" : "Price (SAR)"}</Label>
                   <Input
                     id="price"
                     type="number"
@@ -418,7 +418,7 @@ export function ProductsManagement() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="stock">{isRTL ? "المخزون" : "Stock"}</Label>
+                  <Label htmlFor="stock" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "المخزون" : "Stock"}</Label>
                   <Input
                     id="stock"
                     type="number"
@@ -430,7 +430,7 @@ export function ProductsManagement() {
               </div>
               
               <div>
-                <Label htmlFor="image">{isRTL ? "رابط الصورة" : "Image URL"}</Label>
+                <Label htmlFor="image" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "رابط الصورة" : "Image URL"}</Label>
                 <Input
                   id="image"
                   value={formData.image}
@@ -439,8 +439,8 @@ export function ProductsManagement() {
                 />
               </div>
               
-              <div className="flex flex-wrap gap-4">
-                <div className="flex items-center space-x-2">
+              <div className={`flex flex-wrap gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <input
                     type="checkbox"
                     id="isActive"
@@ -448,10 +448,10 @@ export function ProductsManagement() {
                     onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
                     className="rounded border-gray-300"
                   />
-                  <Label htmlFor="isActive">{isRTL ? "نشط" : "Active"}</Label>
+                  <Label htmlFor="isActive" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "نشط" : "Active"}</Label>
                 </div>
                 
-                <div className="flex items-center space-x-2">
+                <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <input
                     type="checkbox"
                     id="isFeatured"
@@ -459,10 +459,10 @@ export function ProductsManagement() {
                     onChange={(e) => setFormData(prev => ({ ...prev, isFeatured: e.target.checked }))}
                     className="rounded border-gray-300"
                   />
-                  <Label htmlFor="isFeatured">{isRTL ? "مميز" : "Featured"}</Label>
+                  <Label htmlFor="isFeatured" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "مميز" : "Featured"}</Label>
                 </div>
                 
-                <div className="flex items-center space-x-2">
+                <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <input
                     type="checkbox"
                     id="isAvailable"
@@ -470,7 +470,7 @@ export function ProductsManagement() {
                     onChange={(e) => setFormData(prev => ({ ...prev, isAvailable: e.target.checked }))}
                     className="rounded border-gray-300"
                   />
-                  <Label htmlFor="isAvailable">{isRTL ? "متوفر" : "Available"}</Label>
+                  <Label htmlFor="isAvailable" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "متوفر" : "Available"}</Label>
                 </div>
               </div>
               
@@ -496,14 +496,16 @@ export function ProductsManagement() {
       {/* Filters */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex items-center gap-4">
+          <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <div className="flex-1">
-              <Label htmlFor="categoryFilter">{isRTL ? "تصفية حسب الفئة" : "Filter by Category"}</Label>
+              <Label htmlFor="categoryFilter" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                {isRTL ? "تصفية حسب الفئة" : "Filter by Category"}
+              </Label>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger>
+                <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className={isRTL ? 'text-right' : 'text-left'}>
                   <SelectItem value="all">{isRTL ? "جميع الفئات" : "All Categories"}</SelectItem>
                   {categories.map((category: Category) => (
                     <SelectItem key={category.slug} value={category.slug}>

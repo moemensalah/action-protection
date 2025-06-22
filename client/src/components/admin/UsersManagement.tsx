@@ -165,7 +165,7 @@ export function UsersManagement() {
           
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>
+              <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
                 {editingUser 
                   ? (isRTL ? "تعديل المستخدم" : "Edit User")
                   : (isRTL ? "إضافة مستخدم جديد" : "Add New User")

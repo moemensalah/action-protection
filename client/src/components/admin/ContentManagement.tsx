@@ -330,7 +330,6 @@ export function ContentManagement() {
           {isRTL ? "إدارة محتوى الصفحات والمعلومات الثابتة" : "Manage page content and static information"}
         </p>
       </div>
-
       <Tabs defaultValue="about" className="space-y-6">
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="about">{isRTL ? "من نحن" : "About Us"}</TabsTrigger>
@@ -354,7 +353,7 @@ export function ContentManagement() {
               <form onSubmit={(e) => { e.preventDefault(); updateAboutMutation.mutate(aboutData); }} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="aboutTitleEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "العنوان بالإنجليزية" : "Title (English)"}</Label>
+                    <Label htmlFor="aboutTitleEn" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-justify">{isRTL ? "العنوان بالإنجليزية" : "Title (English)"}</Label>
                     <Input
                       id="aboutTitleEn"
                       value={aboutData.titleEn}

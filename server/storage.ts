@@ -360,12 +360,12 @@ export class DatabaseStorage implements IStorage {
     const [widget] = await db
       .select()
       .from(widgetSettings)
-      .where(eq(widgetSettings.widgetName, name));
+      .where(eq(widgetSettings.name, name));
     return widget;
   }
 
   async createOrUpdateWidget(widgetData: InsertWidgetSettings): Promise<WidgetSettings> {
-    const existing = await this.getWidgetByName(widgetData.widgetName);
+    const existing = await this.getWidgetByName(widgetData.name);
     
     if (existing) {
       const [updated] = await db

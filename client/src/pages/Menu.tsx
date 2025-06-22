@@ -68,9 +68,10 @@ export default function Menu() {
   ];
 
   // Fetch categories from database
-  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
+  const { data: categoriesResponse, isLoading: categoriesLoading } = useQuery<{ categories: Category[] }>({
     queryKey: ["/api/categories"],
   });
+  const categories = categoriesResponse?.categories || [];
 
   // Fetch products from database
   const { data: productsResponse, isLoading: productsLoading } = useQuery({

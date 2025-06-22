@@ -6,16 +6,38 @@ import { SEO, getBreadcrumbSchema } from "@/components/SEO";
 import { Coffee, Users, Award, Clock } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
+interface Feature {
+  icon: string;
+  titleEn: string;
+  titleAr: string;
+  descEn: string;
+  descAr: string;
+}
+
 interface AboutUs {
   id: number;
   titleEn: string;
   titleAr: string;
   contentEn: string;
   contentAr: string;
+  features: Feature[];
+  missionEn?: string;
+  missionAr?: string;
   image: string;
   mapUrl?: string;
   isActive: boolean;
 }
+
+// Icon mapping function
+const getIcon = (iconName: string) => {
+  const icons: { [key: string]: any } = {
+    Coffee,
+    Users,
+    Award,
+    Clock,
+  };
+  return icons[iconName] || Coffee;
+};
 
 export default function About() {
   const { t, isRTL } = useLanguage();
@@ -29,30 +51,31 @@ export default function About() {
     { name: t("about"), url: "/about" }
   ];
 
-  const features = [
+  // Use database features or fallback to default features
+  const features = aboutData?.features || [
     {
-      icon: Coffee,
+      icon: "Coffee",
       titleEn: "Premium Coffee",
       titleAr: "قهوة فاخرة",
       descEn: "We source the finest coffee beans from around the world to create exceptional blends.",
       descAr: "نحن نحصل على أفضل حبوب القهوة من جميع أنحاء العالم لصنع خلطات استثنائية.",
     },
     {
-      icon: Users,
+      icon: "Users",
       titleEn: "Expert Team",
       titleAr: "فريق خبير",
       descEn: "Our skilled baristas and chefs bring years of experience to every cup and dish.",
       descAr: "يجلب باريستا والطهاة المهرة لدينا سنوات من الخبرة إلى كل كوب وطبق.",
     },
     {
-      icon: Award,
+      icon: "Award",
       titleEn: "Award Winning",
       titleAr: "حائز على جوائز",
       descEn: "Recognized for excellence in both coffee quality and customer service.",
       descAr: "معترف به للتميز في جودة القهوة وخدمة العملاء.",
     },
     {
-      icon: Clock,
+      icon: "Clock",
       titleEn: "Always Fresh",
       titleAr: "طازج دائماً",
       descEn: "We roast our beans daily and prepare everything fresh to order.",
@@ -164,21 +187,24 @@ export default function About() {
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {features.map((feature, index) => (
-                <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <feature.icon className="h-8 w-8 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-foreground mb-3">
-                      {isRTL ? feature.titleAr : feature.titleEn}
-                    </h3>
-                    <p className="text-muted-foreground">
-                      {isRTL ? feature.descAr : feature.descEn}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
+              {features.map((feature, index) => {
+                const IconComponent = getIcon(feature.icon);
+                return (
+                  <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <IconComponent className="h-8 w-8 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-foreground mb-3">
+                        {isRTL ? feature.titleAr : feature.titleEn}
+                      </h3>
+                      <p className="text-muted-foreground">
+                        {isRTL ? feature.descAr : feature.descEn}
+                      </p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
 
@@ -188,10 +214,14 @@ export default function About() {
               {isRTL ? "مهمتنا" : "Our Mission"}
             </h2>
             <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-              {isRTL 
-                ? "مهمتنا هي إنشاء تجارب لا تُنسى من خلال تقديم قهوة استثنائية ومأكولات لذيذة وخدمة ودودة. نحن نؤمن بأن كل كوب يحكي قصة، وكل وجبة تخلق ذكريات، وكل زيارة يجب أن تجعلك تشعر وكأنك في المنزل."
-                : "Our mission is to create unforgettable experiences through exceptional coffee, delicious food, and warm hospitality. We believe that every cup tells a story, every meal creates memories, and every visit should make you feel at home."
-              }
+              {aboutData ? (
+                isRTL ? (aboutData.missionAr || "مهمتنا هي إنشاء تجارب لا تُنسى من خلال تقديم قهوة استثنائية ومأكولات لذيذة وخدمة ودودة.") 
+                      : (aboutData.missionEn || "Our mission is to create unforgettable experiences through exceptional coffee, delicious food, and warm hospitality.")
+              ) : (
+                isRTL 
+                  ? "مهمتنا هي إنشاء تجارب لا تُنسى من خلال تقديم قهوة استثنائية ومأكولات لذيذة وخدمة ودودة. نحن نؤمن بأن كل كوب يحكي قصة، وكل وجبة تخلق ذكريات، وكل زيارة يجب أن تجعلك تشعر وكأنك في المنزل."
+                  : "Our mission is to create unforgettable experiences through exceptional coffee, delicious food, and warm hospitality. We believe that every cup tells a story, every meal creates memories, and every visit should make you feel at home."
+              )}
             </p>
           </div>
         </div>

@@ -11,14 +11,21 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { apiRequest } from "@/lib/queryClient";
 
+interface Feature {
+  icon: string;
+  titleEn: string;
+  titleAr: string;
+  descEn: string;
+  descAr: string;
+}
+
 interface AboutUs {
   id?: number;
   titleEn: string;
   titleAr: string;
   contentEn: string;
   contentAr: string;
-  featuresEn?: string;
-  featuresAr?: string;
+  features: Feature[];
   missionEn?: string;
   missionAr?: string;
   image: string;

@@ -81,8 +81,7 @@ export const aboutUs = pgTable("about_us", {
   titleAr: varchar("title_ar", { length: 255 }).notNull(),
   contentEn: text("content_en").notNull(),
   contentAr: text("content_ar").notNull(),
-  featuresEn: text("features_en"), // What Makes Us Special section
-  featuresAr: text("features_ar"),
+  features: jsonb("features").default([]), // Array of feature cards with icon, titleEn, titleAr, descEn, descAr
   missionEn: text("mission_en"), // Our Mission section
   missionAr: text("mission_ar"),
   image: text("image"),

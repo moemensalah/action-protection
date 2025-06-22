@@ -137,7 +137,7 @@ export default function Menu() {
             <Button
               variant="ghost"
               onClick={() => setLocation("/")}
-              className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+              className="flex items-center gap-2"
             >
               {isRTL ? (
                 <ArrowRight className="h-4 w-4" />

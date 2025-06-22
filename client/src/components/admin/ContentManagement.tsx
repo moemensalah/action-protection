@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { FileText, Save, Globe, Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -192,6 +192,40 @@ export function ContentManagement() {
       toast({
         title: isRTL ? "تم التحديث" : "Updated",
         description: isRTL ? "تم تحديث محتوى التذييل بنجاح" : "Footer content updated successfully",
+      });
+    }
+  });
+
+  const updatePrivacyMutation = useMutation({
+    mutationFn: async (data: any) => {
+      return await apiRequest("/api/admin/privacy-policy", {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/privacy-policy"] });
+      toast({
+        title: isRTL ? "تم التحديث" : "Updated",
+        description: isRTL ? "تم تحديث سياسة الخصوصية بنجاح" : "Privacy Policy updated successfully",
+      });
+    }
+  });
+
+  const updateTermsMutation = useMutation({
+    mutationFn: async (data: any) => {
+      return await apiRequest("/api/admin/terms-of-service", {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/terms-of-service"] });
+      toast({
+        title: isRTL ? "تم التحديث" : "Updated",
+        description: isRTL ? "تم تحديث شروط الخدمة بنجاح" : "Terms of Service updated successfully",
       });
     }
   });
@@ -606,7 +640,11 @@ export function ContentManagement() {
                     />
                   </div>
                 </div>
-                <Button className="flex items-center gap-2">
+                <Button 
+                  onClick={() => updateTermsMutation.mutate(termsData)}
+                  disabled={updateTermsMutation.isPending}
+                  className="flex items-center gap-2"
+                >
                   <Save className="h-4 w-4" />
                   {isRTL ? "حفظ شروط الخدمة" : "Save Terms of Service"}
                 </Button>
@@ -619,7 +657,8 @@ export function ContentManagement() {
         <TabsContent value="privacy">
           <Card>
             <CardHeader>
-              <CardTitle>
+              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                <FileText className="h-5 w-5" />
                 {isRTL ? "سياسة الخصوصية" : "Privacy Policy"}
               </CardTitle>
             </CardHeader>
@@ -627,7 +666,9 @@ export function ContentManagement() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="privacyContentEn">{isRTL ? "المحتوى بالإنجليزية" : "Content (English)"}</Label>
+                    <Label htmlFor="privacyContentEn" className={isRTL ? 'text-right' : 'text-left'}>
+                      {isRTL ? "المحتوى بالإنجليزية" : "Content (English)"}
+                    </Label>
                     <Textarea
                       id="privacyContentEn"
                       value={privacyData.contentEn}
@@ -637,7 +678,9 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="privacyContentAr">{isRTL ? "المحتوى بالعربية" : "Content (Arabic)"}</Label>
+                    <Label htmlFor="privacyContentAr" className={isRTL ? 'text-right' : 'text-left'}>
+                      {isRTL ? "المحتوى بالعربية" : "Content (Arabic)"}
+                    </Label>
                     <Textarea
                       id="privacyContentAr"
                       value={privacyData.contentAr}
@@ -648,7 +691,11 @@ export function ContentManagement() {
                     />
                   </div>
                 </div>
-                <Button className="flex items-center gap-2">
+                <Button 
+                  onClick={() => updatePrivacyMutation.mutate(privacyData)}
+                  disabled={updatePrivacyMutation.isPending}
+                  className="flex items-center gap-2"
+                >
                   <Save className="h-4 w-4" />
                   {isRTL ? "حفظ سياسة الخصوصية" : "Save Privacy Policy"}
                 </Button>

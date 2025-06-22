@@ -277,6 +277,8 @@ export function ProductsManagement() {
     setIsDialogOpen(true);
   };
 
+
+
   const handleMove = (product: Product) => {
     setMovingProduct(product);
     setNewCategoryId(product.categoryId);
@@ -541,8 +543,30 @@ export function ProductsManagement() {
               </TableHeader>
               <TableBody>
                 {sortedProducts.map((product: Product, index: number) => (
-                  <TableRow key={product.id}>
-                    <TableCell>
+                  <TableRow key={product.id} className={isRTL ? "text-right" : "text-left"}>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleReorder(product.id, 'up')}
+                          disabled={index === 0 || reorderMutation.isPending}
+                          className="p-1 h-6 w-6"
+                        >
+                          <ChevronUp className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleReorder(product.id, 'down')}
+                          disabled={index === sortedProducts.length - 1 || reorderMutation.isPending}
+                          className="p-1 h-6 w-6"
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                         {product.image ? (
                           <img 
@@ -555,30 +579,30 @@ export function ProductsManagement() {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
                       <div>
                         <div className="font-medium text-gray-900 dark:text-white">
                           {isRTL ? product.nameAr : product.nameEn}
                         </div>
-                        <div className="text-sm text-gray-500 max-w-xs truncate">
+                        <div className={`text-sm text-gray-500 max-w-xs truncate ${isRTL ? 'text-right' : 'text-left'}`}>
                           {isRTL ? product.descriptionAr : product.descriptionEn}
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
                       <Badge variant="outline">
                         {getCategoryName(product.categoryId)}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
                       <span className="font-medium">{product.price} {isRTL ? "ريال" : "SAR"}</span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
                       <Badge variant={product.stock > 0 ? "default" : "destructive"}>
                         {product.stock}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
                       <div className="flex flex-col gap-1">
                         <Badge variant={product.isActive ? "default" : "secondary"} className="w-fit">
                           {product.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
@@ -590,8 +614,8 @@ export function ProductsManagement() {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
+                    <TableCell className={isRTL ? "text-right" : "text-left"}>
+                      <div className={`flex items-center gap-2 ${isRTL ? 'justify-end' : 'justify-start'}`}>
                         <Button
                           variant="outline"
                           size="sm"
@@ -599,13 +623,46 @@ export function ProductsManagement() {
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleMove(product)}
-                        >
-                          <Move className="h-4 w-4" />
-                        </Button>
+                        
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent className={isRTL ? "text-right" : "text-left"}>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle className={isRTL ? "text-right" : "text-left"}>
+                                {isRTL ? "تأكيد حذف المنتج" : "Confirm Delete Product"}
+                              </AlertDialogTitle>
+                              <AlertDialogDescription className={isRTL ? "text-right" : "text-left"}>
+                                {isRTL 
+                                  ? `هل أنت متأكد من حذف منتج "${product.nameAr}"؟ هذا الإجراء لا يمكن التراجع عنه.`
+                                  : `Are you sure you want to delete product "${product.nameEn}"? This action cannot be undone.`
+                                }
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter className={isRTL ? "flex-row-reverse" : ""}>
+                              <AlertDialogCancel>
+                                {isRTL ? "إلغاء" : "Cancel"}
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(product)}
+                                className="bg-red-600 hover:bg-red-700"
+                                disabled={deleteMutation.isPending}
+                              >
+                                {deleteMutation.isPending 
+                                  ? (isRTL ? "جاري الحذف..." : "Deleting...")
+                                  : (isRTL ? "حذف" : "Delete")
+                                }
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -616,52 +673,6 @@ export function ProductsManagement() {
         </CardContent>
       </Card>
 
-      {/* Move Product Dialog */}
-      <Dialog open={isMoveDialogOpen} onOpenChange={setIsMoveDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {isRTL ? "نقل المنتج" : "Move Product"}
-            </DialogTitle>
-          </DialogHeader>
-          
-          {movingProduct && (
-            <div className="space-y-4">
-              <div className="text-sm text-gray-600 dark:text-gray-400">
-                {isRTL ? "نقل" : "Moving"}: <strong>{isRTL ? movingProduct.nameAr : movingProduct.nameEn}</strong>
-              </div>
-              
-              <div>
-                <Label>{isRTL ? "الفئة الجديدة" : "New Category"}</Label>
-                <Select value={newCategoryId.toString()} onValueChange={(value) => setNewCategoryId(parseInt(value))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={isRTL ? "اختر الفئة الجديدة" : "Select new category"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category: Category) => (
-                      <SelectItem key={category.id} value={category.id.toString()}>
-                        {isRTL ? category.nameAr : category.nameEn}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" variant="outline" onClick={() => setIsMoveDialogOpen(false)}>
-                  {isRTL ? "إلغاء" : "Cancel"}
-                </Button>
-                <Button 
-                  onClick={handleMoveSubmit}
-                  disabled={moveMutation.isPending || newCategoryId === movingProduct.categoryId}
-                >
-                  {isRTL ? "نقل" : "Move"}
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

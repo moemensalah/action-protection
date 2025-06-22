@@ -274,6 +274,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/admin/products/:id", requireModerator, async (req, res) => {
+    try {
+      const productId = parseInt(req.params.id);
+      await storage.deleteProduct(productId);
+      res.json({ message: "Product deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      res.status(500).json({ message: "Failed to delete product" });
+    }
+  });
+
+  app.patch("/api/admin/products/:id/reorder", requireModerator, async (req, res) => {
+    try {
+      const productId = parseInt(req.params.id);
+      const { direction } = req.body;
+      await storage.reorderProduct(productId, direction);
+      res.json({ message: "Product reordered successfully" });
+    } catch (error) {
+      console.error("Error reordering product:", error);
+      res.status(500).json({ message: "Failed to reorder product" });
+    }
+  });
+
   // Admin Content Management (Administrator only)
   app.put("/api/admin/about", requireAdmin, async (req, res) => {
     try {

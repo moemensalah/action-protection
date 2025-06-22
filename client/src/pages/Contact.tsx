@@ -10,10 +10,32 @@ import { Footer } from "@/components/Footer";
 import { SEO, getBreadcrumbSchema } from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
+interface ContactUs {
+  id: number;
+  phone: string;
+  email: string;
+  address: string;
+  addressAr: string;
+  workingHours: string;
+  workingHoursAr: string;
+  socialMediaLinks: {
+    instagram?: string;
+    twitter?: string;
+    facebook?: string;
+    snapchat?: string;
+  };
+  isActive: boolean;
+}
 
 export default function Contact() {
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
+
+  const { data: contactData } = useQuery<ContactUs>({
+    queryKey: ["/api/contact"],
+  });
   
   const breadcrumbItems = [
     { name: t("home"), url: "/" },

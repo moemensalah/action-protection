@@ -4,9 +4,25 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { Footer } from "@/components/Footer";
 import { SEO, getBreadcrumbSchema } from "@/components/SEO";
 import { Coffee, Users, Award, Clock } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
+interface AboutUs {
+  id: number;
+  titleEn: string;
+  titleAr: string;
+  contentEn: string;
+  contentAr: string;
+  image: string;
+  mapUrl?: string;
+  isActive: boolean;
+}
 
 export default function About() {
   const { t, isRTL } = useLanguage();
+
+  const { data: aboutData } = useQuery<AboutUs>({
+    queryKey: ["/api/about"],
+  });
   
   const breadcrumbItems = [
     { name: t("home"), url: "/" },
@@ -95,34 +111,47 @@ export default function About() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             <div>
               <h2 className="text-3xl font-bold text-foreground mb-6">
-                {isRTL ? "قصتنا" : "Our Story"}
+                {aboutData ? 
+                  (isRTL ? aboutData.titleAr : aboutData.titleEn) :
+                  (isRTL ? "قصتنا" : "Our Story")
+                }
               </h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>
-                  {isRTL 
-                    ? "تأسس كافيه عربيكا عام 2015 بحلم بسيط: إنشاء مساحة حيث يمكن للناس الاستمتاع بأفضل أنواع القهوة والطعام في أجواء دافئة ومرحبة."
-                    : "Café Arabica was founded in 2015 with a simple dream: to create a space where people could enjoy the finest coffee and food in a warm, welcoming atmosphere."
-                  }
-                </p>
-                <p>
-                  {isRTL 
-                    ? "بدأنا كمحمصة صغيرة للقهوة، ونمونا لنصبح وجهة محبوبة لعشاق القهوة وعشاق الطعام على حد سواء. رحلتنا هي واحدة من الشغف والتفاني والسعي المستمر للتميز."
-                    : "What started as a small coffee roastery has grown into a beloved destination for coffee enthusiasts and food lovers alike. Our journey has been one of passion, dedication, and a relentless pursuit of excellence."
-                  }
-                </p>
-                <p>
-                  {isRTL 
-                    ? "اليوم، نواصل التزامنا بتقديم تجربة استثنائية، من حبة القهوة إلى الكوب، ومن المكونات الطازجة إلى الأطباق المصنوعة بعناية."
-                    : "Today, we continue our commitment to delivering an exceptional experience, from bean to cup, and from fresh ingredients to carefully crafted dishes."
-                  }
-                </p>
+                {aboutData ? (
+                  <div 
+                    dangerouslySetInnerHTML={{
+                      __html: isRTL ? aboutData.contentAr : aboutData.contentEn
+                    }}
+                  />
+                ) : (
+                  <>
+                    <p>
+                      {isRTL 
+                        ? "تأسس كافيه عربيكا عام 2015 بحلم بسيط: إنشاء مساحة حيث يمكن للناس الاستمتاع بأفضل أنواع القهوة والطعام في أجواء دافئة ومرحبة."
+                        : "Café Arabica was founded in 2015 with a simple dream: to create a space where people could enjoy the finest coffee and food in a warm, welcoming atmosphere."
+                      }
+                    </p>
+                    <p>
+                      {isRTL 
+                        ? "بدأنا كمحمصة صغيرة للقهوة، ونمونا لنصبح وجهة محبوبة لعشاق القهوة وعشاق الطعام على حد سواء. رحلتنا هي واحدة من الشغف والتفاني والسعي المستمر للتميز."
+                        : "What started as a small coffee roastery has grown into a beloved destination for coffee enthusiasts and food lovers alike. Our journey has been one of passion, dedication, and a relentless pursuit of excellence."
+                      }
+                    </p>
+                    <p>
+                      {isRTL 
+                        ? "اليوم، نواصل التزامنا بتقديم تجربة استثنائية، من حبة القهوة إلى الكوب، ومن المكونات الطازجة إلى الأطباق المصنوعة بعناية."
+                        : "Today, we continue our commitment to delivering an exceptional experience, from bean to cup, and from fresh ingredients to carefully crafted dishes."
+                      }
+                    </p>
+                  </>  
+                )}
               </div>
             </div>
             
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
-                alt="Café Interior"
+                src={aboutData?.image || "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"}
+                alt={aboutData ? (isRTL ? aboutData.titleAr : aboutData.titleEn) : "Café Interior"}
                 className="w-full h-96 object-cover rounded-lg shadow-lg"
               />
             </div>

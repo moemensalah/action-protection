@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
+import { getImageUrl } from "@/lib/utils";
 interface Product {
   id: number;
   nameEn: string;
@@ -49,7 +50,7 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
         <div className="space-y-6">
           <div className="relative">
             <img
-              src={product.image}
+              src={getImageUrl(product.image)}
               alt={language === "ar" ? product.nameAr : product.nameEn}
               className="w-full h-64 sm:h-80 object-cover rounded-lg"
             />

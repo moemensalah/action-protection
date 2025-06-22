@@ -145,6 +145,7 @@ export function CategoriesManagement() {
       });
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/categories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       toast({
@@ -171,6 +172,7 @@ export function CategoriesManagement() {
       });
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/categories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
       toast({
         title: isRTL ? "تم إعادة الترتيب" : "Reordered",
@@ -241,19 +243,19 @@ export function CategoriesManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={isRTL ? 'text-right' : 'text-left'}>
+          <h2 className={`text-2xl font-bold text-gray-900 dark:text-white ${isRTL ? 'text-right' : 'text-left'}`}>
             {isRTL ? "إدارة الفئات" : "Categories Management"}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className={`text-gray-600 dark:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
             {isRTL ? "إدارة فئات المنتجات والصور" : "Manage product categories and images"}
           </p>
         </div>
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={resetForm} className="flex items-center gap-2">
+            <Button onClick={resetForm} className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Plus className="h-4 w-4" />
               {isRTL ? "إضافة فئة" : "Add Category"}
             </Button>
@@ -371,7 +373,7 @@ export function CategoriesManagement() {
       {/* Categories Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
             <Package className="h-5 w-5" />
             {isRTL ? "قائمة الفئات" : "Categories List"}
             <Badge variant="secondary">{(categories as Category[]).length}</Badge>

@@ -10,6 +10,7 @@ import Home from "@/pages/Home";
 import Menu from "@/pages/Menu";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
+import AdminPanel from "@/pages/AdminPanel";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/menu" component={Menu} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
+      <Route path="/admin" component={AdminPanel} />
       <Route component={NotFound} />
     </Switch>
   );

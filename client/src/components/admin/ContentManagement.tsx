@@ -363,7 +363,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="aboutTitleAr">{isRTL ? "العنوان بالعربية" : "Title (Arabic)"}</Label>
+                    <Label htmlFor="aboutTitleAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "العنوان بالعربية" : "Title (Arabic)"}</Label>
                     <Input
                       id="aboutTitleAr"
                       value={aboutData.titleAr}
@@ -376,7 +376,7 @@ export function ContentManagement() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="aboutImage">{isRTL ? "رابط الصورة" : "Image URL"}</Label>
+                    <Label htmlFor="aboutImage" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "رابط الصورة" : "Image URL"}</Label>
                     <Input
                       id="aboutImage"
                       value={aboutData.image}
@@ -385,7 +385,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="aboutMapUrl">{isRTL ? "رابط الخريطة" : "Map URL"}</Label>
+                    <Label htmlFor="aboutMapUrl" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "رابط الخريطة" : "Map URL"}</Label>
                     <Input
                       id="aboutMapUrl"
                       value={aboutData.mapUrl || ""}
@@ -397,7 +397,7 @@ export function ContentManagement() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="aboutContentEn">{isRTL ? "المحتوى بالإنجليزية" : "Content (English)"}</Label>
+                    <Label htmlFor="aboutContentEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "المحتوى بالإنجليزية" : "Content (English)"}</Label>
                     <Textarea
                       id="aboutContentEn"
                       value={aboutData.contentEn}
@@ -407,7 +407,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="aboutContentAr">{isRTL ? "المحتوى بالعربية" : "Content (Arabic)"}</Label>
+                    <Label htmlFor="aboutContentAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "المحتوى بالعربية" : "Content (Arabic)"}</Label>
                     <Textarea
                       id="aboutContentAr"
                       value={aboutData.contentAr}
@@ -432,7 +432,7 @@ export function ContentManagement() {
         <TabsContent value="contact">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                 <Phone className="h-5 w-5" />
                 {isRTL ? "معلومات الاتصال" : "Contact Information"}
               </CardTitle>
@@ -441,7 +441,7 @@ export function ContentManagement() {
               <form onSubmit={(e) => { e.preventDefault(); updateContactMutation.mutate(contactData); }} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="phone" className="flex items-center gap-2">
+                    <Label htmlFor="phone" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                       <Phone className="h-4 w-4" />
                       {isRTL ? "رقم الهاتف" : "Phone Number"}
                     </Label>
@@ -453,7 +453,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="email" className="flex items-center gap-2">
+                    <Label htmlFor="email" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                       <Mail className="h-4 w-4" />
                       {isRTL ? "البريد الإلكتروني" : "Email"}
                     </Label>
@@ -469,7 +469,7 @@ export function ContentManagement() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="address" className="flex items-center gap-2">
+                    <Label htmlFor="address" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                       <MapPin className="h-4 w-4" />
                       {isRTL ? "العنوان بالإنجليزية" : "Address (English)"}
                     </Label>
@@ -481,7 +481,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="addressAr" className="flex items-center gap-2">
+                    <Label htmlFor="addressAr" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                       <MapPin className="h-4 w-4" />
                       {isRTL ? "العنوان بالعربية" : "Address (Arabic)"}
                     </Label>

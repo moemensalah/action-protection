@@ -1,23 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
-
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
 
   // Categories API
   app.get("/api/categories", async (req, res) => {
@@ -160,28 +145,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin/Moderator Protected Routes (require authentication)
+  // Admin/Moderator Protected Routes (temporarily without auth for testing)
   const requireRole = (allowedRoles: string[]) => {
     return async (req: any, res: any, next: any) => {
-      try {
-        const userId = req.user.claims.sub;
-        const user = await storage.getUser(userId);
-        
-        if (!user || !allowedRoles.includes(user.role || 'moderator')) {
-          return res.status(403).json({ message: "Insufficient permissions" });
-        }
-        
-        req.currentUser = user;
-        next();
-      } catch (error) {
-        console.error("Error checking user role:", error);
-        res.status(500).json({ message: "Authorization error" });
-      }
+      // TODO: Add authentication when ready
+      next();
     };
   };
 
   // Category Management (Admin/Moderator)
-  app.post("/api/admin/categories", isAuthenticated, requireRole(['administrator', 'moderator']), async (req: any, res) => {
+  app.post("/api/admin/categories", requireRole(['administrator', 'moderator']), async (req: any, res) => {
     try {
       const category = await storage.createCategory(req.body);
       res.status(201).json(category);
@@ -191,7 +164,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/categories/:id", isAuthenticated, requireRole(['administrator', 'moderator']), async (req: any, res) => {
+  app.put("/api/admin/categories/:id", requireRole(['administrator', 'moderator']), async (req: any, res) => {
     try {
       const categoryId = parseInt(req.params.id);
       const category = await storage.updateCategory(categoryId, req.body);
@@ -203,7 +176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Product Management (Admin/Moderator)
-  app.post("/api/admin/products", isAuthenticated, requireRole(['administrator', 'moderator']), async (req: any, res) => {
+  app.post("/api/admin/products", requireRole(['administrator', 'moderator']), async (req: any, res) => {
     try {
       const product = await storage.createProduct(req.body);
       res.status(201).json(product);
@@ -213,7 +186,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/products/:id", isAuthenticated, requireRole(['administrator', 'moderator']), async (req: any, res) => {
+  app.put("/api/admin/products/:id", requireRole(['administrator', 'moderator']), async (req: any, res) => {
     try {
       const productId = parseInt(req.params.id);
       const product = await storage.updateProduct(productId, req.body);
@@ -225,7 +198,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Content Management (Admin only)
-  app.put("/api/admin/about", isAuthenticated, requireRole(['administrator']), async (req: any, res) => {
+  app.put("/api/admin/about", requireRole(['administrator']), async (req: any, res) => {
     try {
       const aboutUs = await storage.createOrUpdateAboutUs(req.body);
       res.json(aboutUs);
@@ -235,7 +208,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/contact", isAuthenticated, requireRole(['administrator']), async (req: any, res) => {
+  app.put("/api/admin/contact", requireRole(['administrator']), async (req: any, res) => {
     try {
       const contactUs = await storage.createOrUpdateContactUs(req.body);
       res.json(contactUs);
@@ -245,7 +218,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/footer", isAuthenticated, requireRole(['administrator']), async (req: any, res) => {
+  app.put("/api/admin/footer", requireRole(['administrator']), async (req: any, res) => {
     try {
       const footerContent = await storage.createOrUpdateFooterContent(req.body);
       res.json(footerContent);
@@ -255,7 +228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/widgets/:name", isAuthenticated, requireRole(['administrator']), async (req: any, res) => {
+  app.put("/api/admin/widgets/:name", requireRole(['administrator']), async (req: any, res) => {
     try {
       const widget = await storage.createOrUpdateWidget({
         widgetName: req.params.name,

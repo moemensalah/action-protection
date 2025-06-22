@@ -333,59 +333,121 @@ export function UsersManagement() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "المستخدم" : "User"}</TableHead>
-                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "البريد الإلكتروني" : "Email"}</TableHead>
-                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الدور" : "Role"}</TableHead>
-                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الصلاحيات" : "Permissions"}</TableHead>
-                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الحالة" : "Status"}</TableHead>
-                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الإجراءات" : "Actions"}</TableHead>
+                  {isRTL ? (
+                    <>
+                      <TableHead className="text-right">الإجراءات</TableHead>
+                      <TableHead className="text-right">الحالة</TableHead>
+                      <TableHead className="text-right">الصلاحيات</TableHead>
+                      <TableHead className="text-right">الدور</TableHead>
+                      <TableHead className="text-right">البريد الإلكتروني</TableHead>
+                      <TableHead className="text-right">المستخدم</TableHead>
+                    </>
+                  ) : (
+                    <>
+                      <TableHead className="text-left">User</TableHead>
+                      <TableHead className="text-left">Email</TableHead>
+                      <TableHead className="text-left">Role</TableHead>
+                      <TableHead className="text-left">Permissions</TableHead>
+                      <TableHead className="text-left">Status</TableHead>
+                      <TableHead className="text-left">Actions</TableHead>
+                    </>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {users.map((user: User) => (
                   <TableRow key={user.id}>
-                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 flex items-center justify-center text-white font-medium text-sm">
-                          {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-                        </div>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <div className="font-medium text-gray-900 dark:text-white">
-                            {user.firstName} {user.lastName}
+                    {isRTL ? (
+                      <>
+                        <TableCell className="text-right">
+                          <div className="flex items-center gap-2 justify-end">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(user)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
                           </div>
-                          <div className="text-xs text-gray-500">
-                            {isRTL ? "منذ" : "Since"} {new Date(user.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant={user.isActive ? "default" : "secondary"}>
+                            {user.isActive ? "نشط" : "غير نشط"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="text-xs text-gray-500 max-w-xs">
+                            {getPermissions(user.role)}
                           </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
-                      <span className="text-gray-600 dark:text-gray-400">{user.email}</span>
-                    </TableCell>
-                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
-                      {getRoleBadge(user.role)}
-                    </TableCell>
-                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
-                      <div className="text-xs text-gray-500 max-w-xs">
-                        {getPermissions(user.role)}
-                      </div>
-                    </TableCell>
-                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
-                      <Badge variant={user.isActive ? "default" : "secondary"}>
-                        {user.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
-                      <div className={`flex items-center gap-2 ${isRTL ? 'justify-end' : 'justify-start'}`}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(user)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {getRoleBadge(user.role)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <span className="text-gray-600 dark:text-gray-400">{user.email}</span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center gap-3 flex-row-reverse">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 flex items-center justify-center text-white font-medium text-sm">
+                              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                            </div>
+                            <div className="text-right">
+                              <div className="font-medium text-gray-900 dark:text-white">
+                                {user.firstName} {user.lastName}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                منذ {new Date(user.createdAt).toLocaleDateString()}
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                      </>
+                    ) : (
+                      <>
+                        <TableCell className="text-left">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 flex items-center justify-center text-white font-medium text-sm">
+                              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                            </div>
+                            <div className="text-left">
+                              <div className="font-medium text-gray-900 dark:text-white">
+                                {user.firstName} {user.lastName}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                Since {new Date(user.createdAt).toLocaleDateString()}
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <span className="text-gray-600 dark:text-gray-400">{user.email}</span>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          {getRoleBadge(user.role)}
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <div className="text-xs text-gray-500 max-w-xs">
+                            {getPermissions(user.role)}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <Badge variant={user.isActive ? "default" : "secondary"}>
+                            {user.isActive ? "Active" : "Inactive"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <div className="flex items-center gap-2 justify-start">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(user)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>

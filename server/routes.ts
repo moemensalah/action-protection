@@ -406,6 +406,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/admin/widgets", requireAdmin, async (req, res) => {
+    try {
+      const widgetData = req.body;
+      const widget = await storage.createOrUpdateWidget(widgetData);
+      res.json(widget);
+    } catch (error) {
+      console.error("Error updating widget:", error);
+      res.status(500).json({ message: "Failed to update widget" });
+    }
+  });
+
   // Admin Users Management (Administrator only)
   app.get("/api/admin/users", requireAdmin, async (req, res) => {
     try {

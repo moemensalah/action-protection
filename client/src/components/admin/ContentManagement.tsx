@@ -374,14 +374,25 @@ export function ContentManagement() {
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="aboutImage">{isRTL ? "رابط الصورة" : "Image URL"}</Label>
-                  <Input
-                    id="aboutImage"
-                    value={aboutData.image}
-                    onChange={(e) => setAboutData(prev => ({ ...prev, image: e.target.value }))}
-                    placeholder="https://..."
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="aboutImage">{isRTL ? "رابط الصورة" : "Image URL"}</Label>
+                    <Input
+                      id="aboutImage"
+                      value={aboutData.image}
+                      onChange={(e) => setAboutData(prev => ({ ...prev, image: e.target.value }))}
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="aboutMapUrl">{isRTL ? "رابط الخريطة" : "Map URL"}</Label>
+                    <Input
+                      id="aboutMapUrl"
+                      value={aboutData.mapUrl || ""}
+                      onChange={(e) => setAboutData(prev => ({ ...prev, mapUrl: e.target.value }))}
+                      placeholder="https://maps.google.com/embed?..."
+                    />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -766,6 +777,79 @@ export function ContentManagement() {
                 >
                   <Save className="h-4 w-4" />
                   {isRTL ? "حفظ سياسة الخصوصية" : "Save Privacy Policy"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Chat Widget Configuration */}
+        <TabsContent value="chat">
+          <Card>
+            <CardHeader>
+              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                <FileText className="h-5 w-5" />
+                {isRTL ? "إعدادات الدردشة" : "Chat Widget Settings"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="tawkPropertyId" className={isRTL ? 'text-right' : 'text-left'}>
+                      {isRTL ? "معرف الموقع (Property ID)" : "Property ID"}
+                    </Label>
+                    <Input
+                      id="tawkPropertyId"
+                      value={tawkData.propertyId}
+                      onChange={(e) => setTawkData(prev => ({ ...prev, propertyId: e.target.value }))}
+                      placeholder="5f8b4c2d4..."
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="tawkWidgetId" className={isRTL ? 'text-right' : 'text-left'}>
+                      {isRTL ? "معرف الودجة (Widget ID)" : "Widget ID"}
+                    </Label>
+                    <Input
+                      id="tawkWidgetId"
+                      value={tawkData.widgetId}
+                      onChange={(e) => setTawkData(prev => ({ ...prev, widgetId: e.target.value }))}
+                      placeholder="1e2f3g4h5..."
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="tawkActive"
+                    checked={tawkData.isActive}
+                    onChange={(e) => setTawkData(prev => ({ ...prev, isActive: e.target.checked }))}
+                    className="rounded"
+                  />
+                  <Label htmlFor="tawkActive" className={isRTL ? 'text-right' : 'text-left'}>
+                    {isRTL ? "تفعيل الدردشة" : "Enable Chat Widget"}
+                  </Label>
+                </div>
+
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+                    {isRTL ? "كيفية الحصول على معرفات Tawk.to" : "How to get Tawk.to IDs"}
+                  </h4>
+                  <ol className="list-decimal list-inside text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                    <li>{isRTL ? "سجل دخول إلى حساب Tawk.to" : "Login to your Tawk.to account"}</li>
+                    <li>{isRTL ? "اذهب إلى Administration > Chat Widget" : "Go to Administration > Chat Widget"}</li>
+                    <li>{isRTL ? "انسخ Property ID و Widget ID من الكود المضمن" : "Copy Property ID and Widget ID from the embed code"}</li>
+                  </ol>
+                </div>
+
+                <Button 
+                  onClick={() => updateTawkMutation.mutate(tawkData)}
+                  disabled={updateTawkMutation.isPending}
+                  className="flex items-center gap-2"
+                >
+                  <Save className="h-4 w-4" />
+                  {isRTL ? "حفظ إعدادات الدردشة" : "Save Chat Settings"}
                 </Button>
               </div>
             </CardContent>

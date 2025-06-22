@@ -321,7 +321,7 @@ export class DatabaseStorage implements IStorage {
     if (existing) {
       const [updated] = await db
         .update(aboutUs)
-        .set({ ...aboutUsData, updatedAt: new Date() })
+        .set(aboutUsData)
         .where(eq(aboutUs.id, existing.id))
         .returning();
       return updated;
@@ -428,7 +428,7 @@ export class DatabaseStorage implements IStorage {
     if (existing) {
       const [updated] = await db
         .update(privacyPolicy)
-        .set({ ...privacyData, updatedAt: new Date(), lastUpdated: new Date() })
+        .set(privacyData)
         .where(eq(privacyPolicy.id, existing.id))
         .returning();
       return updated;
@@ -453,7 +453,7 @@ export class DatabaseStorage implements IStorage {
     if (existing) {
       const [updated] = await db
         .update(termsOfService)
-        .set({ ...termsData, updatedAt: new Date(), lastUpdated: new Date() })
+        .set(termsData)
         .where(eq(termsOfService.id, existing.id))
         .returning();
       return updated;

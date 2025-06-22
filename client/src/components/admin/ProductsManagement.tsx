@@ -533,141 +533,288 @@ export function ProductsManagement() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className={isRTL ? "text-right" : "text-left"}>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الترتيب" : "Order"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الصورة" : "Image"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الاسم" : "Name"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الفئة" : "Category"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "السعر" : "Price"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "المخزون" : "Stock"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الحالة" : "Status"}</TableHead>
-                  <TableHead className={isRTL ? "text-right" : "text-left"}>{isRTL ? "الإجراءات" : "Actions"}</TableHead>
+                <TableRow className={isRTL ? "text-right" : "text-left"} dir={isRTL ? "rtl" : "ltr"}>
+                  {isRTL ? (
+                    // RTL order: Actions, Status, Stock, Price, Category, Name, Image, Order
+                    <>
+                      <TableHead className="text-right">{isRTL ? "الإجراءات" : "Actions"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "الحالة" : "Status"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "المخزون" : "Stock"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "السعر" : "Price"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "الفئة" : "Category"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "الاسم" : "Name"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "الصورة" : "Image"}</TableHead>
+                      <TableHead className="text-right">{isRTL ? "الترتيب" : "Order"}</TableHead>
+                    </>
+                  ) : (
+                    // LTR order: Order, Image, Name, Category, Price, Stock, Status, Actions
+                    <>
+                      <TableHead className="text-left">{isRTL ? "الترتيب" : "Order"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "الصورة" : "Image"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "الاسم" : "Name"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "الفئة" : "Category"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "السعر" : "Price"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "المخزون" : "Stock"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "الحالة" : "Status"}</TableHead>
+                      <TableHead className="text-left">{isRTL ? "الإجراءات" : "Actions"}</TableHead>
+                    </>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {sortedProducts.map((product: Product, index: number) => (
-                  <TableRow key={product.id} className={isRTL ? "text-right" : "text-left"}>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleReorder(product.id, 'up')}
-                          disabled={index === 0 || reorderMutation.isPending}
-                          className="p-1 h-6 w-6"
-                        >
-                          <ChevronUp className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleReorder(product.id, 'down')}
-                          disabled={index === sortedProducts.length - 1 || reorderMutation.isPending}
-                          className="p-1 h-6 w-6"
-                        >
-                          <ChevronDown className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                        {product.image ? (
-                          <img 
-                            src={product.image} 
-                            alt={isRTL ? product.nameAr : product.nameEn}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <ImageIcon className="h-6 w-6 text-gray-400" />
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <div>
-                        <div className="font-medium text-gray-900 dark:text-white">
-                          {isRTL ? product.nameAr : product.nameEn}
-                        </div>
-                        <div className={`text-sm text-gray-500 max-w-xs truncate ${isRTL ? 'text-right' : 'text-left'}`}>
-                          {isRTL ? product.descriptionAr : product.descriptionEn}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <Badge variant="outline">
-                        {getCategoryName(product.categoryId)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <span className="font-medium">{product.price} {isRTL ? "ريال" : "SAR"}</span>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <Badge variant={product.stock > 0 ? "default" : "destructive"}>
-                        {product.stock}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <div className="flex flex-col gap-1">
-                        <Badge variant={product.isActive ? "default" : "secondary"} className="w-fit">
-                          {product.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
-                        </Badge>
-                        {product.isFeatured && (
-                          <Badge variant="outline" className="w-fit text-xs">
-                            {isRTL ? "مميز" : "Featured"}
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className={isRTL ? "text-right" : "text-left"}>
-                      <div className={`flex items-center gap-2 ${isRTL ? 'justify-end' : 'justify-start'}`}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(product)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
+                  <TableRow key={product.id} className={isRTL ? "text-right" : "text-left"} dir={isRTL ? "rtl" : "ltr"}>
+                    {isRTL ? (
+                      // RTL order: Actions, Status, Stock, Price, Category, Name, Image, Order
+                      <>
+                        <TableCell className="text-right">
+                          <div className={`flex items-center gap-2 justify-end`}>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                              onClick={() => handleEdit(product)}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Edit className="h-4 w-4" />
                             </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent className={isRTL ? "text-right" : "text-left"}>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle className={isRTL ? "text-right" : "text-left"}>
-                                {isRTL ? "تأكيد حذف المنتج" : "Confirm Delete Product"}
-                              </AlertDialogTitle>
-                              <AlertDialogDescription className={isRTL ? "text-right" : "text-left"}>
-                                {isRTL 
-                                  ? `هل أنت متأكد من حذف منتج "${product.nameAr}"؟ هذا الإجراء لا يمكن التراجع عنه.`
-                                  : `Are you sure you want to delete product "${product.nameEn}"? This action cannot be undone.`
-                                }
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter className={isRTL ? "flex-row-reverse" : ""}>
-                              <AlertDialogCancel>
-                                {isRTL ? "إلغاء" : "Cancel"}
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDelete(product)}
-                                className="bg-red-600 hover:bg-red-700"
-                                disabled={deleteMutation.isPending}
-                              >
-                                {deleteMutation.isPending 
-                                  ? (isRTL ? "جاري الحذف..." : "Deleting...")
-                                  : (isRTL ? "حذف" : "Delete")
-                                }
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </TableCell>
+                            
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="text-right">
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className="text-right">
+                                    {isRTL ? "تأكيد حذف المنتج" : "Confirm Delete Product"}
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription className="text-right">
+                                    {isRTL 
+                                      ? `هل أنت متأكد من حذف منتج "${product.nameAr}"؟ هذا الإجراء لا يمكن التراجع عنه.`
+                                      : `Are you sure you want to delete product "${product.nameEn}"? This action cannot be undone.`
+                                    }
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter className="flex-row-reverse">
+                                  <AlertDialogCancel>
+                                    {isRTL ? "إلغاء" : "Cancel"}
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(product)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                    disabled={deleteMutation.isPending}
+                                  >
+                                    {deleteMutation.isPending 
+                                      ? (isRTL ? "جاري الحذف..." : "Deleting...")
+                                      : (isRTL ? "حذف" : "Delete")
+                                    }
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex flex-col gap-1">
+                            <Badge variant={product.isActive ? "default" : "secondary"} className="w-fit">
+                              {product.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
+                            </Badge>
+                            {product.isFeatured && (
+                              <Badge variant="outline" className="w-fit text-xs">
+                                {isRTL ? "مميز" : "Featured"}
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant={product.stock > 0 ? "default" : "destructive"}>
+                            {product.stock}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <span className="font-medium">{product.price} {isRTL ? "ريال" : "SAR"}</span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant="outline">
+                            {getCategoryName(product.categoryId)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div>
+                            <div className="font-medium text-gray-900 dark:text-white">
+                              {isRTL ? product.nameAr : product.nameEn}
+                            </div>
+                            <div className="text-sm text-gray-500 max-w-xs truncate text-right">
+                              {isRTL ? product.descriptionAr : product.descriptionEn}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                            {product.image ? (
+                              <img 
+                                src={product.image} 
+                                alt={isRTL ? product.nameAr : product.nameEn}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <ImageIcon className="h-6 w-6 text-gray-400" />
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center gap-1 justify-end">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleReorder(product.id, 'up')}
+                              disabled={index === 0 || reorderMutation.isPending}
+                              className="p-1 h-6 w-6"
+                            >
+                              <ChevronUp className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleReorder(product.id, 'down')}
+                              disabled={index === sortedProducts.length - 1 || reorderMutation.isPending}
+                              className="p-1 h-6 w-6"
+                            >
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </>
+                    ) : (
+                      // LTR order: Order, Image, Name, Category, Price, Stock, Status, Actions
+                      <>
+                        <TableCell className="text-left">
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleReorder(product.id, 'up')}
+                              disabled={index === 0 || reorderMutation.isPending}
+                              className="p-1 h-6 w-6"
+                            >
+                              <ChevronUp className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleReorder(product.id, 'down')}
+                              disabled={index === sortedProducts.length - 1 || reorderMutation.isPending}
+                              className="p-1 h-6 w-6"
+                            >
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                            {product.image ? (
+                              <img 
+                                src={product.image} 
+                                alt={isRTL ? product.nameAr : product.nameEn}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <ImageIcon className="h-6 w-6 text-gray-400" />
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <div>
+                            <div className="font-medium text-gray-900 dark:text-white">
+                              {isRTL ? product.nameAr : product.nameEn}
+                            </div>
+                            <div className="text-sm text-gray-500 max-w-xs truncate text-left">
+                              {isRTL ? product.descriptionAr : product.descriptionEn}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <Badge variant="outline">
+                            {getCategoryName(product.categoryId)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <span className="font-medium">{product.price} {isRTL ? "ريال" : "SAR"}</span>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <Badge variant={product.stock > 0 ? "default" : "destructive"}>
+                            {product.stock}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <div className="flex flex-col gap-1">
+                            <Badge variant={product.isActive ? "default" : "secondary"} className="w-fit">
+                              {product.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
+                            </Badge>
+                            {product.isFeatured && (
+                              <Badge variant="outline" className="w-fit text-xs">
+                                {isRTL ? "مميز" : "Featured"}
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-left">
+                          <div className="flex items-center gap-2 justify-start">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(product)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="text-left">
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className="text-left">
+                                    {isRTL ? "تأكيد حذف المنتج" : "Confirm Delete Product"}
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription className="text-left">
+                                    {isRTL 
+                                      ? `هل أنت متأكد من حذف منتج "${product.nameAr}"؟ هذا الإجراء لا يمكن التراجع عنه.`
+                                      : `Are you sure you want to delete product "${product.nameEn}"? This action cannot be undone.`
+                                    }
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>
+                                    {isRTL ? "إلغاء" : "Cancel"}
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(product)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                    disabled={deleteMutation.isPending}
+                                  >
+                                    {deleteMutation.isPending 
+                                      ? (isRTL ? "جاري الحذف..." : "Deleting...")
+                                      : (isRTL ? "حذف" : "Delete")
+                                    }
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>

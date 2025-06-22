@@ -269,7 +269,7 @@ export function UsersManagement() {
                 </p>
               </div>
               
-              <div className={`flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <div className={`flex flex-col ${isRTL ? 'items-end' : 'items-start'}`}>
                   <Label htmlFor="isActive" className={`font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
                     {isRTL ? "حالة المستخدم" : "User Status"}
@@ -278,15 +278,30 @@ export function UsersManagement() {
                     {isRTL ? "تحديد ما إذا كان المستخدم نشطًا أم لا" : "Determine if the user account is active"}
                   </p>
                 </div>
-                <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span className={`text-sm ${formData.isActive ? 'text-green-600' : 'text-gray-500'}`}>
-                    {formData.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
-                  </span>
-                  <Switch
-                    id="isActive"
-                    checked={formData.isActive}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
-                  />
+                <div className={`flex items-center gap-3 ${isRTL ? '' : 'flex-row'}`}>
+                  {isRTL ? (
+                    <>
+                      <Switch
+                        id="isActive"
+                        checked={formData.isActive}
+                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
+                      />
+                      <span className={`text-sm ${formData.isActive ? 'text-green-600' : 'text-gray-500'}`}>
+                        {formData.isActive ? "نشط" : "غير نشط"}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className={`text-sm ${formData.isActive ? 'text-green-600' : 'text-gray-500'}`}>
+                        {formData.isActive ? "Active" : "Inactive"}
+                      </span>
+                      <Switch
+                        id="isActive"
+                        checked={formData.isActive}
+                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
+                      />
+                    </>
+                  )}
                 </div>
               </div>
               

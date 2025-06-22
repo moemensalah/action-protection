@@ -459,6 +459,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/admin/users/:id", requireAdmin, async (req, res) => {
+    try {
+      const userId = req.params.id;
+      
+      // Prevent deletion of main admin
+      if (userId === "admin_seed_1") {
+        return res.status(403).json({ message: "Cannot delete main administrator" });
+      }
+      
+      await storage.deleteUser(userId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

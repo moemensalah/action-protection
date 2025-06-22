@@ -41,6 +41,8 @@ export function UsersManagement() {
   
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [formData, setFormData] = useState<UserForm>({
     email: "",
     firstName: "",
@@ -110,6 +112,31 @@ export function UsersManagement() {
     },
   });
 
+  // Delete user mutation
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      return apiRequest(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      toast({
+        title: isRTL ? "تم حذف المستخدم" : "User Deleted",
+        description: isRTL ? "تم حذف المستخدم بنجاح" : "User deleted successfully",
+      });
+      setDeleteConfirmOpen(false);
+      setUserToDelete(null);
+    },
+    onError: (error) => {
+      toast({
+        title: isRTL ? "خطأ" : "Error",
+        description: isRTL ? "فشل في حذف المستخدم" : "Failed to delete user",
+        variant: "destructive",
+      });
+    },
+  });
+
   const getRoleBadge = (role: string) => {
     if (role === "administrator") {
       return (
@@ -158,6 +185,22 @@ export function UsersManagement() {
       isActive: user.isActive
     });
     setIsDialogOpen(true);
+  };
+
+  const handleDelete = (user: User) => {
+    setUserToDelete(user);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (userToDelete) {
+      deleteUserMutation.mutate(userToDelete.id);
+    }
+  };
+
+  const canDeleteUser = (user: User) => {
+    // Cannot delete the main admin (first admin in the system)
+    return user.id !== "admin_seed_1";
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -439,6 +482,16 @@ export function UsersManagement() {
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
+                              {canDeleteUser(user) && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDelete(user)}
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              )}
                             </div>
                           </TableCell>
                           <TableCell className="text-right">
@@ -515,6 +568,16 @@ export function UsersManagement() {
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
+                              {canDeleteUser(user) && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDelete(user)}
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              )}
                             </div>
                           </TableCell>
                         </>
@@ -547,6 +610,51 @@ export function UsersManagement() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="max-w-md" dir={isRTL ? 'rtl' : 'ltr'}>
+          <DialogHeader className={isRTL ? 'text-right' : 'text-left'}>
+            <DialogTitle className={`flex items-center gap-2 text-red-600 dark:text-red-400 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+              <Trash2 className="h-5 w-5" />
+              {isRTL ? "تأكيد الحذف" : "Confirm Delete"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className={`py-4 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
+              {isRTL 
+                ? `هل أنت متأكد من حذف المستخدم "${userToDelete?.firstName} ${userToDelete?.lastName}"؟`
+                : `Are you sure you want to delete user "${userToDelete?.firstName} ${userToDelete?.lastName}"?`
+              }
+            </p>
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {isRTL 
+                ? "هذا الإجراء لا يمكن التراجع عنه."
+                : "This action cannot be undone."
+              }
+            </p>
+          </div>
+          <div className={`flex gap-2 ${isRTL ? 'justify-start flex-row-reverse' : 'justify-end'}`}>
+            <Button 
+              variant="outline" 
+              onClick={() => setDeleteConfirmOpen(false)}
+              disabled={deleteUserMutation.isPending}
+            >
+              {isRTL ? "إلغاء" : "Cancel"}
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={confirmDelete}
+              disabled={deleteUserMutation.isPending}
+            >
+              {deleteUserMutation.isPending 
+                ? (isRTL ? "جاري الحذف..." : "Deleting...")
+                : (isRTL ? "حذف" : "Delete")
+              }
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

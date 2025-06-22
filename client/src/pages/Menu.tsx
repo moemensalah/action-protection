@@ -160,28 +160,33 @@ export default function Menu() {
           </div>
 
           {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className={`flex flex-col sm:flex-row gap-4 mb-8 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+            {/* Search Bar - Left in RTL, Right in LTR */}
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className={`absolute top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 ${isRTL ? 'right-3' : 'left-3'}`} />
                 <Input
                   placeholder={t("searchProducts")}
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-10"
+                  className={`${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}
+                  dir={isRTL ? 'rtl' : 'ltr'}
                 />
               </div>
             </div>
             
+            {/* Categories Dropdown - Right in RTL, Left in LTR */}
             <div className="w-full sm:w-64">
               <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-                <SelectTrigger>
-                  <SelectValue />
+                <SelectTrigger className={isRTL ? 'text-right' : 'text-left'} dir={isRTL ? 'rtl' : 'ltr'}>
+                  <SelectValue placeholder={t("allCategories")} />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("allCategories")}</SelectItem>
+                <SelectContent className={isRTL ? 'text-right' : 'text-left'} dir={isRTL ? 'rtl' : 'ltr'}>
+                  <SelectItem value="all" className={isRTL ? 'text-right' : 'text-left'}>
+                    {t("allCategories")}
+                  </SelectItem>
                   {activeCategories.map((cat: Category) => (
-                    <SelectItem key={cat.slug} value={cat.slug}>
+                    <SelectItem key={cat.slug} value={cat.slug} className={isRTL ? 'text-right' : 'text-left'}>
                       {isRTL ? cat.nameAr : cat.nameEn}
                     </SelectItem>
                   ))}

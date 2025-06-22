@@ -67,6 +67,8 @@ export function ProductsManagement() {
   const [movingProduct, setMovingProduct] = useState<Product | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [newCategoryId, setNewCategoryId] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   
   const [formData, setFormData] = useState<ProductForm>({
     nameEn: "",
@@ -114,6 +116,13 @@ export function ProductsManagement() {
 
   // Sort products by sortOrder for display
   const sortedProducts = [...filteredProducts].sort((a: Product, b: Product) => (a.sortOrder || 0) - (b.sortOrder || 0));
+  
+  // Pagination calculations
+  const totalItems = sortedProducts.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedProducts = sortedProducts.slice(startIndex, endIndex);
 
   // Create product mutation
   const createMutation = useMutation({
@@ -561,7 +570,7 @@ export function ProductsManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedProducts.map((product: Product, index: number) => (
+                {paginatedProducts.map((product: Product, index: number) => (
                   <TableRow key={product.id} className={isRTL ? "text-right" : "text-left"} dir={isRTL ? "rtl" : "ltr"}>
                     {isRTL ? (
                       // RTL order: Actions, Status, Stock, Price, Category, Name, Image, Order
@@ -819,6 +828,62 @@ export function ProductsManagement() {
               </TableBody>
             </Table>
           </div>
+          
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className={`flex items-center justify-between px-6 py-4 border-t ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={`text-sm text-gray-700 dark:text-gray-300 ${isRTL ? 'text-right' : 'text-left'}`}>
+                {isRTL 
+                  ? `عرض ${startIndex + 1}-${Math.min(endIndex, totalItems)} من ${totalItems} منتج`
+                  : `Showing ${startIndex + 1}-${Math.min(endIndex, totalItems)} of ${totalItems} products`
+                }
+              </div>
+              
+              <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={isRTL ? 'text-right' : 'text-left'}
+                >
+                  {isRTL ? "السابق" : "Previous"}
+                </Button>
+                
+                <div className={`flex gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    const pageNumber = currentPage <= 3 
+                      ? i + 1 
+                      : currentPage >= totalPages - 2 
+                        ? totalPages - 4 + i 
+                        : currentPage - 2 + i;
+                    
+                    return (
+                      <Button
+                        key={pageNumber}
+                        variant={currentPage === pageNumber ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(pageNumber)}
+                        className="w-8 h-8 p-0"
+                      >
+                        {pageNumber}
+                      </Button>
+                    );
+                  })}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className={isRTL ? 'text-right' : 'text-left'}
+                >
+                  {isRTL ? "التالي" : "Next"}
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

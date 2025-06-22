@@ -220,10 +220,10 @@ export default function Menu() {
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">
+            <p className={`text-gray-500 dark:text-gray-400 text-lg ${isRTL ? 'text-right' : 'text-left'}`}>
               {searchQuery 
-                ? "No products found matching your search" 
-                : "No products available in this category"
+                ? t("noProductsSearch")
+                : t("noProducts")
               }
             </p>
           </div>

@@ -32,6 +32,7 @@ export const translations = {
     // Products
     products: "Products",
     noProducts: "No products found",
+    noProductsSearch: "No products found matching your search",
     productNotFound: "Product not found",
     searchProducts: "Search products...",
     selectCategory: "Select Category",
@@ -103,6 +104,7 @@ export const translations = {
     // Products
     products: "المنتجات",
     noProducts: "لم يتم العثور على منتجات",
+    noProductsSearch: "لا توجد منتجات تطابق بحثك",
     productNotFound: "المنتج غير موجود",
     searchProducts: "البحث في المنتجات...",
     selectCategory: "اختر الفئة",

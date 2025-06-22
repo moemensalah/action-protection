@@ -353,7 +353,7 @@ export function ContentManagement() {
               <form onSubmit={(e) => { e.preventDefault(); updateAboutMutation.mutate(aboutData); }} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="aboutTitleEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "العنوان بالإنجليزية" : "Title (English)"}</Label>
+                    <Label htmlFor="aboutTitleEn" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "العنوان بالإنجليزية" : "Title (English)"}</Label>
                     <Input
                       id="aboutTitleEn"
                       value={aboutData.titleEn}
@@ -362,7 +362,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="aboutTitleAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "العنوان بالعربية" : "Title (Arabic)"}</Label>
+                    <Label htmlFor="aboutTitleAr" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "العنوان بالعربية" : "Title (Arabic)"}</Label>
                     <Input
                       id="aboutTitleAr"
                       value={aboutData.titleAr}
@@ -375,7 +375,7 @@ export function ContentManagement() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="aboutImage" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "رابط الصورة" : "Image URL"}</Label>
+                    <Label htmlFor="aboutImage" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "رابط الصورة" : "Image URL"}</Label>
                     <Input
                       id="aboutImage"
                       value={aboutData.image}
@@ -384,7 +384,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="aboutMapUrl" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "رابط الخريطة" : "Map URL"}</Label>
+                    <Label htmlFor="aboutMapUrl" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "رابط الخريطة" : "Map URL"}</Label>
                     <Input
                       id="aboutMapUrl"
                       value={aboutData.mapUrl || ""}
@@ -396,7 +396,7 @@ export function ContentManagement() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="aboutContentEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "المحتوى بالإنجليزية" : "Content (English)"}</Label>
+                    <Label htmlFor="aboutContentEn" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "المحتوى بالإنجليزية" : "Content (English)"}</Label>
                     <Textarea
                       id="aboutContentEn"
                       value={aboutData.contentEn}
@@ -406,7 +406,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="aboutContentAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "المحتوى بالعربية" : "Content (Arabic)"}</Label>
+                    <Label htmlFor="aboutContentAr" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "المحتوى بالعربية" : "Content (Arabic)"}</Label>
                     <Textarea
                       id="aboutContentAr"
                       value={aboutData.contentAr}
@@ -585,7 +585,7 @@ export function ContentManagement() {
               <form onSubmit={(e) => { e.preventDefault(); updateFooterMutation.mutate(footerData); }} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="companyNameEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "اسم الشركة بالإنجليزية" : "Company Name (English)"}</Label>
+                    <Label htmlFor="companyNameEn" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "اسم الشركة بالإنجليزية" : "Company Name (English)"}</Label>
                     <Input
                       id="companyNameEn"
                       value={footerData.companyNameEn}
@@ -594,7 +594,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="companyNameAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "اسم الشركة بالعربية" : "Company Name (Arabic)"}</Label>
+                    <Label htmlFor="companyNameAr" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "اسم الشركة بالعربية" : "Company Name (Arabic)"}</Label>
                     <Input
                       id="companyNameAr"
                       value={footerData.companyNameAr}
@@ -607,7 +607,7 @@ export function ContentManagement() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="descriptionEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الوصف بالإنجليزية" : "Description (English)"}</Label>
+                    <Label htmlFor="descriptionEn" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "الوصف بالإنجليزية" : "Description (English)"}</Label>
                     <Textarea
                       id="descriptionEn"
                       value={footerData.descriptionEn}
@@ -616,7 +616,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="descriptionAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الوصف بالعربية" : "Description (Arabic)"}</Label>
+                    <Label htmlFor="descriptionAr" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "الوصف بالعربية" : "Description (Arabic)"}</Label>
                     <Textarea
                       id="descriptionAr"
                       value={footerData.descriptionAr}
@@ -628,7 +628,7 @@ export function ContentManagement() {
                 </div>
 
                 <div>
-                  <Label htmlFor="copyright" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "نص حقوق النشر" : "Copyright Text"}</Label>
+                  <Label htmlFor="copyright" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "نص حقوق النشر" : "Copyright Text"}</Label>
                   <Input
                     id="copyright"
                     value={footerData.copyrightText}
@@ -699,7 +699,7 @@ export function ContentManagement() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="termsContentEn" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "المحتوى بالإنجليزية" : "Content (English)"}</Label>
+                    <Label htmlFor="termsContentEn" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "المحتوى بالإنجليزية" : "Content (English)"}</Label>
                     <Textarea
                       id="termsContentEn"
                       value={termsData.contentEn}
@@ -709,7 +709,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="termsContentAr" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "المحتوى بالعربية" : "Content (Arabic)"}</Label>
+                    <Label htmlFor="termsContentAr" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "المحتوى بالعربية" : "Content (Arabic)"}</Label>
                     <Textarea
                       id="termsContentAr"
                       value={termsData.contentAr}
@@ -746,7 +746,7 @@ export function ContentManagement() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="privacyContentEn" className={isRTL ? 'text-right' : 'text-left'}>
+                    <Label htmlFor="privacyContentEn" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                       {isRTL ? "المحتوى بالإنجليزية" : "Content (English)"}
                     </Label>
                     <Textarea
@@ -758,7 +758,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="privacyContentAr" className={isRTL ? 'text-right' : 'text-left'}>
+                    <Label htmlFor="privacyContentAr" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                       {isRTL ? "المحتوى بالعربية" : "Content (Arabic)"}
                     </Label>
                     <Textarea
@@ -797,7 +797,7 @@ export function ContentManagement() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="tawkPropertyId" className={isRTL ? 'text-right' : 'text-left'}>
+                    <Label htmlFor="tawkPropertyId" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                       {isRTL ? "معرف الموقع (Property ID)" : "Property ID"}
                     </Label>
                     <Input
@@ -808,7 +808,7 @@ export function ContentManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="tawkWidgetId" className={isRTL ? 'text-right' : 'text-left'}>
+                    <Label htmlFor="tawkWidgetId" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                       {isRTL ? "معرف الودجة (Widget ID)" : "Widget ID"}
                     </Label>
                     <Input

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { ArrowLeft, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -45,18 +45,6 @@ interface Category {
   isActive: boolean;
 }
 
-interface ProductsResponse {
-  products: Product[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-}
-
 export default function Menu() {
   const { t, isRTL } = useLanguage();
   const [, setLocation] = useLocation();
@@ -70,138 +58,126 @@ export default function Menu() {
   const urlParams = new URLSearchParams(window.location.search);
   const categorySlug = urlParams.get('category') || "all";
 
+  useEffect(() => {
+    setSelectedCategory(categorySlug);
+  }, [categorySlug]);
+
   const breadcrumbItems = [
     { name: t("home"), url: "/" },
     { name: t("menu"), url: "/menu" }
   ];
 
-  const categories = getCategoriesByActive();
-  const category = categorySlug !== "all" ? getCategoryBySlug(categorySlug) : null;
-  
-  // Get products based on filters and pagination
-  const allProducts = useMemo(() => {
-    let filtered = categorySlug === "all" ? getAllProducts() : getProductsByCategorySlug(categorySlug);
-    
-    // Apply search filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(product => 
-        product.nameEn.toLowerCase().includes(query) ||
-        product.nameAr.toLowerCase().includes(query) ||
-        product.descriptionEn.toLowerCase().includes(query) ||
-        product.descriptionAr.toLowerCase().includes(query)
-      );
-    }
-    
-    return filtered;
-  }, [categorySlug, searchQuery]);
+  // Fetch categories from database
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ["/api/categories"],
+  });
 
-  // Pagination logic
-  const itemsPerPage = 12;
-  const totalPages = Math.ceil(allProducts.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = allProducts.slice(startIndex, startIndex + itemsPerPage);
+  // Fetch products from database
+  const { data: productsResponse, isLoading: productsLoading } = useQuery({
+    queryKey: ["/api/products", { category: categorySlug, search: searchQuery, page: currentPage }],
+  });
 
-  const productsData = {
-    products: paginatedProducts,
-    pagination: {
-      page: currentPage,
-      limit: itemsPerPage,
-      total: allProducts.length,
-      totalPages,
-      hasNext: currentPage < totalPages,
-      hasPrev: currentPage > 1
-    }
-  };
-
-  const handleCategoryChange = (value: string) => {
-    setSelectedCategory(value);
-    setCurrentPage(1);
-    if (value === "all") {
-      setLocation('/menu');
-    } else {
-      setLocation(`/menu?category=${value}`);
-    }
-  };
+  const activeCategories = categories.filter((cat: Category) => cat.isActive);
+  const currentCategory = categorySlug !== "all" ? activeCategories.find((cat: Category) => cat.slug === categorySlug) : null;
 
   const handleViewDetails = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value);
+    setCurrentPage(1);
+    setSearchQuery("");
+    if (value === "all") {
+      setLocation("/menu");
+    } else {
+      setLocation(`/menu?category=${value}`);
+    }
   };
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1);
+  };
+
+  const isLoading = categoriesLoading || productsLoading;
+  const products = productsResponse?.products || [];
+  const pagination = productsResponse?.pagination;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
       <SEO 
-        title={isRTL ? "القائمة" : "Menu"}
-        description={isRTL 
-          ? "استكشف قائمة ليت لاونج الشاملة مع أفضل أنواع القهوة والمشروبات والمأكولات. من الإسبريسو المحضر بخبرة إلى الحلويات الطازجة والأطباق الرئيسية اللذيذة."
-          : "Explore LateLounge's comprehensive menu featuring premium coffee, beverages, and culinary delights. From expertly crafted espresso to fresh desserts and delicious main dishes."
+        title={currentCategory ? (isRTL ? currentCategory.nameAr : currentCategory.nameEn) : t("menu")}
+        description={currentCategory 
+          ? (isRTL ? currentCategory.descriptionAr : currentCategory.descriptionEn)
+          : (isRTL 
+            ? "استكشف قائمة منتجاتنا المتنوعة من القهوة والمشروبات والأطعمة الطازجة. جودة عالية وطعم استثنائي في كل طلب."
+            : "Explore our diverse menu of coffee, beverages, and fresh food. High quality and exceptional taste in every order."
+          )
         }
         keywords={isRTL
-          ? "قائمة الطعام, قهوة, إسبريسو, مشروبات باردة, إفطار, حلويات, أطباق رئيسية, ليت لاونج"
-          : "menu, coffee, espresso, cold drinks, breakfast, desserts, main dishes, LateLounge"
+          ? "قائمة الطعام, قهوة, مشروبات, إفطار, حلويات, ليت لاونج"
+          : "menu, coffee, beverages, breakfast, desserts, LateLounge"
         }
         url="/menu"
-        type="restaurant.menu"
         structuredData={{
           ...getMenuSchema(isRTL),
           ...getBreadcrumbSchema(breadcrumbItems)
         }}
       />
+      
       <AnimatedBackground />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Categories Navigation */}
-        {!categorySlug && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-6">{t("ourCategories")}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-              {categories?.map((cat) => (
-                <Button
-                  key={cat.id}
-                  variant="outline"
-                  className="h-auto p-4 flex flex-col gap-2 hover:bg-primary hover:text-white transition-colors"
-                  onClick={() => setLocation(`/menu?category=${cat.slug}`)}
-                >
-                  <span className="font-medium text-sm">
-                    {isRTL ? cat.nameAr : cat.nameEn}
-                  </span>
-                </Button>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* Search and Filter Section */}
-        <div className="mb-8 space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search Bar */}
-            <div className="relative flex-1">
-              <Search className="absolute left-3 rtl:right-3 rtl:left-auto top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                type="text"
-                placeholder={t("searchProducts") || "Search products..."}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 rtl:pr-10 rtl:pl-3"
-              />
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 shadow-sm relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center justify-between mb-6">
+            <Button
+              variant="ghost"
+              onClick={() => setLocation("/")}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {t("backToHome")}
+            </Button>
+          </div>
+
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-foreground mb-4">
+              {currentCategory ? (isRTL ? currentCategory.nameAr : currentCategory.nameEn) : t("menu")}
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              {currentCategory 
+                ? (isRTL ? currentCategory.descriptionAr : currentCategory.descriptionEn)
+                : t("menuSubtitle")
+              }
+            </p>
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder={t("searchProducts")}
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
             </div>
             
-            {/* Category Dropdown */}
-            <div className={`md:w-64 ${isRTL ? "rtl-dropdown rtl-select" : ""}`}>
-              <Select value={categorySlug || "all"} onValueChange={handleCategoryChange}>
-                <SelectTrigger className={`${isRTL ? "text-right" : ""}`} dir={isRTL ? "rtl" : "ltr"}>
-                  <SelectValue placeholder={t("selectCategory") || "Select Category"} />
+            <div className="w-full sm:w-64">
+              <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+                <SelectTrigger>
+                  <SelectValue />
                 </SelectTrigger>
-                <SelectContent className={`${isRTL ? "text-right" : ""}`} dir={isRTL ? "rtl" : "ltr"}>
-                  <SelectItem value="all" className={`${isRTL ? "text-right" : ""}`}>
-                    {t("allCategories") || "All Categories"}
-                  </SelectItem>
-                  {categories?.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.slug} className={`${isRTL ? "text-right" : ""}`}>
+                <SelectContent>
+                  <SelectItem value="all">{t("allCategories")}</SelectItem>
+                  {activeCategories.map((cat: Category) => (
+                    <SelectItem key={cat.slug} value={cat.slug}>
                       {isRTL ? cat.nameAr : cat.nameEn}
                     </SelectItem>
                   ))}
@@ -210,86 +186,63 @@ export default function Menu() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">
-              {category 
-                ? (isRTL ? category.nameAr : category.nameEn)
-                : t("menu")
-              }
-            </h1>
-            {category && (
-              <p className="text-lg text-muted-foreground">
-                {isRTL ? category.descriptionAr : category.descriptionEn}
-              </p>
-            )}
+      {/* Products Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {isLoading ? (
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
           </div>
-          
-          <Button
-            variant="outline"
-            onClick={() => categorySlug ? setLocation("/menu") : setLocation("/")}
-            className="gap-2"
-          >
-            <ArrowLeft className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} />
-            {categorySlug ? t("allCategories") : t("home")}
-          </Button>
-        </div>
-
-        {/* Products Grid */}
-        {productsData.products?.length ? (
+        ) : products.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 dark:text-gray-400 text-lg">
+              {searchQuery 
+                ? t("noProductsFound") 
+                : t("noProductsInCategory")
+              }
+            </p>
+          </div>
+        ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-              {productsData.products.map((product) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+              {products.map((product: Product) => (
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onViewDetails={handleViewDetails}
+                  onViewDetails={() => handleViewDetails(product)}
                 />
               ))}
             </div>
 
             {/* Pagination */}
-            {productsData && productsData.pagination.totalPages > 1 && (
+            {pagination && pagination.totalPages > 1 && (
               <div className="flex justify-center">
                 <Pagination>
                   <PaginationContent>
-                    {productsData && productsData.pagination.hasPrev && (
+                    {pagination.hasPrev && (
                       <PaginationItem>
                         <PaginationPrevious 
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          className="cursor-pointer"
+                          onClick={() => setCurrentPage(currentPage - 1)}
                         />
                       </PaginationItem>
                     )}
-                    
-                    {productsData && Array.from({ length: productsData.pagination.totalPages }, (_, i) => i + 1)
-                      .filter(page => 
-                        page === 1 || 
-                        page === productsData.pagination.totalPages || 
-                        Math.abs(page - currentPage) <= 2
-                      )
-                      .map((page, index, array) => (
-                        <PaginationItem key={page}>
-                          {index > 0 && array[index - 1] !== page - 1 && (
-                            <span className="px-2">...</span>
-                          )}
-                          <PaginationLink
-                            onClick={() => handlePageChange(page)}
-                            isActive={page === currentPage}
-                            className="cursor-pointer"
-                          >
-                            {page}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ))}
-                    
-                    {productsData && productsData.pagination.hasNext && (
+
+                    {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setCurrentPage(page)}
+                          isActive={page === currentPage}
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+
+                    {pagination.hasNext && (
                       <PaginationItem>
                         <PaginationNext 
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          className="cursor-pointer"
+                          onClick={() => setCurrentPage(currentPage + 1)}
                         />
                       </PaginationItem>
                     )}
@@ -298,22 +251,20 @@ export default function Menu() {
               </div>
             )}
           </>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-lg text-muted-foreground">
-              {t("noProducts")}
-            </p>
-          </div>
         )}
-
-        {/* Product Modal */}
-        <ProductModal
-          product={selectedProduct}
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        />
       </div>
+
       <Footer />
+
+      {/* Product Modal */}
+      <ProductModal
+        product={selectedProduct}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedProduct(null);
+        }}
+      />
     </div>
   );
 }

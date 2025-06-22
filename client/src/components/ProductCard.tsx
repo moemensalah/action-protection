@@ -3,7 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
-import type { Product } from "@/data/staticData";
+
+interface Product {
+  id: number;
+  nameEn: string;
+  nameAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  price: string;
+  categoryId: number;
+  image: string;
+  isActive: boolean;
+  isFeatured: boolean;
+  isAvailable: boolean;
+}
 
 interface ProductCardProps {
   product: Product;

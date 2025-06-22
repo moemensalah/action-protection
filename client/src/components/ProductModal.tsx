@@ -9,7 +9,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
-import type { Product } from "@/data/staticData";
+interface Product {
+  id: number;
+  nameEn: string;
+  nameAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  price: string;
+  categoryId: number;
+  image: string;
+  isActive: boolean;
+  isFeatured: boolean;
+  isAvailable: boolean;
+}
 
 interface ProductModalProps {
   product: Product | null;

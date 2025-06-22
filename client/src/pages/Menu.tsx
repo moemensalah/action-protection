@@ -75,7 +75,18 @@ export default function Menu() {
 
   // Fetch products from database
   const { data: productsResponse, isLoading: productsLoading } = useQuery({
-    queryKey: ["/api/products", { category: categorySlug, search: searchQuery, page: currentPage }],
+    queryKey: ["/api/products", categorySlug, searchQuery, currentPage],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (categorySlug && categorySlug !== "all") params.append("category", categorySlug);
+      if (searchQuery) params.append("search", searchQuery);
+      params.append("page", currentPage.toString());
+      params.append("limit", "8");
+      
+      const response = await fetch(`/api/products?${params.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch products');
+      return response.json();
+    },
   });
 
   const activeCategories = (categories as any[]).filter((cat: any) => cat.isActive) as Category[];
@@ -237,9 +248,9 @@ export default function Menu() {
                       <PaginationItem>
                         <PaginationPrevious 
                           onClick={() => setCurrentPage(currentPage - 1)}
-                          className={isRTL ? 'text-right' : 'text-left'}
+                          className={`${isRTL ? 'text-right flex-row-reverse' : 'text-left'}`}
                         >
-                          {isRTL ? t("previous") : t("previous")}
+                          {t("previous")}
                         </PaginationPrevious>
                       </PaginationItem>
                     )}
@@ -260,9 +271,9 @@ export default function Menu() {
                       <PaginationItem>
                         <PaginationNext 
                           onClick={() => setCurrentPage(currentPage + 1)}
-                          className={isRTL ? 'text-right' : 'text-left'}
+                          className={`${isRTL ? 'text-right flex-row-reverse' : 'text-left'}`}
                         >
-                          {isRTL ? t("next") : t("next")}
+                          {t("next")}
                         </PaginationNext>
                       </PaginationItem>
                     )}

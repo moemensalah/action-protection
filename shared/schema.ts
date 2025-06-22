@@ -81,6 +81,10 @@ export const aboutUs = pgTable("about_us", {
   titleAr: varchar("title_ar", { length: 255 }).notNull(),
   contentEn: text("content_en").notNull(),
   contentAr: text("content_ar").notNull(),
+  featuresEn: text("features_en"), // What Makes Us Special section
+  featuresAr: text("features_ar"),
+  missionEn: text("mission_en"), // Our Mission section
+  missionAr: text("mission_ar"),
   image: text("image"),
   mapUrl: text("map_url"),
   isActive: boolean("is_active").default(true),
@@ -92,12 +96,28 @@ export const aboutUs = pgTable("about_us", {
 export const contactUs = pgTable("contact_us", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
   phone: varchar("phone", { length: 20 }),
+  whatsapp: varchar("whatsapp", { length: 20 }), // Separate WhatsApp number
   email: varchar("email", { length: 255 }),
   address: text("address"),
   addressAr: text("address_ar"),
   workingHours: varchar("working_hours", { length: 255 }),
   workingHoursAr: varchar("working_hours_ar", { length: 255 }),
   socialMediaLinks: jsonb("social_media_links"), // Store as JSON: {facebook, instagram, twitter, etc.}
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// SMTP Settings table
+export const smtpSettings = pgTable("smtp_settings", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  host: varchar("host", { length: 255 }).notNull(),
+  port: integer("port").notNull(),
+  username: varchar("username", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 }).notNull(),
+  secure: boolean("secure").default(true), // Use SSL/TLS
+  fromName: varchar("from_name", { length: 255 }).notNull(),
+  fromEmail: varchar("from_email", { length: 255 }).notNull(),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -216,6 +236,12 @@ export const insertTermsOfServiceSchema = createInsertSchema(termsOfService).omi
   updatedAt: true,
 });
 
+export const insertSmtpSettingsSchema = createInsertSchema(smtpSettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const upsertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
 });
@@ -231,6 +257,7 @@ export type FooterContent = typeof footerContent.$inferSelect;
 export type WidgetSettings = typeof widgetSettings.$inferSelect;
 export type PrivacyPolicy = typeof privacyPolicy.$inferSelect;
 export type TermsOfService = typeof termsOfService.$inferSelect;
+export type SmtpSettings = typeof smtpSettings.$inferSelect;
 
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
 export type InsertProduct = z.infer<typeof insertProductSchema>;
@@ -240,3 +267,4 @@ export type InsertFooterContent = z.infer<typeof insertFooterContentSchema>;
 export type InsertWidgetSettings = z.infer<typeof insertWidgetSettingsSchema>;
 export type InsertPrivacyPolicy = z.infer<typeof insertPrivacyPolicySchema>;
 export type InsertTermsOfService = z.infer<typeof insertTermsOfServiceSchema>;
+export type InsertSmtpSettings = z.infer<typeof insertSmtpSettingsSchema>;

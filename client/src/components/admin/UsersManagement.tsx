@@ -145,8 +145,8 @@ export function UsersManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={isRTL ? 'text-right' : 'text-left'}>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             {isRTL ? "إدارة المستخدمين" : "Users Management"}
           </h2>
@@ -157,7 +157,7 @@ export function UsersManagement() {
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={resetForm} className="flex items-center gap-2">
+            <Button onClick={resetForm} className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <UserPlus className="h-4 w-4" />
               {isRTL ? "إضافة مستخدم" : "Add User"}
             </Button>
@@ -173,72 +173,75 @@ export function UsersManagement() {
               </DialogTitle>
             </DialogHeader>
             
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className={`space-y-4 ${isRTL ? 'text-right' : 'text-left'}`}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName">{isRTL ? "الاسم الأول" : "First Name"}</Label>
+                  <Label htmlFor="firstName" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الاسم الأول" : "First Name"}</Label>
                   <Input
                     id="firstName"
                     value={formData.firstName}
                     onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                     required
+                    className={isRTL ? 'text-right' : 'text-left'}
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="lastName">{isRTL ? "الاسم الأخير" : "Last Name"}</Label>
+                  <Label htmlFor="lastName" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الاسم الأخير" : "Last Name"}</Label>
                   <Input
                     id="lastName"
                     value={formData.lastName}
                     onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                     required
+                    className={isRTL ? 'text-right' : 'text-left'}
                   />
                 </div>
               </div>
               
               <div>
-                <Label htmlFor="email">{isRTL ? "البريد الإلكتروني" : "Email"}</Label>
+                <Label htmlFor="email" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "البريد الإلكتروني" : "Email"}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   required
+                  className={isRTL ? 'text-right' : 'text-left'}
                 />
               </div>
               
               <div>
-                <Label htmlFor="role">{isRTL ? "الدور" : "Role"}</Label>
+                <Label htmlFor="role" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الدور" : "Role"}</Label>
                 <Select 
                   value={formData.role} 
                   onValueChange={(value: "administrator" | "moderator") => 
                     setFormData(prev => ({ ...prev, role: value }))
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="moderator">
-                      <div className="flex items-center gap-2">
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Shield className="h-4 w-4" />
                         {isRTL ? "مشرف" : "Moderator"}
                       </div>
                     </SelectItem>
                     <SelectItem value="administrator">
-                      <div className="flex items-center gap-2">
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Crown className="h-4 w-4" />
                         {isRTL ? "مدير" : "Administrator"}
                       </div>
                     </SelectItem>
                   </SelectContent>
                 </Select>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className={`text-sm text-gray-500 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>
                   {getPermissions(formData.role)}
                 </p>
               </div>
               
-              <div className="flex items-center space-x-2">
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
                 <input
                   type="checkbox"
                   id="isActive"
@@ -246,10 +249,10 @@ export function UsersManagement() {
                   onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
                   className="rounded border-gray-300"
                 />
-                <Label htmlFor="isActive">{isRTL ? "نشط" : "Active"}</Label>
+                <Label htmlFor="isActive" className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "نشط" : "Active"}</Label>
               </div>
               
-              <div className="flex justify-end gap-2 pt-4">
+              <div className={`flex gap-2 pt-4 ${isRTL ? 'justify-start flex-row-reverse' : 'justify-end'}`}>
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                   {isRTL ? "إلغاء" : "Cancel"}
                 </Button>
@@ -269,18 +272,18 @@ export function UsersManagement() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-700 dark:text-red-400">
+            <CardTitle className={`flex items-center gap-2 text-red-700 dark:text-red-400 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
               <Crown className="h-5 w-5" />
               {isRTL ? "المدير" : "Administrator"}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
+            <div className={`space-y-2 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
                 <Key className="h-4 w-4" />
                 <span>{isRTL ? "جميع الصلاحيات" : "Full system access"}</span>
               </div>
-              <ul className="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-1 mr-4">
+              <ul className={`list-disc text-gray-600 dark:text-gray-400 space-y-1 ${isRTL ? 'list-inside text-right mr-0 ml-4' : 'list-inside mr-4'}`}>
                 <li>{isRTL ? "إدارة المستخدمين" : "Manage users"}</li>
                 <li>{isRTL ? "إدارة المحتوى" : "Manage content"}</li>
                 <li>{isRTL ? "إدارة المنتجات والفئات" : "Manage products & categories"}</li>
@@ -292,23 +295,23 @@ export function UsersManagement() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
+            <CardTitle className={`flex items-center gap-2 text-blue-700 dark:text-blue-400 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
               <Shield className="h-5 w-5" />
               {isRTL ? "المشرف" : "Moderator"}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
+            <div className={`space-y-2 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
                 <Key className="h-4 w-4" />
                 <span>{isRTL ? "صلاحيات محدودة" : "Limited access"}</span>
               </div>
-              <ul className="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-1 mr-4">
+              <ul className={`list-disc text-gray-600 dark:text-gray-400 space-y-1 ${isRTL ? 'list-inside text-right mr-0 ml-4' : 'list-inside mr-4'}`}>
                 <li>{isRTL ? "إدارة المنتجات" : "Manage products"}</li>
                 <li>{isRTL ? "إدارة الفئات" : "Manage categories"}</li>
                 <li>{isRTL ? "عرض التقارير" : "View reports"}</li>
               </ul>
-              <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+              <p className={`text-xs text-amber-600 dark:text-amber-400 mt-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                 {isRTL ? "لا يمكن إدارة المستخدمين أو المحتوى الثابت" : "Cannot manage users or static content"}
               </p>
             </div>
@@ -319,7 +322,7 @@ export function UsersManagement() {
       {/* Users Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
             <Users className="h-5 w-5" />
             {isRTL ? "قائمة المستخدمين" : "Users List"}
             <Badge variant="secondary">{users.length}</Badge>
@@ -330,23 +333,23 @@ export function UsersManagement() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{isRTL ? "المستخدم" : "User"}</TableHead>
-                  <TableHead>{isRTL ? "البريد الإلكتروني" : "Email"}</TableHead>
-                  <TableHead>{isRTL ? "الدور" : "Role"}</TableHead>
-                  <TableHead>{isRTL ? "الصلاحيات" : "Permissions"}</TableHead>
-                  <TableHead>{isRTL ? "الحالة" : "Status"}</TableHead>
-                  <TableHead>{isRTL ? "الإجراءات" : "Actions"}</TableHead>
+                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "المستخدم" : "User"}</TableHead>
+                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "البريد الإلكتروني" : "Email"}</TableHead>
+                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الدور" : "Role"}</TableHead>
+                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الصلاحيات" : "Permissions"}</TableHead>
+                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الحالة" : "Status"}</TableHead>
+                  <TableHead className={isRTL ? 'text-right' : 'text-left'}>{isRTL ? "الإجراءات" : "Actions"}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {users.map((user: User) => (
                   <TableRow key={user.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
+                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 flex items-center justify-center text-white font-medium text-sm">
                           {user.firstName.charAt(0)}{user.lastName.charAt(0)}
                         </div>
-                        <div>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
                           <div className="font-medium text-gray-900 dark:text-white">
                             {user.firstName} {user.lastName}
                           </div>
@@ -356,24 +359,24 @@ export function UsersManagement() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
                       <span className="text-gray-600 dark:text-gray-400">{user.email}</span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
                       {getRoleBadge(user.role)}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
                       <div className="text-xs text-gray-500 max-w-xs">
                         {getPermissions(user.role)}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
                       <Badge variant={user.isActive ? "default" : "secondary"}>
                         {user.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
+                    <TableCell className={isRTL ? 'text-right' : 'text-left'}>
+                      <div className={`flex items-center gap-2 ${isRTL ? 'justify-end' : 'justify-start'}`}>
                         <Button
                           variant="outline"
                           size="sm"

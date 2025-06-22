@@ -29,6 +29,7 @@ interface AboutUs {
 interface ContactUs {
   id?: number;
   phone: string;
+  whatsapp?: string;
   email: string;
   address: string;
   addressAr: string;
@@ -69,6 +70,10 @@ export function ContentManagement() {
     titleAr: "",
     contentEn: "",
     contentAr: "",
+    featuresEn: "",
+    featuresAr: "",
+    missionEn: "",
+    missionAr: "",
     image: "",
     mapUrl: "",
     isActive: true
@@ -77,6 +82,7 @@ export function ContentManagement() {
   // Contact Us state
   const [contactData, setContactData] = useState<ContactUs>({
     phone: "",
+    whatsapp: "",
     email: "",
     address: "",
     addressAr: "",
@@ -198,6 +204,10 @@ export function ContentManagement() {
         titleAr: data.titleAr,
         contentEn: data.contentEn,
         contentAr: data.contentAr,
+        featuresEn: data.featuresEn,
+        featuresAr: data.featuresAr,
+        missionEn: data.missionEn,
+        missionAr: data.missionAr,
         image: data.image,
         mapUrl: data.mapUrl,
         isActive: data.isActive
@@ -222,6 +232,7 @@ export function ContentManagement() {
       // Filter out database-only fields to prevent timestamp errors
       const cleanData = {
         phone: data.phone,
+        whatsapp: data.whatsapp,
         email: data.email,
         address: data.address,
         addressAr: data.addressAr,
@@ -453,6 +464,54 @@ export function ContentManagement() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="aboutFeaturesEn" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "المميزات بالإنجليزية" : "Features (English)"}</Label>
+                    <Textarea
+                      id="aboutFeaturesEn"
+                      value={aboutData.featuresEn || ""}
+                      onChange={(e) => setAboutData(prev => ({ ...prev, featuresEn: e.target.value }))}
+                      rows={5}
+                      placeholder="Our special features and offerings..."
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="aboutFeaturesAr" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "المميزات بالعربية" : "Features (Arabic)"}</Label>
+                    <Textarea
+                      id="aboutFeaturesAr"
+                      value={aboutData.featuresAr || ""}
+                      onChange={(e) => setAboutData(prev => ({ ...prev, featuresAr: e.target.value }))}
+                      rows={5}
+                      placeholder="مميزاتنا وخدماتنا الخاصة..."
+                      dir="rtl"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="aboutMissionEn" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "المهمة بالإنجليزية" : "Mission (English)"}</Label>
+                    <Textarea
+                      id="aboutMissionEn"
+                      value={aboutData.missionEn || ""}
+                      onChange={(e) => setAboutData(prev => ({ ...prev, missionEn: e.target.value }))}
+                      rows={5}
+                      placeholder="Our mission and vision..."
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="aboutMissionAr" className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "المهمة بالعربية" : "Mission (Arabic)"}</Label>
+                    <Textarea
+                      id="aboutMissionAr"
+                      value={aboutData.missionAr || ""}
+                      onChange={(e) => setAboutData(prev => ({ ...prev, missionAr: e.target.value }))}
+                      rows={5}
+                      placeholder="مهمتنا ورؤيتنا..."
+                      dir="rtl"
+                    />
+                  </div>
+                </div>
+
                 <Button type="submit" disabled={updateAboutMutation.isPending} className="flex items-center gap-2">
                   <Save className="h-4 w-4" />
                   {isRTL ? "حفظ التغييرات" : "Save Changes"}
@@ -486,6 +545,21 @@ export function ContentManagement() {
                       placeholder="+966 11 123 4567"
                     />
                   </div>
+                  <div>
+                    <Label htmlFor="whatsapp" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                      <MessageSquare className="h-4 w-4" />
+                      {isRTL ? "واتساب" : "WhatsApp"}
+                    </Label>
+                    <Input
+                      id="whatsapp"
+                      value={contactData.whatsapp || ""}
+                      onChange={(e) => setContactData(prev => ({ ...prev, whatsapp: e.target.value }))}
+                      placeholder="+966 55 123 4567"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="email" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                       <Mail className="h-4 w-4" />

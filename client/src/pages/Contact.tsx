@@ -37,6 +37,9 @@ export default function Contact() {
   const { data: contactData } = useQuery<ContactUs>({
     queryKey: ["/api/contact"],
   });
+
+  // Debug logging to check what data we're receiving
+  console.log("Contact Data:", contactData);
   
   const breadcrumbItems = [
     { name: t("home"), url: "/" },

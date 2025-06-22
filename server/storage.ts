@@ -84,6 +84,10 @@ export interface IStorage {
   // Terms of Service
   getTermsOfService(): Promise<TermsOfService | undefined>;
   createOrUpdateTermsOfService(termsData: InsertTermsOfService): Promise<TermsOfService>;
+  
+  // SMTP Settings
+  getSmtpSettings(): Promise<SmtpSettings | undefined>;
+  createOrUpdateSmtpSettings(settingsData: InsertSmtpSettings): Promise<SmtpSettings>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -461,6 +465,35 @@ export class DatabaseStorage implements IStorage {
       const [created] = await db
         .insert(termsOfService)
         .values(termsData)
+        .returning();
+      return created;
+    }
+  }
+
+  async getSmtpSettings(): Promise<SmtpSettings | undefined> {
+    try {
+      const [settings] = await db.select().from(smtpSettings).where(eq(smtpSettings.isActive, true));
+      return settings;
+    } catch (error) {
+      console.log("SMTP settings table not yet created");
+      return undefined;
+    }
+  }
+
+  async createOrUpdateSmtpSettings(settingsData: InsertSmtpSettings): Promise<SmtpSettings> {
+    const existing = await this.getSmtpSettings();
+    
+    if (existing) {
+      const [updated] = await db
+        .update(smtpSettings)
+        .set(settingsData)
+        .where(eq(smtpSettings.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(smtpSettings)
+        .values(settingsData)
         .returning();
       return created;
     }

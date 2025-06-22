@@ -17,6 +17,10 @@ interface AboutUs {
   titleAr: string;
   contentEn: string;
   contentAr: string;
+  featuresEn?: string;
+  featuresAr?: string;
+  missionEn?: string;
+  missionAr?: string;
   image: string;
   mapUrl?: string;
   isActive: boolean;

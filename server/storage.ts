@@ -38,6 +38,7 @@ export interface IStorage {
   getAllUsers(): Promise<User[]>;
   createUser(userData: Omit<User, 'createdAt' | 'updatedAt'>): Promise<User>;
   updateUser(id: string, userData: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>): Promise<User>;
+  deleteUser(id: string): Promise<void>;
   
   // Categories
   getCategories(): Promise<Category[]>;
@@ -130,6 +131,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, id))
       .returning();
     return user;
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
   }
 
   // Categories

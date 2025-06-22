@@ -145,18 +145,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin/Moderator Protected Routes (temporarily without auth for testing)
-  const requireRole = (allowedRoles: string[]) => {
-    return async (req: any, res: any, next: any) => {
-      // TODO: Add authentication when ready
-      next();
-    };
+  // Simple admin authentication middleware (mock for development)
+  const requireAdmin = (req: any, res: any, next: any) => {
+    // For now, allow all admin requests - in production, check JWT/session
+    req.user = { role: 'administrator', id: 'admin1' };
+    next();
   };
 
-  // Category Management (Admin/Moderator)
-  app.post("/api/admin/categories", requireRole(['administrator', 'moderator']), async (req: any, res) => {
+  const requireModerator = (req: any, res: any, next: any) => {
+    // For now, allow all moderator requests - in production, check JWT/session
+    req.user = { role: 'moderator', id: 'mod1' };
+    next();
+  };
+
+  // Admin login route
+  app.post("/api/admin/login", async (req, res) => {
+    const { email, password } = req.body;
+    
+    // Mock authentication - in production, verify against database
+    if (email === "admin@latelounge.sa" && password === "admin123") {
+      res.json({
+        success: true,
+        user: {
+          id: "admin1",
+          email: "admin@latelounge.sa",
+          firstName: "System",
+          lastName: "Administrator",
+          role: "administrator"
+        },
+        token: "mock-admin-token"
+      });
+    } else if (email === "moderator@latelounge.sa" && password === "mod123") {
+      res.json({
+        success: true,
+        user: {
+          id: "mod1", 
+          email: "moderator@latelounge.sa",
+          firstName: "Content",
+          lastName: "Moderator",
+          role: "moderator"
+        },
+        token: "mock-moderator-token"
+      });
+    } else {
+      res.status(401).json({ message: "Invalid credentials" });
+    }
+  });
+
+  // Admin Categories CRUD
+  app.post("/api/admin/categories", requireModerator, async (req, res) => {
     try {
-      const category = await storage.createCategory(req.body);
+      const categoryData = req.body;
+      const category = await storage.createCategory(categoryData);
       res.status(201).json(category);
     } catch (error) {
       console.error("Error creating category:", error);
@@ -164,10 +204,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/categories/:id", requireRole(['administrator', 'moderator']), async (req: any, res) => {
+  app.put("/api/admin/categories/:id", requireModerator, async (req, res) => {
     try {
       const categoryId = parseInt(req.params.id);
-      const category = await storage.updateCategory(categoryId, req.body);
+      const categoryData = req.body;
+      const category = await storage.updateCategory(categoryId, categoryData);
       res.json(category);
     } catch (error) {
       console.error("Error updating category:", error);
@@ -175,10 +216,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Product Management (Admin/Moderator)
-  app.post("/api/admin/products", requireRole(['administrator', 'moderator']), async (req: any, res) => {
+  // Admin Products CRUD
+  app.post("/api/admin/products", requireModerator, async (req, res) => {
     try {
-      const product = await storage.createProduct(req.body);
+      const productData = req.body;
+      const product = await storage.createProduct(productData);
       res.status(201).json(product);
     } catch (error) {
       console.error("Error creating product:", error);
@@ -186,10 +228,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/products/:id", requireRole(['administrator', 'moderator']), async (req: any, res) => {
+  app.put("/api/admin/products/:id", requireModerator, async (req, res) => {
     try {
       const productId = parseInt(req.params.id);
-      const product = await storage.updateProduct(productId, req.body);
+      const productData = req.body;
+      const product = await storage.updateProduct(productId, productData);
       res.json(product);
     } catch (error) {
       console.error("Error updating product:", error);
@@ -197,10 +240,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Content Management (Admin only)
-  app.put("/api/admin/about", requireRole(['administrator']), async (req: any, res) => {
+  // Admin Content Management (Administrator only)
+  app.put("/api/admin/about", requireAdmin, async (req, res) => {
     try {
-      const aboutUs = await storage.createOrUpdateAboutUs(req.body);
+      const aboutData = req.body;
+      const aboutUs = await storage.createOrUpdateAboutUs(aboutData);
       res.json(aboutUs);
     } catch (error) {
       console.error("Error updating about us:", error);
@@ -208,9 +252,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/contact", requireRole(['administrator']), async (req: any, res) => {
+  app.put("/api/admin/contact", requireAdmin, async (req, res) => {
     try {
-      const contactUs = await storage.createOrUpdateContactUs(req.body);
+      const contactData = req.body;
+      const contactUs = await storage.createOrUpdateContactUs(contactData);
       res.json(contactUs);
     } catch (error) {
       console.error("Error updating contact us:", error);
@@ -218,9 +263,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/footer", requireRole(['administrator']), async (req: any, res) => {
+  app.put("/api/admin/footer", requireAdmin, async (req, res) => {
     try {
-      const footerContent = await storage.createOrUpdateFooterContent(req.body);
+      const footerData = req.body;
+      const footerContent = await storage.createOrUpdateFooterContent(footerData);
       res.json(footerContent);
     } catch (error) {
       console.error("Error updating footer content:", error);
@@ -228,22 +274,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/widgets/:name", requireRole(['administrator']), async (req: any, res) => {
+  // Admin Users Management (Administrator only)
+  app.get("/api/admin/users", requireAdmin, async (req, res) => {
     try {
-      const widget = await storage.createOrUpdateWidget({
-        widgetName: req.params.name,
-        ...req.body
-      });
-      res.json(widget);
+      // Mock users data - in production, fetch from database
+      const users = [
+        {
+          id: "admin1",
+          email: "admin@latelounge.sa",
+          firstName: "System",
+          lastName: "Administrator",
+          role: "administrator",
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: "mod1",
+          email: "moderator@latelounge.sa", 
+          firstName: "Content",
+          lastName: "Moderator",
+          role: "moderator",
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      ];
+      res.json(users);
     } catch (error) {
-      console.error("Error updating widget:", error);
-      res.status(500).json({ message: "Failed to update widget" });
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
     }
   });
 
-  // Health check endpoint
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok", message: "LateLounge API is running" });
+  app.post("/api/admin/users", requireAdmin, async (req, res) => {
+    try {
+      const userData = req.body;
+      // Mock user creation - in production, save to database
+      const newUser = {
+        id: `user_${Date.now()}`,
+        ...userData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      res.status(201).json(newUser);
+    } catch (error) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ message: "Failed to create user" });
+    }
+  });
+
+  app.put("/api/admin/users/:id", requireAdmin, async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const userData = req.body;
+      // Mock user update - in production, update in database
+      const updatedUser = {
+        id: userId,
+        ...userData,
+        updatedAt: new Date().toISOString()
+      };
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
   });
 
   const httpServer = createServer(app);

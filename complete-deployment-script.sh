@@ -72,12 +72,13 @@ apt remove -y nodejs npm 2>/dev/null || true
 curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash -
 apt install -y nodejs
 
-# Install other dependencies
-apt install -y postgresql postgresql-contrib nginx certbot python3-certbot-nginx
+# Install other dependencies including Git
+apt install -y git postgresql postgresql-contrib nginx certbot python3-certbot-nginx
 
-# Verify Node.js and npm installation
-node --version
-npm --version
+# Verify installations
+echo "✅ Git version: $(git --version)"
+echo "✅ Node.js version: $(node --version)"
+echo "✅ NPM version: $(npm --version)"
 
 # Create application user
 if ! id "$APP_USER" &>/dev/null; then
@@ -91,11 +92,40 @@ mkdir -p /home/${APP_USER}/${PROJECT_NAME}/uploads
 mkdir -p /home/${APP_USER}/${PROJECT_NAME}/assets
 chown -R ${APP_USER}:${APP_USER} /home/${APP_USER}
 
-# Deploy source code
-echo "📦 Deploying application files..."
-cp -r . /tmp/deployment-staging/
-chown -R ${APP_USER}:${APP_USER} /tmp/deployment-staging/
-sudo -u ${APP_USER} cp -r /tmp/deployment-staging/* /home/${APP_USER}/${PROJECT_NAME}/
+# Deploy/Update source code from Git repository
+echo "📦 Deploying application from Git repository..."
+if [ -d "/home/${APP_USER}/${PROJECT_NAME}/.git" ]; then
+    echo "🔄 Updating existing repository..."
+    cd /home/${APP_USER}/${PROJECT_NAME}
+    
+    # Check if we have access to the repository
+    if sudo -u ${APP_USER} git fetch origin 2>/dev/null; then
+        sudo -u ${APP_USER} git reset --hard origin/main
+        sudo -u ${APP_USER} git pull origin main
+        echo "✅ Repository updated to latest version"
+    else
+        echo "⚠️ Failed to fetch from repository. Using existing code..."
+    fi
+else
+    echo "📥 Cloning repository..."
+    cd /home/${APP_USER}
+    
+    # Attempt to clone the repository
+    if sudo -u ${APP_USER} git clone ${GIT_REPO_URL} ${PROJECT_NAME} 2>/dev/null; then
+        echo "✅ Repository cloned successfully"
+    else
+        echo "⚠️ Failed to clone repository. Creating directory and using current files as fallback..."
+        mkdir -p /home/${APP_USER}/${PROJECT_NAME}
+        chown ${APP_USER}:${APP_USER} /home/${APP_USER}/${PROJECT_NAME}
+        
+        # Copy current directory contents as fallback
+        echo "📦 Copying current source files as fallback..."
+        cp -r . /tmp/deployment-staging/
+        chown -R ${APP_USER}:${APP_USER} /tmp/deployment-staging/
+        sudo -u ${APP_USER} cp -r /tmp/deployment-staging/* /home/${APP_USER}/${PROJECT_NAME}/ 2>/dev/null || true
+        echo "✅ Source files copied as fallback"
+    fi
+fi
 
 # Install Node.js dependencies
 echo "📦 Installing dependencies..."

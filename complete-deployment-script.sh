@@ -145,47 +145,100 @@ fi
 echo "🗄️ Running database migrations..."
 sudo -u ${APP_USER} npm run db:push
 
-# Create admin user directly via PostgreSQL
-echo "👤 Creating admin user directly via PostgreSQL..."
+# Create admin user directly via PostgreSQL (checking actual schema)
+echo "👤 Creating admin user with correct database schema..."
 sudo -u postgres psql -d ${DB_NAME} << ADMIN_EOF
--- Create admin user with bcrypt hash for the configured password
-INSERT INTO users (id, username, email, password, first_name, last_name, role, is_active, created_at, updated_at)
-VALUES (
-  'admin_user',
-  '${ADMIN_USERNAME}', 
-  '${ADMIN_EMAIL}',
-  '\$2b\$10\$RceGzkZgix24g9Y1BkYX6O5mp7en3Q4fIX1gvcc1DdMIOC2EWngIm',
-  '${ADMIN_FIRST_NAME}',
-  '${ADMIN_LAST_NAME}',
-  'administrator',
-  true,
-  NOW(),
-  NOW()
-)
-ON CONFLICT (username) DO UPDATE SET
-  email = EXCLUDED.email,
-  password = EXCLUDED.password,
-  first_name = EXCLUDED.first_name,
-  last_name = EXCLUDED.last_name,
-  role = EXCLUDED.role,
-  is_active = EXCLUDED.is_active,
-  updated_at = NOW();
+-- Check actual table structure and create admin user accordingly
+DO \$\$
+DECLARE
+    has_username boolean;
+    has_password boolean;
+BEGIN
+    -- Check if username column exists
+    SELECT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'username') INTO has_username;
+    -- Check if password column exists  
+    SELECT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'password') INTO has_password;
+    
+    IF has_username AND has_password THEN
+        -- Full schema with username and password
+        INSERT INTO users (id, username, email, password, first_name, last_name, role, is_active, created_at, updated_at)
+        VALUES (
+            'admin_user',
+            '${ADMIN_USERNAME}',
+            '${ADMIN_EMAIL}',
+            '\$2b\$10\$RceGzkZgix24g9Y1BkYX6O5mp7en3Q4fIX1gvcc1DdMIOC2EWngIm',
+            '${ADMIN_FIRST_NAME}',
+            '${ADMIN_LAST_NAME}',
+            'administrator',
+            true,
+            NOW(),
+            NOW()
+        )
+        ON CONFLICT (id) DO UPDATE SET
+            username = EXCLUDED.username,
+            email = EXCLUDED.email,
+            password = EXCLUDED.password,
+            first_name = EXCLUDED.first_name,
+            last_name = EXCLUDED.last_name,
+            role = EXCLUDED.role,
+            is_active = EXCLUDED.is_active,
+            updated_at = NOW();
+    ELSE
+        -- Basic schema without username/password columns
+        INSERT INTO users (id, email, first_name, last_name, role, is_active, created_at, updated_at)
+        VALUES (
+            'admin_user',
+            '${ADMIN_EMAIL}',
+            '${ADMIN_FIRST_NAME}',
+            '${ADMIN_LAST_NAME}',
+            'administrator',
+            true,
+            NOW(),
+            NOW()
+        )
+        ON CONFLICT (id) DO UPDATE SET
+            email = EXCLUDED.email,
+            first_name = EXCLUDED.first_name,
+            last_name = EXCLUDED.last_name,
+            role = EXCLUDED.role,
+            is_active = EXCLUDED.is_active,
+            updated_at = NOW();
+    END IF;
+    
+    RAISE NOTICE 'Admin user created/updated successfully';
+END
+\$\$;
 
--- Verify user was created
-SELECT username, email, role, is_active FROM users WHERE username = '${ADMIN_USERNAME}';
+-- Show created user (using columns that definitely exist)
+SELECT id, email, first_name, last_name, role, is_active FROM users WHERE id = 'admin_user';
 ADMIN_EOF
 
 echo "✅ Admin user created successfully!"
-echo "👤 Login credentials:"
-echo "   Username: ${ADMIN_USERNAME}"
-echo "   Password: ${ADMIN_PASSWORD}"
+echo "👤 Admin access configured for: ${ADMIN_EMAIL}"
 
 # Install PM2 and setup service
 echo "⚡ Setting up PM2 process manager..."
 npm install -g pm2
+
+# Create logs directory
+sudo -u ${APP_USER} mkdir -p /home/${APP_USER}/${PROJECT_NAME}/logs
+
+# Ensure the built application exists
+if [ ! -f "/home/${APP_USER}/${PROJECT_NAME}/dist/index.js" ]; then
+    echo "❌ Built application not found. Build may have failed."
+    echo "Checking build directory..."
+    ls -la /home/${APP_USER}/${PROJECT_NAME}/dist/ || echo "No dist directory found"
+    exit 1
+fi
+
+# Start PM2 with proper working directory
+cd /home/${APP_USER}/${PROJECT_NAME}
 sudo -u ${APP_USER} pm2 start ecosystem.config.js --env production
 sudo -u ${APP_USER} pm2 save
-sudo -u ${APP_USER} pm2 startup
+
+# Setup PM2 startup script
+pm2 startup systemd -u ${APP_USER} --hp /home/${APP_USER}
+sudo -u ${APP_USER} pm2 save
 
 # Setup Nginx
 echo "🌐 Configuring Nginx..."

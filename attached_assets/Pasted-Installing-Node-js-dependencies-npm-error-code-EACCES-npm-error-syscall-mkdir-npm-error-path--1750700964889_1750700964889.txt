@@ -1,0 +1,664 @@
+Installing Node.js dependencies...
+npm error code EACCES
+npm error syscall mkdir
+npm error path /home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm
+npm error errno -13
+npm error Error: EACCES: permission denied, mkdir '/home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm'
+npm error     at async mkdir (node:internal/fs/promises:858:10)
+npm error     at async /usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:624:20
+npm error     at async Promise.allSettled (index 0)
+npm error     at async [reifyPackages] (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:325:11)
+npm error     at async Arborist.reify (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:142:5)
+npm error     at async Install.exec (/usr/lib/node_modules/npm/lib/commands/install.js:150:5)
+npm error     at async Npm.exec (/usr/lib/node_modules/npm/lib/npm.js:207:9)
+npm error     at async module.exports (/usr/lib/node_modules/npm/lib/cli/entry.js:74:5) {
+npm error   errno: -13,
+npm error   code: 'EACCES',
+npm error   syscall: 'mkdir',
+npm error   path: '/home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm'
+npm error }
+npm error
+npm error The operation was rejected by your operating system.
+npm error It is likely you do not have the permissions to access this file as the current user
+npm error
+npm error If you believe this might be a permissions issue, please double-check the
+npm error permissions of the file and its containing directories, or try running
+npm error the command again as root/Administrator.
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.4.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.4.2
+npm notice To update run: npm install -g npm@11.4.2
+npm notice
+npm error A complete log of this run can be found in: /home/appuser/.npm/_logs/2025-06-23T17_38_37_628Z-debug-0.log
+npm error code EACCES
+npm error syscall mkdir
+npm error path /home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm
+npm error errno -13
+npm error Error: EACCES: permission denied, mkdir '/home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm'
+npm error     at async mkdir (node:internal/fs/promises:858:10)
+npm error     at async /usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:624:20
+npm error     at async Promise.allSettled (index 0)
+npm error     at async [reifyPackages] (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:325:11)
+npm error     at async Arborist.reify (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:142:5)
+npm error     at async Install.exec (/usr/lib/node_modules/npm/lib/commands/install.js:150:5)
+npm error     at async Npm.exec (/usr/lib/node_modules/npm/lib/npm.js:207:9)
+npm error     at async module.exports (/usr/lib/node_modules/npm/lib/cli/entry.js:74:5) {
+npm error   errno: -13,
+npm error   code: 'EACCES',
+npm error   syscall: 'mkdir',
+npm error   path: '/home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm'
+npm error }
+npm error
+npm error The operation was rejected by your operating system.
+npm error It is likely you do not have the permissions to access this file as the current user
+npm error
+npm error If you believe this might be a permissions issue, please double-check the
+npm error permissions of the file and its containing directories, or try running
+npm error the command again as root/Administrator.
+npm error A complete log of this run can be found in: /home/appuser/.npm/_logs/2025-06-23T17_38_39_087Z-debug-0.log
+tee: .env: Permission denied
+NODE_ENV=production
+DATABASE_URL=postgresql://appuser:SAJWJJAHED4E@localhost:5432/latelounge
+PGHOST=localhost
+PGPORT=5432
+PGUSER=appuser
+PGPASSWORD=SAJWJJAHED4E
+PGDATABASE=latelounge
+SESSION_SECRET=3ec16ab55a306e50162d74c724e8a6d7af4286e2afb7f010f122230a6c91871f
+REPL_ID=latelounge-production
+ISSUER_URL=https://replit.com/oidc
+REPLIT_DOMAINS=demo2.late-lounge.com
+Building the application...
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+failed to load config from /home/appuser/latelounge/vite.config.ts
+error during build:
+Error: EACCES: permission denied, open '/home/appuser/latelounge/vite.config.ts.timestamp-1750700320949-922e6575e5ebf.mjs'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1216:14)
+    at async loadConfigFromBundledFile (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66956:5)
+    at async loadConfigFromFile (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66799:24)
+    at async resolveConfig (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66399:24)
+    at async build (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65487:18)
+    at async CAC.<anonymous> (file:///home/appuser/latelounge/node_modules/vite/dist/node/cli.js:829:5)
+Copying logo assets to production...
+cp: cannot create regular file 'dist/public/assets/english-white_1750523827323.png': Permission denied
+✓ Copied white theme logo
+cp: cannot create regular file 'dist/public/assets/english-dark_1750523791780.png': Permission denied
+✓ Copied dark theme logo
+cp: cannot create regular file 'dist/public/assets/arabic-white_1750516260877.png': Permission denied
+✓ Copied Arabic white logo
+cp: cannot create regular file 'dist/public/assets/arabic-dark_1750516613229.png': Permission denied
+✓ Copied Arabic dark logo
+tee: ecosystem.config.cjs: Permission denied
+module.exports = {
+  apps: [{
+    name: 'latelounge',
+    script: 'dist/index.js',
+    instances: 1,
+    exec_mode: 'fork',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    },
+    error_file: './logs/err.log',
+    out_file: './logs/out.log',
+    log_file: './logs/combined.log',
+    time: true
+  }]
+};
+Setting correct file permissions for nginx...
+server {
+    listen 80;
+    server_name demo2.late-lounge.com www.demo2.late-lounge.com;
+
+    # Security headers
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied expired no-cache no-store private auth;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # Upload size limit
+    client_max_body_size 10M;
+
+    # CRITICAL: Map /assets/ requests to filesystem location
+    location /assets/ {
+        alias /home/appuser/latelounge/dist/public/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # Serve uploads
+    location /uploads/ {
+        alias /home/appuser/latelounge/uploads/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # API routes to Node.js
+    location /api/ {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Everything else to Node.js
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Setting up database schema and seeding data...
+
+> rest-express@1.0.0 db:push
+> drizzle-kit push
+
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/home/appuser/latelounge/drizzle.config.ts'
+Using 'pg' driver for database querying
+[✓] Pulling schema from database...
+[i] No changes detected
+📸 Copying development assets to production...
+mkdir: cannot create directory ‘/home/appuser/latelounge/assets’: Permission denied
+📋 Copying logo assets...
+cp: cannot create regular file '/home/appuser/latelounge/assets/english-white.png': No such file or directory
+✅ English white logo copied
+cp: cannot create regular file '/home/appuser/latelounge/assets/english-dark.png': No such file or directory
+✅ English dark logo copied
+cp: cannot create regular file '/home/appuser/latelounge/assets/arabic-white.png': No such file or directory
+✅ Arabic white logo copied
+cp: cannot create regular file '/home/appuser/latelounge/assets/arabic-dark.png': No such file or directory
+✅ Arabic dark logo copied
+📦 Copying development uploads...
+No uploads to copy
+✅ Development uploads copied
+chown: cannot access '/home/appuser/latelounge/assets': No such file or directory
+chmod: cannot access '/home/appuser/latelounge/assets': No such file or directory
+tee: seed-complete.js: Permission denied
+import { seedProductionData } from "./server/productionSeeder.js";
+
+async function seedComplete() {
+  console.log("🌱 Starting comprehensive production data seeding...");
+
+  try {
+    await seedProductionData();
+    console.log("✅ Production data seeded successfully!");
+    console.log("📊 Seeded data includes:");
+    console.log("   - 6 Categories with authentic content");
+    console.log("   - 19 Products with real descriptions and images");
+    console.log("   - Admin user (username: admin, password: admin123)");
+    console.log("   - Complete website content (About, Contact, Footer)");
+    console.log("   - Privacy Policy and Terms of Service");
+    console.log("   - Widget settings and logos");
+
+  } catch (error) {
+    console.error("❌ Error during seeding:", error);
+
+    // Fallback to basic seeding if production seeder fails
+    console.log("🔄 Attempting fallback seeding...");
+    const { storage } = await import("./server/storage.js");
+
+    try {
+      const existingAdmin = await storage.getUserByUsername("${ADMIN_USERNAME}");
+      if (!existingAdmin) {
+        const defaultAdmin = await storage.createLocalUser({
+          username: "${ADMIN_USERNAME}",
+          email: "${ADMIN_EMAIL}",
+          password: "${ADMIN_PASSWORD}",
+          firstName: "${ADMIN_FIRST_NAME}",
+          lastName: "${ADMIN_LAST_NAME}",
+          role: "administrator",
+          isActive: true
+        });
+        console.log("✅ Fallback admin user created");
+      }
+    } catch (fallbackError) {
+      console.error("❌ Fallback seeding also failed:", fallbackError);
+    }
+  }
+}
+
+seedComplete().then(() => {
+  console.log("🎉 Database seeding completed!");
+  process.exit(0);
+}).catch((error) => {
+  console.error("💥 Fatal seeding error:", error);
+  process.exit(1);
+});
+🌱 Running comprehensive production data seeding...
+
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+Error: tsx must be loaded with --import instead of --loader
+The --loader flag was deprecated in Node v20.6.0 and v18.19.0
+    at initialize (file:///home/appuser/latelounge/node_modules/tsx/dist/esm/index.mjs:1:919)
+    at Hooks.addCustomLoader (node:internal/modules/esm/hooks:206:24)
+    at Hooks.register (node:internal/modules/esm/hooks:172:16)
+    at async initializeHooks (node:internal/modules/esm/utils:324:5)
+    at async customizedModuleWorker (node:internal/modules/esm/worker:104:24)
+
+Node.js v20.19.3
+setup.sh: 339: isActive:: not found
+setup.sh: 340: },: not found
+setup.sh: 378: Syntax error: Bad for loop variable
+root@VM-9b346604-051d-4ac8-b4ca-5de25abab063:~# ^C
+root@VM-9b346604-051d-4ac8-b4ca-5de25abab063:~# nano setup.sh
+root@VM-9b346604-051d-4ac8-b4ca-5de25abab063:~# sh setup.sh
+=== LATELOUNGE COMPLETE AUTO-DEPLOYMENT SCRIPT ===
+This script includes ALL critical fixes discovered during development
+User appuser already exists
+Applying critical directory permissions fix...
+Installing system dependencies...
+Hit:1 http://mirror.leaseweb.com/ubuntu jammy InRelease
+Hit:2 http://mirror.leaseweb.com/ubuntu jammy-updates InRelease
+Hit:3 http://mirror.leaseweb.com/ubuntu jammy-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu jammy-security InRelease
+Hit:5 https://deb.nodesource.com/node_20.x nodistro InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+lsb-release is already the newest version (11.1.0ubuntu4).
+postgresql is already the newest version (14+238).
+postgresql-contrib is already the newest version (14+238).
+certbot is already the newest version (1.21.0-1build1).
+python3-certbot-nginx is already the newest version (1.21.0-1).
+curl is already the newest version (7.81.0-1ubuntu1.20).
+git is already the newest version (1:2.34.1-1ubuntu1.12).
+gnupg is already the newest version (2.2.27-3ubuntu2.3).
+nginx is already the newest version (1.18.0-6ubuntu14.6).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+2025-06-23 17:47:32 - Installing pre-requisites
+Hit:1 http://mirror.leaseweb.com/ubuntu jammy InRelease
+Hit:2 http://mirror.leaseweb.com/ubuntu jammy-updates InRelease
+Hit:3 http://mirror.leaseweb.com/ubuntu jammy-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu jammy-security InRelease
+Hit:5 https://deb.nodesource.com/node_20.x nodistro InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+ca-certificates is already the newest version (20240203~22.04.1).
+curl is already the newest version (7.81.0-1ubuntu1.20).
+gnupg is already the newest version (2.2.27-3ubuntu2.3).
+apt-transport-https is already the newest version (2.4.14).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Hit:1 http://mirror.leaseweb.com/ubuntu jammy InRelease
+Hit:2 http://mirror.leaseweb.com/ubuntu jammy-updates InRelease
+Hit:3 http://mirror.leaseweb.com/ubuntu jammy-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu jammy-security InRelease
+Hit:5 https://deb.nodesource.com/node_20.x nodistro InRelease
+Reading package lists... Done
+2025-06-23 17:47:39 - Repository configured successfully.
+2025-06-23 17:47:39 - To install Node.js, run: apt-get install nodejs -y
+2025-06-23 17:47:39 - You can use N|solid Runtime as a node.js alternative
+2025-06-23 17:47:39 - To install N|solid Runtime, run: apt-get install nsolid -y
+
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+nodejs is already the newest version (20.19.3-1nodesource1).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+
+changed 135 packages in 5s
+
+13 packages are looking for funding
+  run `npm fund` for details
+Setting up PostgreSQL with local authentication...
+User exists
+Database exists
+could not change directory to "/root": Permission denied
+GRANT
+local   all             appuser                                md5
+Installing Node.js dependencies...
+npm error code EACCES
+npm error syscall mkdir
+npm error path /home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm
+npm error errno -13
+npm error Error: EACCES: permission denied, mkdir '/home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm'
+npm error     at async mkdir (node:internal/fs/promises:858:10)
+npm error     at async /usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:624:20
+npm error     at async Promise.allSettled (index 0)
+npm error     at async [reifyPackages] (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:325:11)
+npm error     at async Arborist.reify (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:142:5)
+npm error     at async Install.exec (/usr/lib/node_modules/npm/lib/commands/install.js:150:5)
+npm error     at async Npm.exec (/usr/lib/node_modules/npm/lib/npm.js:207:9)
+npm error     at async module.exports (/usr/lib/node_modules/npm/lib/cli/entry.js:74:5) {
+npm error   errno: -13,
+npm error   code: 'EACCES',
+npm error   syscall: 'mkdir',
+npm error   path: '/home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm'
+npm error }
+npm error
+npm error The operation was rejected by your operating system.
+npm error It is likely you do not have the permissions to access this file as the current user
+npm error
+npm error If you believe this might be a permissions issue, please double-check the
+npm error permissions of the file and its containing directories, or try running
+npm error the command again as root/Administrator.
+npm error A complete log of this run can be found in: /home/appuser/.npm/_logs/2025-06-23T17_47_47_855Z-debug-0.log
+npm error code EACCES
+npm error syscall mkdir
+npm error path /home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm
+npm error errno -13
+npm error Error: EACCES: permission denied, mkdir '/home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm'
+npm error     at async mkdir (node:internal/fs/promises:858:10)
+npm error     at async /usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:624:20
+npm error     at async Promise.allSettled (index 0)
+npm error     at async [reifyPackages] (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:325:11)
+npm error     at async Arborist.reify (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:142:5)
+npm error     at async Install.exec (/usr/lib/node_modules/npm/lib/commands/install.js:150:5)
+npm error     at async Npm.exec (/usr/lib/node_modules/npm/lib/npm.js:207:9)
+npm error     at async module.exports (/usr/lib/node_modules/npm/lib/cli/entry.js:74:5) {
+npm error   errno: -13,
+npm error   code: 'EACCES',
+npm error   syscall: 'mkdir',
+npm error   path: '/home/appuser/latelounge/node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/android-arm'
+npm error }
+npm error
+npm error The operation was rejected by your operating system.
+npm error It is likely you do not have the permissions to access this file as the current user
+npm error
+npm error If you believe this might be a permissions issue, please double-check the
+npm error permissions of the file and its containing directories, or try running
+npm error the command again as root/Administrator.
+npm error A complete log of this run can be found in: /home/appuser/.npm/_logs/2025-06-23T17_47_49_185Z-debug-0.log
+tee: .env: Permission denied
+NODE_ENV=production
+DATABASE_URL=postgresql://appuser:SAJWJJAHED4E@localhost:5432/latelounge
+PGHOST=localhost
+PGPORT=5432
+PGUSER=appuser
+PGPASSWORD=SAJWJJAHED4E
+PGDATABASE=latelounge
+SESSION_SECRET=213f134d56f5df20851b33c3df6136b81df0f279dd85a9dffdb972f0678b34e5
+REPL_ID=latelounge-production
+ISSUER_URL=https://replit.com/oidc
+REPLIT_DOMAINS=demo2.late-lounge.com
+Building the application...
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+failed to load config from /home/appuser/latelounge/vite.config.ts
+error during build:
+Error: EACCES: permission denied, open '/home/appuser/latelounge/vite.config.ts.timestamp-1750700870977-fdfabb89f7935.mjs'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1216:14)
+    at async loadConfigFromBundledFile (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66956:5)
+    at async loadConfigFromFile (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66799:24)
+    at async resolveConfig (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66399:24)
+    at async build (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65487:18)
+    at async CAC.<anonymous> (file:///home/appuser/latelounge/node_modules/vite/dist/node/cli.js:829:5)
+Copying logo assets to production...
+cp: cannot create regular file 'dist/public/assets/english-white_1750523827323.png': Permission denied
+✓ Copied white theme logo
+cp: cannot create regular file 'dist/public/assets/english-dark_1750523791780.png': Permission denied
+✓ Copied dark theme logo
+cp: cannot create regular file 'dist/public/assets/arabic-white_1750516260877.png': Permission denied
+✓ Copied Arabic white logo
+cp: cannot create regular file 'dist/public/assets/arabic-dark_1750516613229.png': Permission denied
+✓ Copied Arabic dark logo
+tee: ecosystem.config.cjs: Permission denied
+module.exports = {
+  apps: [{
+    name: 'latelounge',
+    script: 'dist/index.js',
+    instances: 1,
+    exec_mode: 'fork',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    },
+    error_file: './logs/err.log',
+    out_file: './logs/out.log',
+    log_file: './logs/combined.log',
+    time: true
+  }]
+};
+Setting correct file permissions for nginx...
+server {
+    listen 80;
+    server_name demo2.late-lounge.com www.demo2.late-lounge.com;
+
+    # Security headers
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied expired no-cache no-store private auth;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # Upload size limit
+    client_max_body_size 10M;
+
+    # CRITICAL: Map /assets/ requests to filesystem location
+    location /assets/ {
+        alias /home/appuser/latelounge/dist/public/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # Serve uploads
+    location /uploads/ {
+        alias /home/appuser/latelounge/uploads/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # API routes to Node.js
+    location /api/ {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Everything else to Node.js
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Setting up database schema and seeding data...
+
+> rest-express@1.0.0 db:push
+> drizzle-kit push
+
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/home/appuser/latelounge/drizzle.config.ts'
+Using 'pg' driver for database querying
+[✓] Pulling schema from database...
+[i] No changes detected
+📸 Copying development assets to production...
+mkdir: cannot create directory ‘assets’: Permission denied
+chown: cannot access 'assets': No such file or directory
+chmod: cannot access 'assets': No such file or directory
+🌱 Running comprehensive production data seeding...
+
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/appuser/latelounge/server/productionSeeder.js' imported from /home/appuser/latelounge/seed-complete.js
+    at finalizeResolution (node:internal/modules/esm/resolve:283:11)
+    at moduleResolve (node:internal/modules/esm/resolve:952:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+    at nextResolve (node:internal/modules/esm/hooks:864:28)
+    at resolveBase (file:///home/appuser/latelounge/node_modules/tsx/dist/esm/index.mjs?1750700872798:2:3212)
+    at resolveDirectory (file:///home/appuser/latelounge/node_modules/tsx/dist/esm/index.mjs?1750700872798:2:3584)
+    at resolveTsPaths (file:///home/appuser/latelounge/node_modules/tsx/dist/esm/index.mjs?1750700872798:2:4073)
+    at resolve (file:///home/appuser/latelounge/node_modules/tsx/dist/esm/index.mjs?1750700872798:2:4447)
+    at nextResolve (node:internal/modules/esm/hooks:864:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:306:30) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///home/appuser/latelounge/server/productionSeeder.js'
+}
+
+Node.js v20.19.3
+🔨 Building application...
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+failed to load config from /home/appuser/latelounge/vite.config.ts
+error during build:
+Error: EACCES: permission denied, open '/home/appuser/latelounge/vite.config.ts.timestamp-1750700873507-d27021b5378dc.mjs'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1216:14)
+    at async loadConfigFromBundledFile (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66956:5)
+    at async loadConfigFromFile (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66799:24)
+    at async resolveConfig (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66399:24)
+    at async build (file:///home/appuser/latelounge/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65487:18)
+    at async CAC.<anonymous> (file:///home/appuser/latelounge/node_modules/vite/dist/node/cli.js:829:5)
+⚙️ Setting up PM2 configuration...
+tee: ecosystem.config.js: Permission denied
+module.exports = {
+  apps: [{
+    name: 'latelounge',
+    script: 'server/production.ts',
+    interpreter: 'node',
+    interpreter_args: '--import tsx/esm',
+    instances: 1,
+    exec_mode: 'fork',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    },
+    error_file: './logs/err.log',
+    out_file: './logs/out.log',
+    log_file: './logs/combined.log',
+    time: true
+  }]
+};
+🚀 Starting application with PM2...
+[PM2][WARN] Applications  not running, starting...
+[PM2][ERROR] Error: No script path - aborting
+[PM2] Saving current process list...
+[PM2][WARN] PM2 is not managing any process, skipping save...
+[PM2][WARN] To force saving use: pm2 save --force
+[PM2] Init System found: systemd
+[PM2] To setup the Startup Script, copy/paste the following command:
+sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u appuser --hp /home/appuser
+🌐 Setting up Nginx configuration...
+server {
+    listen 80;
+    server_name demo2.late-lounge.com www.demo2.late-lounge.com;
+
+    root /home/appuser/latelounge;
+    index index.html;
+
+    # Serve static files
+    location /assets/ {
+        alias /home/appuser/latelounge/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri $uri/ =404;
+    }
+
+    location /uploads/ {
+        alias /home/appuser/latelounge/uploads/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri $uri/ =404;
+    }
+
+    # Proxy API requests to Node.js
+    location /api/ {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Everything else to Node.js
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Handle large file uploads
+    client_max_body_size 10M;
+}
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+🔒 Setting up SSL certificate...
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Requesting a certificate for demo2.late-lounge.com and www.demo2.late-lounge.com
+
+Certbot failed to authenticate some domains (authenticator: nginx). The Certificate Authority reported these problems:
+  Domain: www.demo2.late-lounge.com
+  Type:   dns
+  Detail: DNS problem: NXDOMAIN looking up A for www.demo2.late-lounge.com - check that a DNS record exists for this domain; DNS problem: NXDOMAIN looking up AAAA for www.demo2.late-lounge.com - check that a DNS record exists for this domain
+
+Hint: The Certificate Authority failed to verify the temporary nginx configuration changes made by Certbot. Ensure the listed domains point to this nginx server and that it is accessible from the internet.
+
+Some challenges have failed.
+Ask for help or search for solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with -v for more details.
+🔥 Configuring firewall...
+Rules updated
+Rules updated (v6)
+Rules updated
+Rules updated (v6)
+Firewall is active and enabled on system startup
+✅ LateLounge deployment completed successfully!
+
+🌐 Your application should be available at: https://demo2.late-lounge.com
+🔑 Database credentials are stored in .env file
+📊 Check application status with: pm2 status
+📝 View logs with: pm2 logs latelounge
+🍽️ Production data includes:
+   - 6 Categories (Coffee, Hot Beverages, Cold Beverages, Breakfast, Main Dishes, Desserts)
+   - 19 Products with authentic data and images
+   - Admin user (username: admin, password: admin123456)
+   - Complete content (About, Contact, Footer, Privacy Policy, Terms)
+   - Logo assets and product images from development
+
+🎉 Deployment complete! Your LateLounge cafe website is now live with full data!
+setup.sh: 457: titleEn:: not found
+setup.sh: 458: titleAr:: not found
+setup.sh: 459: descriptionEn:: not found
+setup.sh: 460: descriptionAr:: not found
+setup.sh: 461: settings:: not found
+setup.sh: 462: enabled:: not found
+setup.sh: 463: tawkId:: not found
+setup.sh: 464: position:: not found
+setup.sh: 465: },: not found
+setup.sh: 466: isActive:: not found
+setup.sh: 467: Syntax error: "}" unexpected

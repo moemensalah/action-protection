@@ -5,13 +5,51 @@
 
 set -e
 
-# Configuration
+# Configuration Variables - Update these before deployment
 PROJECT_NAME="latelounge"
 APP_USER="appuser"
-DOMAIN="your-domain.com"  # Update this with your actual domain
-DB_NAME="latelounge_prod"
-DB_USER="latelounge_user"
-DB_PASS=$(openssl rand -base64 32)
+NODE_VERSION="20"
+APP_PORT="3000"
+
+# Domain Configuration
+DOMAIN="demo2.late-lounge.com"
+DOMAIN_WWW="www.demo2.late-lounge.com"
+GIT_REPO_URL="https://github.com/your-username/latelounge.git"
+
+# Database Configuration
+DB_USER="appuser"
+DB_PASSWORD="SAJWJJAHED4E"
+DB_NAME="latelounge"
+
+# Admin User Configuration
+ADMIN_USERNAME="admin"
+ADMIN_PASSWORD="admin123456"
+ADMIN_EMAIL="admin@latelounge.sa"
+ADMIN_FIRST_NAME="System"
+ADMIN_LAST_NAME="Administrator"
+
+# Company Information
+COMPANY_NAME_EN="LateLounge"
+COMPANY_NAME_AR="ليت لاونج"
+COMPANY_PHONE="+966 11 555 123413335"
+COMPANY_WHATSAPP="+966505551234"
+COMPANY_EMAIL="info@latelounge.sa"
+COMPANY_ADDRESS_EN="123 King Fahd Road, Riyadh, Saudi Arabia"
+COMPANY_ADDRESS_AR="123 طريق الملك فهد، الرياض، المملكة العربية السعودية"
+COMPANY_HOURS_EN="Sunday - Thursday: 7:00 AM - 11:00 PM"
+COMPANY_HOURS_AR="الأحد - الخميس: 7:00 ص - 11:00 م"
+
+# Social Media Links
+SOCIAL_INSTAGRAM="https://instagram.com/latelounge"
+SOCIAL_TWITTER="https://twitter.com/latelounge"
+SOCIAL_FACEBOOK="https://facebook.com/latelounge"
+SOCIAL_SNAPCHAT="https://snapchat.com/add/latelounge"
+
+# Logo Assets Configuration
+LOGO_WHITE_PATH="attached_assets/english-white_1750523827323.png"
+LOGO_DARK_PATH="attached_assets/english-dark_1750523791780.png"
+LOGO_ARABIC_WHITE_PATH="attached_assets/arabic-white_1750516260877.png"
+LOGO_ARABIC_DARK_PATH="attached_assets/arabic-dark_1750516613229.png"
 
 echo "🚀 Starting LateLounge Production Deployment..."
 
@@ -54,18 +92,19 @@ fi
 # Database Setup
 echo "🗄️ Setting up PostgreSQL database..."
 sudo -u postgres psql -c "CREATE DATABASE ${DB_NAME};" || true
-sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASS}';" || true
+sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';" || true
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_NAME} TO ${DB_USER};" || true
 
 # Create environment file
 echo "🔐 Creating environment configuration..."
 sudo -u ${APP_USER} tee /home/${APP_USER}/${PROJECT_NAME}/.env << ENV_EOF
 NODE_ENV=production
-DATABASE_URL=postgresql://${DB_USER}:${DB_PASS}@localhost:5432/${DB_NAME}
+DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}  
 SESSION_SECRET=$(openssl rand -base64 32)
 REPL_ID=production-${PROJECT_NAME}
 ISSUER_URL=https://replit.com/oidc
 REPLIT_DOMAINS=${DOMAIN}
+PORT=${APP_PORT}
 ENV_EOF
 
 # Build application
@@ -93,9 +132,9 @@ fi
 echo "🗄️ Running database migrations..."
 sudo -u ${APP_USER} npm run db:push
 
-# Create production seeder with inline data
-echo "🌱 Creating production seeder..."
-sudo -u ${APP_USER} tee /home/${APP_USER}/${PROJECT_NAME}/seed-production.js << 'SEED_EOF'
+# Create simple admin user seeder
+echo "🌱 Creating admin user seeder..."
+sudo -u ${APP_USER} tee /home/${APP_USER}/${PROJECT_NAME}/seed-admin.js << 'SEED_EOF'
 import { Pool } from 'pg';
 import bcrypt from 'bcryptjs';
 
@@ -103,107 +142,40 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
 
-async function seedProductionData() {
+async function createAdminUser() {
   const client = await pool.connect();
   
   try {
-    console.log("🌱 Starting production data seeding...");
-
-    // Seed Admin User
     console.log("👤 Creating admin user...");
-    const hashedPassword = await bcrypt.hash("admin123", 10);
-    await client.query(`
+    
+    const hashedPassword = await bcrypt.hash("${ADMIN_PASSWORD}", 10);
+    await client.query(\`
       INSERT INTO users (id, username, email, password, "firstName", "lastName", role, "isActive")
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      ON CONFLICT (id) DO NOTHING
-    `, ["admin_prod", "admin", "admin@latelounge.sa", hashedPassword, "System", "Administrator", "administrator", true]);
+      VALUES (\$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8)
+      ON CONFLICT (username) DO UPDATE SET 
+        email = \$3,
+        password = \$4,
+        "firstName" = \$5,
+        "lastName" = \$6,
+        role = \$7,
+        "isActive" = \$8
+    \`, ["admin_user", "${ADMIN_USERNAME}", "${ADMIN_EMAIL}", hashedPassword, "${ADMIN_FIRST_NAME}", "${ADMIN_LAST_NAME}", "administrator", true]);
 
-    // Seed Categories
-    console.log("📂 Creating categories...");
-    const categories = [
-      ["Coffee & Espresso", "القهوة والإسبريسو", "Premium coffee blends", "خلطات قهوة فاخرة", "coffee", "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&h=600", 1],
-      ["Hot Beverages", "المشروبات الساخنة", "Warm drinks", "مشروبات دافئة", "hot-drinks", "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=800&h=600", 2],
-      ["Cold Beverages", "المشروبات الباردة", "Refreshing cold drinks", "مشروبات باردة منعشة", "cold-drinks", "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800&h=600", 3],
-      ["Breakfast", "الإفطار", "Fresh breakfast options", "خيارات إفطار طازجة", "breakfast", "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800&h=600", 4],
-      ["Main Dishes", "الأطباق الرئيسية", "Hearty meals", "وجبات شهية", "main-dishes", "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=600", 5],
-      ["Desserts", "الحلويات", "Sweet treats", "حلويات حلوة", "desserts", "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&h=600", 6]
-    ];
-
-    for (let i = 0; i < categories.length; i++) {
-      const cat = categories[i];
-      await client.query(`
-        INSERT INTO categories ("nameEn", "nameAr", "descriptionEn", "descriptionAr", slug, image, "sortOrder", "isActive")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        ON CONFLICT (slug) DO NOTHING
-      `, [...cat, true]);
-    }
-
-    // Seed Products
-    console.log("🍽️ Creating products...");
-    const products = [
-      ["Espresso", "إسبريسو", "Rich espresso shot", "جرعة إسبريسو غنية", "15.00", 1, "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=600&h=400", 1],
-      ["Latte", "لاتيه", "Smooth espresso with milk", "إسبريسو ناعم مع حليب", "25.00", 1, "https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=600&h=400", 2],
-      ["Cappuccino", "كابتشينو", "Classic cappuccino", "كابتشينو كلاسيكي", "22.00", 1, "https://images.unsplash.com/photo-1572286258217-c4915328b391?w=600&h=400", 3],
-      ["Turkish Coffee", "قهوة تركية", "Traditional Turkish coffee", "قهوة تركية تقليدية", "18.00", 2, "https://images.unsplash.com/photo-1544279029-5b0b3e91b4d8?w=600&h=400", 1],
-      ["Hot Chocolate", "شوكولاتة ساخنة", "Rich hot chocolate", "شوكولاتة ساخنة غنية", "20.00", 2, "https://images.unsplash.com/photo-1542990253-a781e04c0082?w=600&h=400", 2],
-      ["Iced Coffee", "قهوة مثلجة", "Refreshing iced coffee", "قهوة مثلجة منعشة", "23.00", 3, "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=600&h=400", 1],
-      ["Fresh Juice", "عصير طازج", "Fresh fruit juice", "عصير فواكه طازج", "15.00", 3, "https://images.unsplash.com/photo-1514995669114-6081e934b693?w=600&h=400", 2]
-    ];
-
-    for (let i = 0; i < products.length; i++) {
-      const prod = products[i];
-      await client.query(`
-        INSERT INTO products ("nameEn", "nameAr", "descriptionEn", "descriptionAr", price, "categoryId", image, "sortOrder", stock, "isActive", "isFeatured", "isAvailable")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-      `, [...prod, 100, true, true, true]);
-    }
-
-    // Seed About Us
-    await client.query(`
-      INSERT INTO about_us ("titleEn", "titleAr", "contentEn", "contentAr", "isActive")
-      VALUES ($1, $2, $3, $4, $5)
-      ON CONFLICT (id) DO UPDATE SET "titleEn" = $1, "titleAr" = $2, "contentEn" = $3, "contentAr" = $4
-    `, [
-      "About LateLounge",
-      "حول ليت لاونج", 
-      "Welcome to LateLounge, where exceptional coffee meets warm hospitality. We serve premium beverages and delicious food in a cozy atmosphere.",
-      "مرحباً بكم في ليت لاونج، حيث تلتقي القهوة الاستثنائية بالضيافة الدافئة. نقدم مشروبات فاخرة وطعام لذيذ في أجواء مريحة.",
-      true
-    ]);
-
-    // Seed Contact Us
-    await client.query(`
-      INSERT INTO contact_us (phone, whatsapp, email, address, "addressAr", "workingHours", "workingHoursAr", "socialMediaLinks", "isActive")
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      ON CONFLICT (id) DO UPDATE SET phone = $1, whatsapp = $2, email = $3
-    `, [
-      "+966 11 555 1234",
-      "966555555555",
-      "contact@latelounge.sa",
-      "456 Coffee Street, Riyadh",
-      "456 شارع القهوة، الرياض",
-      "Daily: 6AM-12AM",
-      "يومياً: 6ص-12م",
-      JSON.stringify({
-        twitter: "https://twitter.com/latelounge_sa",
-        facebook: "https://facebook.com/latelounge",
-        instagram: "https://instagram.com/latelounge_sa"
-      }),
-      true
-    ]);
-
-    console.log("✅ Production data seeded successfully!");
+    console.log("✅ Admin user created successfully!");
+    console.log("👤 Login credentials:");
+    console.log("   Username: ${ADMIN_USERNAME}");  
+    console.log("   Password: ${ADMIN_PASSWORD}");
     
   } catch (error) {
-    console.error("❌ Seeding error:", error);
+    console.error("❌ Error creating admin user:", error);
     throw error;
   } finally {
     client.release();
   }
 }
 
-seedProductionData().then(() => {
-  console.log("🎉 Database seeding completed!");
+createAdminUser().then(() => {
+  console.log("🎉 Admin setup completed!");
   process.exit(0);
 }).catch(error => {
   console.error("💥 Fatal error:", error);
@@ -211,10 +183,10 @@ seedProductionData().then(() => {
 });
 SEED_EOF
 
-# Run seeding
-echo "🌱 Seeding production data..."
+# Run admin user creation
+echo "👤 Creating admin user..."
 cd /home/${APP_USER}/${PROJECT_NAME}
-sudo -u ${APP_USER} DATABASE_URL=postgresql://${DB_USER}:${DB_PASS}@localhost:5432/${DB_NAME} node seed-production.js
+sudo -u ${APP_USER} DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME} node seed-admin.js
 
 # Install PM2 and setup service
 echo "⚡ Setting up PM2 process manager..."
@@ -273,7 +245,8 @@ echo "🎉 LateLounge deployment completed successfully!"
 echo ""
 echo "📋 Deployment Summary:"
 echo "   🌐 Domain: ${DOMAIN}"
-echo "   👤 Admin Login: admin / admin123"
+echo "   👤 Admin Login: ${ADMIN_USERNAME} / ${ADMIN_PASSWORD}"
+echo "   📧 Admin Email: ${ADMIN_EMAIL}"
 echo "   🗄️ Database: ${DB_NAME}"
 echo "   📁 App Directory: /home/${APP_USER}/${PROJECT_NAME}"
 echo ""
@@ -282,4 +255,10 @@ echo "   sudo -u ${APP_USER} pm2 status"
 echo "   sudo -u ${APP_USER} pm2 logs ${PROJECT_NAME}"
 echo "   sudo -u ${APP_USER} pm2 restart ${PROJECT_NAME}"
 echo ""
-echo "🚀 Your LateLounge cafe website is now live!"
+echo "📝 Next Steps:"
+echo "   1. Access admin panel at: https://${DOMAIN}/admin"
+echo "   2. Log in with the credentials above"
+echo "   3. Add your categories, products, and content"
+echo "   4. Configure company information and settings"
+echo ""
+echo "🚀 Your LateLounge cafe website is now live and ready for content!"

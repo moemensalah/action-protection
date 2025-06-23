@@ -1,27 +1,41 @@
 #!/bin/bash
 
-cd /home/appuser/latelounge
+# Test server functionality and identify specific errors
+PROJECT_DIR="/home/appuser/latelounge"
+APP_USER="appuser"
 
-echo "=== SERVER TEST ==="
+echo "Testing server functionality..."
 
-echo "1. Checking if built files exist:"
-ls -la dist/ | head -10
+cd $PROJECT_DIR
 
-echo
-echo "2. Testing API endpoints:"
-curl -s http://localhost:3000/api/categories | head -5
+echo "=== PM2 Status ==="
+sudo -u $APP_USER pm2 status
 
-echo
-echo "3. Testing static file access:"
-curl -I http://localhost:3000/index.html
+echo ""
+echo "=== Recent Error Logs ==="
+sudo -u $APP_USER pm2 logs --err --lines 20
 
-echo
-echo "4. Testing manifest:"
-curl -I http://localhost:3000/manifest.json
+echo ""
+echo "=== Testing API Endpoints ==="
+echo "Contact API:"
+curl -v http://localhost:3000/api/contact 2>&1 | head -20
 
-echo
-echo "5. Checking server logs:"
-pm2 logs --lines 5
+echo ""
+echo "Categories API:"
+curl -v http://localhost:3000/api/categories 2>&1 | head -20
 
-echo
-echo "=== END TEST ==="
+echo ""
+echo "Main Route:"
+curl -v http://localhost:3000/ 2>&1 | head -20
+
+echo ""
+echo "Admin Route:"
+curl -v http://localhost:3000/admin 2>&1 | head -20
+
+echo ""
+echo "=== Environment Variables ==="
+sudo -u $APP_USER pm2 env 0
+
+echo ""
+echo "=== Database Test ==="
+sudo -u postgres psql -d latelounge_db -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';"

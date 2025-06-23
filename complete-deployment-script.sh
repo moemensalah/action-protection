@@ -15,17 +15,17 @@ APP_PORT="3000"
 DOMAIN="demo2.late-lounge.com"
 DOMAIN_WWW="www.demo2.late-lounge.com"
 DOMAIN_NAME="${DOMAIN},${DOMAIN_WWW},localhost:${APP_PORT},127.0.0.1:${APP_PORT}"
-GIT_REPO_URL="https://github.com/your-username/latelounge.git"
+GIT_REPO_URL="https://github.com/ahmedhamada108/cafe.git"
 
 # Database Configuration
-DB_USER="latelounge_user"
-DB_PASSWORD="secure_password_123"
+DB_USER="appuser"
+DB_PASSWORD="SAJWJJAHED4E"
 DB_NAME="latelounge_db"
 DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}"
 
 # Authentication Configuration
-SESSION_SECRET="latelounge-production-session-secret-2024"
-REPL_ID="latelounge-production"
+SESSION_SECRET="latelounge-production-session-st"
+REPL_ID="krw1cv"
 ISSUER_URL="https://replit.com/oidc"
 
 # Admin User Configuration

@@ -1,0 +1,67 @@
+[i] No changes detected
+🌱 Creating admin user seeder...
+import { Pool } from 'pg';
+import bcrypt from 'bcryptjs';
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+});
+
+async function createAdminUser() {
+  const client = await pool.connect();
+
+  try {
+    console.log("👤 Creating admin user...");
+
+    const hashedPassword = await bcrypt.hash("admin123456", 10);
+    await client.query(`
+      INSERT INTO users (id, username, email, password, "firstName", "lastName", role, "isActive")
+      VALUES (, , , , , , , )
+      ON CONFLICT (username) DO UPDATE SET
+        email = ,
+        password = ,
+        "firstName" = ,
+        "lastName" = ,
+        role = ,
+        "isActive" =
+    `, ["admin_user", "admin", "admin@latelounge.sa", hashedPassword, "System", "Administrator", "administrator", true]);
+
+    console.log("✅ Admin user created successfully!");
+    console.log("👤 Login credentials:");
+    console.log("   Username: admin");
+    console.log("   Password: admin123456");
+
+  } catch (error) {
+    console.error("❌ Error creating admin user:", error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+createAdminUser().then(() => {
+  console.log("🎉 Admin setup completed!");
+  process.exit(0);
+}).catch(error => {
+  console.error("💥 Fatal error:", error);
+  process.exit(1);
+});
+👤 Creating admin user...
+node:internal/modules/esm/resolve:873
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'bcryptjs' imported from /home/appuser/latelounge/seed-admin.js
+    at packageResolve (node:internal/modules/esm/resolve:873:9)
+    at moduleResolve (node:internal/modules/esm/resolve:946:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:642:12)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:591:25)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:574:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v20.19.3
+root@VM-9b346604-051d-4ac8-b4ca-5de25abab063:~#

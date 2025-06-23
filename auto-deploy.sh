@@ -5,26 +5,26 @@
 #===========================================
 
 # Domain Configuration
-DOMAIN_NAME="yourdomain.com"
-WWW_DOMAIN="www.yourdomain.com"
+DOMAIN_NAME="demo2.late-lounge.com"
+WWW_DOMAIN="www.demo2.late-lounge.com"
 
 # Database Configuration
 DB_NAME="latelounge_db"
 DB_USER="appuser"
-DB_PASSWORD="your_secure_password_here_change_this"
+DB_PASSWORD="SAJWJJAHED4E"
 
 # Application Configuration
 APP_NAME="latelounge"
 APP_USER="appuser"
 APP_PORT="3000"
-GIT_REPO="https://github.com/yourusername/your-repo.git"
+GIT_REPO="https://github.com/ahmedhamada108/cafe.git"
 
 # Security Configuration
-SESSION_SECRET="your_very_long_random_session_secret_minimum_32_characters_change_this"
-REPL_ID="your_repl_id_here"
+SESSION_SECRET="88HX0HZPT223ZNGGV1QJO4IA3GX5H48B"
+REPL_ID="krw1cv"
 
 # Email for SSL Certificate
-SSL_EMAIL="your-email@example.com"
+SSL_EMAIL="haitham@hmaserv.com"
 
 #===========================================
 # DO NOT EDIT BELOW THIS LINE

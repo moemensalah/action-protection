@@ -223,9 +223,9 @@ npm install -g pm2
 # Create logs directory
 sudo -u ${APP_USER} mkdir -p /home/${APP_USER}/${PROJECT_NAME}/logs
 
-# Create working PM2 ecosystem config
+# Create working PM2 ecosystem config using .cjs extension for CommonJS
 cd /home/${APP_USER}/${PROJECT_NAME}
-sudo -u ${APP_USER} tee ecosystem.config.js << PM2_CONFIG_EOF
+sudo -u ${APP_USER} tee ecosystem.config.cjs << PM2_CONFIG_EOF
 module.exports = {
   apps: [{
     name: '${PROJECT_NAME}',
@@ -254,11 +254,11 @@ PM2_CONFIG_EOF
 # Check build output and start appropriately
 if [ -f "/home/${APP_USER}/${PROJECT_NAME}/dist/index.js" ]; then
     echo "✅ Starting built application..."
-    sudo -u ${APP_USER} pm2 start ecosystem.config.js --env production
+    sudo -u ${APP_USER} pm2 start ecosystem.config.cjs --env production
 else
     echo "⚠️ Built application not found, starting with development mode..."
-    # Create alternative config for development
-    sudo -u ${APP_USER} tee ecosystem-dev.config.js << DEV_CONFIG_EOF
+    # Create alternative config for development using .cjs extension
+    sudo -u ${APP_USER} tee ecosystem-dev.config.cjs << DEV_CONFIG_EOF
 module.exports = {
   apps: [{
     name: '${PROJECT_NAME}',
@@ -280,7 +280,7 @@ module.exports = {
   }]
 };
 DEV_CONFIG_EOF
-    sudo -u ${APP_USER} pm2 start ecosystem-dev.config.js --env production
+    sudo -u ${APP_USER} pm2 start ecosystem-dev.config.cjs --env production
 fi
 
 sudo -u ${APP_USER} pm2 save

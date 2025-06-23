@@ -53,8 +53,18 @@ let server: any;
   // Development setup with Vite
   if (process.env.NODE_ENV !== "production") {
     await setupVite(app, server);
+    
+    const PORT = parseInt(process.env.PORT || "5000");
+    server.listen(PORT, "0.0.0.0", () => {
+      log(`Server running on port ${PORT}`);
+    });
   } else {
     // Production static file serving
     await serveStatic(app);
+    
+    const PORT = parseInt(process.env.PORT || "5000");
+    server.listen(PORT, "0.0.0.0", () => {
+      log(`Production server running on port ${PORT}`);
+    });
   }
 })();

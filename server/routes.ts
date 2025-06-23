@@ -173,6 +173,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
+  // User registration endpoint (admin only)
+  app.post('/api/auth/local/register', requireLocalAdmin, async (req, res) => {
+    try {
+      const userData = req.body;
+      
+      // Create the user using createLocalUser which handles password hashing
+      const newUser = await storage.createLocalUser(userData);
+      
+      // Return user data without password
+      const safeUser = {
+        id: newUser.id,
+        username: newUser.username,
+        email: newUser.email,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        role: newUser.role,
+        isActive: newUser.isActive,
+        createdAt: newUser.createdAt,
+        updatedAt: newUser.updatedAt
+      };
+      
+      res.status(201).json(safeUser);
+    } catch (error) {
+      console.error("Registration error:", error);
+      res.status(500).json({ message: "Registration failed" });
+    }
+  });
+
   // Categories API
   app.get("/api/categories", async (req, res) => {
     try {

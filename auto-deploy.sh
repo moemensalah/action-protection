@@ -3,28 +3,58 @@
 echo "=== LATELOUNGE COMPLETE AUTO-DEPLOYMENT SCRIPT ==="
 echo "This script includes ALL critical fixes discovered during development"
 
-# Variables
+# Configuration Variables - Modify these for your deployment
 DOMAIN="demo2.late-lounge.com"
+DOMAIN_WWW="www.demo2.late-lounge.com"
+GIT_REPO_URL="https://github.com/your-username/latelounge.git"
+PROJECT_NAME="latelounge"
+APP_USER="appuser"
 DB_USER="appuser"
 DB_PASSWORD="SAJWJJAHED4E"
 DB_NAME="latelounge"
 EMAIL="haitham@hmaserv.com"
+NODE_VERSION="20"
+APP_PORT="3000"
+
+# Admin User Configuration
+ADMIN_USERNAME="admin"
+ADMIN_PASSWORD="admin123456"
+ADMIN_EMAIL="admin@latelounge.sa"
+ADMIN_FIRST_NAME="System"
+ADMIN_LAST_NAME="Administrator"
+
+# Company Information
+COMPANY_NAME_EN="LateLounge"
+COMPANY_NAME_AR="ليت لاونج"
+COMPANY_PHONE="+966 11 555 123413335"
+COMPANY_WHATSAPP="+966505551234"
+COMPANY_EMAIL="info@latelounge.sa"
+COMPANY_ADDRESS_EN="123 King Fahd Road, Riyadh, Saudi Arabia"
+COMPANY_ADDRESS_AR="123 طريق الملك فهد، الرياض، المملكة العربية السعودية"
+COMPANY_HOURS_EN="Sunday - Thursday: 7:00 AM - 11:00 PM"
+COMPANY_HOURS_AR="الأحد - الخميس: 7:00 ص - 11:00 م"
+
+# Social Media Links
+SOCIAL_INSTAGRAM="https://instagram.com/latelounge"
+SOCIAL_TWITTER="https://twitter.com/latelounge"
+SOCIAL_FACEBOOK="https://facebook.com/latelounge"
+SOCIAL_SNAPCHAT="https://snapchat.com/add/latelounge"
 
 # Create user and setup directory
-sudo useradd -m -s /bin/bash appuser 2>/dev/null || echo "User appuser already exists"
-sudo usermod -aG sudo appuser
+sudo useradd -m -s /bin/bash ${APP_USER} 2>/dev/null || echo "User ${APP_USER} already exists"
+sudo usermod -aG sudo ${APP_USER}
 
 # CRITICAL FIX #1: Directory permissions for nginx access
 echo "Applying critical directory permissions fix..."
-sudo chmod o+x /home/appuser/
+sudo chmod o+x /home/${APP_USER}/
 
 # Install dependencies
 echo "Installing system dependencies..."
 sudo apt update
 sudo apt install -y curl gnupg lsb-release postgresql postgresql-contrib nginx certbot python3-certbot-nginx git
 
-# Install Node.js 20
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+# Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | sudo -E bash -
 sudo apt install -y nodejs
 
 # Install PM2 globally
@@ -42,19 +72,19 @@ echo "local   all             ${DB_USER}                                md5" | s
 sudo systemctl restart postgresql
 
 # Clone/setup project
-cd /home/appuser
-if [ ! -d "latelounge" ]; then
-    sudo -u appuser git clone https://github.com/your-repo/latelounge.git || echo "Using existing directory"
+cd /home/${APP_USER}
+if [ ! -d "${PROJECT_NAME}" ]; then
+    sudo -u ${APP_USER} git clone ${GIT_REPO_URL} ${PROJECT_NAME} || echo "Using existing directory"
 fi
-cd latelounge
+cd ${PROJECT_NAME}
 
 # Install all dependencies including authentication packages
 echo "Installing Node.js dependencies..."
-sudo -u appuser npm install
-sudo -u appuser npm install bcryptjs @types/bcryptjs
+sudo -u ${APP_USER} npm install
+sudo -u ${APP_USER} npm install bcryptjs @types/bcryptjs
 
 # Setup environment variables
-sudo -u appuser tee .env << EOF
+sudo -u ${APP_USER} tee .env << EOF
 NODE_ENV=production
 DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}
 PGHOST=localhost
@@ -63,26 +93,26 @@ PGUSER=${DB_USER}
 PGPASSWORD=${DB_PASSWORD}
 PGDATABASE=${DB_NAME}
 SESSION_SECRET=$(openssl rand -hex 32)
-REPL_ID=latelounge-production
+REPL_ID=${PROJECT_NAME}-production
 ISSUER_URL=https://replit.com/oidc
 REPLIT_DOMAINS=${DOMAIN}
 EOF
 
 # Build the project
 echo "Building the application..."
-sudo -u appuser npm run build
+sudo -u ${APP_USER} npm run build
 
 # CRITICAL FIX #3: PM2 ecosystem with .cjs extension for ES modules
-sudo -u appuser tee ecosystem.config.cjs << 'EOF'
+sudo -u ${APP_USER} tee ecosystem.config.cjs << EOF
 module.exports = {
   apps: [{
-    name: 'latelounge',
+    name: '${PROJECT_NAME}',
     script: 'dist/index.js',
     instances: 1,
     exec_mode: 'fork',
     env: {
       NODE_ENV: 'production',
-      PORT: 3000
+      PORT: ${APP_PORT}
     },
     error_file: './logs/err.log',
     out_file: './logs/out.log',
@@ -93,8 +123,8 @@ module.exports = {
 EOF
 
 # Create logs directory
-sudo -u appuser mkdir -p logs
-sudo -u appuser mkdir -p uploads
+sudo -u ${APP_USER} mkdir -p logs
+sudo -u ${APP_USER} mkdir -p uploads
 sudo chmod 755 uploads
 
 # CRITICAL FIX #4: File permissions for nginx
@@ -104,10 +134,10 @@ sudo chmod -R 755 dist/
 sudo find dist/ -type f -exec chmod 644 {} \;
 
 # CRITICAL FIX #5: Complete Nginx configuration with HTTP and proper asset mapping
-sudo tee /etc/nginx/sites-available/latelounge << 'EOF'
+sudo tee /etc/nginx/sites-available/${PROJECT_NAME} << EOF
 server {
     listen 80;
-    server_name demo2.late-lounge.com www.demo2.late-lounge.com;
+    server_name ${DOMAIN} ${DOMAIN_WWW};
 
     # Security headers
     add_header X-Frame-Options DENY;
@@ -126,42 +156,42 @@ server {
 
     # CRITICAL: Map /assets/ requests to filesystem location
     location /assets/ {
-        alias /home/appuser/latelounge/dist/public/assets/;
+        alias /home/${APP_USER}/${PROJECT_NAME}/dist/public/assets/;
         expires 1y;
         add_header Cache-Control "public, immutable";
-        try_files $uri =404;
+        try_files \$uri =404;
     }
 
     # Serve uploads
     location /uploads/ {
-        alias /home/appuser/latelounge/uploads/;
+        alias /home/${APP_USER}/${PROJECT_NAME}/uploads/;
         expires 1y;
         add_header Cache-Control "public, immutable";
-        try_files $uri =404;
+        try_files \$uri =404;
     }
 
     # API routes to Node.js
     location /api/ {
-        proxy_pass http://localhost:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://localhost:${APP_PORT};
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
     }
 
     # Everything else to Node.js
     location / {
-        proxy_pass http://localhost:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://localhost:${APP_PORT};
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
     }
 }
 EOF
 
 # Enable site and remove default
-sudo ln -sf /etc/nginx/sites-available/latelounge /etc/nginx/sites-enabled/
+sudo ln -sf /etc/nginx/sites-available/${PROJECT_NAME} /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default
 
 # Test and restart nginx
@@ -169,10 +199,10 @@ sudo nginx -t && sudo systemctl restart nginx
 
 # CRITICAL FIX #6: Database schema migration and complete seeding with admin user
 echo "Setting up database schema and seeding data..."
-sudo -u appuser npm run db:push
+sudo -u ${APP_USER} npm run db:push
 
 # Create comprehensive seeding script with admin user
-sudo -u appuser tee seed-complete.js << 'SEED_EOF'
+sudo -u ${APP_USER} tee seed-complete.js << 'SEED_EOF'
 import { storage } from "./dist/storage.js";
 
 async function seedComplete() {
@@ -182,21 +212,21 @@ async function seedComplete() {
     // Create default admin user
     console.log("👤 Creating default admin user...");
     try {
-      const existingAdmin = await storage.getUserByUsername("admin");
+      const existingAdmin = await storage.getUserByUsername("${ADMIN_USERNAME}");
       if (existingAdmin) {
         console.log("✅ Admin user already exists");
       } else {
         const defaultAdmin = await storage.createLocalUser({
-          username: "admin",
-          email: "admin@latelounge.sa",
-          password: "admin123456",
-          firstName: "System",
-          lastName: "Administrator",
+          username: "${ADMIN_USERNAME}",
+          email: "${ADMIN_EMAIL}",
+          password: "${ADMIN_PASSWORD}",
+          firstName: "${ADMIN_FIRST_NAME}",
+          lastName: "${ADMIN_LAST_NAME}",
           role: "administrator",
           isActive: true
         });
-        console.log(`✅ Created admin user: ${defaultAdmin.username}`);
-        console.log("🔑 Default password: admin123456 (CHANGE THIS!)");
+        console.log(\`✅ Created admin user: \${defaultAdmin.username}\`);
+        console.log("🔑 Default password: ${ADMIN_PASSWORD} (CHANGE THIS!)");
       }
     } catch (error) {
       console.log("Admin user creation skipped:", error.message);

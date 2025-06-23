@@ -22,6 +22,7 @@ DB_USER="appuser"
 DB_PASSWORD="SAJWJJAHED4E"
 DB_NAME="latelounge_db"
 DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}"
+DROP_EXISTING_DATABASE="true"  # Set to "false" to keep existing database
 
 # Authentication Configuration
 SESSION_SECRET="latelounge-production-session-st"
@@ -111,6 +112,14 @@ fi
 
 # Database Setup
 echo "🗄️ Setting up PostgreSQL database..."
+
+# Drop existing database if enabled
+if [ "$DROP_EXISTING_DATABASE" = "true" ]; then
+    echo "⚠️ Dropping existing database ${DB_NAME}..."
+    sudo -u postgres psql -c "DROP DATABASE IF EXISTS ${DB_NAME};" || true
+    echo "✅ Existing database dropped"
+fi
+
 sudo -u postgres psql -c "CREATE DATABASE ${DB_NAME};" || true
 sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';" || true
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_NAME} TO ${DB_USER};" || true

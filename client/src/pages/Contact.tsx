@@ -34,7 +34,7 @@ export default function Contact() {
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
 
-  const { data: contactData } = useQuery<ContactUs>({
+  const { data: contactData, isLoading } = useQuery<ContactUs>({
     queryKey: ["/api/contact"],
   });
 
@@ -168,21 +168,69 @@ export default function Contact() {
               </h2>
               
               <div className="space-y-6">
-                {contactInfo.map((info, index) => (
-                  <div key={index} className="flex items-start space-x-4 rtl:space-x-reverse">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <info.icon className="h-6 w-6 text-primary" />
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, index) => (
+                    <div key={index} className="flex items-start space-x-4 rtl:space-x-reverse">
+                      <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-lg animate-pulse"></div>
+                      <div className="flex-1">
+                        <div className="h-5 bg-gray-300 dark:bg-gray-600 rounded w-1/3 mb-2 animate-pulse"></div>
+                        <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-2/3 animate-pulse"></div>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground mb-1">
-                        {isRTL ? info.titleAr : info.titleEn}
-                      </h3>
-                      <p className="text-muted-foreground">
-                        {isRTL ? info.valueAr : info.valueEn}
-                      </p>
+                  ))
+                ) : contactData ? (
+                  [
+                    {
+                      icon: MapPin,
+                      titleEn: "Address",
+                      titleAr: "العنوان",
+                      valueEn: contactData.address,
+                      valueAr: contactData.addressAr,
+                    },
+                    {
+                      icon: Phone,
+                      titleEn: "Phone",
+                      titleAr: "الهاتف",
+                      valueEn: contactData.phone,
+                      valueAr: contactData.phone,
+                    },
+                    {
+                      icon: MessageCircle,
+                      titleEn: "WhatsApp",
+                      titleAr: "واتساب",
+                      valueEn: contactData.whatsapp,
+                      valueAr: contactData.whatsapp,
+                    },
+                    {
+                      icon: Mail,
+                      titleEn: "Email",
+                      titleAr: "البريد الإلكتروني",
+                      valueEn: contactData.email,
+                      valueAr: contactData.email,
+                    },
+                    {
+                      icon: Clock,
+                      titleEn: "Hours",
+                      titleAr: "ساعات العمل",
+                      valueEn: contactData.workingHours,
+                      valueAr: contactData.workingHoursAr,
+                    },
+                  ].map((info, index) => (
+                    <div key={index} className="flex items-start space-x-4 rtl:space-x-reverse">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <info.icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground mb-1">
+                          {isRTL ? info.titleAr : info.titleEn}
+                        </h3>
+                        <p className="text-muted-foreground">
+                          {isRTL ? info.valueAr : info.valueEn}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : null}
               </div>
 
               {/* Quick Call Buttons */}
@@ -192,28 +240,37 @@ export default function Contact() {
                 </h3>
                 
                 <div className="space-y-3">
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start gap-3"
-                    onClick={() => window.open(`tel:${contactData?.phone || '+1 (555) 123-4567'}`)}
-                  >
-                    <Phone className="h-4 w-4" />
-                    {isRTL ? "اتصال عادي" : "Regular Call"}
-                    <span className="ml-auto text-muted-foreground">{contactData?.phone || "+1 (555) 123-4567"}</span>
-                  </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start gap-3"
-                    onClick={() => {
-                      const whatsappNumber = contactData?.whatsapp?.replace(/[^\d]/g, '') || '15551234567';
-                      window.open(`https://wa.me/${whatsappNumber}`);
-                    }}
-                  >
-                    <span className="text-green-500">📱</span>
-                    {isRTL ? "واتساب" : "WhatsApp"}
-                    <span className="ml-auto text-muted-foreground">{contactData?.whatsapp || "+1 (555) 123-4567"}</span>
-                  </Button>
+                  {isLoading ? (
+                    <>
+                      <div className="h-12 bg-gray-300 dark:bg-gray-600 rounded animate-pulse"></div>
+                      <div className="h-12 bg-gray-300 dark:bg-gray-600 rounded animate-pulse"></div>
+                    </>
+                  ) : contactData ? (
+                    <>
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-start gap-3"
+                        onClick={() => window.open(`tel:${contactData.phone}`)}
+                      >
+                        <Phone className="h-4 w-4" />
+                        {isRTL ? "اتصال عادي" : "Regular Call"}
+                        <span className="ml-auto text-muted-foreground">{contactData.phone}</span>
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-start gap-3"
+                        onClick={() => {
+                          const whatsappNumber = contactData.whatsapp?.replace(/[^\d]/g, '');
+                          window.open(`https://wa.me/${whatsappNumber}`);
+                        }}
+                      >
+                        <span className="text-green-500">📱</span>
+                        {isRTL ? "واتساب" : "WhatsApp"}
+                        <span className="ml-auto text-muted-foreground">{contactData.whatsapp}</span>
+                      </Button>
+                    </>
+                  ) : null}
                 </div>
               </div>
             </div>

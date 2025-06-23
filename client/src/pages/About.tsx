@@ -136,11 +136,15 @@ export default function About() {
             </div>
             
             <div className="relative">
-              <img
-                src={aboutData?.image || "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"}
-                alt={aboutData ? (isRTL ? aboutData.titleAr : aboutData.titleEn) : "Café Interior"}
-                className="w-full h-96 object-cover rounded-lg shadow-lg"
-              />
+              {isLoading ? (
+                <div className="w-full h-96 bg-gray-300 dark:bg-gray-600 rounded-lg animate-pulse"></div>
+              ) : aboutData?.image ? (
+                <img
+                  src={aboutData.image}
+                  alt={isRTL ? aboutData.titleAr : aboutData.titleEn}
+                  className="w-full h-96 object-cover rounded-lg shadow-lg"
+                />
+              ) : null}
             </div>
           </div>
 
@@ -151,42 +155,63 @@ export default function About() {
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {features.map((feature, index) => {
-                const IconComponent = getIcon(feature.icon);
-                return (
-                  <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+              {isLoading ? (
+                Array.from({ length: 4 }).map((_, index) => (
+                  <Card key={index} className="text-center">
                     <CardContent className="p-6">
-                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <IconComponent className="h-8 w-8 text-primary" />
+                      <div className="w-16 h-16 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-4 animate-pulse"></div>
+                      <div className="h-6 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mx-auto mb-3 animate-pulse"></div>
+                      <div className="space-y-2">
+                        <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded animate-pulse"></div>
+                        <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-5/6 mx-auto animate-pulse"></div>
                       </div>
-                      <h3 className="text-xl font-semibold text-foreground mb-3">
-                        {isRTL ? feature.titleAr : feature.titleEn}
-                      </h3>
-                      <p className="text-muted-foreground">
-                        {isRTL ? feature.descAr : feature.descEn}
-                      </p>
                     </CardContent>
                   </Card>
-                );
-              })}
+                ))
+              ) : aboutData?.features ? (
+                aboutData.features.map((feature: Feature, index: number) => {
+                  const IconComponent = getIcon(feature.icon);
+                  return (
+                    <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <IconComponent className="h-8 w-8 text-primary" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-foreground mb-3">
+                          {isRTL ? feature.titleAr : feature.titleEn}
+                        </h3>
+                        <p className="text-muted-foreground">
+                          {isRTL ? feature.descAr : feature.descEn}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              ) : null}
             </div>
           </div>
 
           {/* Mission Statement */}
           <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 text-center">
-            <h2 className="text-3xl font-bold text-foreground mb-6">
-              {isRTL ? "مهمتنا" : "Our Mission"}
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-              {aboutData ? (
-                isRTL ? (aboutData.missionAr || "مهمتنا هي إنشاء تجارب لا تُنسى من خلال تقديم قهوة استثنائية ومأكولات لذيذة وخدمة ودودة.") 
-                      : (aboutData.missionEn || "Our mission is to create unforgettable experiences through exceptional coffee, delicious food, and warm hospitality.")
-              ) : (
-                isRTL 
-                  ? "مهمتنا هي إنشاء تجارب لا تُنسى من خلال تقديم قهوة استثنائية ومأكولات لذيذة وخدمة ودودة. نحن نؤمن بأن كل كوب يحكي قصة، وكل وجبة تخلق ذكريات، وكل زيارة يجب أن تجعلك تشعر وكأنك في المنزل."
-                  : "Our mission is to create unforgettable experiences through exceptional coffee, delicious food, and warm hospitality. We believe that every cup tells a story, every meal creates memories, and every visit should make you feel at home."
-              )}
-            </p>
+            {isLoading ? (
+              <div className="space-y-6">
+                <div className="h-8 bg-gray-300 dark:bg-gray-600 rounded w-1/4 mx-auto animate-pulse"></div>
+                <div className="space-y-3 max-w-4xl mx-auto">
+                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded animate-pulse"></div>
+                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-5/6 mx-auto animate-pulse"></div>
+                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-4/5 mx-auto animate-pulse"></div>
+                </div>
+              </div>
+            ) : aboutData ? (
+              <>
+                <h2 className="text-3xl font-bold text-foreground mb-6">
+                  {isRTL ? "مهمتنا" : "Our Mission"}
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+                  {isRTL ? aboutData.missionAr : aboutData.missionEn}
+                </p>
+              </>
+            ) : null}
           </div>
         </div>
       </section>

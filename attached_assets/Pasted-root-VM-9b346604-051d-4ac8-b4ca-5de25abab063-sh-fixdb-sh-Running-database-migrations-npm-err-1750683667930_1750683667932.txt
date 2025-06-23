@@ -1,0 +1,36 @@
+root@VM-9b346604-051d-4ac8-b4ca-5de25abab063:~# sh fixdb.sh
+Running database migrations...
+npm error code ENOENT
+npm error syscall open
+npm error path /root/package.json
+npm error errno -2
+npm error enoent Could not read package.json: Error: ENOENT: no such file or dir    ectory, open '/root/package.json'
+npm error enoent This is related to npm not being able to find a file.
+npm error enoent
+npm error A complete log of this run can be found in: /root/.npm/_logs/2025-06-2    3T13_00_17_541Z-debug-0.log
+Updating PM2 environment variables...
+[PM2] Applying action stopProcessId on app [all](ids: [ 0 ])
+[PM2] [latelounge](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ latelounge         │ fork     │ 2    │ stopped   │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2] Applying action deleteProcessId on app [all](ids: [ 0 ])
+[PM2] [latelounge](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2][WARN] Applications latelounge not running, starting...
+[PM2][WARN] Folder does not exist: /root/logs
+[PM2] Creating folder: /root/logs
+[PM2] App [latelounge] launched (1 instances)
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ latelounge         │ fork     │ 0    │ online    │ 0%       │ 17.3mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2] Saving current process list...
+[PM2] Successfully saved in /root/.pm2/dump.pm2
+Testing API...
+Database fix complete!

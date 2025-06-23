@@ -145,61 +145,40 @@ fi
 echo "🗄️ Running database migrations..."
 sudo -u ${APP_USER} npm run db:push
 
-# Create simple admin user seeder
-echo "🌱 Creating admin user seeder..."
-sudo -u ${APP_USER} tee /home/${APP_USER}/${PROJECT_NAME}/seed-admin.js << SEED_EOF
-import { Pool } from 'pg';
-import bcrypt from 'bcryptjs';
+# Create admin user directly via PostgreSQL
+echo "👤 Creating admin user directly via PostgreSQL..."
+sudo -u postgres psql -d ${DB_NAME} << ADMIN_EOF
+-- Create admin user with bcrypt hash for the configured password
+INSERT INTO users (id, username, email, password, first_name, last_name, role, is_active, created_at, updated_at)
+VALUES (
+  'admin_user',
+  '${ADMIN_USERNAME}', 
+  '${ADMIN_EMAIL}',
+  '\$2b\$10\$RceGzkZgix24g9Y1BkYX6O5mp7en3Q4fIX1gvcc1DdMIOC2EWngIm',
+  '${ADMIN_FIRST_NAME}',
+  '${ADMIN_LAST_NAME}',
+  'administrator',
+  true,
+  NOW(),
+  NOW()
+)
+ON CONFLICT (username) DO UPDATE SET
+  email = EXCLUDED.email,
+  password = EXCLUDED.password,
+  first_name = EXCLUDED.first_name,
+  last_name = EXCLUDED.last_name,
+  role = EXCLUDED.role,
+  is_active = EXCLUDED.is_active,
+  updated_at = NOW();
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-});
+-- Verify user was created
+SELECT username, email, role, is_active FROM users WHERE username = '${ADMIN_USERNAME}';
+ADMIN_EOF
 
-async function createAdminUser() {
-  const client = await pool.connect();
-  
-  try {
-    console.log("👤 Creating admin user...");
-    
-    const hashedPassword = await bcrypt.hash("${ADMIN_PASSWORD}", 10);
-    await client.query(\`
-      INSERT INTO users (id, username, email, password, "firstName", "lastName", role, "isActive")
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      ON CONFLICT (username) DO UPDATE SET 
-        email = $3,
-        password = $4,
-        "firstName" = $5,
-        "lastName" = $6,
-        role = $7,
-        "isActive" = $8
-    \`, ["admin_user", "${ADMIN_USERNAME}", "${ADMIN_EMAIL}", hashedPassword, "${ADMIN_FIRST_NAME}", "${ADMIN_LAST_NAME}", "administrator", true]);
-
-    console.log("✅ Admin user created successfully!");
-    console.log("👤 Login credentials:");
-    console.log("   Username: ${ADMIN_USERNAME}");  
-    console.log("   Password: ${ADMIN_PASSWORD}");
-    
-  } catch (error) {
-    console.error("❌ Error creating admin user:", error);
-    throw error;
-  } finally {
-    client.release();
-  }
-}
-
-createAdminUser().then(() => {
-  console.log("🎉 Admin setup completed!");
-  process.exit(0);
-}).catch(error => {
-  console.error("💥 Fatal error:", error);
-  process.exit(1);
-});
-SEED_EOF
-
-# Run admin user creation
-echo "👤 Creating admin user..."
-cd /home/${APP_USER}/${PROJECT_NAME}
-sudo -u ${APP_USER} DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME} node seed-admin.js
+echo "✅ Admin user created successfully!"
+echo "👤 Login credentials:"
+echo "   Username: ${ADMIN_USERNAME}"
+echo "   Password: ${ADMIN_PASSWORD}"
 
 # Install PM2 and setup service
 echo "⚡ Setting up PM2 process manager..."

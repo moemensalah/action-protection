@@ -1,0 +1,50 @@
+ Setting up production data seeding...
+import { seedProductionData } from "./server/productionSeeder.ts";
+
+async function seedComplete() {
+  console.log("🌱 Starting comprehensive production data seeding...");
+
+  try {
+    await seedProductionData();
+    console.log("✅ Production data seeded successfully!");
+    console.log("📊 Seeded data includes:");
+    console.log("   - 6 Categories with authentic content");
+    console.log("   - 19 Products with real descriptions and images");
+    console.log("   - Admin user (username: admin, password: admin123)");
+    console.log("   - Complete website content (About, Contact, Footer)");
+    console.log("   - Privacy Policy and Terms of Service");
+    console.log("   - Widget settings and logos");
+
+  } catch (error) {
+    console.error("❌ Error during seeding:", error);
+    process.exit(1);
+  }
+}
+
+seedComplete().then(() => {
+  console.log("🎉 Database seeding completed!");
+  process.exit(0);
+}).catch((error) => {
+  console.error("💥 Fatal seeding error:", error);
+  process.exit(1);
+});
+🌱 Running production data seeding...
+
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/appuser/latelounge/server/productionSeeder.ts' imported from /home/appuser/latelounge/seed-production.js
+    at finalizeResolution (node:internal/modules/esm/resolve:283:11)
+    at moduleResolve (node:internal/modules/esm/resolve:952:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+    at nextResolve (node:internal/modules/esm/hooks:864:28)
+    at resolveBase (file:///home/appuser/latelounge/node_modules/tsx/dist/esm/index.mjs?1750701549461:2:3811)
+    at resolveDirectory (file:///home/appuser/latelounge/node_modules/tsx/dist/esm/index.mjs?1750701549461:2:4310)
+    at resolveTsPaths (file:///home/appuser/latelounge/node_modules/tsx/dist/esm/index.mjs?1750701549461:2:5051)
+    at resolve (file:///home/appuser/latelounge/node_modules/tsx/dist/esm/index.mjs?1750701549461:2:5428)
+    at nextResolve (node:internal/modules/esm/hooks:864:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:306:30) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///home/appuser/latelounge/server/productionSeeder.ts'
+}
+

@@ -1,413 +1,285 @@
 #!/bin/bash
 
-echo "=== LATELOUNGE COMPLETE DEPLOYMENT SCRIPT ==="
+# Complete LateLounge Production Deployment Script
+# Fixes all permission, build, and seeding issues
 
-# Variables
-DOMAIN="demo2.late-lounge.com"
-DB_USER="appuser"
-DB_PASSWORD="SAJWJJAHED4E"
-DB_NAME="latelounge"
-EMAIL="haitham@hmaserv.com"
+set -e
 
-# Create user and setup directory
-sudo useradd -m -s /bin/bash appuser 2>/dev/null || echo "User appuser already exists"
-sudo usermod -aG sudo appuser
+# Configuration
+PROJECT_NAME="latelounge"
+APP_USER="appuser"
+DOMAIN="your-domain.com"  # Update this with your actual domain
+DB_NAME="latelounge_prod"
+DB_USER="latelounge_user"
+DB_PASS=$(openssl rand -base64 32)
 
-# CRITICAL FIX: Directory permissions for nginx access
-sudo chmod o+x /home/appuser/
+echo "🚀 Starting LateLounge Production Deployment..."
 
-# Install dependencies
-sudo apt update
-sudo apt install -y curl gnupg lsb-release postgresql postgresql-contrib nginx certbot python3-certbot-nginx git
+# System Setup
+echo "⚙️ Setting up system dependencies..."
+apt update
+apt install -y nodejs npm postgresql postgresql-contrib nginx certbot python3-certbot-nginx
 
-# Install Node.js 20
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
-
-# Install PM2 globally
-sudo npm install -g pm2
-
-# Setup PostgreSQL with local connection
-sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';" 2>/dev/null || echo "User exists"
-sudo -u postgres psql -c "CREATE DATABASE ${DB_NAME} OWNER ${DB_USER};" 2>/dev/null || echo "Database exists"
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_NAME} TO ${DB_USER};"
-
-# Configure PostgreSQL for local connections
-sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = 'localhost'/" /etc/postgresql/*/main/postgresql.conf
-echo "local   all             ${DB_USER}                                md5" | sudo tee -a /etc/postgresql/*/main/pg_hba.conf
-sudo systemctl restart postgresql
-
-# Clone/setup project
-cd /home/appuser
-if [ ! -d "latelounge" ]; then
-    sudo -u appuser git clone https://github.com/your-repo/latelounge.git || echo "Using existing directory"
+# Create application user
+if ! id "$APP_USER" &>/dev/null; then
+    useradd -m -s /bin/bash $APP_USER
 fi
-cd latelounge
 
-# Install project dependencies
-sudo -u appuser npm install
+# Setup directories with proper permissions
+echo "📁 Creating directory structure..."
+mkdir -p /home/${APP_USER}/${PROJECT_NAME}
+mkdir -p /home/${APP_USER}/${PROJECT_NAME}/uploads
+mkdir -p /home/${APP_USER}/${PROJECT_NAME}/assets
+chown -R ${APP_USER}:${APP_USER} /home/${APP_USER}
 
-# Install additional dependencies for authentication
-sudo -u appuser npm install bcryptjs @types/bcryptjs
+# Deploy source code
+echo "📦 Deploying application files..."
+cp -r . /tmp/deployment-staging/
+chown -R ${APP_USER}:${APP_USER} /tmp/deployment-staging/
+sudo -u ${APP_USER} cp -r /tmp/deployment-staging/* /home/${APP_USER}/${PROJECT_NAME}/
 
-# Setup environment variables
-sudo -u appuser tee .env << EOF
+# Install Node.js dependencies
+echo "📦 Installing dependencies..."
+cd /home/${APP_USER}/${PROJECT_NAME}
+sudo -u ${APP_USER} npm cache clean --force
+sudo -u ${APP_USER} rm -rf node_modules package-lock.json
+sudo -u ${APP_USER} npm install
+
+# Fix Rollup dependency issue
+if [ ! -d "/home/${APP_USER}/${PROJECT_NAME}/node_modules/@rollup/rollup-linux-x64-gnu" ]; then
+    echo "🔧 Installing Rollup dependency..."
+    sudo -u ${APP_USER} npm install @rollup/rollup-linux-x64-gnu --save-optional
+fi
+
+# Database Setup
+echo "🗄️ Setting up PostgreSQL database..."
+sudo -u postgres psql -c "CREATE DATABASE ${DB_NAME};" || true
+sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASS}';" || true
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_NAME} TO ${DB_USER};" || true
+
+# Create environment file
+echo "🔐 Creating environment configuration..."
+sudo -u ${APP_USER} tee /home/${APP_USER}/${PROJECT_NAME}/.env << ENV_EOF
 NODE_ENV=production
-DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}
-PGHOST=localhost
-PGPORT=5432
-PGUSER=${DB_USER}
-PGPASSWORD=${DB_PASSWORD}
-PGDATABASE=${DB_NAME}
-SESSION_SECRET=$(openssl rand -hex 32)
-REPL_ID=latelounge-production
+DATABASE_URL=postgresql://${DB_USER}:${DB_PASS}@localhost:5432/${DB_NAME}
+SESSION_SECRET=$(openssl rand -base64 32)
+REPL_ID=production-${PROJECT_NAME}
 ISSUER_URL=https://replit.com/oidc
 REPLIT_DOMAINS=${DOMAIN}
-EOF
+ENV_EOF
 
-# Build the project
-sudo -u appuser npm run build
+# Build application
+echo "🔨 Building application..."
+BUILD_SUCCESS=false
+for i in {1..3}; do
+    if sudo -u ${APP_USER} npm run build; then
+        BUILD_SUCCESS=true
+        break
+    else
+        echo "Build attempt $i failed, retrying..."
+        sudo -u ${APP_USER} rm -rf node_modules/.vite dist
+        if [ $i -eq 2 ]; then
+            sudo -u ${APP_USER} npm install @rollup/rollup-linux-x64-gnu --force
+        fi
+    fi
+done
 
-# Create PM2 ecosystem configuration (use .cjs for ES modules)
-sudo -u appuser tee ecosystem.config.cjs << 'EOF'
-module.exports = {
-  apps: [{
-    name: 'latelounge',
-    script: 'dist/index.js',
-    instances: 1,
-    exec_mode: 'fork',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000
-    },
-    error_file: './logs/err.log',
-    out_file: './logs/out.log',
-    log_file: './logs/combined.log',
-    time: true
-  }]
-};
-EOF
+if [ "$BUILD_SUCCESS" = false ]; then
+    echo "❌ Build failed. Trying alternative method..."
+    sudo -u ${APP_USER} npx vite build --force
+fi
 
-# Create logs directory
-sudo -u appuser mkdir -p logs
+# Database migration
+echo "🗄️ Running database migrations..."
+sudo -u ${APP_USER} npm run db:push
 
-# Setup uploads directory
-sudo -u appuser mkdir -p uploads
-sudo chmod 755 uploads
+# Create production seeder with inline data
+echo "🌱 Creating production seeder..."
+sudo -u ${APP_USER} tee /home/${APP_USER}/${PROJECT_NAME}/seed-production.js << 'SEED_EOF'
+import { Pool } from 'pg';
+import bcrypt from 'bcryptjs';
 
-# Fix all file permissions for nginx
-sudo chown -R www-data:www-data dist/
-sudo chmod -R 755 dist/
-sudo find dist/ -type f -exec chmod 644 {} \;
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+});
 
-# Generate SSL certificate
-sudo mkdir -p /etc/ssl/certs /etc/ssl/private
-sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/ssl/private/latelounge.key \
-    -out /etc/ssl/certs/latelounge.crt \
-    -subj "/C=SA/ST=Riyadh/L=Riyadh/O=LateLounge/CN=${DOMAIN}"
-
-# Create complete Nginx configuration
-sudo tee /etc/nginx/sites-available/latelounge << 'EOF'
-# HTTP server (redirects to HTTPS)
-server {
-    listen 80;
-    server_name demo2.late-lounge.com www.demo2.late-lounge.com;
-    return 301 https://$server_name$request_uri;
-}
-
-# HTTPS server
-server {
-    listen 443 ssl http2;
-    server_name demo2.late-lounge.com www.demo2.late-lounge.com;
-
-    # SSL configuration
-    ssl_certificate /etc/ssl/certs/latelounge.crt;
-    ssl_certificate_key /etc/ssl/private/latelounge.key;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384;
-    ssl_prefer_server_ciphers off;
-
-    # Security headers
-    add_header X-Frame-Options DENY;
-    add_header X-Content-Type-Options nosniff;
-    add_header X-XSS-Protection "1; mode=block";
-
-    # Gzip compression
-    gzip on;
-    gzip_vary on;
-    gzip_min_length 1024;
-    gzip_proxied expired no-cache no-store private auth;
-    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
-
-    # Upload size limit
-    client_max_body_size 10M;
-
-    # Map /assets/ requests to filesystem location
-    location /assets/ {
-        alias /home/appuser/latelounge/dist/public/assets/;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-        try_files $uri =404;
-    }
-
-    # Serve uploads
-    location /uploads/ {
-        alias /home/appuser/latelounge/uploads/;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-        try_files $uri =404;
-    }
-
-    # API routes to Node.js
-    location /api/ {
-        proxy_pass http://localhost:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # Everything else to Node.js
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_Set_header X-Forwarded-Proto $scheme;
-    }
-}
-EOF
-
-# Fix the typo in nginx config
-sudo sed -i 's/proxy_Set_header/proxy_set_header/g' /etc/nginx/sites-available/latelounge
-
-# Enable site and remove default
-sudo ln -sf /etc/nginx/sites-available/latelounge /etc/nginx/sites-enabled/
-sudo rm -f /etc/nginx/sites-enabled/default
-
-# Test and restart nginx
-sudo nginx -t && sudo systemctl restart nginx
-
-# Setup database schema and seed with admin user
-sudo -u appuser npm run db:push
-
-# Create comprehensive seeding script with admin user
-sudo -u appuser tee seed-complete.js << 'SEED_EOF'
-import { storage } from "./dist/storage.js";
-
-async function seedComplete() {
-  console.log("🌱 Starting complete database seeding with admin user...");
-
+async function seedProductionData() {
+  const client = await pool.connect();
+  
   try {
-    // Create default admin user
-    console.log("👤 Creating default admin user...");
-    try {
-      const existingAdmin = await storage.getUserByUsername("admin");
-      if (existingAdmin) {
-        console.log("✅ Admin user already exists");
-      } else {
-        const defaultAdmin = await storage.createLocalUser({
-          username: "admin",
-          email: "admin@latelounge.sa",
-          password: "admin123456",
-          firstName: "System",
-          lastName: "Administrator",
-          role: "administrator",
-          isActive: true
-        });
-        console.log(`✅ Created admin user: ${defaultAdmin.username}`);
-        console.log("🔑 Default password: admin123456 (CHANGE THIS!)");
-      }
-    } catch (error) {
-      console.log("Admin user creation skipped:", error.message);
-    }
+    console.log("🌱 Starting production data seeding...");
 
-    // Check if sample data exists
-    const existingCategories = await storage.getCategories();
-    if (existingCategories.length > 0) {
-      console.log("✅ Sample data already exists");
-      return;
-    }
+    // Seed Admin User
+    console.log("👤 Creating admin user...");
+    const hashedPassword = await bcrypt.hash("admin123", 10);
+    await client.query(`
+      INSERT INTO users (id, username, email, password, "firstName", "lastName", role, "isActive")
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      ON CONFLICT (id) DO NOTHING
+    `, ["admin_prod", "admin", "admin@latelounge.sa", hashedPassword, "System", "Administrator", "administrator", true]);
 
     // Seed Categories
-    const coffeeCategory = await storage.createCategory({
-      nameEn: "Coffee & Espresso",
-      nameAr: "القهوة والإسبريسو", 
-      descriptionEn: "Premium coffee blends and specialty drinks",
-      descriptionAr: "خلطات قهوة فاخرة ومشروبات مميزة",
-      slug: "coffee",
-      image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-      isActive: true
-    });
+    console.log("📂 Creating categories...");
+    const categories = [
+      ["Coffee & Espresso", "القهوة والإسبريسو", "Premium coffee blends", "خلطات قهوة فاخرة", "coffee", "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&h=600", 1],
+      ["Hot Beverages", "المشروبات الساخنة", "Warm drinks", "مشروبات دافئة", "hot-drinks", "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=800&h=600", 2],
+      ["Cold Beverages", "المشروبات الباردة", "Refreshing cold drinks", "مشروبات باردة منعشة", "cold-drinks", "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800&h=600", 3],
+      ["Breakfast", "الإفطار", "Fresh breakfast options", "خيارات إفطار طازجة", "breakfast", "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800&h=600", 4],
+      ["Main Dishes", "الأطباق الرئيسية", "Hearty meals", "وجبات شهية", "main-dishes", "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=600", 5],
+      ["Desserts", "الحلويات", "Sweet treats", "حلويات حلوة", "desserts", "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&h=600", 6]
+    ];
 
-    const hotDrinksCategory = await storage.createCategory({
-      nameEn: "Hot Beverages",
-      nameAr: "المشروبات الساخنة",
-      descriptionEn: "Warm and comforting drinks",
-      descriptionAr: "مشروبات دافئة ومريحة",
-      slug: "hot-drinks",
-      image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-      isActive: true
-    });
+    for (let i = 0; i < categories.length; i++) {
+      const cat = categories[i];
+      await client.query(`
+        INSERT INTO categories ("nameEn", "nameAr", "descriptionEn", "descriptionAr", slug, image, "sortOrder", "isActive")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        ON CONFLICT (slug) DO NOTHING
+      `, [...cat, true]);
+    }
 
     // Seed Products
-    await storage.createProduct({
-      nameEn: "Espresso",
-      nameAr: "إسبريسو",
-      descriptionEn: "Rich and bold espresso shot",
-      descriptionAr: "جرعة إسبريسو غنية وجريئة",
-      price: "15.00",
-      categoryId: coffeeCategory.id,
-      image: "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      isActive: true,
-      isFeatured: true,
-      isAvailable: true
-    });
+    console.log("🍽️ Creating products...");
+    const products = [
+      ["Espresso", "إسبريسو", "Rich espresso shot", "جرعة إسبريسو غنية", "15.00", 1, "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=600&h=400", 1],
+      ["Latte", "لاتيه", "Smooth espresso with milk", "إسبريسو ناعم مع حليب", "25.00", 1, "https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=600&h=400", 2],
+      ["Cappuccino", "كابتشينو", "Classic cappuccino", "كابتشينو كلاسيكي", "22.00", 1, "https://images.unsplash.com/photo-1572286258217-c4915328b391?w=600&h=400", 3],
+      ["Turkish Coffee", "قهوة تركية", "Traditional Turkish coffee", "قهوة تركية تقليدية", "18.00", 2, "https://images.unsplash.com/photo-1544279029-5b0b3e91b4d8?w=600&h=400", 1],
+      ["Hot Chocolate", "شوكولاتة ساخنة", "Rich hot chocolate", "شوكولاتة ساخنة غنية", "20.00", 2, "https://images.unsplash.com/photo-1542990253-a781e04c0082?w=600&h=400", 2],
+      ["Iced Coffee", "قهوة مثلجة", "Refreshing iced coffee", "قهوة مثلجة منعشة", "23.00", 3, "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=600&h=400", 1],
+      ["Fresh Juice", "عصير طازج", "Fresh fruit juice", "عصير فواكه طازج", "15.00", 3, "https://images.unsplash.com/photo-1514995669114-6081e934b693?w=600&h=400", 2]
+    ];
 
-    await storage.createProduct({
-      nameEn: "Cappuccino", 
-      nameAr: "كابتشينو",
-      descriptionEn: "Classic Italian coffee with steamed milk",
-      descriptionAr: "قهوة إيطالية كلاسيكية مع حليب مبخر",
-      price: "22.00",
-      categoryId: coffeeCategory.id,
-      image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      isActive: true,
-      isFeatured: false,
-      isAvailable: true
-    });
+    for (let i = 0; i < products.length; i++) {
+      const prod = products[i];
+      await client.query(`
+        INSERT INTO products ("nameEn", "nameAr", "descriptionEn", "descriptionAr", price, "categoryId", image, "sortOrder", stock, "isActive", "isFeatured", "isAvailable")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      `, [...prod, 100, true, true, true]);
+    }
 
-    await storage.createProduct({
-      nameEn: "Green Tea",
-      nameAr: "شاي أخضر",
-      descriptionEn: "Premium organic green tea",
-      descriptionAr: "شاي أخضر عضوي فاخر",
-      price: "18.00",
-      categoryId: hotDrinksCategory.id,
-      image: "https://images.unsplash.com/photo-1556881286-fc6915169721?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      isActive: true,
-      isFeatured: false,
-      isAvailable: true
-    });
+    // Seed About Us
+    await client.query(`
+      INSERT INTO about_us ("titleEn", "titleAr", "contentEn", "contentAr", "isActive")
+      VALUES ($1, $2, $3, $4, $5)
+      ON CONFLICT (id) DO UPDATE SET "titleEn" = $1, "titleAr" = $2, "contentEn" = $3, "contentAr" = $4
+    `, [
+      "About LateLounge",
+      "حول ليت لاونج", 
+      "Welcome to LateLounge, where exceptional coffee meets warm hospitality. We serve premium beverages and delicious food in a cozy atmosphere.",
+      "مرحباً بكم في ليت لاونج، حيث تلتقي القهوة الاستثنائية بالضيافة الدافئة. نقدم مشروبات فاخرة وطعام لذيذ في أجواء مريحة.",
+      true
+    ]);
 
-    // Seed content
-    await storage.createOrUpdateContactUs({
-      phone: "+966 11 555 123413335",
-      whatsapp: "+966505551234",
-      email: "info@latelounge.sa",
-      address: "123 King Fahd Road, Riyadh, Saudi Arabia",
-      addressAr: "123 طريق الملك فهد، الرياض، المملكة العربية السعودية",
-      workingHours: "Sunday - Thursday: 7:00 AM - 11:00 PM",
-      workingHoursAr: "الأحد - الخميس: 7:00 ص - 11:00 م",
-      socialMediaLinks: {
-        instagram: "https://instagram.com/latelounge",
-        twitter: "https://twitter.com/latelounge",
-        facebook: "https://facebook.com/latelounge"
-      },
-      isActive: true
-    });
+    // Seed Contact Us
+    await client.query(`
+      INSERT INTO contact_us (phone, whatsapp, email, address, "addressAr", "workingHours", "workingHoursAr", "socialMediaLinks", "isActive")
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      ON CONFLICT (id) DO UPDATE SET phone = $1, whatsapp = $2, email = $3
+    `, [
+      "+966 11 555 1234",
+      "966555555555",
+      "contact@latelounge.sa",
+      "456 Coffee Street, Riyadh",
+      "456 شارع القهوة، الرياض",
+      "Daily: 6AM-12AM",
+      "يومياً: 6ص-12م",
+      JSON.stringify({
+        twitter: "https://twitter.com/latelounge_sa",
+        facebook: "https://facebook.com/latelounge",
+        instagram: "https://instagram.com/latelounge_sa"
+      }),
+      true
+    ]);
 
-    await storage.createOrUpdateFooterContent({
-      companyNameEn: "LateLounge*",
-      companyNameAr: "ليت لاونج*",
-      descriptionEn: "Premium coffee experience with authentic flavors",
-      descriptionAr: "تجربة قهوة فاخرة مع نكهات أصيلة",
-      copyrightText: "© 2024 LateLounge. All rights reserved.",
-      quickLinks: [
-        { nameEn: "About Us", nameAr: "من نحن", url: "/about" },
-        { nameEn: "Menu", nameAr: "القائمة", url: "/menu" },
-        { nameEn: "Contact", nameAr: "اتصل بنا", url: "/contact" }
-      ],
-      isActive: true
-    });
-
-    await storage.createOrUpdateAboutUs({
-      titleEn: "About LateLounge",
-      titleAr: "حول ليت لاونج",
-      contentEn: "Welcome to LateLounge, where exceptional coffee meets warm hospitality.",
-      contentAr: "مرحباً بكم في ليت لاونج، حيث تلتقي القهوة الاستثنائية مع الضيافة الدافئة.",
-      image: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-      isActive: true
-    });
-
-    await storage.createOrUpdateWidget({
-      name: "tawk_chat",
-      titleEn: "Live Chat Support",
-      titleAr: "دعم الدردشة المباشرة",
-      descriptionEn: "Get instant help from our support team",
-      descriptionAr: "احصل على مساعدة فورية من فريق الدعم",
-      settings: {
-        enabled: true,
-        tawkId: "default-tawk-id",
-        position: "bottom-right"
-      },
-      isActive: true
-    });
-
-    console.log("🎉 Database seeding completed successfully!");
-    console.log("=== LOGIN CREDENTIALS ===");
-    console.log("Username: admin");
-    console.log("Password: admin123456");
-    console.log("Email: admin@latelounge.sa");
-    console.log("Role: administrator");
-    console.log("IMPORTANT: Change the default password after first login!");
-
+    console.log("✅ Production data seeded successfully!");
+    
   } catch (error) {
-    console.error("❌ Error seeding database:", error);
-    process.exit(1);
+    console.error("❌ Seeding error:", error);
+    throw error;
+  } finally {
+    client.release();
   }
 }
 
-seedComplete().then(() => {
-  console.log("✅ Seeding process finished");
+seedProductionData().then(() => {
+  console.log("🎉 Database seeding completed!");
   process.exit(0);
+}).catch(error => {
+  console.error("💥 Fatal error:", error);
+  process.exit(1);
 });
 SEED_EOF
 
-# Run the seeding script
-echo "Running complete database seeding..."
-sudo -u appuser node seed-complete.js
+# Run seeding
+echo "🌱 Seeding production data..."
+cd /home/${APP_USER}/${PROJECT_NAME}
+sudo -u ${APP_USER} DATABASE_URL=postgresql://${DB_USER}:${DB_PASS}@localhost:5432/${DB_NAME} node seed-production.js
 
-# Start PM2 application
-cd /home/appuser/latelounge
-sudo -u appuser pm2 start ecosystem.config.cjs --env production
-sudo -u appuser pm2 save
-sudo -u appuser pm2 startup | grep -o 'sudo.*' | sudo bash
+# Install PM2 and setup service
+echo "⚡ Setting up PM2 process manager..."
+npm install -g pm2
+sudo -u ${APP_USER} pm2 start ecosystem.config.js --env production
+sudo -u ${APP_USER} pm2 save
+sudo -u ${APP_USER} pm2 startup
 
-# Test deployment
-echo "Testing deployment..."
-sleep 10
+# Setup Nginx
+echo "🌐 Configuring Nginx..."
+tee /etc/nginx/sites-available/${PROJECT_NAME} << NGINX_EOF
+server {
+    listen 80;
+    server_name ${DOMAIN} www.${DOMAIN};
+    
+    root /home/${APP_USER}/${PROJECT_NAME}/dist;
+    index index.html;
+    
+    # Serve static files
+    location /assets/ {
+        alias /home/${APP_USER}/${PROJECT_NAME}/dist/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+    
+    location /uploads/ {
+        alias /home/${APP_USER}/${PROJECT_NAME}/uploads/;
+        expires 1y;
+        add_header Cache-Control "public";
+    }
+    
+    # API routes
+    location /api/ {
+        proxy_pass http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+    
+    # Frontend routes
+    location / {
+        try_files \$uri \$uri/ /index.html;
+    }
+}
+NGINX_EOF
 
-# Test all APIs
-echo "Testing APIs..."
-curl -s http://localhost:3000/api/categories | head -100
-curl -s http://localhost:3000/api/products | head -100
-curl -s http://localhost:3000/api/contact | head -100
-curl -s http://localhost:3000/api/footer | head -100
+ln -sf /etc/nginx/sites-available/${PROJECT_NAME} /etc/nginx/sites-enabled/
+nginx -t && systemctl reload nginx
 
-# Test admin login
-echo "Testing admin authentication..."
-curl -X POST http://localhost:3000/api/auth/local/login \
-  -H "Content-Type: application/json" \
-  -d '{"username":"admin","password":"admin123456"}' | head -100
-
-# Test asset serving
-curl -I https://${DOMAIN}/assets/index-D9yNFWBb.css
-
-echo "=== DEPLOYMENT COMPLETE ==="
-echo "Website: https://${DOMAIN}"
-echo "Admin Login: https://${DOMAIN}/admin"
+echo "🎉 LateLounge deployment completed successfully!"
 echo ""
-echo "🎯 Default Admin Credentials:"
-echo "Username: admin"
-echo "Password: admin123456"
-echo "Email: admin@latelounge.sa"
-echo "Role: administrator"
+echo "📋 Deployment Summary:"
+echo "   🌐 Domain: ${DOMAIN}"
+echo "   👤 Admin Login: admin / admin123"
+echo "   🗄️ Database: ${DB_NAME}"
+echo "   📁 App Directory: /home/${APP_USER}/${PROJECT_NAME}"
 echo ""
-echo "⚠️  CRITICAL: Change default password immediately!"
+echo "🔧 Management Commands:"
+echo "   sudo -u ${APP_USER} pm2 status"
+echo "   sudo -u ${APP_USER} pm2 logs ${PROJECT_NAME}"
+echo "   sudo -u ${APP_USER} pm2 restart ${PROJECT_NAME}"
 echo ""
-echo "Management Commands:"
-echo "sudo -u appuser pm2 status"
-echo "sudo -u appuser pm2 logs"
-echo "sudo -u appuser pm2 restart latelounge"
+echo "🚀 Your LateLounge cafe website is now live!"

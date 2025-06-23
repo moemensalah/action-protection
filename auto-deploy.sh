@@ -138,25 +138,27 @@ print_step "16. Creating logs directory..."
 mkdir -p logs
 
 print_step "17. Creating PM2 ecosystem config..."
-cat > ecosystem.config.js << EOF
+cat > ecosystem.config.js << 'EOF'
 module.exports = {
   apps: [{
-    name: '$APP_NAME',
+    name: 'latelounge',
     script: 'npm',
     args: 'start',
-    instances: 'max',
-    exec_mode: 'cluster',
+    instances: 1,
+    exec_mode: 'fork',
     env: {
       NODE_ENV: 'development'
     },
     env_production: {
       NODE_ENV: 'production',
-      PORT: $APP_PORT
+      PORT: 3000
     },
     error_file: './logs/err.log',
     out_file: './logs/out.log',
     log_file: './logs/combined.log',
-    time: true
+    time: true,
+    autorestart: true,
+    max_memory_restart: '1G'
   }]
 };
 EOF

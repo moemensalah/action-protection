@@ -50,9 +50,16 @@ sudo chmod -R 755 /home/${APP_USER}/.npm
 # Clear any problematic cache
 sudo -u ${APP_USER} npm cache clean --force
 
-# CRITICAL FIX #4: Install dependencies with proper user context
+# CRITICAL FIX #4: Install dependencies with proper user context and handle Rollup issue
 echo "📦 Installing Node.js dependencies..."
-sudo -u ${APP_USER} bash -c 'cd /home/'"${APP_USER}"'/'"${PROJECT_NAME}"' && npm install --no-optional --prefer-offline'
+sudo -u ${APP_USER} bash -c 'cd /home/'"${APP_USER}"'/'"${PROJECT_NAME}"' && rm -rf node_modules package-lock.json'
+sudo -u ${APP_USER} bash -c 'cd /home/'"${APP_USER}"'/'"${PROJECT_NAME}"' && npm install'
+
+# Fix Rollup optional dependency issue if it occurs
+if [ ! -d "/home/${APP_USER}/${PROJECT_NAME}/node_modules/@rollup/rollup-linux-x64-gnu" ]; then
+    echo "🔧 Fixing Rollup optional dependency issue..."
+    sudo -u ${APP_USER} bash -c 'cd /home/'"${APP_USER}"'/'"${PROJECT_NAME}"' && npm install @rollup/rollup-linux-x64-gnu --save-optional'
+fi
 
 # CRITICAL FIX #5: Create environment file with proper permissions
 echo "🔐 Setting up environment variables..."
@@ -70,9 +77,31 @@ ISSUER_URL=https://replit.com/oidc
 REPLIT_DOMAINS=${DOMAIN}
 ENV_EOF
 
-# CRITICAL FIX #6: Build application with proper permissions
+# CRITICAL FIX #6: Build application with proper permissions and fallback handling
 echo "🔨 Building application..."
-sudo -u ${APP_USER} bash -c 'cd /home/'"${APP_USER}"'/'"${PROJECT_NAME}"' && npm run build'
+cd /home/${APP_USER}/${PROJECT_NAME}
+
+# Try building with retries for Rollup issues
+BUILD_SUCCESS=false
+for i in {1..3}; do
+    if sudo -u ${APP_USER} npm run build; then
+        BUILD_SUCCESS=true
+        break
+    else
+        echo "Build attempt $i failed, cleaning and retrying..."
+        sudo -u ${APP_USER} rm -rf node_modules/.vite
+        sudo -u ${APP_USER} rm -rf dist
+        if [ $i -eq 2 ]; then
+            echo "Reinstalling dependencies for final build attempt..."
+            sudo -u ${APP_USER} npm install @rollup/rollup-linux-x64-gnu --force
+        fi
+    fi
+done
+
+if [ "$BUILD_SUCCESS" = false ]; then
+    echo "❌ Build failed after multiple attempts. Trying alternative build method..."
+    sudo -u ${APP_USER} npx vite build --force
+fi
 
 # CRITICAL FIX #7: Create asset directories with proper structure
 echo "📸 Setting up assets and uploads..."

@@ -167,25 +167,16 @@ print_step "18. Starting application with PM2..."
 pm2 start ecosystem.config.cjs --env production
 pm2 save
 
-print_step "19. Creating Nginx configuration..."
+print_step "19. Creating temporary HTTP Nginx configuration..."
 sudo tee /etc/nginx/sites-available/$APP_NAME << EOF
 server {
     listen 80;
     server_name $DOMAIN_NAME $WWW_DOMAIN;
-    return 301 https://\$server_name\$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    server_name $DOMAIN_NAME $WWW_DOMAIN;
-
-    # SSL configuration will be added by Certbot
 
     # Security headers
     add_header X-Frame-Options DENY;
     add_header X-Content-Type-Options nosniff;
     add_header X-XSS-Protection "1; mode=block";
-    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
 
     # Gzip compression
     gzip on;
@@ -239,6 +230,69 @@ sudo systemctl restart nginx
 
 print_step "23. Setting up SSL certificate..."
 sudo certbot --nginx -d $DOMAIN_NAME -d $WWW_DOMAIN --non-interactive --agree-tos --email $SSL_EMAIL
+
+print_step "24. Adding HTTPS redirect to Nginx configuration..."
+sudo tee /etc/nginx/sites-available/$APP_NAME << EOF
+server {
+    listen 80;
+    server_name $DOMAIN_NAME $WWW_DOMAIN;
+    return 301 https://\$server_name\$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name $DOMAIN_NAME $WWW_DOMAIN;
+
+    ssl_certificate /etc/letsencrypt/live/$DOMAIN_NAME/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/$DOMAIN_NAME/privkey.pem;
+
+    # Security headers
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied expired no-cache no-store private auth;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # Upload size limit
+    client_max_body_size 10M;
+
+    # Serve static files
+    location /uploads/ {
+        alias /home/$APP_USER/$APP_NAME/uploads/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Serve static assets
+    location /assets/ {
+        alias /home/$APP_USER/$APP_NAME/dist/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Main application
+    location / {
+        proxy_pass http://localhost:$APP_PORT;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+        proxy_redirect off;
+    }
+}
+EOF
+
+sudo systemctl reload nginx
 
 print_step "24. Configuring firewall..."
 sudo ufw allow ssh

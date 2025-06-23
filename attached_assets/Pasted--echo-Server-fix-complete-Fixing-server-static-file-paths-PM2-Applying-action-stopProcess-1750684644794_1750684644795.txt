@@ -1,0 +1,64 @@
+
+echo "Server fix complete!"
+Fixing server static file paths...
+[PM2] Applying action stopProcessId on app [all](ids: [ 0 ])
+[PM2] [latelounge](0) ✓
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ latelounge    │ default     │ N/A     │ fork    │ 0        │ 0      │ 0    │ stopped   │ 0%       │ 0b       │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.19 building for production...
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1766 modules transformed.
+../dist/public/index.html                   2.34 kB │ gzip:   1.03 kB
+../dist/public/assets/index-D9yNFWBb.css  101.85 kB │ gzip:  16.70 kB
+../dist/public/assets/index-Db2z8t11.js   530.18 kB │ gzip: 156.68 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 8.46s
+
+  dist/index.js  46.1kb
+
+⚡ Done in 8ms
+Files in dist:
+total 60
+drwxr-xr-x  3 root root  4096 Jun 23 12:57 .
+drwxr-xr-x 11 root root  4096 Jun 23 13:16 ..
+-rw-r--r--  1 root root 47244 Jun 23 13:17 index.js
+drwxr-xr-x  3 root root  4096 Jun 23 13:17 public
+Files in dist/public:
+total 16
+drwxr-xr-x 3 root root 4096 Jun 23 13:17 .
+drwxr-xr-x 3 root root 4096 Jun 23 12:57 ..
+drwxr-xr-x 2 root root 4096 Jun 23 13:17 assets
+-rw-r--r-- 1 root root 2372 Jun 23 13:17 index.html
+[PM2] Applying action restartProcessId on app [latelounge](ids: [ 0 ])
+[PM2] [latelounge](0) ✓
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ latelounge    │ default     │ N/A     │ fork    │ 53893    │ 0s     │ 0    │ online    │ 0%       │ 25.3mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Testing frontend in 5 seconds...
+HTTP/1.1 404 Not Found
+X-Powered-By: Express
+Content-Security-Policy: default-src 'none'
+X-Content-Type-Options: nosniff
+Content-Type: text/html; charset=utf-8
+Content-Length: 136
+Date: Mon, 23 Jun 2025 13:17:12 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+Server fix complete!
+root@VM-9b346604-051d-4ac8-b4ca-5de25abab063:/home/appuser/latelounge#

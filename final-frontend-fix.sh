@@ -1,3 +1,15 @@
+#!/bin/bash
+
+cd /home/appuser/latelounge
+
+echo "=== FINAL FRONTEND FIX ==="
+
+# Stop PM2
+pm2 stop all
+pm2 delete all
+
+# Update server configuration for correct static file serving
+cat > server/index.ts << 'EOF'
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -89,24 +101,30 @@ app.use((req, res, next) => {
     });
   } else {
     // Development setup with Vite
-    // setting up all the other routes so the catch-all route
-    // doesn't interfere with the other routes
-    if (app.get("env") === "development") {
-      await setupVite(app, server);
-    } else {
-      serveStatic(app);
-    }
-
-    // ALWAYS serve the app on port 5000
-    // this serves both the API and the client.
-    // It is the only port that is not firewalled.
-    const port = 5000;
-    server.listen({
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    }, () => {
-      log(`serving on port ${port}`);
-    });
+    await setupVite(app, server);
   }
 })();
+EOF
+
+# Rebuild application
+npm run build
+
+# Check build output
+ls -la dist/public/
+
+# Start PM2
+pm2 start ecosystem.config.cjs --env production
+pm2 save
+
+# Test endpoints
+sleep 5
+echo "Testing API:"
+curl -s http://localhost:3000/api/categories | head -50
+
+echo -e "\nTesting frontend:"
+curl -I http://localhost:3000
+
+echo -e "\nTesting index.html directly:"
+curl -I http://localhost:3000/index.html
+
+echo "=== FRONTEND FIX COMPLETE ==="

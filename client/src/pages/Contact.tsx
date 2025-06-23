@@ -75,43 +75,7 @@ export default function Contact() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const contactInfo = [
-    {
-      icon: MapPin,
-      titleEn: "Address",
-      titleAr: "العنوان",
-      valueEn: contactData?.address || "123 Coffee Street, Downtown",
-      valueAr: contactData?.addressAr || "123 شارع القهوة، وسط المدينة",
-    },
-    {
-      icon: Phone,
-      titleEn: "Phone",
-      titleAr: "الهاتف",
-      valueEn: contactData?.phone || "+1 (555) 123-4567",
-      valueAr: contactData?.phone || "+1 (555) 123-4567",
-    },
-    {
-      icon: MessageCircle,
-      titleEn: "WhatsApp",
-      titleAr: "واتساب",
-      valueEn: contactData?.whatsapp || "+1 (555) 123-4567",
-      valueAr: contactData?.whatsapp || "+1 (555) 123-4567",
-    },
-    {
-      icon: Mail,
-      titleEn: "Email",
-      titleAr: "البريد الإلكتروني",
-      valueEn: contactData?.email || "info@cafearabica.com",
-      valueAr: contactData?.email || "info@cafearabica.com",
-    },
-    {
-      icon: Clock,
-      titleEn: "Hours",
-      titleAr: "ساعات العمل",
-      valueEn: contactData?.workingHours || "Mon-Sun: 7:00 AM - 10:00 PM",
-      valueAr: contactData?.workingHoursAr || "الاثنين-الأحد: 7:00 ص - 10:00 م",
-    },
-  ];
+
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
@@ -382,18 +346,23 @@ export default function Contact() {
             </h2>
             
             <div className="bg-gray-200 dark:bg-gray-800 rounded-lg h-64 flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {isRTL ? "الخريطة التفاعلية" : "Interactive Map"}
-                </h3>
-                <p className="text-muted-foreground">
-                  {isRTL 
-                    ? "123 شارع القهوة، وسط المدينة"
-                    : "123 Coffee Street, Downtown"
-                  }
-                </p>
-              </div>
+              {isLoading ? (
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded mx-auto mb-4 animate-pulse"></div>
+                  <div className="h-6 bg-gray-300 dark:bg-gray-600 rounded w-32 mx-auto mb-2 animate-pulse"></div>
+                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-48 mx-auto animate-pulse"></div>
+                </div>
+              ) : contactData ? (
+                <div className="text-center">
+                  <MapPin className="h-12 w-12 text-primary mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    {isRTL ? "الخريطة التفاعلية" : "Interactive Map"}
+                  </h3>
+                  <p className="text-muted-foreground">
+                    {isRTL ? contactData.addressAr : contactData.address}
+                  </p>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

@@ -329,55 +329,13 @@ seedComplete().then(() => {
   process.exit(1);
 });
 SEED_EOF
-      nameAr: "المشروبات الساخنة",
-      descriptionEn: "Warm and comforting drinks",
-      descriptionAr: "مشروبات دافئة ومريحة",
-      slug: "hot-drinks",
-      image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-      isActive: true
-    });
 
-    const coldDrinksCategory = await storage.createCategory({
-      nameEn: "Cold Beverages",
-      nameAr: "المشروبات الباردة",
-      descriptionEn: "Refreshing cold drinks",
-      descriptionAr: "مشروبات باردة منعشة",
-      slug: "cold-drinks",
-      image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-      isActive: true
-    });
+# Run the comprehensive seeding script
+echo "🌱 Running comprehensive production data seeding..."
+cd /home/${APP_USER}/${PROJECT_NAME}
+sudo -u ${APP_USER} node --loader tsx/esm seed-complete.js
 
-    const foodCategory = await storage.createCategory({
-      nameEn: "Food",
-      nameAr: "الطعام",
-      descriptionEn: "Delicious food options",
-      descriptionAr: "خيارات طعام لذيذة",
-      slug: "food",
-      image: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-      isActive: true
-    });
-
-    // Seed Products
-    const products = [
-      {
-        nameEn: "Espresso", nameAr: "إسبريسو",
-        descriptionEn: "Rich and bold espresso shot", descriptionAr: "جرعة إسبريسو غنية وجريئة",
-        price: "15.00", categoryId: coffeeCategory.id,
-        image: "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        isActive: true, isFeatured: true, isAvailable: true
-      },
-      {
-        nameEn: "Cappuccino", nameAr: "كابتشينو",
-        descriptionEn: "Classic Italian coffee with steamed milk", descriptionAr: "قهوة إيطالية كلاسيكية مع حليب مبخر",
-        price: "22.00", categoryId: coffeeCategory.id,
-        image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        isActive: true, isFeatured: false, isAvailable: true
-      },
-      {
-        nameEn: "Latte", nameAr: "لاتيه",
-        descriptionEn: "Smooth espresso with steamed milk", descriptionAr: "إسبريسو ناعم مع حليب مبخر",
-        price: "25.00", categoryId: coffeeCategory.id,
-        image: "https://images.unsplash.com/photo-1561882468-9110e03e0f78?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+# CRITICAL FIX #8: Complete remaining deployment steps
         isActive: true, isFeatured: true, isAvailable: true
       },
       {

@@ -54,6 +54,15 @@ SOCIAL_FACEBOOK="https://facebook.com/latelounge"
 SOCIAL_SNAPCHAT="https://snapchat.com/add/latelounge"
 ```
 
+### Logo Assets Configuration
+```bash
+# Logo file paths (these will be copied to production assets folder)
+LOGO_WHITE_PATH="attached_assets/english-white_1750523827323.png"    # White theme logo
+LOGO_DARK_PATH="attached_assets/english-dark_1750523791780.png"       # Dark theme logo
+LOGO_ARABIC_WHITE_PATH="attached_assets/arabic-white_1750516260877.png"  # Arabic white logo
+LOGO_ARABIC_DARK_PATH="attached_assets/arabic-dark_1750516613229.png"    # Arabic dark logo
+```
+
 ## Deployment Steps
 
 1. **Clone the repository** with your customized code

@@ -42,7 +42,7 @@ const getIcon = (iconName: string) => {
 export default function About() {
   const { t, isRTL } = useLanguage();
 
-  const { data: aboutData } = useQuery<AboutUs>({
+  const { data: aboutData, isLoading } = useQuery<AboutUs>({
     queryKey: ["/api/about"],
   });
   
@@ -51,37 +51,14 @@ export default function About() {
     { name: t("about"), url: "/about" }
   ];
 
-  // Use database features or fallback to default features
-  const features = aboutData?.features || [
-    {
-      icon: "Coffee",
-      titleEn: "Premium Coffee",
-      titleAr: "قهوة فاخرة",
-      descEn: "We source the finest coffee beans from around the world to create exceptional blends.",
-      descAr: "نحن نحصل على أفضل حبوب القهوة من جميع أنحاء العالم لصنع خلطات استثنائية.",
-    },
-    {
-      icon: "Users",
-      titleEn: "Expert Team",
-      titleAr: "فريق خبير",
-      descEn: "Our skilled baristas and chefs bring years of experience to every cup and dish.",
-      descAr: "يجلب باريستا والطهاة المهرة لدينا سنوات من الخبرة إلى كل كوب وطبق.",
-    },
-    {
-      icon: "Award",
-      titleEn: "Award Winning",
-      titleAr: "حائز على جوائز",
-      descEn: "Recognized for excellence in both coffee quality and customer service.",
-      descAr: "معترف به للتميز في جودة القهوة وخدمة العملاء.",
-    },
-    {
-      icon: "Clock",
-      titleEn: "Always Fresh",
-      titleAr: "طازج دائماً",
-      descEn: "We roast our beans daily and prepare everything fresh to order.",
-      descAr: "نحمص حبوبنا يومياً ونحضر كل شيء طازجاً حسب الطلب.",
-    },
-  ];
+  // Loading skeleton component
+  const LoadingSkeleton = () => (
+    <div className="animate-pulse space-y-4">
+      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
+      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/2"></div>
+      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-2/3"></div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
@@ -133,42 +110,29 @@ export default function About() {
           {/* Story Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             <div>
-              <h2 className="text-3xl font-bold text-foreground mb-6">
-                {aboutData ? 
-                  (isRTL ? aboutData.titleAr : aboutData.titleEn) :
-                  (isRTL ? "قصتنا" : "Our Story")
-                }
-              </h2>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                {aboutData ? (
-                  <div 
-                    dangerouslySetInnerHTML={{
-                      __html: isRTL ? aboutData.contentAr : aboutData.contentEn
-                    }}
-                  />
-                ) : (
-                  <>
-                    <p>
-                      {isRTL 
-                        ? "تأسس كافيه عربيكا عام 2015 بحلم بسيط: إنشاء مساحة حيث يمكن للناس الاستمتاع بأفضل أنواع القهوة والطعام في أجواء دافئة ومرحبة."
-                        : "Café Arabica was founded in 2015 with a simple dream: to create a space where people could enjoy the finest coffee and food in a warm, welcoming atmosphere."
-                      }
-                    </p>
-                    <p>
-                      {isRTL 
-                        ? "بدأنا كمحمصة صغيرة للقهوة، ونمونا لنصبح وجهة محبوبة لعشاق القهوة وعشاق الطعام على حد سواء. رحلتنا هي واحدة من الشغف والتفاني والسعي المستمر للتميز."
-                        : "What started as a small coffee roastery has grown into a beloved destination for coffee enthusiasts and food lovers alike. Our journey has been one of passion, dedication, and a relentless pursuit of excellence."
-                      }
-                    </p>
-                    <p>
-                      {isRTL 
-                        ? "اليوم، نواصل التزامنا بتقديم تجربة استثنائية، من حبة القهوة إلى الكوب، ومن المكونات الطازجة إلى الأطباق المصنوعة بعناية."
-                        : "Today, we continue our commitment to delivering an exceptional experience, from bean to cup, and from fresh ingredients to carefully crafted dishes."
-                      }
-                    </p>
-                  </>  
-                )}
-              </div>
+              {isLoading ? (
+                <div className="space-y-6">
+                  <div className="h-8 bg-gray-300 dark:bg-gray-600 rounded w-1/3 animate-pulse"></div>
+                  <div className="space-y-3">
+                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded animate-pulse"></div>
+                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-5/6 animate-pulse"></div>
+                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-4/5 animate-pulse"></div>
+                  </div>
+                </div>
+              ) : aboutData ? (
+                <>
+                  <h2 className="text-3xl font-bold text-foreground mb-6">
+                    {isRTL ? aboutData.titleAr : aboutData.titleEn}
+                  </h2>
+                  <div className="space-y-4 text-muted-foreground leading-relaxed">
+                    <div 
+                      dangerouslySetInnerHTML={{
+                        __html: isRTL ? aboutData.contentAr : aboutData.contentEn
+                      }}
+                    />
+                  </div>
+                </>
+              ) : null}
             </div>
             
             <div className="relative">

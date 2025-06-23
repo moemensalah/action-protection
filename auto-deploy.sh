@@ -40,6 +40,12 @@ SOCIAL_TWITTER="https://twitter.com/latelounge"
 SOCIAL_FACEBOOK="https://facebook.com/latelounge"
 SOCIAL_SNAPCHAT="https://snapchat.com/add/latelounge"
 
+# Logo Assets Configuration
+LOGO_WHITE_PATH="attached_assets/english-white_1750523827323.png"
+LOGO_DARK_PATH="attached_assets/english-dark_1750523791780.png"
+LOGO_ARABIC_WHITE_PATH="attached_assets/arabic-white_1750516260877.png"
+LOGO_ARABIC_DARK_PATH="attached_assets/arabic-dark_1750516613229.png"
+
 # Create user and setup directory
 sudo useradd -m -s /bin/bash ${APP_USER} 2>/dev/null || echo "User ${APP_USER} already exists"
 sudo usermod -aG sudo ${APP_USER}
@@ -101,6 +107,26 @@ EOF
 # Build the project
 echo "Building the application..."
 sudo -u ${APP_USER} npm run build
+
+# Copy logo assets to production
+echo "Copying logo assets to production..."
+sudo -u ${APP_USER} mkdir -p dist/public/assets
+if [ -f "${LOGO_WHITE_PATH}" ]; then
+    sudo -u ${APP_USER} cp "${LOGO_WHITE_PATH}" dist/public/assets/
+    echo "✓ Copied white theme logo"
+fi
+if [ -f "${LOGO_DARK_PATH}" ]; then
+    sudo -u ${APP_USER} cp "${LOGO_DARK_PATH}" dist/public/assets/
+    echo "✓ Copied dark theme logo"
+fi
+if [ -f "${LOGO_ARABIC_WHITE_PATH}" ]; then
+    sudo -u ${APP_USER} cp "${LOGO_ARABIC_WHITE_PATH}" dist/public/assets/
+    echo "✓ Copied Arabic white logo"
+fi
+if [ -f "${LOGO_ARABIC_DARK_PATH}" ]; then
+    sudo -u ${APP_USER} cp "${LOGO_ARABIC_DARK_PATH}" dist/public/assets/
+    echo "✓ Copied Arabic dark logo"
+fi
 
 # CRITICAL FIX #3: PM2 ecosystem with .cjs extension for ES modules
 sudo -u ${APP_USER} tee ecosystem.config.cjs << EOF

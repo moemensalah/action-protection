@@ -36,9 +36,15 @@ sudo chmod -R 755 /home/${APP_USER}
 
 # CRITICAL FIX #2: Deploy source code with immediate ownership fix
 echo "📦 Deploying source code with proper permissions..."
+sudo mkdir -p /tmp/deployment-staging
 sudo cp -r . /tmp/deployment-staging/
 sudo chown -R ${APP_USER}:${APP_USER} /tmp/deployment-staging/
 sudo -u ${APP_USER} cp -r /tmp/deployment-staging/* /home/${APP_USER}/${PROJECT_NAME}/
+
+# Ensure all TypeScript files are copied properly
+sudo -u ${APP_USER} cp -f server/productionSeeder.ts /home/${APP_USER}/${PROJECT_NAME}/server/ 2>/dev/null || true
+sudo -u ${APP_USER} cp -f shared/schema.ts /home/${APP_USER}/${PROJECT_NAME}/shared/ 2>/dev/null || true
+
 cd /home/${APP_USER}/${PROJECT_NAME}
 
 # CRITICAL FIX #3: Fix npm and Node.js permissions before installation
@@ -146,7 +152,7 @@ sudo -u ${APP_USER} bash -c 'cd /home/'"${APP_USER}"'/'"${PROJECT_NAME}"' && npm
 # CRITICAL FIX #9: Create comprehensive seeding script with proper permissions
 echo "🌱 Setting up production data seeding..."
 sudo -u ${APP_USER} tee /home/${APP_USER}/${PROJECT_NAME}/seed-production.js << 'SEED_EOF'
-import { seedProductionData } from "./server/productionSeeder.js";
+import { seedProductionData } from "./server/productionSeeder.ts";
 
 async function seedComplete() {
   console.log("🌱 Starting comprehensive production data seeding...");

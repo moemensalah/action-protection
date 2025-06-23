@@ -1,0 +1,37 @@
+/root/.pm2/pm2.log last 10 lines:
+PM2        | 2025-06-23T13:00:23: PM2 log: App [latelounge:0] online
+PM2        | 2025-06-23T13:00:23: PM2 log: App [latelounge:0] exited with code [254]                                                                                                                                                                                                                                          via signal [SIGINT]
+PM2        | 2025-06-23T13:00:23: PM2 log: App [latelounge:0] starting in -fork mode                                                                                                                                                                                                                                         -
+PM2        | 2025-06-23T13:00:23: PM2 log: App [latelounge:0] online
+PM2        | 2025-06-23T13:00:23: PM2 log: App [latelounge:0] exited with code [254]                                                                                                                                                                                                                                          via signal [SIGINT]
+PM2        | 2025-06-23T13:00:23: PM2 log: Script /usr/bin/npm had too many unstable                                                                                                                                                                                                                                          restarts (16). Stopped. "errored"
+PM2        | 2025-06-23T13:02:11: PM2 log: Stopping app:latelounge id:0
+PM2        | 2025-06-23T13:02:11: PM2 error: app=latelounge id=0 does not have a pid
+PM2        | 2025-06-23T13:02:13: PM2 log: App [latelounge:0] starting in -fork mode                                                                                                                                                                                                                                         -
+PM2        | 2025-06-23T13:02:13: PM2 log: App [latelounge:0] online
+
+/home/appuser/latelounge/logs/out-0.log last 10 lines:
+0|lateloun | 2025-06-23T12:57:25: 12:57:25 PM [express] Production server running on                                                                                                                                                                                                                                          port 3000
+0|lateloun | 2025-06-23T12:57:25: 12:57:25 PM [express] API available at http://loca                                                                                                                                                                                                                                         lhost:3000/api/categories
+0|lateloun | 2025-06-23T12:58:25: 12:58:25 PM [express] GET /api/categories 500 in 2                                                                                                                                                                                                                                         4ms :: {"message":"Failed to fetch categories"}
+0|lateloun | 2025-06-23T13:02:14:
+0|lateloun | 2025-06-23T13:02:14: > rest-express@1.0.0 start
+0|lateloun | 2025-06-23T13:02:14: > NODE_ENV=production node dist/index.js
+0|lateloun | 2025-06-23T13:02:14:
+0|lateloun | 2025-06-23T13:02:15: 1:02:15 PM [express] Production server running on                                                                                                                                                                                                                                          port 3000
+0|lateloun | 2025-06-23T13:02:15: 1:02:15 PM [express] API available at http://local                                                                                                                                                                                                                                         host:3000/api/categories
+0|lateloun | 2025-06-23T13:02:19: 1:02:19 PM [express] GET /api/categories 500 in 37                                                                                                                                                                                                                                         ms :: {"message":"Failed to fetch categories"}
+
+/home/appuser/latelounge/logs/err-0.log last 10 lines:
+0|lateloun | 2025-06-23T13:02:19:     address: '127.0.0.1',
+0|lateloun | 2025-06-23T13:02:19:     port: 443
+0|lateloun | 2025-06-23T13:02:19:   },
+0|lateloun | 2025-06-23T13:02:19:   [Symbol(kMessage)]: 'connect ECONNREFUSED 127.0.                                                                                                                                                                                                                                         0.1:443'
+0|lateloun | 2025-06-23T13:02:19: }
+0|lateloun | 2025-06-23T13:02:37: Error: ENOENT: no such file or directory, stat '/h                                                                                                                                                                                                                                         ome/appuser/latelounge/dist/index.html'
+0|lateloun | 2025-06-23T13:03:05: Error: ENOENT: no such file or directory, stat '/h                                                                                                                                                                                                                                         ome/appuser/latelounge/dist/index.html'
+0|lateloun | 2025-06-23T13:03:06: Error: ENOENT: no such file or directory, stat '/h                                                                                                                                                                                                                                         ome/appuser/latelounge/dist/index.html'
+0|lateloun | 2025-06-23T13:03:06: Error: ENOENT: no such file or directory, stat '/h                                                                                                                                                                                                                                         ome/appuser/latelounge/dist/index.html'
+0|lateloun | 2025-06-23T13:03:10: Error: ENOENT: no such file or directory, stat '/h                                                                                                                                                                                                                                         ome/appuser/latelounge/dist/index.html'
+
+^C

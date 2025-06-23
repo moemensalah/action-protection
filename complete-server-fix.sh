@@ -1,131 +1,50 @@
 #!/bin/bash
 
+echo "=== COMPLETE SERVER PERMISSION FIX ==="
+
 cd /home/appuser/latelounge
 
-echo "=== COMPLETE SERVER FIX ==="
+# Check current ownership and permissions
+echo "Current file ownership:"
+ls -la dist/public/assets/
 
-# Stop PM2
-pm2 stop all
-pm2 delete all
+# Check if files actually exist
+echo "Checking if files exist:"
+file dist/public/assets/index-D9yNFWBb.css
+file dist/public/assets/index-Db2z8t11.js
 
-echo "1. Updating server/index.ts with correct static file paths..."
-cat > server/index.ts << 'EOF'
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+# Check directory structure
+echo "Directory structure:"
+find dist/ -type f -name "*.css" -o -name "*.js" | head -10
 
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+# Stop any processes that might be locking files
+sudo fuser -k dist/public/assets/* 2>/dev/null || true
 
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      log(logLine);
-    }
-  });
-
-  next();
-});
-
-(async () => {
-  // Serve static assets in development
-  if (process.env.NODE_ENV === "development") {
-    app.use('/assets', express.static('attached_assets'));
-  }
-
-  // Register API routes first
-  const server = await registerRoutes(app);
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // Production static file serving
-  if (process.env.NODE_ENV === "production") {
-    const path = await import("path");
-    const { fileURLToPath } = await import("url");
-    
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    
-    // Serve static files from public directory
-    app.use(express.static(path.join(__dirname, "public")));
-    
-    // Serve uploads directory
-    app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
-    
-    // Serve manifest.json with proper MIME type
-    app.get("/manifest.json", (req: Request, res: Response) => {
-      res.setHeader('Content-Type', 'application/json');
-      res.sendFile(path.join(__dirname, "public", "manifest.json"));
-    });
-    
-    // Handle client-side routing
-    app.get("*", (req: Request, res: Response) => {
-      if (req.path.startsWith("/api")) {
-        res.status(404).json({ error: "API endpoint not found" });
-      } else {
-        res.sendFile(path.join(__dirname, "public", "index.html"));
-      }
-    });
-    
-    const PORT = parseInt(process.env.PORT || "5000");
-    server.listen(PORT, "0.0.0.0", () => {
-      log(`Production server running on port ${PORT}`);
-      log(`API available at http://localhost:${PORT}/api/categories`);
-    });
-  } else {
-    // Development setup with Vite
-    await setupVite(app, server);
-  }
-})();
-EOF
-
-echo "2. Rebuilding application with updated server..."
+# Force rebuild to ensure fresh files
+echo "Rebuilding to ensure fresh files..."
+sudo rm -rf dist/
 npm run build
 
-echo "3. Verifying build files..."
-ls -la dist/public/
+# Set permissions properly after rebuild
+echo "Setting permissions on newly built files:"
+sudo chown -R www-data:www-data dist/
+sudo chmod -R 755 dist/
+sudo find dist/ -type f -exec chmod 644 {} \;
 
-echo "4. Starting PM2..."
-pm2 start ecosystem.config.cjs --env production
-pm2 save
+# Test file access
+echo "Testing file access:"
+sudo -u www-data cat dist/public/assets/index-D9yNFWBb.css | head -3 2>/dev/null || echo "Still can't read file"
 
-echo "5. Testing in 10 seconds..."
-sleep 10
+# Check SELinux status (if applicable)
+getenforce 2>/dev/null || echo "SELinux not installed"
 
-echo "API Test:"
-curl -s http://localhost:3000/api/categories | head -20
+# Alternative: Create a simple test file
+echo "Creating test file:"
+echo "/* Test CSS */" | sudo tee dist/public/assets/test.css
+sudo chown www-data:www-data dist/public/assets/test.css
+sudo chmod 644 dist/public/assets/test.css
 
-echo -e "\nFrontend Test:"
-curl -I http://localhost:3000/
+# Test the simple file
+curl -I http://localhost/assets/test.css
 
-echo -e "\nDirect index.html test:"
-curl -I http://localhost:3000/index.html
-
-echo "=== SERVER FIX COMPLETE ==="
+echo "=== COMPLETE SERVER FIX DONE ==="

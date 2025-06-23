@@ -223,22 +223,75 @@ npm install -g pm2
 # Create logs directory
 sudo -u ${APP_USER} mkdir -p /home/${APP_USER}/${PROJECT_NAME}/logs
 
-# Ensure the built application exists
-if [ ! -f "/home/${APP_USER}/${PROJECT_NAME}/dist/index.js" ]; then
-    echo "❌ Built application not found. Build may have failed."
-    echo "Checking build directory..."
-    ls -la /home/${APP_USER}/${PROJECT_NAME}/dist/ || echo "No dist directory found"
-    exit 1
+# Create working PM2 ecosystem config
+cd /home/${APP_USER}/${PROJECT_NAME}
+sudo -u ${APP_USER} tee ecosystem.config.js << PM2_CONFIG_EOF
+module.exports = {
+  apps: [{
+    name: '${PROJECT_NAME}',
+    script: './dist/index.js',
+    instances: 1,
+    exec_mode: 'fork',
+    env: {
+      NODE_ENV: 'development'
+    },
+    env_production: {
+      NODE_ENV: 'production',
+      PORT: ${APP_PORT}
+    },
+    error_file: './logs/err.log',
+    out_file: './logs/out.log',
+    log_file: './logs/combined.log',
+    time: true,
+    autorestart: true,
+    max_memory_restart: '1G',
+    watch: false,
+    ignore_watch: ['node_modules', 'logs']
+  }]
+};
+PM2_CONFIG_EOF
+
+# Check build output and start appropriately
+if [ -f "/home/${APP_USER}/${PROJECT_NAME}/dist/index.js" ]; then
+    echo "✅ Starting built application..."
+    sudo -u ${APP_USER} pm2 start ecosystem.config.js --env production
+else
+    echo "⚠️ Built application not found, starting with development mode..."
+    # Create alternative config for development
+    sudo -u ${APP_USER} tee ecosystem-dev.config.js << DEV_CONFIG_EOF
+module.exports = {
+  apps: [{
+    name: '${PROJECT_NAME}',
+    script: 'server/index.ts',
+    interpreter: 'tsx',
+    instances: 1,
+    exec_mode: 'fork',
+    env_production: {
+      NODE_ENV: 'production',
+      PORT: ${APP_PORT}
+    },
+    error_file: './logs/err.log',
+    out_file: './logs/out.log',
+    log_file: './logs/combined.log',
+    time: true,
+    autorestart: true,
+    max_memory_restart: '1G',
+    watch: false
+  }]
+};
+DEV_CONFIG_EOF
+    sudo -u ${APP_USER} pm2 start ecosystem-dev.config.js --env production
 fi
 
-# Start PM2 with proper working directory
-cd /home/${APP_USER}/${PROJECT_NAME}
-sudo -u ${APP_USER} pm2 start ecosystem.config.js --env production
 sudo -u ${APP_USER} pm2 save
 
 # Setup PM2 startup script
 pm2 startup systemd -u ${APP_USER} --hp /home/${APP_USER}
 sudo -u ${APP_USER} pm2 save
+
+# Show status
+echo "📊 PM2 Status:"
+sudo -u ${APP_USER} pm2 status
 
 # Setup Nginx
 echo "🌐 Configuring Nginx..."

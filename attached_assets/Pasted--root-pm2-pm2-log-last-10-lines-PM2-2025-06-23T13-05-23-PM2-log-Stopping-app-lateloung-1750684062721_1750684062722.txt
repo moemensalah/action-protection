@@ -1,0 +1,35 @@
+/root/.pm2/pm2.log last 10 lines:
+PM2        | 2025-06-23T13:05:23: PM2 log: Stopping app:latelounge id:0
+PM2        | 2025-06-23T13:05:23: PM2 log: App [latelounge:0] exited with code [0] via signal [SIGINT]
+PM2        | 2025-06-23T13:05:23: PM2 log: pid=53293 msg=process killed
+PM2        | 2025-06-23T13:06:07: PM2 log: App [latelounge:0] starting in -fork mode-
+PM2        | 2025-06-23T13:06:07: PM2 log: App [latelounge:0] online
+PM2        | 2025-06-23T13:07:12: PM2 log: Stopping app:latelounge id:0
+PM2        | 2025-06-23T13:07:12: PM2 log: App [latelounge:0] exited with code [0] via signal [SIGINT]
+PM2        | 2025-06-23T13:07:12: PM2 log: pid=53423 msg=process killed
+PM2        | 2025-06-23T13:07:12: PM2 log: App [latelounge:0] starting in -fork mode-
+PM2        | 2025-06-23T13:07:12: PM2 log: App [latelounge:0] online
+
+/home/appuser/latelounge/logs/err-0.log last 10 lines:
+0|lateloun | 2025-06-23T13:07:24:   [Symbol(kError)]: Error: connect ECONNREFUSED 127.0.0.1:443
+0|lateloun | 2025-06-23T13:07:24:       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+0|lateloun | 2025-06-23T13:07:24:     errno: -111,
+0|lateloun | 2025-06-23T13:07:24:     code: 'ECONNREFUSED',
+0|lateloun | 2025-06-23T13:07:24:     syscall: 'connect',
+0|lateloun | 2025-06-23T13:07:24:     address: '127.0.0.1',
+0|lateloun | 2025-06-23T13:07:24:     port: 443
+0|lateloun | 2025-06-23T13:07:24:   },
+0|lateloun | 2025-06-23T13:07:24:   [Symbol(kMessage)]: 'connect ECONNREFUSED 127.0.0.1:443'
+0|lateloun | 2025-06-23T13:07:24: }
+
+/home/appuser/latelounge/logs/out-0.log last 10 lines:
+0|lateloun | 2025-06-23T13:06:08: 1:06:08 PM [express] API available at http://localhost:3000/api/categories
+0|lateloun | 2025-06-23T13:06:17: 1:06:17 PM [express] GET /api/categories 500 in 35ms :: {"message":"Failed to fetch categories"}
+0|lateloun | 2025-06-23T13:06:47: 1:06:47 PM [express] GET /api/categories 500 in 7ms :: {"message":"Failed to fetch categories"}
+0|lateloun | 2025-06-23T13:07:13:
+0|lateloun | 2025-06-23T13:07:13: > rest-express@1.0.0 start
+0|lateloun | 2025-06-23T13:07:13: > NODE_ENV=production node dist/index.js
+0|lateloun | 2025-06-23T13:07:13:
+0|lateloun | 2025-06-23T13:07:14: 1:07:14 PM [express] Production server running on port 3000
+0|lateloun | 2025-06-23T13:07:14: 1:07:14 PM [express] API available at http://localhost:3000/api/categories
+0|lateloun | 2025-06-23T13:07:24: 1:07:24 PM [express] GET /api/categories 500 in 23ms :: {"message":"Failed to fetch categories"}

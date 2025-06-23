@@ -1,0 +1,70 @@
+chown: cannot access '/home/appuser/latelounge/assets': No such file or directory
+chmod: cannot access '/home/appuser/latelounge/assets': No such file or directory
+tee: seed-complete.js: Permission denied
+import { seedProductionData } from "./server/productionSeeder.js";
+
+async function seedComplete() {
+  console.log("🌱 Starting comprehensive production data seeding...");
+
+  try {
+    await seedProductionData();
+    console.log("✅ Production data seeded successfully!");
+    console.log("📊 Seeded data includes:");
+    console.log("   - 6 Categories with authentic content");
+    console.log("   - 19 Products with real descriptions and images");
+    console.log("   - Admin user (username: admin, password: admin123)");
+    console.log("   - Complete website content (About, Contact, Footer)");
+    console.log("   - Privacy Policy and Terms of Service");
+    console.log("   - Widget settings and logos");
+
+  } catch (error) {
+    console.error("❌ Error during seeding:", error);
+
+    // Fallback to basic seeding if production seeder fails
+    console.log("🔄 Attempting fallback seeding...");
+    const { storage } = await import("./server/storage.js");
+
+    try {
+      const existingAdmin = await storage.getUserByUsername("${ADMIN_USERNAME}");
+      if (!existingAdmin) {
+        const defaultAdmin = await storage.createLocalUser({
+          username: "${ADMIN_USERNAME}",
+          email: "${ADMIN_EMAIL}",
+          password: "${ADMIN_PASSWORD}",
+          firstName: "${ADMIN_FIRST_NAME}",
+          lastName: "${ADMIN_LAST_NAME}",
+          role: "administrator",
+          isActive: true
+        });
+        console.log("✅ Fallback admin user created");
+      }
+    } catch (fallbackError) {
+      console.error("❌ Fallback seeding also failed:", fallbackError);
+    }
+  }
+}
+
+seedComplete().then(() => {
+  console.log("🎉 Database seeding completed!");
+  process.exit(0);
+}).catch((error) => {
+  console.error("💥 Fatal seeding error:", error);
+  process.exit(1);
+});
+🌱 Running comprehensive production data seeding...
+
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+Error: tsx must be loaded with --import instead of --loader
+The --loader flag was deprecated in Node v20.6.0 and v18.19.0
+    at initialize (file:///home/appuser/latelounge/node_modules/tsx/dist/esm/index.mjs:1:919)
+    at Hooks.addCustomLoader (node:internal/modules/esm/hooks:206:24)
+    at Hooks.register (node:internal/modules/esm/hooks:172:16)
+    at async initializeHooks (node:internal/modules/esm/utils:324:5)
+    at async customizedModuleWorker (node:internal/modules/esm/worker:104:24)
+
+Node.js v20.19.3
+setup.sh: 339: isActive:: not found
+setup.sh: 340: },: not found
+setup.sh: 378: Syntax error: Bad for loop variable

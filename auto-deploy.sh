@@ -230,54 +230,54 @@ sudo -u ${APP_USER} npm run db:push
 # CRITICAL FIX #7: Copy development assets and uploads to production
 echo "📸 Copying development assets to production..."
 
-# Create assets and uploads directories
-sudo -u ${APP_USER} mkdir -p /home/${APP_USER}/${PROJECT_NAME}/assets
-sudo -u ${APP_USER} mkdir -p /home/${APP_USER}/${PROJECT_NAME}/uploads
+# Change to project directory first
+cd /home/${APP_USER}/${PROJECT_NAME}
 
-# Copy logo assets from attached_assets if they exist
-if [ -d "attached_assets" ]; then
+# Create assets and uploads directories
+sudo -u ${APP_USER} mkdir -p assets uploads
+
+# Copy logo assets from attached_assets if they exist in source
+if [ -d "/tmp/latelounge-source/attached_assets" ]; then
     echo "📋 Copying logo assets..."
     
     # Copy English white logo
-    if [ -f "attached_assets/english-white_1750523827323.png" ]; then
-        sudo -u ${APP_USER} cp "attached_assets/english-white_1750523827323.png" "/home/${APP_USER}/${PROJECT_NAME}/assets/english-white.png"
+    if [ -f "/tmp/latelounge-source/attached_assets/english-white_1750523827323.png" ]; then
+        sudo -u ${APP_USER} cp "/tmp/latelounge-source/attached_assets/english-white_1750523827323.png" "assets/english-white.png"
         echo "✅ English white logo copied"
     fi
     
     # Copy English dark logo
-    if [ -f "attached_assets/english-dark_1750523791780.png" ]; then
-        sudo -u ${APP_USER} cp "attached_assets/english-dark_1750523791780.png" "/home/${APP_USER}/${PROJECT_NAME}/assets/english-dark.png"
+    if [ -f "/tmp/latelounge-source/attached_assets/english-dark_1750523791780.png" ]; then
+        sudo -u ${APP_USER} cp "/tmp/latelounge-source/attached_assets/english-dark_1750523791780.png" "assets/english-dark.png"
         echo "✅ English dark logo copied"
     fi
     
     # Copy Arabic white logo
-    if [ -f "attached_assets/arabic-white_1750516260877.png" ]; then
-        sudo -u ${APP_USER} cp "attached_assets/arabic-white_1750516260877.png" "/home/${APP_USER}/${PROJECT_NAME}/assets/arabic-white.png"
+    if [ -f "/tmp/latelounge-source/attached_assets/arabic-white_1750516260877.png" ]; then
+        sudo -u ${APP_USER} cp "/tmp/latelounge-source/attached_assets/arabic-white_1750516260877.png" "assets/arabic-white.png"
         echo "✅ Arabic white logo copied"
     fi
     
     # Copy Arabic dark logo
-    if [ -f "attached_assets/arabic-dark_1750516613229.png" ]; then
-        sudo -u ${APP_USER} cp "attached_assets/arabic-dark_1750516613229.png" "/home/${APP_USER}/${PROJECT_NAME}/assets/arabic-dark.png"
+    if [ -f "/tmp/latelounge-source/attached_assets/arabic-dark_1750516613229.png" ]; then
+        sudo -u ${APP_USER} cp "/tmp/latelounge-source/attached_assets/arabic-dark_1750516613229.png" "assets/arabic-dark.png"
         echo "✅ Arabic dark logo copied"
     fi
 fi
 
-# Copy development uploads if they exist
-if [ -d "uploads" ] && [ "$(ls -A uploads 2>/dev/null)" ]; then
+# Copy development uploads if they exist in source
+if [ -d "/tmp/latelounge-source/uploads" ] && [ "$(ls -A /tmp/latelounge-source/uploads 2>/dev/null)" ]; then
     echo "📦 Copying development uploads..."
-    sudo -u ${APP_USER} cp uploads/* "/home/${APP_USER}/${PROJECT_NAME}/uploads/" 2>/dev/null || echo "No uploads to copy"
+    sudo -u ${APP_USER} cp /tmp/latelounge-source/uploads/* uploads/ 2>/dev/null || echo "No uploads to copy"
     echo "✅ Development uploads copied"
 fi
 
 # Set proper permissions for assets
-sudo chown -R ${APP_USER}:${APP_USER} /home/${APP_USER}/${PROJECT_NAME}/assets
-sudo chown -R ${APP_USER}:${APP_USER} /home/${APP_USER}/${PROJECT_NAME}/uploads
-sudo chmod -R 755 /home/${APP_USER}/${PROJECT_NAME}/assets
-sudo chmod -R 755 /home/${APP_USER}/${PROJECT_NAME}/uploads
+sudo chown -R ${APP_USER}:${APP_USER} assets uploads
+sudo chmod -R 755 assets uploads
 
 # Create comprehensive seeding script with complete production data
-sudo -u ${APP_USER} tee seed-complete.js << 'SEED_EOF'
+cat > /tmp/seed-complete.js << SEED_EOF
 import { seedProductionData } from "./server/productionSeeder.js";
 
 async function seedComplete() {
@@ -330,100 +330,130 @@ seedComplete().then(() => {
 });
 SEED_EOF
 
-# Run the comprehensive seeding script
+# Copy seeding script to project directory with proper permissions
+sudo cp /tmp/seed-complete.js /home/${APP_USER}/${PROJECT_NAME}/seed-complete.js
+sudo chown ${APP_USER}:${APP_USER} /home/${APP_USER}/${PROJECT_NAME}/seed-complete.js
+
+# Run the comprehensive seeding script with updated tsx flag
 echo "🌱 Running comprehensive production data seeding..."
 cd /home/${APP_USER}/${PROJECT_NAME}
-sudo -u ${APP_USER} node --loader tsx/esm seed-complete.js
+sudo -u ${APP_USER} node --import tsx/esm seed-complete.js
 
 # CRITICAL FIX #8: Complete remaining deployment steps
-        isActive: true, isFeatured: true, isAvailable: true
-      },
-      {
-        nameEn: "Green Tea", nameAr: "شاي أخضر",
-        descriptionEn: "Premium organic green tea", descriptionAr: "شاي أخضر عضوي فاخر",
-        price: "18.00", categoryId: hotDrinksCategory.id,
-        image: "https://images.unsplash.com/photo-1556881286-fc6915169721?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        isActive: true, isFeatured: false, isAvailable: true
-      },
-      {
-        nameEn: "Hot Chocolate", nameAr: "شوكولاتة ساخنة",
-        descriptionEn: "Rich hot chocolate with whipped cream", descriptionAr: "شوكولاتة ساخنة غنية مع كريمة مخفوقة",
-        price: "25.00", categoryId: hotDrinksCategory.id,
-        image: "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        isActive: true, isFeatured: false, isAvailable: true
-      },
-      {
-        nameEn: "Iced Americano", nameAr: "أمريكانو مثلج",
-        descriptionEn: "Refreshing iced coffee", descriptionAr: "قهوة مثلجة منعشة",
-        price: "20.00", categoryId: coldDrinksCategory.id,
-        image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        isActive: true, isFeatured: true, isAvailable: true
-      },
-      {
-        nameEn: "Fresh Orange Juice", nameAr: "عصير برتقال طازج",
-        descriptionEn: "Freshly squeezed orange juice", descriptionAr: "عصير برتقال طازج",
-        price: "16.00", categoryId: coldDrinksCategory.id,
-        image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        isActive: true, isFeatured: false, isAvailable: true
-      },
-      {
-        nameEn: "Club Sandwich", nameAr: "ساندويتش كلوب",
-        descriptionEn: "Classic club sandwich with chicken", descriptionAr: "ساندويتش كلوب كلاسيكي مع دجاج",
-        price: "35.00", categoryId: foodCategory.id,
-        image: "https://images.unsplash.com/photo-1567234669003-dce7a7a88821?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-        isActive: true, isFeatured: true, isAvailable: true
-      }
-    ];
+echo "🔨 Building application..."
+sudo -u ${APP_USER} npm run build
 
-    for (const product of products) {
-      await storage.createProduct(product);
-      console.log(`✅ Created product: ${product.nameEn}`);
+# Setup PM2 ecosystem
+echo "⚙️ Setting up PM2 configuration..."
+sudo -u ${APP_USER} tee ecosystem.config.js << 'PM2_EOF'
+module.exports = {
+  apps: [{
+    name: 'latelounge',
+    script: 'server/production.ts',
+    interpreter: 'node',
+    interpreter_args: '--import tsx/esm',
+    instances: 1,
+    exec_mode: 'fork',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    },
+    error_file: './logs/err.log',
+    out_file: './logs/out.log',
+    log_file: './logs/combined.log',
+    time: true
+  }]
+};
+PM2_EOF
+
+# Create logs directory
+sudo -u ${APP_USER} mkdir -p logs
+
+# Start services with PM2
+echo "🚀 Starting application with PM2..."
+sudo -u ${APP_USER} pm2 start ecosystem.config.js
+sudo -u ${APP_USER} pm2 save
+sudo -u ${APP_USER} pm2 startup
+
+# Setup Nginx virtual host
+echo "🌐 Setting up Nginx configuration..."
+sudo tee /etc/nginx/sites-available/${PROJECT_NAME} << NGINX_EOF
+server {
+    listen 80;
+    server_name ${DOMAIN} ${DOMAIN_WWW};
+
+    root /home/${APP_USER}/${PROJECT_NAME};
+    index index.html;
+
+    # Serve static files
+    location /assets/ {
+        alias /home/${APP_USER}/${PROJECT_NAME}/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files \$uri \$uri/ =404;
     }
 
-    // Seed all content
-    await storage.createOrUpdateContactUs({
-      phone: "${COMPANY_PHONE}",
-      whatsapp: "${COMPANY_WHATSAPP}",
-      email: "${COMPANY_EMAIL}",
-      address: "${COMPANY_ADDRESS_EN}",
-      addressAr: "${COMPANY_ADDRESS_AR}",
-      workingHours: "${COMPANY_HOURS_EN}",
-      workingHoursAr: "${COMPANY_HOURS_AR}",
-      socialMediaLinks: {
-        instagram: "${SOCIAL_INSTAGRAM}",
-        twitter: "${SOCIAL_TWITTER}",
-        facebook: "${SOCIAL_FACEBOOK}",
-        snapchat: "${SOCIAL_SNAPCHAT}"
-      },
-      isActive: true
-    });
+    location /uploads/ {
+        alias /home/${APP_USER}/${PROJECT_NAME}/uploads/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files \$uri \$uri/ =404;
+    }
 
-    await storage.createOrUpdateFooterContent({
-      companyNameEn: "${COMPANY_NAME_EN}",
-      companyNameAr: "${COMPANY_NAME_AR}",
-      descriptionEn: "Premium coffee experience with authentic flavors and warm hospitality",
-      descriptionAr: "تجربة قهوة فاخرة مع نكهات أصيلة وضيافة دافئة",
-      copyrightText: "© 2024 ${COMPANY_NAME_EN}. All rights reserved.",
-      quickLinks: [
-        { nameEn: "About Us", nameAr: "من نحن", url: "/about" },
-        { nameEn: "Menu", nameAr: "القائمة", url: "/menu" },
-        { nameEn: "Contact", nameAr: "اتصل بنا", url: "/contact" },
-        { nameEn: "Privacy Policy", nameAr: "سياسة الخصوصية", url: "/privacy" }
-      ],
-      isActive: true
-    });
+    # Proxy API requests to Node.js
+    location /api/ {
+        proxy_pass http://localhost:${APP_PORT};
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
 
-    await storage.createOrUpdateAboutUs({
-      titleEn: "About ${COMPANY_NAME_EN}",
-      titleAr: "حول ${COMPANY_NAME_AR}",
-      contentEn: "Welcome to ${COMPANY_NAME_EN}, where exceptional coffee meets warm hospitality. We are dedicated to creating a unique coffee experience that brings people together in a comfortable and inviting atmosphere.",
-      contentAr: "مرحباً بكم في ${COMPANY_NAME_AR}، حيث تلتقي القهوة الاستثنائية مع الضيافة الدافئة. نحن ملتزمون بخلق تجربة قهوة فريدة تجمع الناس في أجواء مريحة ومرحبة.",
-      image: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-      isActive: true
-    });
+    # Everything else to Node.js
+    location / {
+        proxy_pass http://localhost:${APP_PORT};
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
 
-    await storage.createOrUpdateWidget({
-      name: "tawk_chat",
+    # Handle large file uploads
+    client_max_body_size 10M;
+}
+NGINX_EOF
+
+# Enable site and remove default
+sudo ln -sf /etc/nginx/sites-available/${PROJECT_NAME} /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Test and restart nginx
+sudo nginx -t && sudo systemctl restart nginx
+
+# Setup SSL with Certbot
+echo "🔒 Setting up SSL certificate..."
+sudo certbot --nginx -d ${DOMAIN} -d ${DOMAIN_WWW} --email ${EMAIL} --agree-tos --non-interactive
+
+# Setup firewall
+echo "🔥 Configuring firewall..."
+sudo ufw allow 'Nginx Full'
+sudo ufw allow ssh
+sudo ufw --force enable
+
+echo "✅ LateLounge deployment completed successfully!"
+echo ""
+echo "🌐 Your application should be available at: https://${DOMAIN}"
+echo "🔑 Database credentials are stored in .env file"
+echo "📊 Check application status with: pm2 status"
+echo "📝 View logs with: pm2 logs latelounge"
+echo "🍽️ Production data includes:"
+echo "   - 6 Categories (Coffee, Hot Beverages, Cold Beverages, Breakfast, Main Dishes, Desserts)"
+echo "   - 19 Products with authentic data and images"
+echo "   - Admin user (username: ${ADMIN_USERNAME}, password: ${ADMIN_PASSWORD})"
+echo "   - Complete content (About, Contact, Footer, Privacy Policy, Terms)"
+echo "   - Logo assets and product images from development"
+echo ""
+echo "🎉 Deployment complete! Your LateLounge cafe website is now live with full data!"
       titleEn: "Live Chat Support",
       titleAr: "دعم الدردشة المباشرة",
       descriptionEn: "Get instant help from our support team",

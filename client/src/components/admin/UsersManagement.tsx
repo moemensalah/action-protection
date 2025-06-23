@@ -92,10 +92,16 @@ export function UsersManagement() {
   // Update user mutation
   const updateUserMutation = useMutation({
     mutationFn: async ({ id, userData }: { id: string; userData: UserForm }) => {
+      // Remove password from update if it's empty (keep current password)
+      const updateData = { ...userData };
+      if (!updateData.password) {
+        delete updateData.password;
+      }
+      
       return apiRequest(`/api/admin/users/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(updateData),
       });
     },
     onSuccess: () => {
@@ -593,6 +599,9 @@ export function UsersManagement() {
                                 </div>
                               </div>
                             </div>
+                          </TableCell>
+                          <TableCell className="text-left">
+                            <span className="font-medium text-gray-900 dark:text-white">{user.username}</span>
                           </TableCell>
                           <TableCell className="text-left">
                             <span className="text-gray-600 dark:text-gray-400">{user.email}</span>

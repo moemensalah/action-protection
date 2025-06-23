@@ -1,31 +1,34 @@
 #!/bin/bash
 
-cd /home/appuser/latelounge
+# Fix environment variables for PM2 immediately
+set -e
 
-# Stop PM2
-pm2 stop all
-pm2 delete all
+PROJECT_DIR="/home/appuser/latelounge"
+APP_USER="appuser"
 
-# Create ecosystem config with explicit environment variables
-cat > ecosystem.config.cjs << 'EOF'
+echo "🔧 Adding DATABASE_URL to PM2 configuration..."
+
+cd $PROJECT_DIR
+
+# Stop current PM2 processes
+sudo -u $APP_USER pm2 delete all 2>/dev/null || true
+
+# Create updated ecosystem config with DATABASE_URL
+sudo -u $APP_USER tee ecosystem.config.cjs << 'ENV_CJS_EOF'
 module.exports = {
   apps: [{
     name: 'latelounge',
-    script: 'npm',
-    args: 'start',
+    script: './dist/index.js',
     instances: 1,
     exec_mode: 'fork',
     env: {
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
+      DATABASE_URL: 'postgresql://latelounge_user:secure_password_123@localhost:5432/latelounge_db'
     },
     env_production: {
       NODE_ENV: 'production',
       PORT: 3000,
-      DATABASE_URL: 'postgresql://latelounge_user:secure_password123@localhost:5432/latelounge_db',
-      SESSION_SECRET: 'your_session_secret_key_here_change_in_production',
-      REPL_ID: 'latelounge',
-      ISSUER_URL: 'https://replit.com/oidc',
-      REPLIT_DOMAINS: 'yourdomain.com'
+      DATABASE_URL: 'postgresql://latelounge_user:secure_password_123@localhost:5432/latelounge_db'
     },
     error_file: './logs/err.log',
     out_file: './logs/out.log',
@@ -33,14 +36,21 @@ module.exports = {
     time: true,
     autorestart: true,
     max_memory_restart: '1G',
-    watch: false
+    watch: false,
+    ignore_watch: ['node_modules', 'logs']
   }]
 };
-EOF
+ENV_CJS_EOF
 
-# Start PM2
-pm2 start ecosystem.config.cjs --env production
-pm2 save
+# Restart with environment variables
+echo "🚀 Starting application with DATABASE_URL..."
+sudo -u $APP_USER pm2 start ecosystem.config.cjs --env production
+sudo -u $APP_USER pm2 save
 
-echo "Environment variables now set directly in PM2 config"
-pm2 logs --lines 5
+echo "📊 PM2 Status:"
+sudo -u $APP_USER pm2 status
+
+echo "📋 Environment check:"
+sudo -u $APP_USER pm2 env 0
+
+echo "✅ DATABASE_URL added to PM2 configuration!"

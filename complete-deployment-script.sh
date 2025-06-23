@@ -233,11 +233,13 @@ module.exports = {
     instances: 1,
     exec_mode: 'fork',
     env: {
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
+      DATABASE_URL: '${DATABASE_URL}'
     },
     env_production: {
       NODE_ENV: 'production',
-      PORT: ${APP_PORT}
+      PORT: ${APP_PORT},
+      DATABASE_URL: '${DATABASE_URL}'
     },
     error_file: './logs/err.log',
     out_file: './logs/out.log',
@@ -268,7 +270,8 @@ module.exports = {
     exec_mode: 'fork',
     env_production: {
       NODE_ENV: 'production',
-      PORT: ${APP_PORT}
+      PORT: ${APP_PORT},
+      DATABASE_URL: '${DATABASE_URL}'
     },
     error_file: './logs/err.log',
     out_file: './logs/out.log',

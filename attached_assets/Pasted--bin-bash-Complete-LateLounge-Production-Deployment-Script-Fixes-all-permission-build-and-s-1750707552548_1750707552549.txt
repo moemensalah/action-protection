@@ -227,23 +227,6 @@ echo "👤 Admin access configured for: ${ADMIN_EMAIL}"
 echo "⚡ Setting up PM2 process manager..."
 npm install -g pm2
 
-# Fix port conflicts and clean up existing processes
-echo "🔧 Cleaning up port ${APP_PORT} conflicts..."
-sudo lsof -ti:${APP_PORT} | xargs sudo kill -9 2>/dev/null || echo "No processes found on port ${APP_PORT}"
-sudo -u ${APP_USER} pm2 delete all 2>/dev/null || echo "No PM2 processes to stop"
-sudo pkill -f "node.*${PROJECT_NAME}" 2>/dev/null || echo "No Node processes found"
-sudo pkill -f "tsx server" 2>/dev/null || echo "No tsx processes found"
-
-# Wait for processes to terminate
-sleep 3
-
-# Verify port is free
-if lsof -Pi :${APP_PORT} -sTCP:LISTEN -t >/dev/null; then
-    echo "❌ Port ${APP_PORT} still in use. Forcing cleanup..."
-    sudo lsof -ti:${APP_PORT} | xargs sudo kill -9 2>/dev/null || true
-    sleep 2
-fi
-
 # Create logs directory
 sudo -u ${APP_USER} mkdir -p /home/${APP_USER}/${PROJECT_NAME}/logs
 
@@ -280,9 +263,7 @@ module.exports = {
     autorestart: true,
     max_memory_restart: '1G',
     watch: false,
-    ignore_watch: ['node_modules', 'logs'],
-    max_restarts: 5,
-    min_uptime: '10s'
+    ignore_watch: ['node_modules', 'logs']
   }]
 };
 PM2_CONFIG_EOF
@@ -317,9 +298,7 @@ module.exports = {
     time: true,
     autorestart: true,
     max_memory_restart: '1G',
-    watch: false,
-    max_restarts: 5,
-    min_uptime: '10s'
+    watch: false
   }]
 };
 DEV_CONFIG_EOF
@@ -332,35 +311,9 @@ sudo -u ${APP_USER} pm2 save
 pm2 startup systemd -u ${APP_USER} --hp /home/${APP_USER}
 sudo -u ${APP_USER} pm2 save
 
-# Show status and verify application is working
+# Show status
 echo "📊 PM2 Status:"
 sudo -u ${APP_USER} pm2 status
-
-# Wait for application startup
-echo "⏳ Waiting for application to start..."
-sleep 10
-
-# Test application connectivity
-echo "🧪 Testing application connectivity..."
-CONNECTIVITY_TEST=false
-for i in {1..5}; do
-    if curl -s http://localhost:${APP_PORT}/api/contact >/dev/null; then
-        echo "✅ Application responding successfully on port ${APP_PORT}"
-        CONNECTIVITY_TEST=true
-        break
-    else
-        echo "⏳ Attempt $i: Application not responding yet, waiting..."
-        sleep 5
-    fi
-done
-
-if [ "$CONNECTIVITY_TEST" = false ]; then
-    echo "⚠️ Application not responding after multiple attempts. Checking logs..."
-    sudo -u ${APP_USER} pm2 logs --lines 20
-    echo "🔧 Application may need manual troubleshooting"
-else
-    echo "🎯 Application successfully deployed and responding!"
-fi
 
 # Setup Nginx
 echo "🌐 Configuring Nginx..."

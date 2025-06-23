@@ -347,28 +347,28 @@ async function seedComplete() {
 
     // Seed all content
     await storage.createOrUpdateContactUs({
-      phone: "+966 11 555 123413335",
-      whatsapp: "+966505551234",
-      email: "info@latelounge.sa",
-      address: "123 King Fahd Road, Riyadh, Saudi Arabia",
-      addressAr: "123 طريق الملك فهد، الرياض، المملكة العربية السعودية",
-      workingHours: "Sunday - Thursday: 7:00 AM - 11:00 PM",
-      workingHoursAr: "الأحد - الخميس: 7:00 ص - 11:00 م",
+      phone: "${COMPANY_PHONE}",
+      whatsapp: "${COMPANY_WHATSAPP}",
+      email: "${COMPANY_EMAIL}",
+      address: "${COMPANY_ADDRESS_EN}",
+      addressAr: "${COMPANY_ADDRESS_AR}",
+      workingHours: "${COMPANY_HOURS_EN}",
+      workingHoursAr: "${COMPANY_HOURS_AR}",
       socialMediaLinks: {
-        instagram: "https://instagram.com/latelounge",
-        twitter: "https://twitter.com/latelounge",
-        facebook: "https://facebook.com/latelounge",
-        snapchat: "https://snapchat.com/add/latelounge"
+        instagram: "${SOCIAL_INSTAGRAM}",
+        twitter: "${SOCIAL_TWITTER}",
+        facebook: "${SOCIAL_FACEBOOK}",
+        snapchat: "${SOCIAL_SNAPCHAT}"
       },
       isActive: true
     });
 
     await storage.createOrUpdateFooterContent({
-      companyNameEn: "LateLounge*",
-      companyNameAr: "ليت لاونج*",
+      companyNameEn: "${COMPANY_NAME_EN}",
+      companyNameAr: "${COMPANY_NAME_AR}",
       descriptionEn: "Premium coffee experience with authentic flavors and warm hospitality",
       descriptionAr: "تجربة قهوة فاخرة مع نكهات أصيلة وضيافة دافئة",
-      copyrightText: "© 2024 LateLounge. All rights reserved.",
+      copyrightText: "© 2024 ${COMPANY_NAME_EN}. All rights reserved.",
       quickLinks: [
         { nameEn: "About Us", nameAr: "من نحن", url: "/about" },
         { nameEn: "Menu", nameAr: "القائمة", url: "/menu" },
@@ -379,10 +379,10 @@ async function seedComplete() {
     });
 
     await storage.createOrUpdateAboutUs({
-      titleEn: "About LateLounge",
-      titleAr: "حول ليت لاونج",
-      contentEn: "Welcome to LateLounge, where exceptional coffee meets warm hospitality. We are dedicated to creating a unique coffee experience that brings people together in a comfortable and inviting atmosphere.",
-      contentAr: "مرحباً بكم في ليت لاونج، حيث تلتقي القهوة الاستثنائية مع الضيافة الدافئة. نحن ملتزمون بخلق تجربة قهوة فريدة تجمع الناس في أجواء مريحة ومرحبة.",
+      titleEn: "About ${COMPANY_NAME_EN}",
+      titleAr: "حول ${COMPANY_NAME_AR}",
+      contentEn: "Welcome to ${COMPANY_NAME_EN}, where exceptional coffee meets warm hospitality. We are dedicated to creating a unique coffee experience that brings people together in a comfortable and inviting atmosphere.",
+      contentAr: "مرحباً بكم في ${COMPANY_NAME_AR}، حيث تلتقي القهوة الاستثنائية مع الضيافة الدافئة. نحن ملتزمون بخلق تجربة قهوة فريدة تجمع الناس في أجواء مريحة ومرحبة.",
       image: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
       isActive: true
     });
@@ -425,13 +425,13 @@ SEED_EOF
 
 # Run the comprehensive seeding script
 echo "Running complete database seeding with admin user..."
-sudo -u appuser node seed-complete.js
+sudo -u ${APP_USER} node seed-complete.js
 
 # Start PM2 application
-cd /home/appuser/latelounge
-sudo -u appuser pm2 start ecosystem.config.cjs --env production
-sudo -u appuser pm2 save
-sudo -u appuser pm2 startup | grep -o 'sudo.*' | sudo bash
+cd /home/${APP_USER}/${PROJECT_NAME}
+sudo -u ${APP_USER} pm2 start ecosystem.config.cjs --env production
+sudo -u ${APP_USER} pm2 save
+sudo -u ${APP_USER} pm2 startup | grep -o 'sudo.*' | sudo bash
 
 # Test deployment
 echo "Testing complete deployment..."
@@ -439,18 +439,18 @@ sleep 10
 
 # Test all APIs
 echo "Testing all APIs..."
-curl -s http://localhost:3000/api/categories | head -100
-curl -s http://localhost:3000/api/products | head -100
-curl -s http://localhost:3000/api/contact | head -100
-curl -s http://localhost:3000/api/footer | head -100
-curl -s http://localhost:3000/api/about | head -100
-curl -s http://localhost:3000/api/widgets/tawk_chat | head -100
+curl -s http://localhost:${APP_PORT}/api/categories | head -100
+curl -s http://localhost:${APP_PORT}/api/products | head -100
+curl -s http://localhost:${APP_PORT}/api/contact | head -100
+curl -s http://localhost:${APP_PORT}/api/footer | head -100
+curl -s http://localhost:${APP_PORT}/api/about | head -100
+curl -s http://localhost:${APP_PORT}/api/widgets/tawk_chat | head -100
 
 # Test admin authentication
 echo "Testing admin authentication..."
-curl -X POST http://localhost:3000/api/auth/local/login \
+curl -X POST http://localhost:${APP_PORT}/api/auth/local/login \
   -H "Content-Type: application/json" \
-  -d '{"username":"admin","password":"admin123456"}' | head -100
+  -d "{\"username\":\"${ADMIN_USERNAME}\",\"password\":\"${ADMIN_PASSWORD}\"}" | head -100
 
 # Test asset serving
 echo "Testing asset serving..."
@@ -461,25 +461,25 @@ echo "=== DEPLOYMENT COMPLETE ==="
 echo "Website: http://${DOMAIN}"
 echo "Admin Panel: http://${DOMAIN}/admin"
 echo ""
-echo "🎯 Default Admin Credentials:"
-echo "Username: admin"
-echo "Password: admin123456"
-echo "Email: admin@latelounge.sa"
+echo "Default Admin Credentials:"
+echo "Username: ${ADMIN_USERNAME}"
+echo "Password: ${ADMIN_PASSWORD}"
+echo "Email: ${ADMIN_EMAIL}"
 echo "Role: administrator"
 echo ""
-echo "⚠️  CRITICAL SECURITY: Change default password immediately!"
+echo "CRITICAL SECURITY: Change default password immediately!"
 echo ""
-echo "📊 Management Commands:"
-echo "sudo -u appuser pm2 status"
-echo "sudo -u appuser pm2 logs"
-echo "sudo -u appuser pm2 restart latelounge"
-echo "sudo -u appuser pm2 stop latelounge"
+echo "Management Commands:"
+echo "sudo -u ${APP_USER} pm2 status"
+echo "sudo -u ${APP_USER} pm2 logs"
+echo "sudo -u ${APP_USER} pm2 restart ${PROJECT_NAME}"
+echo "sudo -u ${APP_USER} pm2 stop ${PROJECT_NAME}"
 echo ""
-echo "🔧 All Critical Fixes Applied:"
-echo "✅ Directory permissions (chmod o+x /home/appuser/)"
+echo "All Critical Fixes Applied:"
+echo "✅ Directory permissions (chmod o+x /home/${APP_USER}/)"
 echo "✅ PostgreSQL local authentication"
 echo "✅ PM2 ES module compatibility (.cjs)"
-echo "✅ Nginx HTTPS + asset mapping"
+echo "✅ Nginx HTTP + asset mapping"
 echo "✅ File permissions for www-data"
 echo "✅ Complete database seeding"
 echo "✅ Admin user authentication system"

@@ -22,11 +22,11 @@ app.use((req, res, next) => {
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+        logLine += ` :: ${JSON.stringify(capturedJsonResponse).substring(0, 100)}`;
       }
 
       if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
+        logLine = logLine.substring(0, 79) + "…";
       }
 
       log(logLine);
@@ -36,80 +36,25 @@ app.use((req, res, next) => {
   next();
 });
 
+let server: any;
+
 (async () => {
-  // Serve static assets in development
-  if (process.env.NODE_ENV === "development") {
-    app.use('/assets', express.static('attached_assets'));
-  }
+  server = await registerRoutes(app);
 
-  // Register API routes first
-  const server = await registerRoutes(app);
-
+  // Error handling middleware  
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
+    const status = err.statusCode || err.status || 500;
     const message = err.message || "Internal Server Error";
 
     res.status(status).json({ message });
     throw err;
   });
 
-  // Production static file serving
-  if (process.env.NODE_ENV === "production") {
-    const path = await import("path");
-    const { fileURLToPath } = await import("url");
-    
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    
-    // Serve static files from dist/public directory (where Vite builds to)
-    app.use(express.static(path.join(__dirname, "..", "dist", "public")));
-    
-    // Serve uploads directory
-    app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
-    
-    // Serve logo assets specifically (fallback for asset serving)
-    app.use("/assets", express.static(path.join(__dirname, "..", "dist", "public", "assets")));
-    
-    // Serve manifest.json with proper MIME type
-    app.get("/manifest.json", (req: Request, res: Response) => {
-      res.setHeader('Content-Type', 'application/json');
-      res.sendFile(path.join(__dirname, "..", "dist", "public", "manifest.json"));
-    });
-    
-    // Handle client-side routing
-    app.get("*", (req: Request, res: Response) => {
-      if (req.path.startsWith("/api")) {
-        res.status(404).json({ error: "API endpoint not found" });
-      } else {
-        res.sendFile(path.join(__dirname, "..", "dist", "public", "index.html"));
-      }
-    });
-    
-    const PORT = parseInt(process.env.PORT || "5000");
-    server.listen(PORT, "0.0.0.0", () => {
-      log(`Production server running on port ${PORT}`);
-      log(`API available at http://localhost:${PORT}/api/categories`);
-    });
+  // Development setup with Vite
+  if (process.env.NODE_ENV !== "production") {
+    await setupVite(app, server);
   } else {
-    // Development setup with Vite
-    // setting up all the other routes so the catch-all route
-    // doesn't interfere with the other routes
-    if (app.get("env") === "development") {
-      await setupVite(app, server);
-    } else {
-      serveStatic(app);
-    }
-
-    // ALWAYS serve the app on port 5000
-    // this serves both the API and the client.
-    // It is the only port that is not firewalled.
-    const port = 5000;
-    server.listen({
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    }, () => {
-      log(`serving on port ${port}`);
-    });
+    // Production static file serving
+    await serveStatic(app);
   }
 })();

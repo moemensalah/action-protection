@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   apps: [{
     name: 'latelounge',
     script: 'npm',

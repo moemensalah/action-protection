@@ -138,7 +138,7 @@ print_step "16. Creating logs directory..."
 mkdir -p logs
 
 print_step "17. Creating PM2 ecosystem config..."
-cat > ecosystem.config.js << 'EOF'
+cat > ecosystem.config.cjs << 'EOF'
 module.exports = {
   apps: [{
     name: 'latelounge',
@@ -164,7 +164,7 @@ module.exports = {
 EOF
 
 print_step "18. Starting application with PM2..."
-pm2 start ecosystem.config.js --env production
+pm2 start ecosystem.config.cjs --env production
 pm2 save
 
 print_step "19. Creating Nginx configuration..."
@@ -275,7 +275,7 @@ echo "Running database migrations..."
 npm run db:push
 
 echo "Restarting PM2..."
-pm2 restart $APP_NAME
+pm2 restart latelounge
 
 echo "Deployment complete!"
 EOF

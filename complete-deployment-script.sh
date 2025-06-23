@@ -56,7 +56,20 @@ echo "🚀 Starting LateLounge Production Deployment..."
 # System Setup
 echo "⚙️ Setting up system dependencies..."
 apt update
-apt install -y nodejs npm postgresql postgresql-contrib nginx certbot python3-certbot-nginx
+
+# Fix Node.js/npm conflict by removing conflicting packages first
+apt remove -y nodejs npm 2>/dev/null || true
+
+# Install Node.js from NodeSource repository
+curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash -
+apt install -y nodejs
+
+# Install other dependencies
+apt install -y postgresql postgresql-contrib nginx certbot python3-certbot-nginx
+
+# Verify Node.js and npm installation
+node --version
+npm --version
 
 # Create application user
 if ! id "$APP_USER" &>/dev/null; then

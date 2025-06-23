@@ -1,0 +1,11 @@
+
+2025/06/23 13:45:32 [notice] 54496#54496: signal process started
+2025/06/23 13:45:32 [error] 54497#54497: *64 open() "/home/appuser/latelounge/dist/public/assets/index-D9yNFWBb.css" failed (13: Permission denied), client: 172.71.172.125, server: demo2.late-lounge.com, request: "GET /assets/index-D9yNFWBb.css HTTP/1.1", host: "demo2.late-lounge.com"
+2025/06/23 13:45:32 [error] 54497#54497: *65 open() "/home/appuser/latelounge/dist/public/assets/index-Db2z8t11.js" failed (13: Permission denied), client: 172.70.247.124, server: demo2.late-lounge.com, request: "GET /assets/index-Db2z8t11.js HTTP/1.1", host: "demo2.late-lounge.com"
+2025/06/23 13:46:02 [notice] 54528#54528: signal process started
+2025/06/23 13:46:02 [error] 54529#54529: *66 open() "/home/appuser/latelounge/dist/public/assets/index-D9yNFWBb.css" failed (13: Permission denied), client: 172.71.172.125, server: demo2.late-lounge.com, request: "HEAD /assets/index-D9yNFWBb.css HTTP/1.1", host: "demo2.late-lounge.com"
+2025/06/23 13:46:02 [error] 54529#54529: *67 open() "/home/appuser/latelounge/dist/public/assets/index-Db2z8t11.js" failed (13: Permission denied), client: 172.70.247.124, server: demo2.late-lounge.com, request: "HEAD /assets/index-Db2z8t11.js HTTP/1.1", host: "demo2.late-lounge.com"
+2025/06/23 13:47:03 [notice] 54560#54560: signal process started
+2025/06/23 13:47:03 [error] 54529#54529: *68 open() "/home/appuser/latelounge/dist/public/assets/index-D9yNFWBb.css" failed (13: Permission denied), client: 127.0.0.1, server: demo2.late-lounge.com, request: "HEAD /assets/index-D9yNFWBb.css HTTP/1.1", host: "localhost"
+2025/06/23 13:47:42 [crit] 54561#54561: *73 stat() "/home/appuser/latelounge/dist/public/assets/index-D9yNFWBb.css" failed (13: Permission denied), client: 127.0.0.1, server: demo2.late-lounge.com, request: "HEAD /assets/index-D9yNFWBb.css HTTP/1.1", host: "localhost"
+2025/06/23 13:49:14 [crit] 54561#54561: *83 stat() "/home/appuser/latelounge/dist/public/assets/index-D9yNFWBb.css" failed (13: Permission denied), client: 127.0.0.1, server: demo2.late-lounge.com, request: "HEAD /assets/index-D9yNFWBb.css HTTP/1.1", host: "localhost"

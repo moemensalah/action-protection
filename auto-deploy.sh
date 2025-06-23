@@ -137,7 +137,18 @@ npm run db:push
 print_step "16. Creating logs directory..."
 mkdir -p logs
 
-print_step "17. Creating PM2 ecosystem config..."
+print_step "17. Creating environment variables..."
+cat > .env << EOF
+NODE_ENV=production
+PORT=$APP_PORT
+DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME
+SESSION_SECRET=$(openssl rand -base64 32)
+REPL_ID=$APP_NAME
+ISSUER_URL=https://replit.com/oidc
+REPLIT_DOMAINS=$DOMAIN_NAME
+EOF
+
+print_step "18. Creating PM2 ecosystem config..."
 cat > ecosystem.config.cjs << 'EOF'
 module.exports = {
   apps: [{
@@ -153,6 +164,7 @@ module.exports = {
       NODE_ENV: 'production',
       PORT: 3000
     },
+    env_file: './.env',
     error_file: './logs/err.log',
     out_file: './logs/out.log',
     log_file: './logs/combined.log',

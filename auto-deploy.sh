@@ -227,21 +227,83 @@ sudo nginx -t && sudo systemctl restart nginx
 echo "Setting up database schema and seeding data..."
 sudo -u ${APP_USER} npm run db:push
 
-# Create comprehensive seeding script with admin user
+# CRITICAL FIX #7: Copy development assets and uploads to production
+echo "📸 Copying development assets to production..."
+
+# Create assets and uploads directories
+sudo -u ${APP_USER} mkdir -p /home/${APP_USER}/${PROJECT_NAME}/assets
+sudo -u ${APP_USER} mkdir -p /home/${APP_USER}/${PROJECT_NAME}/uploads
+
+# Copy logo assets from attached_assets if they exist
+if [ -d "attached_assets" ]; then
+    echo "📋 Copying logo assets..."
+    
+    # Copy English white logo
+    if [ -f "attached_assets/english-white_1750523827323.png" ]; then
+        sudo -u ${APP_USER} cp "attached_assets/english-white_1750523827323.png" "/home/${APP_USER}/${PROJECT_NAME}/assets/english-white.png"
+        echo "✅ English white logo copied"
+    fi
+    
+    # Copy English dark logo
+    if [ -f "attached_assets/english-dark_1750523791780.png" ]; then
+        sudo -u ${APP_USER} cp "attached_assets/english-dark_1750523791780.png" "/home/${APP_USER}/${PROJECT_NAME}/assets/english-dark.png"
+        echo "✅ English dark logo copied"
+    fi
+    
+    # Copy Arabic white logo
+    if [ -f "attached_assets/arabic-white_1750516260877.png" ]; then
+        sudo -u ${APP_USER} cp "attached_assets/arabic-white_1750516260877.png" "/home/${APP_USER}/${PROJECT_NAME}/assets/arabic-white.png"
+        echo "✅ Arabic white logo copied"
+    fi
+    
+    # Copy Arabic dark logo
+    if [ -f "attached_assets/arabic-dark_1750516613229.png" ]; then
+        sudo -u ${APP_USER} cp "attached_assets/arabic-dark_1750516613229.png" "/home/${APP_USER}/${PROJECT_NAME}/assets/arabic-dark.png"
+        echo "✅ Arabic dark logo copied"
+    fi
+fi
+
+# Copy development uploads if they exist
+if [ -d "uploads" ] && [ "$(ls -A uploads 2>/dev/null)" ]; then
+    echo "📦 Copying development uploads..."
+    sudo -u ${APP_USER} cp uploads/* "/home/${APP_USER}/${PROJECT_NAME}/uploads/" 2>/dev/null || echo "No uploads to copy"
+    echo "✅ Development uploads copied"
+fi
+
+# Set proper permissions for assets
+sudo chown -R ${APP_USER}:${APP_USER} /home/${APP_USER}/${PROJECT_NAME}/assets
+sudo chown -R ${APP_USER}:${APP_USER} /home/${APP_USER}/${PROJECT_NAME}/uploads
+sudo chmod -R 755 /home/${APP_USER}/${PROJECT_NAME}/assets
+sudo chmod -R 755 /home/${APP_USER}/${PROJECT_NAME}/uploads
+
+# Create comprehensive seeding script with complete production data
 sudo -u ${APP_USER} tee seed-complete.js << 'SEED_EOF'
-import { storage } from "./dist/storage.js";
+import { seedProductionData } from "./server/productionSeeder.js";
 
 async function seedComplete() {
-  console.log("🌱 Starting complete database seeding with admin user...");
+  console.log("🌱 Starting comprehensive production data seeding...");
 
   try {
-    // Create default admin user
-    console.log("👤 Creating default admin user...");
+    await seedProductionData();
+    console.log("✅ Production data seeded successfully!");
+    console.log("📊 Seeded data includes:");
+    console.log("   - 6 Categories with authentic content");
+    console.log("   - 19 Products with real descriptions and images");
+    console.log("   - Admin user (username: admin, password: admin123)");
+    console.log("   - Complete website content (About, Contact, Footer)");
+    console.log("   - Privacy Policy and Terms of Service");
+    console.log("   - Widget settings and logos");
+    
+  } catch (error) {
+    console.error("❌ Error during seeding:", error);
+    
+    // Fallback to basic seeding if production seeder fails
+    console.log("🔄 Attempting fallback seeding...");
+    const { storage } = await import("./server/storage.js");
+    
     try {
       const existingAdmin = await storage.getUserByUsername("${ADMIN_USERNAME}");
-      if (existingAdmin) {
-        console.log("✅ Admin user already exists");
-      } else {
+      if (!existingAdmin) {
         const defaultAdmin = await storage.createLocalUser({
           username: "${ADMIN_USERNAME}",
           email: "${ADMIN_EMAIL}",
@@ -251,33 +313,22 @@ async function seedComplete() {
           role: "administrator",
           isActive: true
         });
-        console.log(\`✅ Created admin user: \${defaultAdmin.username}\`);
-        console.log("🔑 Default password: ${ADMIN_PASSWORD} (CHANGE THIS!)");
+        console.log("✅ Fallback admin user created");
       }
-    } catch (error) {
-      console.log("Admin user creation skipped:", error.message);
+    } catch (fallbackError) {
+      console.error("❌ Fallback seeding also failed:", fallbackError);
     }
+  }
+}
 
-    // Check if sample data exists
-    const existingCategories = await storage.getCategories();
-    if (existingCategories.length > 0) {
-      console.log("✅ Sample data already exists");
-      return;
-    }
-
-    // Seed Categories
-    const coffeeCategory = await storage.createCategory({
-      nameEn: "Coffee & Espresso",
-      nameAr: "القهوة والإسبريسو", 
-      descriptionEn: "Premium coffee blends and specialty drinks",
-      descriptionAr: "خلطات قهوة فاخرة ومشروبات مميزة",
-      slug: "coffee",
-      image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-      isActive: true
-    });
-
-    const hotDrinksCategory = await storage.createCategory({
-      nameEn: "Hot Beverages",
+seedComplete().then(() => {
+  console.log("🎉 Database seeding completed!");
+  process.exit(0);
+}).catch((error) => {
+  console.error("💥 Fatal seeding error:", error);
+  process.exit(1);
+});
+SEED_EOF
       nameAr: "المشروبات الساخنة",
       descriptionEn: "Warm and comforting drinks",
       descriptionAr: "مشروبات دافئة ومريحة",

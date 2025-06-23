@@ -16,7 +16,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
   const { isRTL } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: ""
   });
 
@@ -25,9 +25,10 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/admin/login", {
+      const response = await fetch("/api/auth/local/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(formData)
       });
 
@@ -37,8 +38,8 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
 
       const data = await response.json();
       
-      if (data.success) {
-        localStorage.setItem("admin_token", data.token);
+      if (data.user) {
+        // Store user data in localStorage for admin panel
         localStorage.setItem("admin_user", JSON.stringify(data.user));
         onLogin(data.user);
         toast({
@@ -49,7 +50,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
     } catch (error) {
       toast({
         title: isRTL ? "خطأ في تسجيل الدخول" : "Login Error",
-        description: isRTL ? "بيانات الدخول غير صحيحة" : "Invalid email or password",
+        description: isRTL ? "بيانات الدخول غير صحيحة" : "Invalid username or password",
         variant: "destructive",
       });
     } finally {
@@ -59,8 +60,8 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
 
   const handleDemoLogin = (type: "admin" | "moderator") => {
     const credentials = type === "admin" 
-      ? { email: "admin@latelounge.sa", password: "admin123" }
-      : { email: "moderator@latelounge.sa", password: "mod123" };
+      ? { username: "admin", password: "admin123456" }
+      : { username: "hai", password: "newpassword123" };
     
     setFormData(credentials);
   };
@@ -83,13 +84,13 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="email">{isRTL ? "البريد الإلكتروني" : "Email"}</Label>
+              <Label htmlFor="username">{isRTL ? "اسم المستخدم" : "Username"}</Label>
               <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                placeholder={isRTL ? "أدخل البريد الإلكتروني" : "Enter your email"}
+                id="username"
+                type="text"
+                value={formData.username}
+                onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
+                placeholder={isRTL ? "أدخل اسم المستخدم" : "Enter your username"}
                 required
               />
             </div>

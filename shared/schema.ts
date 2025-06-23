@@ -30,7 +30,9 @@ export const userRoles = ["administrator", "moderator"] as const;
 // Users table (required for authentication)
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().notNull(),
+  username: varchar("username", { length: 50 }).unique(),
   email: varchar("email").unique(),
+  password: varchar("password", { length: 255 }), // Hashed password for local auth
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
@@ -245,6 +247,18 @@ export const upsertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
 });
 
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const createUserSchema = insertUserSchema.extend({
+  username: z.string().min(3).max(50),
+  password: z.string().min(6),
+  email: z.string().email(),
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type UpsertUser = z.infer<typeof upsertUserSchema>;
@@ -267,3 +281,5 @@ export type InsertWidgetSettings = z.infer<typeof insertWidgetSettingsSchema>;
 export type InsertPrivacyPolicy = z.infer<typeof insertPrivacyPolicySchema>;
 export type InsertTermsOfService = z.infer<typeof insertTermsOfServiceSchema>;
 export type InsertSmtpSettings = z.infer<typeof insertSmtpSettingsSchema>;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type CreateUser = z.infer<typeof createUserSchema>;

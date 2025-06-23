@@ -29,7 +29,10 @@ import {
   type InsertPrivacyPolicy,
   type InsertTermsOfService,
   type InsertSmtpSettings,
+  type InsertUser,
+  type CreateUser,
 } from "@shared/schema";
+import bcrypt from "bcryptjs";
 import { db } from "./db";
 import { eq, lt, gt, desc, asc, and } from "drizzle-orm";
 
@@ -42,6 +45,12 @@ export interface IStorage {
   createUser(userData: Omit<User, 'createdAt' | 'updatedAt'>): Promise<User>;
   updateUser(id: string, userData: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>): Promise<User>;
   deleteUser(id: string): Promise<void>;
+  
+  // Local authentication methods
+  getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createLocalUser(userData: CreateUser): Promise<User>;
+  validatePassword(user: User, password: string): Promise<boolean>;
   
   // Categories
   getCategories(): Promise<Category[]>;
@@ -142,6 +151,45 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUser(id: string): Promise<void> {
     await db.delete(users).where(eq(users.id, id));
+  }
+
+  // Local authentication methods
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async createLocalUser(userData: CreateUser): Promise<User> {
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const [user] = await db
+      .insert(users)
+      .values({
+        id: userId,
+        username: userData.username,
+        email: userData.email,
+        password: hashedPassword,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        profileImageUrl: userData.profileImageUrl,
+        role: userData.role || "moderator",
+        isActive: userData.isActive !== undefined ? userData.isActive : true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    return user;
+  }
+
+  async validatePassword(user: User, password: string): Promise<boolean> {
+    if (!user.password) return false;
+    return await bcrypt.compare(password, user.password);
   }
 
   // Categories

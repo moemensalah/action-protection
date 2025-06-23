@@ -103,33 +103,11 @@ sudo chown -R www-data:www-data dist/
 sudo chmod -R 755 dist/
 sudo find dist/ -type f -exec chmod 644 {} \;
 
-# Generate SSL certificate
-sudo mkdir -p /etc/ssl/certs /etc/ssl/private
-sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/ssl/private/latelounge.key \
-    -out /etc/ssl/certs/latelounge.crt \
-    -subj "/C=SA/ST=Riyadh/L=Riyadh/O=LateLounge/CN=${DOMAIN}"
-
-# CRITICAL FIX #5: Complete Nginx configuration with HTTPS and proper asset mapping
+# CRITICAL FIX #5: Complete Nginx configuration with HTTP and proper asset mapping
 sudo tee /etc/nginx/sites-available/latelounge << 'EOF'
-# HTTP server (redirects to HTTPS)
 server {
     listen 80;
     server_name demo2.late-lounge.com www.demo2.late-lounge.com;
-    return 301 https://$server_name$request_uri;
-}
-
-# HTTPS server
-server {
-    listen 443 ssl http2;
-    server_name demo2.late-lounge.com www.demo2.late-lounge.com;
-
-    # SSL configuration
-    ssl_certificate /etc/ssl/certs/latelounge.crt;
-    ssl_certificate_key /etc/ssl/private/latelounge.key;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384;
-    ssl_prefer_server_ciphers off;
 
     # Security headers
     add_header X-Frame-Options DENY;
@@ -446,12 +424,12 @@ curl -X POST http://localhost:3000/api/auth/local/login \
 
 # Test asset serving
 echo "Testing asset serving..."
-curl -I https://${DOMAIN}/assets/index-D9yNFWBb.css
+curl -I http://${DOMAIN}/assets/index-D9yNFWBb.css
 
 echo ""
 echo "=== DEPLOYMENT COMPLETE ==="
-echo "Website: https://${DOMAIN}"
-echo "Admin Panel: https://${DOMAIN}/admin"
+echo "Website: http://${DOMAIN}"
+echo "Admin Panel: http://${DOMAIN}/admin"
 echo ""
 echo "🎯 Default Admin Credentials:"
 echo "Username: admin"

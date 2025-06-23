@@ -369,7 +369,7 @@ server {
     listen 80;
     server_name ${DOMAIN} www.${DOMAIN};
     
-    root /home/${APP_USER}/${PROJECT_NAME}/dist;
+    root /home/${APP_USER}/${PROJECT_NAME}/dist/public;
     index index.html;
     
     # Serve static files
@@ -387,7 +387,7 @@ server {
     
     # API routes
     location /api/ {
-        proxy_pass http://localhost:5000;
+        proxy_pass http://localhost:${APP_PORT};
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';

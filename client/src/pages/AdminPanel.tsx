@@ -16,7 +16,15 @@ export default function AdminPanel() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("categories");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<{
+    id: string;
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: "administrator" | "moderator";
+    isActive: boolean;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -58,14 +66,15 @@ export default function AdminPanel() {
     return <AdminLogin onLogin={handleLogin} />;
   }
 
-  const adminSections = [
+  const allSections = [
     {
       id: "categories",
       icon: FolderOpen,
       nameEn: "Categories",
       nameAr: "الفئات",
       descEn: "Manage product categories",
-      descAr: "إدارة فئات المنتجات"
+      descAr: "إدارة فئات المنتجات",
+      roles: ["administrator", "moderator"]
     },
     {
       id: "products", 
@@ -73,7 +82,8 @@ export default function AdminPanel() {
       nameEn: "Products",
       nameAr: "المنتجات",
       descEn: "Manage all products",
-      descAr: "إدارة جميع المنتجات"
+      descAr: "إدارة جميع المنتجات",
+      roles: ["administrator", "moderator"]
     },
     {
       id: "content",
@@ -81,7 +91,8 @@ export default function AdminPanel() {
       nameEn: "Content",
       nameAr: "المحتوى",
       descEn: "Manage pages and content",
-      descAr: "إدارة الصفحات والمحتوى"
+      descAr: "إدارة الصفحات والمحتوى",
+      roles: ["administrator"]
     },
     {
       id: "users",
@@ -89,9 +100,22 @@ export default function AdminPanel() {
       nameEn: "Users",
       nameAr: "المستخدمين",
       descEn: "Manage admin users",
-      descAr: "إدارة المستخدمين الإداريين"
+      descAr: "إدارة المستخدمين الإداريين",
+      roles: ["administrator"]
     }
   ];
+
+  // Filter sections based on user role
+  const adminSections = allSections.filter(section => 
+    user?.role && section.roles.includes(user.role)
+  );
+
+  // Ensure activeTab is valid for the user's role
+  useEffect(() => {
+    if (adminSections.length > 0 && !adminSections.find(section => section.id === activeTab)) {
+      setActiveTab(adminSections[0].id);
+    }
+  }, [adminSections, activeTab]);
 
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
@@ -212,33 +236,37 @@ export default function AdminPanel() {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="content" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
-                      <FileText className="h-5 w-5" />
-                      {isRTL ? "إدارة المحتوى" : "Content Management"}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ContentManagement />
-                  </CardContent>
-                </Card>
-              </TabsContent>
+              {user?.role === "administrator" && (
+                <TabsContent value="content" className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                        <FileText className="h-5 w-5" />
+                        {isRTL ? "إدارة المحتوى" : "Content Management"}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ContentManagement />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              )}
 
-              <TabsContent value="users" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
-                      <Users className="h-5 w-5" />
-                      {isRTL ? "إدارة المستخدمين" : "Users Management"}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <UsersManagement />
-                  </CardContent>
-                </Card>
-              </TabsContent>
+              {user?.role === "administrator" && (
+                <TabsContent value="users" className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                        <Users className="h-5 w-5" />
+                        {isRTL ? "إدارة المستخدمين" : "Users Management"}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <UsersManagement />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              )}
             </Tabs>
           </div>
         </main>

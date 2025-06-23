@@ -14,12 +14,19 @@ APP_PORT="3000"
 # Domain Configuration
 DOMAIN="demo2.late-lounge.com"
 DOMAIN_WWW="www.demo2.late-lounge.com"
+DOMAIN_NAME="${DOMAIN},${DOMAIN_WWW},localhost:${APP_PORT},127.0.0.1:${APP_PORT}"
 GIT_REPO_URL="https://github.com/your-username/latelounge.git"
 
 # Database Configuration
-DB_USER="appuser"
-DB_PASSWORD="SAJWJJAHED4E"
-DB_NAME="latelounge"
+DB_USER="latelounge_user"
+DB_PASSWORD="secure_password_123"
+DB_NAME="latelounge_db"
+DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}"
+
+# Authentication Configuration
+SESSION_SECRET="latelounge-production-session-secret-2024"
+REPL_ID="latelounge-production"
+ISSUER_URL="https://replit.com/oidc"
 
 # Admin User Configuration
 ADMIN_USERNAME="admin"
@@ -112,11 +119,11 @@ sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_NAME} TO ${DB_US
 echo "🔐 Creating environment configuration..."
 sudo -u ${APP_USER} tee /home/${APP_USER}/${PROJECT_NAME}/.env << ENV_EOF
 NODE_ENV=production
-DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}  
-SESSION_SECRET=$(openssl rand -base64 32)
-REPL_ID=production-${PROJECT_NAME}
-ISSUER_URL=https://replit.com/oidc
-REPLIT_DOMAINS=${DOMAIN}
+DATABASE_URL=${DATABASE_URL}
+SESSION_SECRET=${SESSION_SECRET}
+REPL_ID=${REPL_ID}
+ISSUER_URL=${ISSUER_URL}
+REPLIT_DOMAINS=${DOMAIN_NAME}
 PORT=${APP_PORT}
 ENV_EOF
 
@@ -236,18 +243,18 @@ module.exports = {
       NODE_ENV: 'development',
       DATABASE_URL: '${DATABASE_URL}',
       REPLIT_DOMAINS: '${DOMAIN_NAME}',
-      REPL_ID: '${PROJECT_NAME}-production',
+      REPL_ID: '${REPL_ID}',
       SESSION_SECRET: '${SESSION_SECRET}',
-      ISSUER_URL: 'https://replit.com/oidc'
+      ISSUER_URL: '${ISSUER_URL}'
     },
     env_production: {
       NODE_ENV: 'production',
       PORT: ${APP_PORT},
       DATABASE_URL: '${DATABASE_URL}',
       REPLIT_DOMAINS: '${DOMAIN_NAME}',
-      REPL_ID: '${PROJECT_NAME}-production',
+      REPL_ID: '${REPL_ID}',
       SESSION_SECRET: '${SESSION_SECRET}',
-      ISSUER_URL: 'https://replit.com/oidc'
+      ISSUER_URL: '${ISSUER_URL}'
     },
     error_file: './logs/err.log',
     out_file: './logs/out.log',
@@ -281,9 +288,9 @@ module.exports = {
       PORT: ${APP_PORT},
       DATABASE_URL: '${DATABASE_URL}',
       REPLIT_DOMAINS: '${DOMAIN_NAME}',
-      REPL_ID: '${PROJECT_NAME}-production',
+      REPL_ID: '${REPL_ID}',
       SESSION_SECRET: '${SESSION_SECRET}',
-      ISSUER_URL: 'https://replit.com/oidc'
+      ISSUER_URL: '${ISSUER_URL}'
     },
     error_file: './logs/err.log',
     out_file: './logs/out.log',

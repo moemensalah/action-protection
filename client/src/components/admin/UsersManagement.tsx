@@ -482,11 +482,13 @@ export function UsersManagement() {
                       <TableHead className="text-right">الصلاحيات</TableHead>
                       <TableHead className="text-right">الدور</TableHead>
                       <TableHead className="text-right">البريد الإلكتروني</TableHead>
+                      <TableHead className="text-right">اسم المستخدم</TableHead>
                       <TableHead className="text-right">المستخدم</TableHead>
                     </>
                   ) : (
                     <>
                       <TableHead className="text-left">User</TableHead>
+                      <TableHead className="text-left">Username</TableHead>
                       <TableHead className="text-left">Email</TableHead>
                       <TableHead className="text-left">Role</TableHead>
                       <TableHead className="text-left">Permissions</TableHead>
@@ -555,6 +557,9 @@ export function UsersManagement() {
                           </TableCell>
                           <TableCell className="text-right">
                             <span className="text-gray-600 dark:text-gray-400">{user.email}</span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <span className="font-medium text-gray-900 dark:text-white">{user.username}</span>
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex items-center gap-3 flex-row-reverse">

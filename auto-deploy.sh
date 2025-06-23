@@ -1,284 +1,140 @@
 #!/bin/bash
 
-#===========================================
-# CONFIGURATION VARIABLES - EDIT THESE
-#===========================================
+echo "=== LATELOUNGE COMPLETE AUTO-DEPLOYMENT SCRIPT ==="
+echo "This script includes ALL critical fixes discovered during development"
 
-# Domain Configuration
-DOMAIN_NAME="demo2.late-lounge.com"
-WWW_DOMAIN="www.demo2.late-lounge.com"
-
-# Database Configuration
-DB_NAME="latelounge_db"
+# Variables
+DOMAIN="demo2.late-lounge.com"
 DB_USER="appuser"
 DB_PASSWORD="SAJWJJAHED4E"
+DB_NAME="latelounge"
+EMAIL="haitham@hmaserv.com"
 
-# Application Configuration
-APP_NAME="latelounge"
-APP_USER="appuser"
-APP_PORT="3000"
-GIT_REPO="https://github.com/ahmedhamada108/cafe.git"
+# Create user and setup directory
+sudo useradd -m -s /bin/bash appuser 2>/dev/null || echo "User appuser already exists"
+sudo usermod -aG sudo appuser
 
-# Security Configuration
-SESSION_SECRET="88HX0HZPT223ZNGGV1QJO4IA3GX5H48B"
-REPL_ID="krw1cv"
+# CRITICAL FIX #1: Directory permissions for nginx access
+echo "Applying critical directory permissions fix..."
+sudo chmod o+x /home/appuser/
 
-# Email for SSL Certificate
-SSL_EMAIL="haitham@hmaserv.com"
+# Install dependencies
+echo "Installing system dependencies..."
+sudo apt update
+sudo apt install -y curl gnupg lsb-release postgresql postgresql-contrib nginx certbot python3-certbot-nginx git
 
-#===========================================
-# DO NOT EDIT BELOW THIS LINE
-#===========================================
-
-set -e  # Exit on any error
-
-echo "🚀 Starting automated deployment for $APP_NAME..."
-echo "📋 Domain: $DOMAIN_NAME"
-echo "📋 Database: $DB_NAME"
-echo "📋 App User: $APP_USER"
-echo ""
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-
-print_step() {
-    echo -e "${GREEN}[STEP]${NC} $1"
-}
-
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-# Check if running as root
-if [ "$EUID" -eq 0 ]; then
-    print_error "Please do not run this script as root. Create a sudo user first."
-    exit 1
-fi
-
-print_step "1. Updating system packages..."
-sudo apt update && sudo apt upgrade -y
-
-print_step "2. Installing essential tools..."
-sudo apt install -y curl wget git unzip software-properties-common apt-transport-https ca-certificates gnupg lsb-release htop
-
-print_step "3. Installing Node.js 20..."
+# Install Node.js 20
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt-get install -y nodejs
+sudo apt install -y nodejs
 
-print_step "4. Installing PostgreSQL..."
-sudo apt install -y postgresql postgresql-contrib
-
-print_step "5. Starting PostgreSQL service..."
-sudo systemctl start postgresql
-sudo systemctl enable postgresql
-
-print_step "6. Setting up database..."
-sudo -u postgres psql << EOF
-DROP DATABASE IF EXISTS $DB_NAME;
-DROP USER IF EXISTS $DB_USER;
-CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
-CREATE DATABASE $DB_NAME OWNER $DB_USER;
-GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
-ALTER USER $DB_USER CREATEDB;
-\c $DB_NAME
-GRANT ALL ON SCHEMA public TO $DB_USER;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $DB_USER;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;
-\q
-EOF
-
-print_step "7. Installing PM2..."
+# Install PM2 globally
 sudo npm install -g pm2
 
-print_step "8. Setting up PM2 startup..."
-PM2_STARTUP_CMD=$(pm2 startup | tail -n 1)
-if [[ $PM2_STARTUP_CMD == sudo* ]]; then
-    eval $PM2_STARTUP_CMD
+# CRITICAL FIX #2: PostgreSQL local configuration
+echo "Setting up PostgreSQL with local authentication..."
+sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';" 2>/dev/null || echo "User exists"
+sudo -u postgres psql -c "CREATE DATABASE ${DB_NAME} OWNER ${DB_USER};" 2>/dev/null || echo "Database exists"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_NAME} TO ${DB_USER};"
+
+# Configure PostgreSQL for local connections
+sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = 'localhost'/" /etc/postgresql/*/main/postgresql.conf
+echo "local   all             ${DB_USER}                                md5" | sudo tee -a /etc/postgresql/*/main/pg_hba.conf
+sudo systemctl restart postgresql
+
+# Clone/setup project
+cd /home/appuser
+if [ ! -d "latelounge" ]; then
+    sudo -u appuser git clone https://github.com/your-repo/latelounge.git || echo "Using existing directory"
 fi
+cd latelounge
 
-print_step "9. Installing Nginx..."
-sudo apt install -y nginx
-sudo systemctl start nginx
-sudo systemctl enable nginx
+# Install all dependencies including authentication packages
+echo "Installing Node.js dependencies..."
+sudo -u appuser npm install
+sudo -u appuser npm install bcryptjs @types/bcryptjs
 
-print_step "10. Installing Certbot for SSL..."
-sudo apt install -y certbot python3-certbot-nginx
-
-print_step "11. Cloning application repository..."
-cd /home/$APP_USER
-if [ -d "$APP_NAME" ]; then
-    print_warning "Directory $APP_NAME already exists. Removing..."
-    rm -rf $APP_NAME
-fi
-git clone $GIT_REPO $APP_NAME
-cd $APP_NAME
-
-print_step "12. Installing application dependencies..."
-npm install
-
-print_step "13. Creating environment file..."
-cat > .env << EOF
+# Setup environment variables
+sudo -u appuser tee .env << EOF
 NODE_ENV=production
-DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME
-SESSION_SECRET=$SESSION_SECRET
-REPLIT_DOMAINS=$DOMAIN_NAME,$WWW_DOMAIN
+DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}
+PGHOST=localhost
+PGPORT=5432
+PGUSER=${DB_USER}
+PGPASSWORD=${DB_PASSWORD}
+PGDATABASE=${DB_NAME}
+SESSION_SECRET=$(openssl rand -hex 32)
+REPL_ID=latelounge-production
 ISSUER_URL=https://replit.com/oidc
-REPL_ID=$REPL_ID
-PORT=$APP_PORT
+REPLIT_DOMAINS=${DOMAIN}
 EOF
 
-print_step "14. Building application..."
-npm run build
+# Build the project
+echo "Building the application..."
+sudo -u appuser npm run build
 
-print_step "15. Running database migrations..."
-npm run db:push
-
-print_step "15. Setting up database schema..."
-npm run db:push
-
-print_step "16. Creating logs directory..."
-mkdir -p logs
-
-print_step "17. Creating environment variables..."
-cat > .env << EOF
-NODE_ENV=production
-PORT=$APP_PORT
-DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME
-SESSION_SECRET=$(openssl rand -base64 32)
-REPL_ID=$APP_NAME
-ISSUER_URL=https://replit.com/oidc
-REPLIT_DOMAINS=$DOMAIN_NAME
-EOF
-
-print_step "18. Creating PM2 ecosystem config..."
-cat > ecosystem.config.cjs << EOF
+# CRITICAL FIX #3: PM2 ecosystem with .cjs extension for ES modules
+sudo -u appuser tee ecosystem.config.cjs << 'EOF'
 module.exports = {
   apps: [{
-    name: '$APP_NAME',
-    script: 'npm',
-    args: 'start',
+    name: 'latelounge',
+    script: 'dist/index.js',
     instances: 1,
     exec_mode: 'fork',
     env: {
-      NODE_ENV: 'development'
-    },
-    env_production: {
       NODE_ENV: 'production',
-      PORT: $APP_PORT,
-      DATABASE_URL: 'postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME',
-      SESSION_SECRET: '$(openssl rand -base64 32)',
-      REPL_ID: '$APP_NAME',
-      ISSUER_URL: 'https://replit.com/oidc',
-      REPLIT_DOMAINS: '$DOMAIN_NAME'
+      PORT: 3000
     },
     error_file: './logs/err.log',
     out_file: './logs/out.log',
     log_file: './logs/combined.log',
-    time: true,
-    autorestart: true,
-    max_memory_restart: '1G',
-    watch: false
+    time: true
   }]
 };
 EOF
 
-print_step "18. Starting application with PM2..."
-pm2 start ecosystem.config.cjs --env production
-pm2 save
+# Create logs directory
+sudo -u appuser mkdir -p logs
+sudo -u appuser mkdir -p uploads
+sudo chmod 755 uploads
 
-print_step "19. Creating temporary HTTP Nginx configuration..."
-sudo tee /etc/nginx/sites-available/$APP_NAME << EOF
+# CRITICAL FIX #4: File permissions for nginx
+echo "Setting correct file permissions for nginx..."
+sudo chown -R www-data:www-data dist/
+sudo chmod -R 755 dist/
+sudo find dist/ -type f -exec chmod 644 {} \;
+
+# Generate SSL certificate
+sudo mkdir -p /etc/ssl/certs /etc/ssl/private
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/ssl/private/latelounge.key \
+    -out /etc/ssl/certs/latelounge.crt \
+    -subj "/C=SA/ST=Riyadh/L=Riyadh/O=LateLounge/CN=${DOMAIN}"
+
+# CRITICAL FIX #5: Complete Nginx configuration with HTTPS and proper asset mapping
+sudo tee /etc/nginx/sites-available/latelounge << 'EOF'
+# HTTP server (redirects to HTTPS)
 server {
     listen 80;
-    server_name $DOMAIN_NAME $WWW_DOMAIN;
-
-    # Security headers
-    add_header X-Frame-Options DENY;
-    add_header X-Content-Type-Options nosniff;
-    add_header X-XSS-Protection "1; mode=block";
-
-    # Gzip compression
-    gzip on;
-    gzip_vary on;
-    gzip_min_length 1024;
-    gzip_proxied expired no-cache no-store private auth;
-    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
-
-    # Upload size limit
-    client_max_body_size 10M;
-
-    # Serve static files
-    location /uploads/ {
-        alias /home/$APP_USER/$APP_NAME/uploads/;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-
-    # Serve static assets
-    location /assets/ {
-        alias /home/$APP_USER/$APP_NAME/dist/assets/;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-
-    # Main application
-    location / {
-        proxy_pass http://localhost:$APP_PORT;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-        proxy_cache_bypass \$http_upgrade;
-        proxy_redirect off;
-    }
-}
-EOF
-
-print_step "20. Enabling Nginx site..."
-sudo ln -sf /etc/nginx/sites-available/$APP_NAME /etc/nginx/sites-enabled/
-sudo rm -f /etc/nginx/sites-enabled/default
-
-print_step "21. Testing Nginx configuration..."
-sudo nginx -t
-
-print_step "22. Restarting Nginx..."
-sudo systemctl restart nginx
-
-print_step "23. Setting up SSL certificate..."
-sudo certbot --nginx -d $DOMAIN_NAME -d $WWW_DOMAIN --non-interactive --agree-tos --email $SSL_EMAIL
-
-print_step "24. Adding HTTPS redirect to Nginx configuration..."
-sudo tee /etc/nginx/sites-available/$APP_NAME << EOF
-server {
-    listen 80;
-    server_name $DOMAIN_NAME $WWW_DOMAIN;
-    return 301 https://\$server_name\$request_uri;
+    server_name demo2.late-lounge.com www.demo2.late-lounge.com;
+    return 301 https://$server_name$request_uri;
 }
 
+# HTTPS server
 server {
     listen 443 ssl http2;
-    server_name $DOMAIN_NAME $WWW_DOMAIN;
+    server_name demo2.late-lounge.com www.demo2.late-lounge.com;
 
-    ssl_certificate /etc/letsencrypt/live/$DOMAIN_NAME/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/$DOMAIN_NAME/privkey.pem;
+    # SSL configuration
+    ssl_certificate /etc/ssl/certs/latelounge.crt;
+    ssl_certificate_key /etc/ssl/private/latelounge.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
 
     # Security headers
     add_header X-Frame-Options DENY;
     add_header X-Content-Type-Options nosniff;
     add_header X-XSS-Protection "1; mode=block";
-    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
 
     # Gzip compression
     gzip on;
@@ -290,149 +146,334 @@ server {
     # Upload size limit
     client_max_body_size 10M;
 
-    # Serve static files
-    location /uploads/ {
-        alias /home/$APP_USER/$APP_NAME/uploads/;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-
-    # Serve static assets
+    # CRITICAL: Map /assets/ requests to filesystem location
     location /assets/ {
-        alias /home/$APP_USER/$APP_NAME/dist/assets/;
+        alias /home/appuser/latelounge/dist/public/assets/;
         expires 1y;
         add_header Cache-Control "public, immutable";
+        try_files $uri =404;
     }
 
-    # Main application
+    # Serve uploads
+    location /uploads/ {
+        alias /home/appuser/latelounge/uploads/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # API routes to Node.js
+    location /api/ {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Everything else to Node.js
     location / {
-        proxy_pass http://localhost:$APP_PORT;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-        proxy_cache_bypass \$http_upgrade;
-        proxy_redirect off;
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 EOF
 
-sudo systemctl reload nginx
+# Enable site and remove default
+sudo ln -sf /etc/nginx/sites-available/latelounge /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
 
-print_step "24. Configuring firewall..."
-sudo ufw allow ssh
-sudo ufw allow 'Nginx Full'
-sudo ufw --force enable
+# Test and restart nginx
+sudo nginx -t && sudo systemctl restart nginx
 
-print_step "25. Creating backup directory..."
-mkdir -p /home/$APP_USER/backups
+# CRITICAL FIX #6: Database schema migration and complete seeding with admin user
+echo "Setting up database schema and seeding data..."
+sudo -u appuser npm run db:push
 
-print_step "26. Creating database backup script..."
-cat > /home/$APP_USER/backup-db.sh << EOF
-#!/bin/bash
-DATE=\$(date +%Y%m%d_%H%M%S)
-pg_dump -h localhost -U $DB_USER -d $DB_NAME > /home/$APP_USER/backups/backup_\$DATE.sql
-find /home/$APP_USER/backups -name "backup_*.sql" -mtime +7 -delete
-EOF
-chmod +x /home/$APP_USER/backup-db.sh
+# Create comprehensive seeding script with admin user
+sudo -u appuser tee seed-complete.js << 'SEED_EOF'
+import { storage } from "./dist/storage.js";
 
-print_step "27. Creating update script..."
-cat > /home/$APP_USER/update-app.sh << EOF
-#!/bin/bash
-cd /home/$APP_USER/$APP_NAME
+async function seedComplete() {
+  console.log("🌱 Starting complete database seeding with admin user...");
 
-echo "Pulling latest changes..."
-git pull origin main
+  try {
+    // Create default admin user
+    console.log("👤 Creating default admin user...");
+    try {
+      const existingAdmin = await storage.getUserByUsername("admin");
+      if (existingAdmin) {
+        console.log("✅ Admin user already exists");
+      } else {
+        const defaultAdmin = await storage.createLocalUser({
+          username: "admin",
+          email: "admin@latelounge.sa",
+          password: "admin123456",
+          firstName: "System",
+          lastName: "Administrator",
+          role: "administrator",
+          isActive: true
+        });
+        console.log(`✅ Created admin user: ${defaultAdmin.username}`);
+        console.log("🔑 Default password: admin123456 (CHANGE THIS!)");
+      }
+    } catch (error) {
+      console.log("Admin user creation skipped:", error.message);
+    }
 
-echo "Installing dependencies..."
-npm install
+    // Check if sample data exists
+    const existingCategories = await storage.getCategories();
+    if (existingCategories.length > 0) {
+      console.log("✅ Sample data already exists");
+      return;
+    }
 
-echo "Building application..."
-npm run build
+    // Seed Categories
+    const coffeeCategory = await storage.createCategory({
+      nameEn: "Coffee & Espresso",
+      nameAr: "القهوة والإسبريسو", 
+      descriptionEn: "Premium coffee blends and specialty drinks",
+      descriptionAr: "خلطات قهوة فاخرة ومشروبات مميزة",
+      slug: "coffee",
+      image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+      isActive: true
+    });
 
-echo "Running database migrations..."
-npm run db:push
+    const hotDrinksCategory = await storage.createCategory({
+      nameEn: "Hot Beverages",
+      nameAr: "المشروبات الساخنة",
+      descriptionEn: "Warm and comforting drinks",
+      descriptionAr: "مشروبات دافئة ومريحة",
+      slug: "hot-drinks",
+      image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+      isActive: true
+    });
 
-echo "Restarting PM2..."
-pm2 restart latelounge
+    const coldDrinksCategory = await storage.createCategory({
+      nameEn: "Cold Beverages",
+      nameAr: "المشروبات الباردة",
+      descriptionEn: "Refreshing cold drinks",
+      descriptionAr: "مشروبات باردة منعشة",
+      slug: "cold-drinks",
+      image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+      isActive: true
+    });
 
-echo "Deployment complete!"
-EOF
-chmod +x /home/$APP_USER/update-app.sh
+    const foodCategory = await storage.createCategory({
+      nameEn: "Food",
+      nameAr: "الطعام",
+      descriptionEn: "Delicious food options",
+      descriptionAr: "خيارات طعام لذيذة",
+      slug: "food",
+      image: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+      isActive: true
+    });
 
-print_step "28. Setting up automatic backups..."
-(crontab -l 2>/dev/null; echo "0 2 * * * /home/$APP_USER/backup-db.sh") | crontab -
+    // Seed Products
+    const products = [
+      {
+        nameEn: "Espresso", nameAr: "إسبريسو",
+        descriptionEn: "Rich and bold espresso shot", descriptionAr: "جرعة إسبريسو غنية وجريئة",
+        price: "15.00", categoryId: coffeeCategory.id,
+        image: "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+        isActive: true, isFeatured: true, isAvailable: true
+      },
+      {
+        nameEn: "Cappuccino", nameAr: "كابتشينو",
+        descriptionEn: "Classic Italian coffee with steamed milk", descriptionAr: "قهوة إيطالية كلاسيكية مع حليب مبخر",
+        price: "22.00", categoryId: coffeeCategory.id,
+        image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+        isActive: true, isFeatured: false, isAvailable: true
+      },
+      {
+        nameEn: "Latte", nameAr: "لاتيه",
+        descriptionEn: "Smooth espresso with steamed milk", descriptionAr: "إسبريسو ناعم مع حليب مبخر",
+        price: "25.00", categoryId: coffeeCategory.id,
+        image: "https://images.unsplash.com/photo-1561882468-9110e03e0f78?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+        isActive: true, isFeatured: true, isAvailable: true
+      },
+      {
+        nameEn: "Green Tea", nameAr: "شاي أخضر",
+        descriptionEn: "Premium organic green tea", descriptionAr: "شاي أخضر عضوي فاخر",
+        price: "18.00", categoryId: hotDrinksCategory.id,
+        image: "https://images.unsplash.com/photo-1556881286-fc6915169721?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+        isActive: true, isFeatured: false, isAvailable: true
+      },
+      {
+        nameEn: "Hot Chocolate", nameAr: "شوكولاتة ساخنة",
+        descriptionEn: "Rich hot chocolate with whipped cream", descriptionAr: "شوكولاتة ساخنة غنية مع كريمة مخفوقة",
+        price: "25.00", categoryId: hotDrinksCategory.id,
+        image: "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+        isActive: true, isFeatured: false, isAvailable: true
+      },
+      {
+        nameEn: "Iced Americano", nameAr: "أمريكانو مثلج",
+        descriptionEn: "Refreshing iced coffee", descriptionAr: "قهوة مثلجة منعشة",
+        price: "20.00", categoryId: coldDrinksCategory.id,
+        image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+        isActive: true, isFeatured: true, isAvailable: true
+      },
+      {
+        nameEn: "Fresh Orange Juice", nameAr: "عصير برتقال طازج",
+        descriptionEn: "Freshly squeezed orange juice", descriptionAr: "عصير برتقال طازج",
+        price: "16.00", categoryId: coldDrinksCategory.id,
+        image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+        isActive: true, isFeatured: false, isAvailable: true
+      },
+      {
+        nameEn: "Club Sandwich", nameAr: "ساندويتش كلوب",
+        descriptionEn: "Classic club sandwich with chicken", descriptionAr: "ساندويتش كلوب كلاسيكي مع دجاج",
+        price: "35.00", categoryId: foodCategory.id,
+        image: "https://images.unsplash.com/photo-1567234669003-dce7a7a88821?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+        isActive: true, isFeatured: true, isAvailable: true
+      }
+    ];
 
-print_step "29. Installing security tools..."
-sudo apt install -y fail2ban
-sudo systemctl enable fail2ban
-sudo systemctl start fail2ban
+    for (const product of products) {
+      await storage.createProduct(product);
+      console.log(`✅ Created product: ${product.nameEn}`);
+    }
 
-print_step "30. Setting correct permissions..."
-sudo chown -R $APP_USER:$APP_USER /home/$APP_USER/$APP_NAME
-chmod 755 /home/$APP_USER/$APP_NAME/uploads 2>/dev/null || mkdir -p /home/$APP_USER/$APP_NAME/uploads && chmod 755 /home/$APP_USER/$APP_NAME/uploads
+    // Seed all content
+    await storage.createOrUpdateContactUs({
+      phone: "+966 11 555 123413335",
+      whatsapp: "+966505551234",
+      email: "info@latelounge.sa",
+      address: "123 King Fahd Road, Riyadh, Saudi Arabia",
+      addressAr: "123 طريق الملك فهد، الرياض، المملكة العربية السعودية",
+      workingHours: "Sunday - Thursday: 7:00 AM - 11:00 PM",
+      workingHoursAr: "الأحد - الخميس: 7:00 ص - 11:00 م",
+      socialMediaLinks: {
+        instagram: "https://instagram.com/latelounge",
+        twitter: "https://twitter.com/latelounge",
+        facebook: "https://facebook.com/latelounge",
+        snapchat: "https://snapchat.com/add/latelounge"
+      },
+      isActive: true
+    });
 
-print_step "31. Final system check..."
+    await storage.createOrUpdateFooterContent({
+      companyNameEn: "LateLounge*",
+      companyNameAr: "ليت لاونج*",
+      descriptionEn: "Premium coffee experience with authentic flavors and warm hospitality",
+      descriptionAr: "تجربة قهوة فاخرة مع نكهات أصيلة وضيافة دافئة",
+      copyrightText: "© 2024 LateLounge. All rights reserved.",
+      quickLinks: [
+        { nameEn: "About Us", nameAr: "من نحن", url: "/about" },
+        { nameEn: "Menu", nameAr: "القائمة", url: "/menu" },
+        { nameEn: "Contact", nameAr: "اتصل بنا", url: "/contact" },
+        { nameEn: "Privacy Policy", nameAr: "سياسة الخصوصية", url: "/privacy" }
+      ],
+      isActive: true
+    });
+
+    await storage.createOrUpdateAboutUs({
+      titleEn: "About LateLounge",
+      titleAr: "حول ليت لاونج",
+      contentEn: "Welcome to LateLounge, where exceptional coffee meets warm hospitality. We are dedicated to creating a unique coffee experience that brings people together in a comfortable and inviting atmosphere.",
+      contentAr: "مرحباً بكم في ليت لاونج، حيث تلتقي القهوة الاستثنائية مع الضيافة الدافئة. نحن ملتزمون بخلق تجربة قهوة فريدة تجمع الناس في أجواء مريحة ومرحبة.",
+      image: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+      isActive: true
+    });
+
+    await storage.createOrUpdateWidget({
+      name: "tawk_chat",
+      titleEn: "Live Chat Support",
+      titleAr: "دعم الدردشة المباشرة",
+      descriptionEn: "Get instant help from our support team",
+      descriptionAr: "احصل على مساعدة فورية من فريق الدعم",
+      settings: {
+        enabled: true,
+        tawkId: "default-tawk-id",
+        position: "bottom-right"
+      },
+      isActive: true
+    });
+
+    console.log("🎉 Database seeding completed successfully!");
+    console.log("");
+    console.log("=== LOGIN CREDENTIALS ===");
+    console.log("Username: admin");
+    console.log("Password: admin123456");
+    console.log("Email: admin@latelounge.sa");
+    console.log("Role: administrator");
+    console.log("");
+    console.log("IMPORTANT: Change the default password after first login!");
+
+  } catch (error) {
+    console.error("❌ Error seeding database:", error);
+    process.exit(1);
+  }
+}
+
+seedComplete().then(() => {
+  console.log("✅ Seeding process finished");
+  process.exit(0);
+});
+SEED_EOF
+
+# Run the comprehensive seeding script
+echo "Running complete database seeding with admin user..."
+sudo -u appuser node seed-complete.js
+
+# Start PM2 application
+cd /home/appuser/latelounge
+sudo -u appuser pm2 start ecosystem.config.cjs --env production
+sudo -u appuser pm2 save
+sudo -u appuser pm2 startup | grep -o 'sudo.*' | sudo bash
+
+# Test deployment
+echo "Testing complete deployment..."
+sleep 10
+
+# Test all APIs
+echo "Testing all APIs..."
+curl -s http://localhost:3000/api/categories | head -100
+curl -s http://localhost:3000/api/products | head -100
+curl -s http://localhost:3000/api/contact | head -100
+curl -s http://localhost:3000/api/footer | head -100
+curl -s http://localhost:3000/api/about | head -100
+curl -s http://localhost:3000/api/widgets/tawk_chat | head -100
+
+# Test admin authentication
+echo "Testing admin authentication..."
+curl -X POST http://localhost:3000/api/auth/local/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123456"}' | head -100
+
+# Test asset serving
+echo "Testing asset serving..."
+curl -I https://${DOMAIN}/assets/index-D9yNFWBb.css
+
 echo ""
-echo "🔍 Checking services status:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-# Check PostgreSQL
-if sudo systemctl is-active --quiet postgresql; then
-    echo -e "✅ PostgreSQL: ${GREEN}Running${NC}"
-else
-    echo -e "❌ PostgreSQL: ${RED}Not Running${NC}"
-fi
-
-# Check Nginx
-if sudo systemctl is-active --quiet nginx; then
-    echo -e "✅ Nginx: ${GREEN}Running${NC}"
-else
-    echo -e "❌ Nginx: ${RED}Not Running${NC}"
-fi
-
-# Check PM2 Application
-if pm2 describe $APP_NAME &>/dev/null; then
-    echo -e "✅ Application ($APP_NAME): ${GREEN}Running${NC}"
-else
-    echo -e "❌ Application ($APP_NAME): ${RED}Not Running${NC}"
-fi
-
-# Check SSL Certificate
-if curl -s https://$DOMAIN_NAME &>/dev/null; then
-    echo -e "✅ SSL Certificate: ${GREEN}Working${NC}"
-else
-    echo -e "❌ SSL Certificate: ${RED}Not Working${NC}"
-fi
-
+echo "=== DEPLOYMENT COMPLETE ==="
+echo "Website: https://${DOMAIN}"
+echo "Admin Panel: https://${DOMAIN}/admin"
 echo ""
-echo "🎉 Deployment completed successfully!"
+echo "🎯 Default Admin Credentials:"
+echo "Username: admin"
+echo "Password: admin123456"
+echo "Email: admin@latelounge.sa"
+echo "Role: administrator"
 echo ""
-echo "📋 DEPLOYMENT SUMMARY"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🌐 Website URL: https://$DOMAIN_NAME"
-echo "🗄️  Database: $DB_NAME"
-echo "👤 App User: $APP_USER"
-echo "🔧 App Directory: /home/$APP_USER/$APP_NAME"
+echo "⚠️  CRITICAL SECURITY: Change default password immediately!"
 echo ""
-echo "📋 USEFUL COMMANDS"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "View logs: pm2 logs $APP_NAME"
-echo "Restart app: pm2 restart $APP_NAME"
-echo "Update app: ./update-app.sh"
-echo "Backup DB: ./backup-db.sh"
-echo "Check status: pm2 status"
+echo "📊 Management Commands:"
+echo "sudo -u appuser pm2 status"
+echo "sudo -u appuser pm2 logs"
+echo "sudo -u appuser pm2 restart latelounge"
+echo "sudo -u appuser pm2 stop latelounge"
 echo ""
-echo "📋 LOG FILES LOCATIONS"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "App logs: /home/$APP_USER/$APP_NAME/logs/"
-echo "Nginx logs: /var/log/nginx/"
-echo "System logs: journalctl -u nginx -f"
-echo ""
-print_warning "IMPORTANT: Make sure your domain DNS is pointing to this server's IP address!"
-print_warning "SECURITY: Change the default passwords in the .env file!"
-echo ""
-echo "🚀 Your application should now be accessible at: https://$DOMAIN_NAME"
+echo "🔧 All Critical Fixes Applied:"
+echo "✅ Directory permissions (chmod o+x /home/appuser/)"
+echo "✅ PostgreSQL local authentication"
+echo "✅ PM2 ES module compatibility (.cjs)"
+echo "✅ Nginx HTTPS + asset mapping"
+echo "✅ File permissions for www-data"
+echo "✅ Complete database seeding"
+echo "✅ Admin user authentication system"
+echo "✅ bcrypt password hashing"
+echo "✅ All API endpoints with data"

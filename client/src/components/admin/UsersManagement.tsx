@@ -16,6 +16,7 @@ import { apiRequest } from "@/lib/queryClient";
 
 interface User {
   id: string;
+  username: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -27,7 +28,9 @@ interface User {
 }
 
 interface UserForm {
+  username: string;
   email: string;
+  password: string;
   firstName: string;
   lastName: string;
   role: "administrator" | "moderator";
@@ -44,7 +47,9 @@ export function UsersManagement() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [formData, setFormData] = useState<UserForm>({
+    username: "",
     email: "",
+    password: "",
     firstName: "",
     lastName: "",
     role: "moderator",
@@ -59,7 +64,7 @@ export function UsersManagement() {
   // Create user mutation
   const createUserMutation = useMutation({
     mutationFn: async (userData: UserForm) => {
-      return apiRequest('/api/admin/users', {
+      return apiRequest('/api/auth/local/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -167,22 +172,27 @@ export function UsersManagement() {
 
   const resetForm = () => {
     setFormData({
+      username: "",
       email: "",
+      password: "",
       firstName: "",
       lastName: "",
       role: "moderator",
       isActive: true
     });
+    setEditingUser(null);
   };
 
   const handleEdit = (user: User) => {
     setEditingUser(user);
     setFormData({
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      role: user.role,
-      isActive: user.isActive
+      username: user.username || "",
+      email: user.email || "",
+      password: "", // Don't prefill password for security
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      role: user.role || "moderator",
+      isActive: user.isActive || false
     });
     setIsDialogOpen(true);
   };
@@ -245,6 +255,42 @@ export function UsersManagement() {
             </DialogHeader>
             
             <form onSubmit={handleSubmit} className={`space-y-4 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+              {/* Username Field */}
+              <div>
+                <Label htmlFor="username" className={`block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "اسم المستخدم" : "Username"}</Label>
+                <Input
+                  id="username"
+                  value={formData.username}
+                  onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
+                  required
+                  className={isRTL ? 'text-right [&:focus]:text-right' : 'text-left'}
+                  dir={isRTL ? 'rtl' : 'ltr'}
+                  placeholder={isRTL ? "أدخل اسم المستخدم" : "Enter username"}
+                />
+              </div>
+
+              {/* Password Field */}
+              <div>
+                <Label htmlFor="password" className={`block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                  {isRTL ? "كلمة المرور" : "Password"}
+                  {editingUser && (
+                    <span className="text-sm text-gray-500 ml-1">
+                      {isRTL ? "(اتركها فارغة للاحتفاظ بكلمة المرور الحالية)" : "(leave empty to keep current)"}
+                    </span>
+                  )}
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                  required={!editingUser}
+                  className={isRTL ? 'text-right [&:focus]:text-right' : 'text-left'}
+                  dir={isRTL ? 'rtl' : 'ltr'}
+                  placeholder={isRTL ? "أدخل كلمة المرور" : "Enter password"}
+                />
+              </div>
+
               <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${isRTL ? 'md:grid-flow-col-dense' : ''}`}>
                 <div className={isRTL ? 'md:order-2' : ''}>
                   <Label htmlFor="firstName" className={`block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{isRTL ? "الاسم الأول" : "First Name"}</Label>

@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
-// Production-compatible asset paths with cache busting
-const englishDarkLogo = "/assets/english-dark_1750523791780.png?v=1.1";
-const englishWhiteLogo = "/assets/english-white_1750523827323.png?v=1.1";
+// Import logo assets directly to ensure they're included in the build
+import englishDarkLogoImg from "@assets/english-dark_1750523791780.png";
+import englishWhiteLogoImg from "@assets/english-white_1750523827323.png";
 
 export function LogoSection() {
   const { language, t, isRTL } = useLanguage();
@@ -15,7 +15,7 @@ export function LogoSection() {
 
   // Select the appropriate logo based on theme (always English for both languages)
   const getLogo = () => {
-    return theme === 'dark' ? englishDarkLogo : englishWhiteLogo;
+    return theme === 'dark' ? englishDarkLogoImg : englishWhiteLogoImg;
   };
 
   // Typing slogans with multiple words

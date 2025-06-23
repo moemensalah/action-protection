@@ -7,9 +7,9 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useTheme } from "@/components/ThemeProvider";
-// Production-compatible asset paths with cache busting
-const englishDarkLogo = "/assets/english-dark_1750523791780.png?v=1.1";
-const englishWhiteLogo = "/assets/english-white_1750523827323.png?v=1.1";
+// Import logo assets directly to ensure they're included in the build
+import englishDarkLogoImg from "@assets/english-dark_1750523791780.png";
+import englishWhiteLogoImg from "@assets/english-white_1750523827323.png";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +19,7 @@ export function Navbar() {
   const [location] = useLocation();
 
   const getLogoSrc = () => {
-    return theme === 'dark' ? englishDarkLogo : englishWhiteLogo;
+    return theme === 'dark' ? englishDarkLogoImg : englishWhiteLogoImg;
   };
 
   const navLinks = [

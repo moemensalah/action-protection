@@ -147,7 +147,7 @@ sudo -u ${APP_USER} npm run db:push
 
 # Create simple admin user seeder
 echo "🌱 Creating admin user seeder..."
-sudo -u ${APP_USER} tee /home/${APP_USER}/${PROJECT_NAME}/seed-admin.js << 'SEED_EOF'
+sudo -u ${APP_USER} tee /home/${APP_USER}/${PROJECT_NAME}/seed-admin.js << SEED_EOF
 import { Pool } from 'pg';
 import bcrypt from 'bcryptjs';
 
@@ -164,14 +164,14 @@ async function createAdminUser() {
     const hashedPassword = await bcrypt.hash("${ADMIN_PASSWORD}", 10);
     await client.query(\`
       INSERT INTO users (id, username, email, password, "firstName", "lastName", role, "isActive")
-      VALUES (\$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       ON CONFLICT (username) DO UPDATE SET 
-        email = \$3,
-        password = \$4,
-        "firstName" = \$5,
-        "lastName" = \$6,
-        role = \$7,
-        "isActive" = \$8
+        email = $3,
+        password = $4,
+        "firstName" = $5,
+        "lastName" = $6,
+        role = $7,
+        "isActive" = $8
     \`, ["admin_user", "${ADMIN_USERNAME}", "${ADMIN_EMAIL}", hashedPassword, "${ADMIN_FIRST_NAME}", "${ADMIN_LAST_NAME}", "administrator", true]);
 
     console.log("✅ Admin user created successfully!");

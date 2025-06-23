@@ -199,27 +199,60 @@ if [ "$BUILD_SUCCESS" = false ]; then
     sudo -u ${APP_USER} npx vite build --force
 fi
 
-# Verify and copy logo assets to build output
-echo "🔍 Verifying logo assets in build output..."
-if [ -d "dist/public" ]; then
-    sudo -u ${APP_USER} mkdir -p dist/public/assets
-    if [ -f "client/public/assets/english-dark_1750523791780.png" ]; then
-        sudo -u ${APP_USER} cp "client/public/assets/english-dark_1750523791780.png" "dist/public/assets/"
-        echo "✅ Dark logo copied to build output"
-    fi
-    if [ -f "client/public/assets/english-white_1750523827323.png" ]; then
-        sudo -u ${APP_USER} cp "client/public/assets/english-white_1750523827323.png" "dist/public/assets/"
-        echo "✅ White logo copied to build output"
+# Fix production static file structure for server compatibility
+echo "🔧 Configuring production static file structure..."
+if [ -d "dist" ]; then
+    # The production server expects files in dist/public/ directory
+    # Move Vite's default output to match server expectations
+    sudo -u ${APP_USER} mkdir -p dist/public
+    
+    # Move main files to public directory if they exist at root of dist
+    if [ -f "dist/index.html" ]; then
+        sudo -u ${APP_USER} mv "dist/index.html" "dist/public/"
+        echo "✅ Moved index.html to dist/public/"
     fi
     
-    # Verify files exist in final location
-    if [ -f "dist/public/assets/english-dark_1750523791780.png" ] && [ -f "dist/public/assets/english-white_1750523827323.png" ]; then
-        echo "✅ Logo assets verified in build output"
-    else
-        echo "⚠️ Warning: Logo assets not found in build output"
+    if [ -f "dist/manifest.json" ]; then
+        sudo -u ${APP_USER} mv "dist/manifest.json" "dist/public/"
+        echo "✅ Moved manifest.json to dist/public/"
     fi
+    
+    # Move assets directory to public if it exists at root of dist
+    if [ -d "dist/assets" ] && [ ! -d "dist/public/assets" ]; then
+        sudo -u ${APP_USER} mv "dist/assets" "dist/public/"
+        echo "✅ Moved assets to dist/public/"
+    fi
+    
+    echo "✅ Production static file structure configured"
 else
-    echo "❌ Build output directory not found"
+    echo "❌ No dist directory found after build"
+fi
+
+# Verify and copy logo assets to build output (matching server path structure)
+echo "🔍 Verifying logo assets in build output..."
+
+# Create the correct directory structure for production static files
+sudo -u ${APP_USER} mkdir -p dist/public/assets
+
+# Copy logo assets to the final production location
+if [ -f "client/public/assets/english-dark_1750523791780.png" ]; then
+    sudo -u ${APP_USER} cp "client/public/assets/english-dark_1750523791780.png" "dist/public/assets/"
+    echo "✅ Dark logo copied to production location"
+fi
+
+if [ -f "client/public/assets/english-white_1750523827323.png" ]; then
+    sudo -u ${APP_USER} cp "client/public/assets/english-white_1750523827323.png" "dist/public/assets/"
+    echo "✅ White logo copied to production location"
+fi
+
+# Verify final production structure
+if [ -f "dist/public/index.html" ] && [ -d "dist/public/assets" ]; then
+    echo "✅ Production files verified in correct structure"
+    ls -la dist/public/ | head -10
+else
+    echo "❌ Production file structure incomplete"
+    echo "Contents of dist directory:"
+    ls -la dist/ 2>/dev/null || echo "No dist directory found"
 fi
 
 # Database migration
@@ -331,7 +364,8 @@ module.exports = {
     instances: 1,
     exec_mode: 'fork',
     env: {
-      NODE_ENV: 'development',
+      NODE_ENV: 'production',
+      PORT: ${APP_PORT},
       DATABASE_URL: '${DATABASE_URL}',
       REPLIT_DOMAINS: '${DOMAIN_NAME}',
       REPL_ID: '${REPL_ID}',

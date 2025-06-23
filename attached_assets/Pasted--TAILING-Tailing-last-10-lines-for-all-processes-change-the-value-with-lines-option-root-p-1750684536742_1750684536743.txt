@@ -1,0 +1,36 @@
+[TAILING] Tailing last 10 lines for [all] processes (change the value with --lines option)
+/root/.pm2/pm2.log last 10 lines:
+PM2        | 2025-06-23T13:08:55: PM2 log: Stopping app:latelounge id:0
+PM2        | 2025-06-23T13:08:55: PM2 log: App [latelounge:0] exited with code [0] via signal [SIGINT]
+PM2        | 2025-06-23T13:08:55: PM2 log: pid=53470 msg=process killed
+PM2        | 2025-06-23T13:09:09: PM2 log: App [latelounge:0] starting in -fork mode-
+PM2        | 2025-06-23T13:09:09: PM2 log: App [latelounge:0] online
+PM2        | 2025-06-23T13:14:34: PM2 log: Stopping app:latelounge id:0
+PM2        | 2025-06-23T13:14:34: PM2 log: App [latelounge:0] exited with code [0] via signal [SIGINT]
+PM2        | 2025-06-23T13:14:34: PM2 log: pid=53598 msg=process killed
+PM2        | 2025-06-23T13:14:44: PM2 log: App [latelounge:0] starting in -fork mode-
+PM2        | 2025-06-23T13:14:44: PM2 log: App [latelounge:0] online
+
+/home/appuser/latelounge/logs/err-0.log last 10 lines:
+0|lateloun | 2025-06-23T13:07:24:   [Symbol(kMessage)]: 'connect ECONNREFUSED 127.0.0.1:443'
+0|lateloun | 2025-06-23T13:07:24: }
+0|lateloun | 2025-06-23T13:07:50: Error: ENOENT: no such file or directory, stat '/home/appuser/latelounge/dist/index.html'
+0|lateloun | 2025-06-23T13:09:27: Error: ENOENT: no such file or directory, stat '/home/appuser/latelounge/dist/index.html'
+0|lateloun | 2025-06-23T13:09:28: Error: ENOENT: no such file or directory, stat '/home/appuser/latelounge/dist/index.html'
+0|lateloun | 2025-06-23T13:09:29: Error: ENOENT: no such file or directory, stat '/home/appuser/latelounge/dist/index.html'
+0|lateloun | 2025-06-23T13:09:30: Error: ENOENT: no such file or directory, stat '/home/appuser/latelounge/dist/index.html'
+0|lateloun | 2025-06-23T13:09:30: Error: ENOENT: no such file or directory, stat '/home/appuser/latelounge/dist/index.html'
+0|lateloun | 2025-06-23T13:10:39: Error: ENOENT: no such file or directory, stat '/home/appuser/latelounge/dist/index.html'
+0|lateloun | 2025-06-23T13:14:54: Error: ENOENT: no such file or directory, stat '/home/appuser/latelounge/dist/index.html'
+
+/home/appuser/latelounge/logs/out-0.log last 10 lines:
+0|lateloun | 2025-06-23T13:09:10: 1:09:10 PM [express] Production server running on port 3000
+0|lateloun | 2025-06-23T13:09:10: 1:09:10 PM [express] API available at http://localhost:3000/api/categories
+0|lateloun | 2025-06-23T13:09:19: 1:09:19 PM [express] GET /api/categories 200 in 44ms :: {"categories":[{"id":5,"nameEn":"Hot Drinks"…
+0|lateloun | 2025-06-23T13:14:44:
+0|lateloun | 2025-06-23T13:14:44: > rest-express@1.0.0 start
+0|lateloun | 2025-06-23T13:14:44: > NODE_ENV=production node dist/index.js
+0|lateloun | 2025-06-23T13:14:44:
+0|lateloun | 2025-06-23T13:14:45: 1:14:45 PM [express] Production server running on port 3000
+0|lateloun | 2025-06-23T13:14:45: 1:14:45 PM [express] API available at http://localhost:3000/api/categories
+0|lateloun | 2025-06-23T13:14:56: 1:14:56 PM [express] GET /api/categories 200 in 38ms :: {"categories":[{"id":5,"nameEn":"Hot Drinks"…

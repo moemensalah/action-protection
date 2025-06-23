@@ -234,12 +234,20 @@ module.exports = {
     exec_mode: 'fork',
     env: {
       NODE_ENV: 'development',
-      DATABASE_URL: '${DATABASE_URL}'
+      DATABASE_URL: '${DATABASE_URL}',
+      REPLIT_DOMAINS: '${DOMAIN_NAME}',
+      REPL_ID: '${PROJECT_NAME}-production',
+      SESSION_SECRET: '${SESSION_SECRET}',
+      ISSUER_URL: 'https://replit.com/oidc'
     },
     env_production: {
       NODE_ENV: 'production',
       PORT: ${APP_PORT},
-      DATABASE_URL: '${DATABASE_URL}'
+      DATABASE_URL: '${DATABASE_URL}',
+      REPLIT_DOMAINS: '${DOMAIN_NAME}',
+      REPL_ID: '${PROJECT_NAME}-production',
+      SESSION_SECRET: '${SESSION_SECRET}',
+      ISSUER_URL: 'https://replit.com/oidc'
     },
     error_file: './logs/err.log',
     out_file: './logs/out.log',
@@ -271,7 +279,11 @@ module.exports = {
     env_production: {
       NODE_ENV: 'production',
       PORT: ${APP_PORT},
-      DATABASE_URL: '${DATABASE_URL}'
+      DATABASE_URL: '${DATABASE_URL}',
+      REPLIT_DOMAINS: '${DOMAIN_NAME}',
+      REPL_ID: '${PROJECT_NAME}-production',
+      SESSION_SECRET: '${SESSION_SECRET}',
+      ISSUER_URL: 'https://replit.com/oidc'
     },
     error_file: './logs/err.log',
     out_file: './logs/out.log',

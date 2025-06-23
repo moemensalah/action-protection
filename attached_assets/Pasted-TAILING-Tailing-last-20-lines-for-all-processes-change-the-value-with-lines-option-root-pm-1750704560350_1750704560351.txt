@@ -1,0 +1,46 @@
+TAILING] Tailing last 20 lines for [all] processes (change the value with --lines option)
+/root/.pm2/pm2.log last 20 lines:
+PM2        | 2025-06-23T13:14:34: PM2 log: Stopping app:latelounge id:0
+PM2        | 2025-06-23T13:14:34: PM2 log: App [latelounge:0] exited with code [0] via signal [SIGINT]
+PM2        | 2025-06-23T13:14:34: PM2 log: pid=53598 msg=process killed
+PM2        | 2025-06-23T13:14:44: PM2 log: App [latelounge:0] starting in -fork mode-
+PM2        | 2025-06-23T13:14:44: PM2 log: App [latelounge:0] online
+PM2        | 2025-06-23T13:16:58: PM2 log: Stopping app:latelounge id:0
+PM2        | 2025-06-23T13:16:58: PM2 log: App [latelounge:0] exited with code [0] via signal [SIGINT]
+PM2        | 2025-06-23T13:16:58: PM2 log: pid=53766 msg=process killed
+PM2        | 2025-06-23T13:17:07: PM2 log: App [latelounge:0] starting in -fork mode-
+PM2        | 2025-06-23T13:17:07: PM2 log: App [latelounge:0] online
+PM2        | 2025-06-23T13:18:32: PM2 log: Stopping app:latelounge id:0
+PM2        | 2025-06-23T13:18:32: PM2 log: App [latelounge:0] exited with code [0] via signal [SIGINT]
+PM2        | 2025-06-23T13:18:32: PM2 log: pid=53893 msg=process killed
+PM2        | 2025-06-23T13:18:41: PM2 log: App [latelounge:0] starting in -fork mode-
+PM2        | 2025-06-23T13:18:41: PM2 log: App [latelounge:0] online
+PM2        | 2025-06-23T13:21:08: PM2 log: Stopping app:latelounge id:0
+PM2        | 2025-06-23T13:21:08: PM2 log: App [latelounge:0] exited with code [0] via signal [SIGINT]
+PM2        | 2025-06-23T13:21:08: PM2 log: pid=53991 msg=process killed
+PM2        | 2025-06-23T13:21:46: PM2 log: App [latelounge:0] starting in -fork mode-
+PM2        | 2025-06-23T13:21:46: PM2 log: App [latelounge:0] online
+
+/home/appuser/latelounge/logs/out-0.log last 20 lines:
+/home/appuser/latelounge/logs/err-0.log last 20 lines:
+0|lateloun | 2025-06-23T13:00:23: npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open '/root/package.json'
+0|lateloun | 2025-06-23T13:00:23: npm error enoent This is related to npm not being able to find a file.
+0|lateloun | 2025-06-23T13:00:23: npm error enoent
+0|lateloun | 2025-06-23T13:00:23: npm error A complete log of this run can be found in: /root/.npm/_logs/2025-06-23T13_00_23_409Z-debug-0.log
+0|lateloun | 2025-06-23T13:00:23: npm error code ENOENT
+0|lateloun | 2025-06-23T13:00:23: npm error syscall open
+0|lateloun | 2025-06-23T13:00:23: npm error path /root/package.json
+0|lateloun | 2025-06-23T13:00:23: npm error errno -2
+0|lateloun | 2025-06-23T13:00:23: npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open '/root/package.json'
+0|lateloun | 2025-06-23T13:00:23: npm error enoent This is related to npm not being able to find a file.
+0|lateloun | 2025-06-23T13:00:23: npm error enoent
+0|lateloun | 2025-06-23T13:00:23: npm error A complete log of this run can be found in: /root/.npm/_logs/2025-06-23T13_00_23_731Z-debug-0.log
+0|lateloun | 2025-06-23T18:45:03: Error: Environment variable REPLIT_DOMAINS not provided
+0|lateloun | 2025-06-23T18:45:03:     at file:///home/appuser/latelounge/dist/index.js:524:9
+0|lateloun | 2025-06-23T18:45:03:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+0|lateloun | 2025-06-23T18:45:03:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+0|lateloun | 2025-06-23T18:45:51: Error: Environment variable REPLIT_DOMAINS not provided
+0|lateloun | 2025-06-23T18:45:51:     at file:///home/appuser/latelounge/dist/index.js:524:9
+0|lateloun | 2025-06-23T18:45:51:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+0|lateloun | 2025-06-23T18:45:51:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+

@@ -81,10 +81,18 @@ sudo systemctl enable postgresql
 
 print_step "6. Setting up database..."
 sudo -u postgres psql << EOF
-CREATE DATABASE $DB_NAME;
+DROP DATABASE IF EXISTS $DB_NAME;
+DROP USER IF EXISTS $DB_USER;
 CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
+CREATE DATABASE $DB_NAME OWNER $DB_USER;
 GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
 ALTER USER $DB_USER CREATEDB;
+\c $DB_NAME
+GRANT ALL ON SCHEMA public TO $DB_USER;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $DB_USER;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;
 \q
 EOF
 
@@ -130,6 +138,9 @@ EOF
 
 print_step "14. Building application..."
 npm run build
+
+print_step "15. Running database migrations..."
+npm run db:push
 
 print_step "15. Setting up database schema..."
 npm run db:push

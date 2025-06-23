@@ -136,6 +136,18 @@ REPLIT_DOMAINS=${DOMAIN_NAME}
 PORT=${APP_PORT}
 ENV_EOF
 
+# Copy logo assets to public directory before building
+echo "📋 Copying logo assets..."
+sudo -u ${APP_USER} mkdir -p client/public/assets
+if [ -f "attached_assets/english-dark_1750523791780.png" ]; then
+    sudo -u ${APP_USER} cp "attached_assets/english-dark_1750523791780.png" "client/public/assets/"
+    echo "✅ English dark logo copied"
+fi
+if [ -f "attached_assets/english-white_1750523827323.png" ]; then
+    sudo -u ${APP_USER} cp "attached_assets/english-white_1750523827323.png" "client/public/assets/"
+    echo "✅ English white logo copied"
+fi
+
 # Build application
 echo "🔨 Building application..."
 BUILD_SUCCESS=false

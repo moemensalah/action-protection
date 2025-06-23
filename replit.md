@@ -32,6 +32,15 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 
 ## Recent Changes
 
+### 2025-06-23: Logo Fix & Enhanced Deployment
+- ✓ Fixed logo display issues by implementing proper asset serving system
+- ✓ Copied logo assets to client/public/assets directory for proper serving
+- ✓ Added cache-busting parameters to prevent browser caching issues
+- ✓ Updated complete deployment script with port conflict resolution
+- ✓ Added conditional database dropping functionality (DROP_EXISTING_DATABASE variable)
+- ✓ Fixed Nginx configuration to use correct port (3000) and path (dist/public)
+- ✓ Enhanced deployment script with comprehensive error handling and connectivity testing
+
 ### 2024-12-21: Production Deployment & PM2 Setup
 - ✓ Fixed 404 API route issues in production by ensuring proper route registration order
 - ✓ Created PM2 ecosystem configuration for production deployment

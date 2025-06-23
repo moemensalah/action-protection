@@ -13,7 +13,7 @@ echo "👤 Creating admin user directly via PostgreSQL..."
 # Create admin user using SQL directly
 sudo -u postgres psql -d ${DB_NAME} << 'EOF'
 -- Create admin user with bcrypt hash for password "admin123456"
-INSERT INTO users (id, username, email, password, "firstName", "lastName", role, "isActive", "createdAt", "updatedAt")
+INSERT INTO users (id, username, email, password, first_name, last_name, role, is_active, created_at, updated_at)
 VALUES (
   'admin_user',
   'admin', 
@@ -29,14 +29,14 @@ VALUES (
 ON CONFLICT (username) DO UPDATE SET
   email = EXCLUDED.email,
   password = EXCLUDED.password,
-  "firstName" = EXCLUDED."firstName",
-  "lastName" = EXCLUDED."lastName",
+  first_name = EXCLUDED.first_name,
+  last_name = EXCLUDED.last_name,
   role = EXCLUDED.role,
-  "isActive" = EXCLUDED."isActive",
-  "updatedAt" = NOW();
+  is_active = EXCLUDED.is_active,
+  updated_at = NOW();
 
 -- Verify user was created
-SELECT username, email, role, "isActive" FROM users WHERE username = 'admin';
+SELECT username, email, role, is_active FROM users WHERE username = 'admin';
 EOF
 
 echo "✅ Admin user created successfully!"

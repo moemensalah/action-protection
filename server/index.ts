@@ -61,16 +61,19 @@ app.use((req, res, next) => {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
     
-    // Serve static files from public directory
-    app.use(express.static(path.join(__dirname, "public")));
+    // Serve static files from dist/public directory (where Vite builds to)
+    app.use(express.static(path.join(__dirname, "..", "dist", "public")));
     
     // Serve uploads directory
     app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
     
+    // Serve logo assets specifically (fallback for asset serving)
+    app.use("/assets", express.static(path.join(__dirname, "..", "dist", "public", "assets")));
+    
     // Serve manifest.json with proper MIME type
     app.get("/manifest.json", (req: Request, res: Response) => {
       res.setHeader('Content-Type', 'application/json');
-      res.sendFile(path.join(__dirname, "public", "manifest.json"));
+      res.sendFile(path.join(__dirname, "..", "dist", "public", "manifest.json"));
     });
     
     // Handle client-side routing
@@ -78,7 +81,7 @@ app.use((req, res, next) => {
       if (req.path.startsWith("/api")) {
         res.status(404).json({ error: "API endpoint not found" });
       } else {
-        res.sendFile(path.join(__dirname, "public", "index.html"));
+        res.sendFile(path.join(__dirname, "..", "dist", "public", "index.html"));
       }
     });
     

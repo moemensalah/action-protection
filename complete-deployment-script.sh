@@ -141,11 +141,11 @@ echo "📋 Copying logo assets..."
 sudo -u ${APP_USER} mkdir -p client/public/assets
 if [ -f "attached_assets/english-dark_1750523791780.png" ]; then
     sudo -u ${APP_USER} cp "attached_assets/english-dark_1750523791780.png" "client/public/assets/"
-    echo "✅ English dark logo copied"
+    echo "✅ English dark logo copied to client/public/assets/"
 fi
 if [ -f "attached_assets/english-white_1750523827323.png" ]; then
     sudo -u ${APP_USER} cp "attached_assets/english-white_1750523827323.png" "client/public/assets/"
-    echo "✅ English white logo copied"
+    echo "✅ English white logo copied to client/public/assets/"
 fi
 
 # Build application
@@ -167,6 +167,29 @@ done
 if [ "$BUILD_SUCCESS" = false ]; then
     echo "❌ Build failed. Trying alternative method..."
     sudo -u ${APP_USER} npx vite build --force
+fi
+
+# Verify and copy logo assets to build output
+echo "🔍 Verifying logo assets in build output..."
+if [ -d "dist/public" ]; then
+    sudo -u ${APP_USER} mkdir -p dist/public/assets
+    if [ -f "client/public/assets/english-dark_1750523791780.png" ]; then
+        sudo -u ${APP_USER} cp "client/public/assets/english-dark_1750523791780.png" "dist/public/assets/"
+        echo "✅ Dark logo copied to build output"
+    fi
+    if [ -f "client/public/assets/english-white_1750523827323.png" ]; then
+        sudo -u ${APP_USER} cp "client/public/assets/english-white_1750523827323.png" "dist/public/assets/"
+        echo "✅ White logo copied to build output"
+    fi
+    
+    # Verify files exist in final location
+    if [ -f "dist/public/assets/english-dark_1750523791780.png" ] && [ -f "dist/public/assets/english-white_1750523827323.png" ]; then
+        echo "✅ Logo assets verified in build output"
+    else
+        echo "⚠️ Warning: Logo assets not found in build output"
+    fi
+else
+    echo "❌ Build output directory not found"
 fi
 
 # Database migration

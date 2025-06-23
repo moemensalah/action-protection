@@ -89,6 +89,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Local authentication routes
+  app.post('/api/auth/local/login', async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+      }
+
+      // Find user by username or email
+      let user = await storage.getUserByUsername(username);
+      if (!user) {
+        user = await storage.getUserByEmail(username);
+      }
+
+      if (!user || !user.isActive) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      // Validate password
+      const isValidPassword = await storage.validatePassword(user, password);
+      if (!isValidPassword) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      // Store user in session (simplified session management)
+      req.session.localUser = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        firstName: user.firstName,
+        lastName: user.lastName
+      };
+
+      res.json({
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          firstName: user.firstName,
+          lastName: user.lastName
+        },
+        message: "Login successful"
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  app.post('/api/auth/local/logout', (req, res) => {
+    req.session.localUser = null;
+    res.json({ message: "Logout successful" });
+  });
+
+  app.get('/api/auth/local/user', (req: any, res) => {
+    if (req.session.localUser) {
+      res.json(req.session.localUser);
+    } else {
+      res.status(401).json({ message: "Not authenticated" });
+    }
+  });
+
+  // Local auth middleware
+  const requireLocalAuth = (req: any, res: any, next: any) => {
+    if (req.session.localUser) {
+      req.localUser = req.session.localUser;
+      next();
+    } else {
+      res.status(401).json({ message: "Authentication required" });
+    }
+  };
+
+  const requireLocalAdmin = (req: any, res: any, next: any) => {
+    if (req.session.localUser && req.session.localUser.role === "administrator") {
+      req.localUser = req.session.localUser;
+      next();
+    } else {
+      res.status(403).json({ message: "Administrator access required" });
+    }
+  };
+
   // Categories API
   app.get("/api/categories", async (req, res) => {
     try {
@@ -315,37 +399,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin login route
-  app.post("/api/admin/login", async (req, res) => {
-    const { email, password } = req.body;
-    
-    // Mock authentication - in production, verify against database
-    if (email === "admin@latelounge.sa" && password === "admin123") {
-      res.json({
-        success: true,
-        user: {
-          id: "admin1",
-          email: "admin@latelounge.sa",
-          firstName: "System",
-          lastName: "Administrator",
-          role: "administrator"
-        },
-        token: "mock-admin-token"
+  // User Management Routes
+  app.get("/api/admin/users", requireLocalAdmin, async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      // Remove password field from response
+      const safeUsers = users.map(user => {
+        const { password, ...safeUser } = user;
+        return safeUser;
       });
-    } else if (email === "moderator@latelounge.sa" && password === "mod123") {
-      res.json({
-        success: true,
-        user: {
-          id: "mod1", 
-          email: "moderator@latelounge.sa",
-          firstName: "Content",
-          lastName: "Moderator",
-          role: "moderator"
-        },
-        token: "mock-moderator-token"
-      });
-    } else {
-      res.status(401).json({ message: "Invalid credentials" });
+      res.json(safeUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.post("/api/admin/users", requireLocalAdmin, async (req, res) => {
+    try {
+      const userData = req.body;
+      
+      // Check if username or email already exists
+      const existingUserByUsername = await storage.getUserByUsername(userData.username);
+      const existingUserByEmail = await storage.getUserByEmail(userData.email);
+      
+      if (existingUserByUsername) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+      
+      if (existingUserByEmail) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+
+      const user = await storage.createLocalUser(userData);
+      
+      // Remove password from response
+      const { password, ...safeUser } = user;
+      res.status(201).json(safeUser);
+    } catch (error) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ message: "Failed to create user" });
+    }
+  });
+
+  app.put("/api/admin/users/:id", requireLocalAdmin, async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const userData = req.body;
+      
+      // If password is provided, hash it
+      if (userData.password) {
+        const bcrypt = await import("bcryptjs");
+        userData.password = await bcrypt.hash(userData.password, 10);
+      }
+      
+      const user = await storage.updateUser(userId, userData);
+      
+      // Remove password from response
+      const { password, ...safeUser } = user;
+      res.json(safeUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  app.delete("/api/admin/users/:id", requireLocalAdmin, async (req, res) => {
+    try {
+      const userId = req.params.id;
+      
+      // Prevent deleting yourself
+      if (req.localUser.id === userId) {
+        return res.status(400).json({ message: "Cannot delete your own account" });
+      }
+      
+      await storage.deleteUser(userId);
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
     }
   });
 

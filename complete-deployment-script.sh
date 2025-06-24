@@ -36,22 +36,7 @@ ADMIN_EMAIL="admin@latelounge.sa"
 ADMIN_FIRST_NAME="System"
 ADMIN_LAST_NAME="Administrator"
 
-# Company Information
-COMPANY_NAME_EN="LateLounge"
-COMPANY_NAME_AR="ليت لاونج"
-COMPANY_PHONE="+966 11 555 123413335"
-COMPANY_WHATSAPP="+966505551234"
-COMPANY_EMAIL="info@latelounge.sa"
-COMPANY_ADDRESS_EN="123 King Fahd Road, Riyadh, Saudi Arabia"
-COMPANY_ADDRESS_AR="123 طريق الملك فهد، الرياض، المملكة العربية السعودية"
-COMPANY_HOURS_EN="Sunday - Thursday: 7:00 AM - 11:00 PM"
-COMPANY_HOURS_AR="الأحد - الخميس: 7:00 ص - 11:00 م"
 
-# Social Media Links
-SOCIAL_INSTAGRAM="https://instagram.com/latelounge"
-SOCIAL_TWITTER="https://twitter.com/latelounge"
-SOCIAL_FACEBOOK="https://facebook.com/latelounge"
-SOCIAL_SNAPCHAT="https://snapchat.com/add/latelounge"
 
 # Logo Assets Configuration
 LOGO_WHITE_PATH="attached_assets/english-white_1750523827323.png"

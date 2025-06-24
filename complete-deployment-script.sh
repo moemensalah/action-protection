@@ -1,7 +1,34 @@
 #!/bin/bash
 
-# Complete LateLounge Production Deployment Script
-# Fixes all permission, build, and seeding issues
+# ========================================================================
+# LateLounge Cafe Production Deployment Script
+# ========================================================================
+# 
+# Created by: The ORCAS Team
+# Author: Haitham Amin - CEO
+# 
+# Purpose: Complete production deployment automation script for LateLounge
+# bilingual cafe website. This script handles full Ubuntu 22.04 server
+# setup including Node.js installation, PostgreSQL database configuration,
+# React frontend build process, Express.js backend deployment, PM2 process
+# management, and Nginx reverse proxy configuration.
+#
+# Requirements:
+# - Ubuntu 22.04 LTS server with sudo access
+# - Internet connection for package downloads
+# - Domain DNS configured to point to server IP
+# - PostgreSQL and Node.js will be installed automatically
+#
+# Features deployed:
+# - Bilingual website (Arabic/English) with RTL support
+# - Admin panel with user management
+# - Product catalog with categories
+# - Dark/light theme switching
+# - Database-driven content management
+# - Production-ready PM2 process management
+# - SSL-ready Nginx configuration
+#
+# ========================================================================
 
 set -e
 

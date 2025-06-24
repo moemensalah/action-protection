@@ -100,27 +100,27 @@ export function LogoSection() {
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>
         </div>
         
-        {/* Center - Hookah and atmosphere */}
+        {/* Center - Food and atmosphere */}
         <div className="absolute left-1/3 top-0 w-1/3 h-full">
           <img 
-            src="/assets/friends-engaging-over-hookah-in-a-cozy-lounge-71035690_1750782931870.jpg"
-            alt="Friends enjoying hookah in cozy lounge atmosphere"
+            src="https://picsum.photos/600/800?random=3&food"
+            alt="Delicious food and cuisine"
             className="w-full h-full object-cover opacity-35 dark:opacity-25 animate-pulse"
             style={{ animationDelay: '2s' }}
+            onError={(e) => {
+              e.currentTarget.src = "https://via.placeholder.com/600x800/FF8C00/FFFFFF?text=Food+%26+Cuisine";
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/60 to-white/70 dark:from-gray-800/70 dark:via-gray-800/60 dark:to-gray-800/70"></div>
         </div>
         
-        {/* Right side - Food and desserts */}
+        {/* Right side - Hookah lounge */}
         <div className="absolute right-0 top-0 w-1/3 h-full">
           <img 
-            src="https://picsum.photos/600/800?random=3&food"
-            alt="Delicious food and desserts"
+            src="/assets/friends-engaging-over-hookah-in-a-cozy-lounge-71035690_1750782931870.jpg"
+            alt="Friends enjoying hookah in cozy lounge atmosphere"
             className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
             style={{ animationDelay: '4s' }}
-            onError={(e) => {
-              e.currentTarget.src = "https://via.placeholder.com/600x800/FF8C00/FFFFFF?text=Food+%26+Desserts";
-            }}
           />
           <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>
         </div>

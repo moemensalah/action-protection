@@ -178,9 +178,11 @@ REPLIT_DOMAINS=${DOMAIN_NAME}
 PORT=${APP_PORT}
 ENV_EOF
 
-# Copy logo assets to public directory before building
-echo "📋 Copying logo assets..."
+# Copy assets to public directory before building
+echo "📋 Copying logo and hero background assets..."
 sudo -u ${APP_USER} mkdir -p client/public/assets
+
+# Logo assets
 if [ -f "attached_assets/english-dark_1750523791780.png" ]; then
     sudo -u ${APP_USER} cp "attached_assets/english-dark_1750523791780.png" "client/public/assets/"
     echo "✅ English dark logo copied to client/public/assets/"
@@ -188,6 +190,16 @@ fi
 if [ -f "attached_assets/english-white_1750523827323.png" ]; then
     sudo -u ${APP_USER} cp "attached_assets/english-white_1750523827323.png" "client/public/assets/"
     echo "✅ English white logo copied to client/public/assets/"
+fi
+
+# Hero background images
+if [ -f "attached_assets/artisan-coffee-pastry-delight-91179007_1750782813470.jpg" ]; then
+    sudo -u ${APP_USER} cp "attached_assets/artisan-coffee-pastry-delight-91179007_1750782813470.jpg" "client/public/assets/"
+    echo "✅ Coffee and pastry background image copied to client/public/assets/"
+fi
+if [ -f "attached_assets/friends-engaging-over-hookah-in-a-cozy-lounge-71035690_1750782931870.jpg" ]; then
+    sudo -u ${APP_USER} cp "attached_assets/friends-engaging-over-hookah-in-a-cozy-lounge-71035690_1750782931870.jpg" "client/public/assets/"
+    echo "✅ Hookah lounge background image copied to client/public/assets/"
 fi
 
 # Build application
@@ -240,8 +252,8 @@ else
     echo "❌ No dist directory found after build"
 fi
 
-# Verify and copy logo assets to build output (matching server path structure)
-echo "🔍 Verifying logo assets in build output..."
+# Verify and copy all assets to build output (matching server path structure)
+echo "🔍 Verifying logo and background assets in build output..."
 
 # Create the correct directory structure for production static files
 sudo -u ${APP_USER} mkdir -p dist/public/assets
@@ -255,6 +267,17 @@ fi
 if [ -f "client/public/assets/english-white_1750523827323.png" ]; then
     sudo -u ${APP_USER} cp "client/public/assets/english-white_1750523827323.png" "dist/public/assets/"
     echo "✅ White logo copied to production location"
+fi
+
+# Copy hero background images to the final production location
+if [ -f "client/public/assets/artisan-coffee-pastry-delight-91179007_1750782813470.jpg" ]; then
+    sudo -u ${APP_USER} cp "client/public/assets/artisan-coffee-pastry-delight-91179007_1750782813470.jpg" "dist/public/assets/"
+    echo "✅ Coffee and pastry background copied to production location"
+fi
+
+if [ -f "client/public/assets/friends-engaging-over-hookah-in-a-cozy-lounge-71035690_1750782931870.jpg" ]; then
+    sudo -u ${APP_USER} cp "client/public/assets/friends-engaging-over-hookah-in-a-cozy-lounge-71035690_1750782931870.jpg" "dist/public/assets/"
+    echo "✅ Hookah lounge background copied to production location"
 fi
 
 # Verify final production structure

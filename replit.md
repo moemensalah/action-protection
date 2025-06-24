@@ -32,7 +32,7 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 
 ## Recent Changes
 
-### 2025-06-24: Theme & Language Defaults + Enhanced Hero
+### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode
 - ✓ Confirmed Arabic as default language (already configured)
 - ✓ Enhanced hero background with three-section layout using custom images
@@ -40,6 +40,7 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Added user's hookah lounge atmosphere image to right section
 - ✓ Implemented staggered fade animations (0s, 2s, 4s delays)
 - ✓ Used authentic cafe imagery instead of placeholder content
+- ✓ Updated deployment script to copy hero background images to production
 - ✓ Maintained existing fade animation effect while showcasing real LateLounge experience
 
 ### 2025-06-23: Logo Fix & Enhanced Deployment

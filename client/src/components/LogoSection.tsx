@@ -92,25 +92,42 @@ export function LogoSection() {
       <div className="absolute inset-0 z-0">
         {/* Left side - Coffee and drinks */}
         <div className="absolute left-0 top-0 w-1/3 h-full">
-          <div className="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900 dark:to-amber-800 opacity-60 animate-pulse">
-            <div className="w-full h-full bg-coffee-pattern opacity-30"></div>
-          </div>
+          <img 
+            src="https://picsum.photos/600/800?random=1&coffee"
+            alt="Premium coffee and drinks"
+            className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
+            onError={(e) => {
+              e.currentTarget.src = "https://via.placeholder.com/600x800/D2691E/FFFFFF?text=Coffee+%26+Drinks";
+            }}
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>
         </div>
         
         {/* Center - Hookah and atmosphere */}
         <div className="absolute left-1/3 top-0 w-1/3 h-full">
-          <div className="w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900 dark:to-purple-800 opacity-50 animate-pulse" style={{ animationDelay: '2s' }}>
-            <div className="w-full h-full bg-hookah-pattern opacity-30"></div>
-          </div>
+          <img 
+            src="https://picsum.photos/600/800?random=2&lounge"
+            alt="Hookah lounge atmosphere"
+            className="w-full h-full object-cover opacity-35 dark:opacity-25 animate-pulse"
+            style={{ animationDelay: '2s' }}
+            onError={(e) => {
+              e.currentTarget.src = "https://via.placeholder.com/600x800/4B0082/FFFFFF?text=Hookah+Lounge";
+            }}
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/60 to-white/70 dark:from-gray-800/70 dark:via-gray-800/60 dark:to-gray-800/70"></div>
         </div>
         
         {/* Right side - Food and desserts */}
         <div className="absolute right-0 top-0 w-1/3 h-full">
-          <div className="w-full h-full bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900 dark:to-orange-800 opacity-60 animate-pulse" style={{ animationDelay: '4s' }}>
-            <div className="w-full h-full bg-food-pattern opacity-30"></div>
-          </div>
+          <img 
+            src="https://picsum.photos/600/800?random=3&food"
+            alt="Delicious food and desserts"
+            className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
+            style={{ animationDelay: '4s' }}
+            onError={(e) => {
+              e.currentTarget.src = "https://via.placeholder.com/600x800/FF8C00/FFFFFF?text=Food+%26+Desserts";
+            }}
+          />
           <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>
         </div>
         

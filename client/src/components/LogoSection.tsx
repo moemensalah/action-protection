@@ -93,12 +93,9 @@ export function LogoSection() {
         {/* Left side - Coffee and drinks */}
         <div className="absolute left-0 top-0 w-1/3 h-full">
           <img 
-            src="https://picsum.photos/600/800?random=1&coffee"
-            alt="Premium coffee and drinks"
+            src="/assets/artisan-coffee-pastry-delight-91179007_1750782813470.jpg"
+            alt="Artisan coffee with latte art and pastry"
             className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
-            onError={(e) => {
-              e.currentTarget.src = "https://via.placeholder.com/600x800/D2691E/FFFFFF?text=Coffee+%26+Drinks";
-            }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>
         </div>

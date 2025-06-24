@@ -103,13 +103,10 @@ export function LogoSection() {
         {/* Center - Hookah and atmosphere */}
         <div className="absolute left-1/3 top-0 w-1/3 h-full">
           <img 
-            src="https://picsum.photos/600/800?random=2&lounge"
-            alt="Hookah lounge atmosphere"
+            src="/assets/friends-engaging-over-hookah-in-a-cozy-lounge-71035690_1750782931870.jpg"
+            alt="Friends enjoying hookah in cozy lounge atmosphere"
             className="w-full h-full object-cover opacity-35 dark:opacity-25 animate-pulse"
             style={{ animationDelay: '2s' }}
-            onError={(e) => {
-              e.currentTarget.src = "https://via.placeholder.com/600x800/4B0082/FFFFFF?text=Hookah+Lounge";
-            }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/60 to-white/70 dark:from-gray-800/70 dark:via-gray-800/60 dark:to-gray-800/70"></div>
         </div>

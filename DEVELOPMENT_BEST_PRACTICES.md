@@ -150,21 +150,90 @@ app.use('/uploads', (req, res, next) => {
 
 ## Production Deployment Issues
 
-### 11. Build Process
-**Problem**: Build failures or incorrect file paths
+### 11. Static File Structure & Asset Serving
+**Problem**: Production blank page, assets not loading, incorrect file paths
+**Root Cause**: Mismatch between Vite build output structure and server expectations
 **Solution**:
-- Use relative paths from root directory
-- Avoid absolute paths or `/repo/` references
-- Test build process before deployment
-- Check asset path resolution
+- Server expects files in `dist/public/` but Vite outputs to `dist/`
+- Move `index.html`, `manifest.json`, and `assets/` to `dist/public/` structure
+- Copy all attached assets (logos, hero images) to both `client/public/assets/` and `dist/public/assets/`
+- Use correct Nginx configuration pointing to `dist/public/` not just `dist/`
 
-### 12. Environment Variables
-**Problem**: Missing environment variables in production
+```bash
+# Fix production static file structure
+sudo -u ${APP_USER} mkdir -p dist/public
+sudo -u ${APP_USER} mv "dist/index.html" "dist/public/" 2>/dev/null || true
+sudo -u ${APP_USER} mv "dist/assets" "dist/public/" 2>/dev/null || true
+```
+
+### 12. Node.js Environment & Process Management
+**Problem**: Server runs in development mode causing blank pages and performance issues
+**Root Cause**: NODE_ENV not properly set to 'production' in deployment
 **Solution**:
-- Document all required environment variables
+- Force NODE_ENV=production in ecosystem.config.cjs
+- Use production server entry point (server/production.ts)
+- Configure PM2 properly with production environment variables
+- Ensure server runs on correct port (3000 vs 5000 conflict)
+
+```javascript
+// Correct PM2 configuration
+env_production: {
+  NODE_ENV: 'production',
+  PORT: 3000
+}
+```
+
+### 13. PostgreSQL Database Flexibility Issues
+**Problem**: Database connection failures, permission issues, existing data conflicts
+**Root Cause**: Inflexible database setup not handling existing installations
+**Solution**:
+- Add DROP_EXISTING_DATABASE variable for controlled database recreation
+- Implement proper database user permissions and role management
+- Handle both fresh installs and updates gracefully
+- Add database connectivity testing before proceeding
+
+```bash
+# Flexible database setup
+if [ "$DROP_EXISTING_DATABASE" = "true" ]; then
+    sudo -u postgres psql -c "DROP DATABASE IF EXISTS ${DB_NAME};" || true
+fi
+```
+
+### 14. Asset Path Resolution in Production
+**Problem**: Custom images (hero backgrounds, logos) not displaying in production
+**Root Cause**: Assets not copied to final production location
+**Solution**:
+- Copy assets during build phase to `client/public/assets/`
+- Copy again to final production location `dist/public/assets/`
+- Ensure deployment script handles all custom attached assets
+- Verify asset paths match frontend references (`/assets/filename.jpg`)
+
+### 15. Port Conflicts & Service Management
+**Problem**: Port conflicts, services not starting, PM2 not binding to correct port
+**Root Cause**: Multiple services competing for same port, improper PM2 configuration
+**Solution**:
+- Kill conflicting processes before starting new ones
+- Use consistent port configuration (3000) across all components
+- Implement proper service health checks
+- Add connectivity testing after deployment
+
+### 16. Build Process & Dependencies
+**Problem**: Build failures, missing dependencies, Rollup issues
+**Root Cause**: Linux-specific build dependencies not installed
+**Solution**:
+- Install @rollup/rollup-linux-x64-gnu for Ubuntu deployment
+- Clean node_modules and package-lock.json before fresh install
+- Retry build process multiple times with different strategies
+- Handle npm permission issues properly
+
+### 17. Environment Variables & Configuration
+**Problem**: Missing environment variables, incorrect configuration values
+**Root Cause**: Environment variables not properly set or accessed
+**Solution**:
+- Create comprehensive .env file with all required variables
+- Document all environment variables in deployment script
 - Use proper fallbacks where appropriate
-- Test with production-like environment
-- Implement proper secret management
+- Test environment variable access before proceeding
 
 ## Development Workflow Best Practices
 
@@ -222,12 +291,41 @@ app.use('/uploads', (req, res, next) => {
 7. Restart development server
 8. Check file permissions
 
+### Production-Specific Debugging
+1. **Blank Page Issues**:
+   - Check if NODE_ENV=production is set
+   - Verify `dist/public/index.html` exists
+   - Test static file serving path
+   - Check PM2 logs: `pm2 logs appname`
+
+2. **Asset Loading Failures**:
+   - Verify assets exist in `dist/public/assets/`
+   - Check Nginx configuration for correct asset paths
+   - Test direct asset URL access
+   - Verify file permissions (644 for files, 755 for directories)
+
+3. **Database Connection Issues**:
+   - Test database connectivity: `psql -U username -d database -c "SELECT 1;"`
+   - Check database user permissions
+   - Verify DATABASE_URL format and credentials
+   - Ensure PostgreSQL service is running
+
+4. **Service Management Issues**:
+   - Check PM2 status: `pm2 status`
+   - Verify port availability: `netstat -tlnp | grep :3000`
+   - Test service binding: `curl localhost:3000`
+   - Check system resources: `free -h`, `df -h`
+
 ### Common Error Patterns
 - **React hydration errors**: Check for client/server mismatch
 - **Query errors**: Verify API endpoints and data structure
 - **Upload errors**: Check file permissions and upload directory
 - **Translation errors**: Verify translation keys exist
 - **Layout errors**: Check CSS classes and RTL implementation
+- **Production blank page**: Always check NODE_ENV and static file structure
+- **Asset 404 errors**: Verify deployment script copied all attached assets
+- **Database errors**: Check user permissions and connection string format
+- **Port binding errors**: Kill conflicting processes before starting services
 
 ## Project Setup Automation
 
@@ -243,4 +341,46 @@ app.use('/uploads', (req, res, next) => {
 - [ ] Set up error handling
 - [ ] Implement logging system
 
-This guide should be referenced at the start of every new project and consulted when encountering issues. Most problems we've solved can be prevented by following these patterns from the beginning.
+### Production Deployment Checklist
+- [ ] Verify NODE_ENV=production in all configurations
+- [ ] Set up proper static file structure (dist/public/)
+- [ ] Copy all attached assets to production locations
+- [ ] Configure database with flexible setup options
+- [ ] Implement proper port management (avoid conflicts)
+- [ ] Set up PM2 with production environment
+- [ ] Configure Nginx with correct asset paths
+- [ ] Test database connectivity before proceeding
+- [ ] Implement health checks for all services
+- [ ] Add comprehensive error logging
+
+### Critical Production Issues Reference
+
+**Issue**: Blank page in production
+**Quick Fix**: Check NODE_ENV=production and verify dist/public/index.html exists
+
+**Issue**: Assets not loading (404 errors)
+**Quick Fix**: Ensure deployment script copies attached_assets to dist/public/assets/
+
+**Issue**: Database connection failures
+**Quick Fix**: Verify user permissions and DATABASE_URL format
+
+**Issue**: Port conflicts
+**Quick Fix**: Kill conflicting processes: `sudo fuser -k 3000/tcp`
+
+**Issue**: PM2 not starting correctly
+**Quick Fix**: Check ecosystem.config.cjs has correct NODE_ENV and paths
+
+### Update Script Usage
+For existing deployments, use the quick update script:
+```bash
+./update-production.sh
+```
+
+This handles:
+- Git updates
+- Asset copying
+- Dependency installation
+- Application rebuild
+- Service restart
+
+This comprehensive guide covers all major issues encountered in full-stack development and production deployment. Reference this document at project start and when troubleshooting to avoid repeated problems and ensure consistent solutions.

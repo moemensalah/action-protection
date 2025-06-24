@@ -93,7 +93,7 @@ export function LogoSection() {
         {/* Left side - Coffee and drinks */}
         <div className="absolute left-0 top-0 w-1/3 h-full">
           <img 
-            src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800"
+            src={`https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800&v=${Date.now()}`}
             alt="Premium coffee and drinks"
             className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
           />
@@ -103,7 +103,7 @@ export function LogoSection() {
         {/* Center - Hookah and atmosphere */}
         <div className="absolute left-1/3 top-0 w-1/3 h-full">
           <img 
-            src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800"
+            src={`https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800&v=${Date.now()}`}
             alt="Hookah lounge atmosphere"
             className="w-full h-full object-cover opacity-35 dark:opacity-25 animate-pulse"
             style={{ animationDelay: '2s' }}
@@ -114,7 +114,7 @@ export function LogoSection() {
         {/* Right side - Food and desserts */}
         <div className="absolute right-0 top-0 w-1/3 h-full">
           <img 
-            src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800"
+            src={`https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800&v=${Date.now()}`}
             alt="Delicious food and desserts"
             className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
             style={{ animationDelay: '4s' }}
@@ -124,9 +124,6 @@ export function LogoSection() {
         
         {/* Central fade overlay for content readability */}
         <div className="absolute inset-0 bg-gradient-radial from-white/90 via-white/70 to-transparent dark:from-gray-900/90 dark:via-gray-800/70 dark:to-transparent"></div>
-        
-        {/* Subtle floating elements overlay */}ter overlay for content readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent dark:via-gray-800/70"></div>
         
         {/* Center radial gradient for natural blending */}
         <div className="absolute inset-0 bg-radial-gradient from-white/50 via-white/20 to-transparent dark:from-gray-800/50 dark:via-gray-800/20 dark:to-transparent"></div>

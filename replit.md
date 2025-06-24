@@ -32,6 +32,14 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 
 ## Recent Changes
 
+### 2025-06-24: Theme & Language Defaults + Enhanced Hero
+- ✓ Changed default theme from dark to light mode
+- ✓ Confirmed Arabic as default language (already configured)
+- ✓ Enhanced hero background with three-section layout: drinks, hookah, and food
+- ✓ Added staggered fade animations with different delays for each section
+- ✓ Implemented radial gradient overlay for better content readability
+- ✓ Maintained existing fade animation effect while expanding visual appeal
+
 ### 2025-06-23: Logo Fix & Enhanced Deployment
 - ✓ Fixed logo display issues by implementing proper asset serving system
 - ✓ Copied logo assets to client/public/assets directory for proper serving

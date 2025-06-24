@@ -304,6 +304,20 @@
   .bg-radial-gradient {
     background: radial-gradient(ellipse at center, var(--tw-gradient-stops));
   }
+  
+  .bg-gradient-radial {
+    background: radial-gradient(ellipse at center, var(--tw-gradient-stops));
+  }
+  
+  /* Enhanced hero animations */
+  @keyframes fadeSlide {
+    0%, 100% { opacity: 0.3; transform: translateY(0px); }
+    50% { opacity: 0.6; transform: translateY(-5px); }
+  }
+  
+  .animate-fade-slide {
+    animation: fadeSlide 6s ease-in-out infinite;
+  }
 
   /* Slide up animation */
   .slide-up {

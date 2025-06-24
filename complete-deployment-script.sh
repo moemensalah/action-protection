@@ -482,7 +482,7 @@ server {
     
     # Serve static files
     location /assets/ {
-        alias /home/${APP_USER}/${PROJECT_NAME}/dist/assets/;
+        alias /home/${APP_USER}/${PROJECT_NAME}/dist/public/assets/;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }

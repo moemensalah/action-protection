@@ -92,33 +92,25 @@ export function LogoSection() {
       <div className="absolute inset-0 z-0">
         {/* Left side - Coffee and drinks */}
         <div className="absolute left-0 top-0 w-1/3 h-full">
-          <img 
-            src={`https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800&v=${Date.now()}`}
-            alt="Premium coffee and drinks"
-            className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
-          />
+          <div className="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900 dark:to-amber-800 opacity-60 animate-pulse">
+            <div className="w-full h-full bg-coffee-pattern opacity-30"></div>
+          </div>
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>
         </div>
         
         {/* Center - Hookah and atmosphere */}
         <div className="absolute left-1/3 top-0 w-1/3 h-full">
-          <img 
-            src={`https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800&v=${Date.now()}`}
-            alt="Hookah lounge atmosphere"
-            className="w-full h-full object-cover opacity-35 dark:opacity-25 animate-pulse"
-            style={{ animationDelay: '2s' }}
-          />
+          <div className="w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900 dark:to-purple-800 opacity-50 animate-pulse" style={{ animationDelay: '2s' }}>
+            <div className="w-full h-full bg-hookah-pattern opacity-30"></div>
+          </div>
           <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/60 to-white/70 dark:from-gray-800/70 dark:via-gray-800/60 dark:to-gray-800/70"></div>
         </div>
         
         {/* Right side - Food and desserts */}
         <div className="absolute right-0 top-0 w-1/3 h-full">
-          <img 
-            src={`https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=800&v=${Date.now()}`}
-            alt="Delicious food and desserts"
-            className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
-            style={{ animationDelay: '4s' }}
-          />
+          <div className="w-full h-full bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900 dark:to-orange-800 opacity-60 animate-pulse" style={{ animationDelay: '4s' }}>
+            <div className="w-full h-full bg-food-pattern opacity-30"></div>
+          </div>
           <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>
         </div>
         

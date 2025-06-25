@@ -72,6 +72,8 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Switched database driver from pg to @neondatabase/serverless to resolve development environment connection timeout issues
 - ✓ Fixed database connection pool exhaustion by implementing proper connection limits and timeout configurations
 - ✓ Production deployment uses different database setup, so development changes don't impact production environment
+- ✓ Fixed product editing real-time updates in admin panel by adding cache invalidation to all CRUD mutations
+- ✓ Admin panel now updates instantly after creating, editing, moving, or deleting products without manual refresh
 
 ### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode

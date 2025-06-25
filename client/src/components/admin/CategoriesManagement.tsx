@@ -175,7 +175,9 @@ export function CategoriesManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/categories"] });
+      queryClient.refetchQueries({ queryKey: ["/api/admin/categories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      queryClient.refetchQueries({ queryKey: ["/api/categories"] });
       toast({
         title: isRTL ? "تم إعادة الترتيب" : "Reordered",
         description: isRTL ? "تم إعادة ترتيب الفئات بنجاح" : "Categories reordered successfully",

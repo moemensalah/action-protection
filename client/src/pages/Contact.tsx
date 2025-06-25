@@ -55,24 +55,44 @@ export default function Contact() {
     phone: "",
     message: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitMutation = useMutation({
+    mutationFn: async (data: typeof formData) => {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error("Failed to send message");
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: isRTL ? "تم الإرسال بنجاح" : "Message Sent Successfully",
+        description: isRTL 
+          ? "شكراً لك! سنتواصل معك قريباً." 
+          : "Thank you! We'll get back to you soon.",
+      });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+    },
+    onError: () => {
+      toast({
+        title: isRTL ? "خطأ في إرسال الرسالة" : "Failed to Send Message",
+        description: isRTL 
+          ? "حدث خطأ. يرجى المحاولة مرة أخرى." 
+          : "An error occurred. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    toast({
-      title: isRTL ? "تم إرسال الرسالة" : "Message Sent",
-      description: isRTL 
-        ? "شكراً لتواصلك معنا. سنرد عليك قريباً!" 
-        : "Thank you for contacting us. We'll get back to you soon!",
-    });
-
-    setFormData({ name: "", email: "", phone: "", message: "" });
-    setIsSubmitting(false);
+    submitMutation.mutate(formData);
   };
 
   const handleChange = (field: string, value: string) => {
@@ -325,7 +345,7 @@ export default function Contact() {
                       className="w-full gap-2" 
                       disabled={submitMutation.isPending}
                     >
-                      {submitMutation.isPending ? (
+                      {submitMutation?.isPending ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" />
                           {isRTL ? "جاري الإرسال..." : "Sending..."}

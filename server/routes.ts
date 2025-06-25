@@ -403,23 +403,106 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // SMTP Settings routes
-  app.get('/api/admin/smtp', isAuthenticated, async (req, res) => {
+  app.get("/api/admin/smtp-settings", isAuthenticated, async (req, res) => {
     try {
       const settings = await storage.getSmtpSettings();
       res.json(settings);
     } catch (error) {
       console.error("Error fetching SMTP settings:", error);
-      res.status(500).json({ error: "Failed to fetch SMTP settings" });
+      res.status(500).json({ message: "Failed to fetch SMTP settings" });
     }
   });
 
-  app.put('/api/admin/smtp', isAuthenticated, async (req, res) => {
+  app.post("/api/admin/smtp-settings", isAuthenticated, async (req, res) => {
     try {
       const settings = await storage.createOrUpdateSmtpSettings(req.body);
       res.json(settings);
     } catch (error) {
-      console.error("Error updating SMTP settings:", error);
-      res.status(500).json({ error: "Failed to update SMTP settings" });
+      console.error("Error saving SMTP settings:", error);
+      res.status(500).json({ message: "Failed to save SMTP settings" });
+    }
+  });
+
+  app.post("/api/admin/smtp-settings/test", isAuthenticated, async (req, res) => {
+    try {
+      const nodemailer = require('nodemailer');
+      const settings = req.body;
+
+      const transporter = nodemailer.createTransporter({
+        host: settings.host,
+        port: settings.port,
+        secure: settings.port === 465,
+        auth: {
+          user: settings.username,
+          pass: settings.password,
+        },
+      });
+
+      await transporter.sendMail({
+        from: `"${settings.fromName}" <${settings.fromEmail}>`,
+        to: settings.fromEmail,
+        subject: 'Test Email from LateLounge',
+        text: 'This is a test email to verify SMTP configuration.',
+        html: '<p>This is a test email to verify SMTP configuration.</p>',
+      });
+
+      res.json({ message: "Test email sent successfully" });
+    } catch (error) {
+      console.error("Error sending test email:", error);
+      res.status(500).json({ message: "Failed to send test email", error: error.message });
+    }
+  });
+
+  // Contact form with SMTP integration
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const { name, email, phone, message } = req.body;
+      
+      if (!name || !email || !message) {
+        return res.status(400).json({ message: "Name, email, and message are required" });
+      }
+
+      // Get SMTP settings
+      const smtpSettings = await storage.getSmtpSettings();
+      
+      if (!smtpSettings || !smtpSettings.isActive) {
+        return res.status(500).json({ message: "Email service is not configured" });
+      }
+
+      const nodemailer = require('nodemailer');
+      
+      const transporter = nodemailer.createTransporter({
+        host: smtpSettings.host,
+        port: smtpSettings.port,
+        secure: smtpSettings.port === 465,
+        auth: {
+          user: smtpSettings.username,
+          pass: smtpSettings.password,
+        },
+      });
+
+      // Send email to admin
+      await transporter.sendMail({
+        from: `"${smtpSettings.fromName}" <${smtpSettings.fromEmail}>`,
+        to: smtpSettings.fromEmail, // Send to the configured admin email
+        subject: 'New Contact Form Submission - LateLounge',
+        html: `
+          <h2>New Contact Form Submission</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
+          <p><strong>Message:</strong></p>
+          <p>${message.replace(/\n/g, '<br>')}</p>
+          <hr>
+          <p><em>This message was sent from the LateLounge website contact form.</em></p>
+        `,
+        text: `New Contact Form Submission\n\nName: ${name}\nEmail: ${email}${phone ? `\nPhone: ${phone}` : ''}\n\nMessage:\n${message}\n\nThis message was sent from the LateLounge website contact form.`
+      });
+
+      res.json({ message: "Message sent successfully" });
+    } catch (error) {
+      console.error("Error sending contact email:", error);
+      res.status(500).json({ message: "Failed to send message", error: error.message });
     }
   });
 

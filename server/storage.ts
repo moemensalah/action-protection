@@ -355,15 +355,9 @@ export class DatabaseStorage implements IStorage {
       .where(eq(products.categoryId, product.categoryId))
       .orderBy(asc(products.sortOrder));
 
-    console.log(`Reordering product ${id} (${product.nameEn}) ${direction} in category ${product.categoryId}`);
-    console.log('Category products:', categoryProducts.map(p => ({ id: p.id, name: p.nameEn, order: p.sortOrder })));
-
     // Find current product index
     const currentIndex = categoryProducts.findIndex(p => p.id === id);
-    if (currentIndex === -1) {
-      console.log('Product not found in category products');
-      return;
-    }
+    if (currentIndex === -1) return;
 
     let targetIndex: number;
     if (direction === 'up' && currentIndex > 0) {
@@ -371,15 +365,12 @@ export class DatabaseStorage implements IStorage {
     } else if (direction === 'down' && currentIndex < categoryProducts.length - 1) {
       targetIndex = currentIndex + 1;
     } else {
-      console.log(`Cannot move ${direction}: already at edge (index ${currentIndex} of ${categoryProducts.length})`);
       return; // Already at the edge, can't move further
     }
 
     // Swap the products
     const currentProduct = categoryProducts[currentIndex];
     const targetProduct = categoryProducts[targetIndex];
-
-    console.log(`Swapping: ${currentProduct.nameEn} (order ${currentProduct.sortOrder}) <-> ${targetProduct.nameEn} (order ${targetProduct.sortOrder})`);
 
     // Update both products with swapped sort orders
     await db.update(products)
@@ -389,8 +380,6 @@ export class DatabaseStorage implements IStorage {
     await db.update(products)
       .set({ sortOrder: currentProduct.sortOrder, updatedAt: new Date() })
       .where(eq(products.id, targetProduct.id));
-
-    console.log('Reorder completed successfully');
   }
 
   // About Us

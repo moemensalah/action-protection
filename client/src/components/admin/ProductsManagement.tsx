@@ -160,8 +160,12 @@ export function ProductsManagement() {
       });
     },
     onSuccess: () => {
+      // Force immediate refetch of all product-related queries
       queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
       queryClient.refetchQueries({ queryKey: ["/api/admin/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.refetchQueries({ queryKey: ["/api/products"] });
+      
       setIsDialogOpen(false);
       resetForm();
       toast({
@@ -188,7 +192,12 @@ export function ProductsManagement() {
       });
     },
     onSuccess: () => {
+      // Force immediate refetch of all product-related queries
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
+      queryClient.refetchQueries({ queryKey: ["/api/admin/products"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.refetchQueries({ queryKey: ["/api/products"] });
+      
       setIsDialogOpen(false);
       setEditingProduct(null);
       resetForm();
@@ -269,7 +278,12 @@ export function ProductsManagement() {
       });
     },
     onSuccess: () => {
+      // Force immediate refetch of all product-related queries
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
+      queryClient.refetchQueries({ queryKey: ["/api/admin/products"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.refetchQueries({ queryKey: ["/api/products"] });
+      
       setIsMoveDialogOpen(false);
       setMovingProduct(null);
       setNewCategoryId(0);

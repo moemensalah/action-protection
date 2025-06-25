@@ -46,6 +46,8 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Fixed product sorting functionality (up/down buttons now work correctly within categories)
 - ✓ Resolved product editing duplicate creation issue (now properly updates existing products)
 - ✓ Fixed dark mode dropdown text visibility (proper color contrast in both light and dark modes)
+- ✓ Added missing product reorder API endpoint for category-specific sorting functionality
+- ✓ Fixed session persistence issue - admin users now stay logged in after page refresh
 
 ### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode

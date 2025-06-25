@@ -39,8 +39,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
       const data = await response.json();
       
       if (data.user) {
-        // Store user data in localStorage for admin panel
-        localStorage.setItem("admin_user", JSON.stringify(data.user));
+        // Don't rely on localStorage, use server session only
         onLogin(data.user);
         toast({
           title: isRTL ? "تم تسجيل الدخول" : "Login Successful",

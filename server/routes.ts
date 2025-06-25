@@ -152,7 +152,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get('/api/auth/local/user', (req: any, res) => {
-    if (req.session.localUser) {
+    if (req.session && req.session.localUser) {
+      // Refresh session to keep it alive
+      req.session.touch();
       res.json(req.session.localUser);
     } else {
       res.status(401).json({ message: "Not authenticated" });

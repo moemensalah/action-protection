@@ -39,7 +39,7 @@ export function getSession() {
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
-    rolling: true,
+    rolling: true, // Refresh session on each request
     cookie: {
       httpOnly: true,
       secure: false, // Keep false for now, will be handled by Cloudflare

@@ -522,7 +522,7 @@ export function CategoriesManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleReorder(category.id, 'up')}
-                              disabled={index === 0 || reorderMutation.isPending}
+                              disabled={isReorderDisabled(category, 'up')}
                               className="p-1 h-6 w-6"
                             >
                               <ChevronUp className="h-4 w-4" />
@@ -531,7 +531,7 @@ export function CategoriesManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleReorder(category.id, 'down')}
-                              disabled={index === sortedCategories.length - 1 || reorderMutation.isPending}
+                              disabled={isReorderDisabled(category, 'down')}
                               className="p-1 h-6 w-6"
                             >
                               <ChevronDown className="h-4 w-4" />
@@ -548,7 +548,7 @@ export function CategoriesManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleReorder(category.id, 'up')}
-                              disabled={index === 0 || reorderMutation.isPending}
+                              disabled={isReorderDisabled(category, 'up')}
                               className="p-1 h-6 w-6"
                             >
                               <ChevronUp className="h-4 w-4" />
@@ -557,7 +557,7 @@ export function CategoriesManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleReorder(category.id, 'down')}
-                              disabled={index === sortedCategories.length - 1 || reorderMutation.isPending}
+                              disabled={isReorderDisabled(category, 'down')}
                               className="p-1 h-6 w-6"
                             >
                               <ChevronDown className="h-4 w-4" />

@@ -263,32 +263,56 @@ export default function SmtpSettings() {
               </Label>
             </div>
 
-            <div className={`flex gap-4 pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <Button 
-                type="submit" 
-                disabled={saveMutation.isPending}
-                className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
-              >
-                <Shield className="h-4 w-4" />
-                {saveMutation.isPending 
-                  ? (isRTL ? "جاري الحفظ..." : "Saving...") 
-                  : (isRTL ? "حفظ الإعدادات" : "Save Settings")
-                }
-              </Button>
-
-              <Button 
-                type="button" 
-                variant="outline"
-                onClick={handleTestEmail}
-                disabled={testMutation.isPending || !formData.fromEmail}
-                className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
-              >
-                <Mail className="h-4 w-4" />
-                {testMutation.isPending 
-                  ? (isRTL ? "جاري الإرسال..." : "Sending...") 
-                  : (isRTL ? "اختبار البريد الإلكتروني" : "Test Email")
-                }
-              </Button>
+            <div className="flex gap-4 pt-4">
+              {isRTL ? (
+                <>
+                  <Button 
+                    type="button" 
+                    variant="outline"
+                    onClick={handleTestEmail}
+                    disabled={testMutation.isPending || !formData.fromEmail}
+                    className="flex items-center gap-2 flex-row-reverse"
+                  >
+                    <Mail className="h-4 w-4" />
+                    {testMutation.isPending 
+                      ? "جاري الإرسال..." 
+                      : "اختبار البريد الإلكتروني"
+                    }
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    disabled={saveMutation.isPending}
+                    className="flex items-center gap-2 flex-row-reverse"
+                  >
+                    <Shield className="h-4 w-4" />
+                    {saveMutation.isPending 
+                      ? "جاري الحفظ..." 
+                      : "حفظ الإعدادات"
+                    }
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button 
+                    type="submit" 
+                    disabled={saveMutation.isPending}
+                    className="flex items-center gap-2"
+                  >
+                    <Shield className="h-4 w-4" />
+                    {saveMutation.isPending ? "Saving..." : "Save Settings"}
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline"
+                    onClick={handleTestEmail}
+                    disabled={testMutation.isPending || !formData.fromEmail}
+                    className="flex items-center gap-2"
+                  >
+                    <Mail className="h-4 w-4" />
+                    {testMutation.isPending ? "Sending..." : "Test Email"}
+                  </Button>
+                </>
+              )}
             </div>
           </form>
         </CardContent>

@@ -73,19 +73,24 @@ export default function AdminPanel() {
   );
 
   useEffect(() => {
-    // Check for existing login
-    const token = localStorage.getItem("admin_token");
-    const userData = localStorage.getItem("admin_user");
-    
-    if (token && userData) {
+    // Check server session instead of localStorage
+    const checkSession = async () => {
       try {
-        setUser(JSON.parse(userData));
+        const response = await fetch('/api/auth/local/user', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        }
       } catch (error) {
-        localStorage.removeItem("admin_token");
-        localStorage.removeItem("admin_user");
+        console.log('No active session');
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+    
+    checkSession();
   }, []);
 
   useEffect(() => {
@@ -97,12 +102,17 @@ export default function AdminPanel() {
 
   const handleLogin = (userData: any) => {
     setUser(userData);
-    localStorage.setItem("admin_user", JSON.stringify(userData));
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin_token");
-    localStorage.removeItem("admin_user");
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/local/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
     setUser(null);
     setLocation("/");
   };

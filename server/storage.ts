@@ -248,6 +248,8 @@ export class DatabaseStorage implements IStorage {
       targetIndex = currentIndex - 1;
     } else if (direction === 'down' && currentIndex < allCategories.length - 1) {
       targetIndex = currentIndex + 1;
+    } else {
+      return; // Already at the edge, can't move further
     }
     
     if (targetIndex >= 0) {
@@ -256,11 +258,11 @@ export class DatabaseStorage implements IStorage {
       
       // Swap the sort orders
       await db.update(categories)
-        .set({ sortOrder: targetCategory.sortOrder })
+        .set({ sortOrder: targetCategory.sortOrder, updatedAt: new Date() })
         .where(eq(categories.id, currentCategory.id));
       
       await db.update(categories)
-        .set({ sortOrder: currentCategory.sortOrder })
+        .set({ sortOrder: currentCategory.sortOrder, updatedAt: new Date() })
         .where(eq(categories.id, targetCategory.id));
     }
   }

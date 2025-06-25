@@ -81,6 +81,19 @@ export function CategoriesManagement() {
 
   // Sort categories by sortOrder for display
   const sortedCategories = [...(categories as Category[])].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+  
+  // Helper function to check if reorder button should be disabled
+  const isReorderDisabled = (category: Category, direction: 'up' | 'down') => {
+    if (reorderMutation.isPending) return true;
+    
+    const categoryIndex = sortedCategories.findIndex(c => c.id === category.id);
+    
+    if (direction === 'up') {
+      return categoryIndex === 0;
+    } else {
+      return categoryIndex === sortedCategories.length - 1;
+    }
+  };
 
   // Create category mutation
   const createMutation = useMutation({

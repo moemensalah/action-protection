@@ -21,6 +21,9 @@ chmod +x production-database-cleanup.sh
 
 # Run analysis to identify ghost products
 ./production-database-cleanup.sh
+
+# If categories show duplicates, run category analysis
+psql -h $PGHOST -p $PGPORT -U $PGUSER -d $PGDATABASE -f production-category-cleanup.sql
 ```
 
 This will:
@@ -52,17 +55,28 @@ psql -h $PGHOST -p $PGPORT -U $PGUSER -d $PGDATABASE
 ```
 
 ## Step 5: Execute Cleanup Commands
-Based on your analysis, remove specific problematic products:
 
+### For Ghost Products:
 ```sql
--- Example: Remove products with NULL names
+-- Remove products with NULL names
 DELETE FROM products WHERE name_en IS NULL;
 
--- Example: Remove specific duplicate IDs (keep the oldest)
-DELETE FROM products WHERE id IN (26, 27);
+-- Remove specific duplicate IDs (keep the oldest)
+DELETE FROM products WHERE id IN (specific_ids);
+```
+
+### For Duplicate Categories (Based on your output):
+```sql
+-- First, move products from duplicate category to the main one
+-- Example: If "Hot Beverages" has IDs 2 and 3, keep ID 2, move products from ID 3
+UPDATE products SET category_id = 2 WHERE category_id = 3;
+
+-- Then delete the duplicate category
+DELETE FROM categories WHERE id = 3;
 
 -- Verify cleanup
-SELECT COUNT(*) as final_count FROM products WHERE is_active = true;
+SELECT COUNT(*) as final_categories FROM categories;
+SELECT COUNT(*) as final_products FROM products WHERE is_active = true;
 
 -- Exit database
 \q

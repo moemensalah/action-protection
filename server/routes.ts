@@ -402,9 +402,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // SMTP Settings routes
-  app.get("/api/admin/smtp-settings", isAuthenticated, async (req, res) => {
+  // SMTP Settings routes (using local auth middleware)
+  app.get("/api/admin/smtp-settings", async (req, res) => {
     try {
+      // Check if user is authenticated via session
+      if (!req.session?.user || req.session.user.role !== 'administrator') {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const settings = await storage.getSmtpSettings();
       res.json(settings);
     } catch (error) {
@@ -413,8 +418,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/smtp-settings", isAuthenticated, async (req, res) => {
+  app.post("/api/admin/smtp-settings", async (req, res) => {
     try {
+      // Check if user is authenticated via session
+      if (!req.session?.user || req.session.user.role !== 'administrator') {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const settings = await storage.createOrUpdateSmtpSettings(req.body);
       res.json(settings);
     } catch (error) {
@@ -423,8 +433,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/smtp-settings/test", isAuthenticated, async (req, res) => {
+  app.post("/api/admin/smtp-settings/test", async (req, res) => {
     try {
+      // Check if user is authenticated via session
+      if (!req.session?.user || req.session.user.role !== 'administrator') {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const nodemailer = require('nodemailer');
       const settings = req.body;
 

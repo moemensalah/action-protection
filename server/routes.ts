@@ -711,10 +711,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/users/:id", async (req, res) => {
+  app.put("/api/admin/users/:id", requireLocalAdmin, async (req, res) => {
     try {
       const userId = req.params.id;
       const userData = req.body;
+      
+      // Check if email is being changed and already exists for another user
+      if (userData.email) {
+        const existingUserByEmail = await storage.getUserByEmail(userData.email);
+        if (existingUserByEmail && existingUserByEmail.id !== userId) {
+          return res.status(400).json({ message: "Email already exists" });
+        }
+      }
+      
+      // Check if username is being changed and already exists for another user
+      if (userData.username) {
+        const existingUserByUsername = await storage.getUserByUsername(userData.username);
+        if (existingUserByUsername && existingUserByUsername.id !== userId) {
+          return res.status(400).json({ message: "Username already exists" });
+        }
+      }
+      
       const updatedUser = await storage.updateUser(userId, userData);
       res.json(updatedUser);
     } catch (error) {
@@ -723,17 +740,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/users/:id", async (req, res) => {
+  app.delete("/api/admin/users/:id", requireLocalAdmin, async (req, res) => {
     try {
       const userId = req.params.id;
       
-      // Prevent deletion of main admin
-      if (userId === "admin_seed_1") {
-        return res.status(403).json({ message: "Cannot delete main administrator" });
+      // Prevent deleting yourself
+      if (req.localUser.id === userId) {
+        return res.status(400).json({ message: "Cannot delete your own account" });
       }
       
       await storage.deleteUser(userId);
-      res.status(204).send();
+      res.json({ message: "User deleted successfully" });
     } catch (error) {
       console.error("Error deleting user:", error);
       res.status(500).json({ message: "Failed to delete user" });

@@ -547,7 +547,7 @@ export function ContentManagement() {
                               newFeatures[index] = { ...feature, icon: e.target.value };
                               setAboutData(prev => ({ ...prev, features: newFeatures }));
                             }}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                           >
                             <option value="Coffee">Coffee</option>
                             <option value="Users">Users</option>

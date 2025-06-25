@@ -118,23 +118,41 @@
   
   /* Dark mode dropdown fixes */
   .dark [data-radix-select-content] {
-    background-color: rgb(31 41 55);
-    border-color: rgb(75 85 99);
-    color: rgb(255 255 255);
+    background-color: rgb(31 41 55) !important;
+    border-color: rgb(75 85 99) !important;
+    color: rgb(255 255 255) !important;
   }
 
   .dark [data-radix-select-item] {
-    color: rgb(255 255 255);
+    color: rgb(255 255 255) !important;
+    background-color: transparent !important;
   }
 
   .dark [data-radix-select-item]:hover {
-    background-color: rgb(55 65 81);
-    color: rgb(255 255 255);
+    background-color: rgb(55 65 81) !important;
+    color: rgb(255 255 255) !important;
   }
 
   .dark [data-radix-select-item][data-highlighted] {
-    background-color: rgb(55 65 81);
-    color: rgb(255 255 255);
+    background-color: rgb(55 65 81) !important;
+    color: rgb(255 255 255) !important;
+  }
+
+  .dark [data-radix-select-item][data-state="checked"] {
+    background-color: rgb(59 130 246) !important;
+    color: rgb(255 255 255) !important;
+  }
+
+  /* Dark mode regular select dropdown fixes */
+  .dark select {
+    background-color: rgb(31 41 55) !important;
+    border-color: rgb(75 85 99) !important;
+    color: rgb(255 255 255) !important;
+  }
+
+  .dark select option {
+    background-color: rgb(31 41 55) !important;
+    color: rgb(255 255 255) !important;
   }
 
   /* Light mode dropdown fixes */

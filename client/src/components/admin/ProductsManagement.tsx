@@ -161,6 +161,7 @@ export function ProductsManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
+      queryClient.refetchQueries({ queryKey: ["/api/admin/products"] });
       setIsDialogOpen(false);
       resetForm();
       toast({
@@ -214,6 +215,7 @@ export function ProductsManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
+      queryClient.refetchQueries({ queryKey: ["/api/admin/products"] });
       toast({
         title: isRTL ? "تم حذف المنتج" : "Product Deleted",
         description: isRTL ? "تم حذف المنتج بنجاح" : "Product deleted successfully",
@@ -238,7 +240,11 @@ export function ProductsManagement() {
       });
     },
     onSuccess: () => {
+      // Force immediate refetch of all product-related queries
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
+      queryClient.refetchQueries({ queryKey: ["/api/admin/products"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.refetchQueries({ queryKey: ["/api/products"] });
       toast({
         title: isRTL ? "تم إعادة الترتيب" : "Reordered",
         description: isRTL ? "تم إعادة ترتيب المنتجات بنجاح" : "Products reordered successfully",

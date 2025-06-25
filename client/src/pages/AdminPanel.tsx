@@ -277,6 +277,12 @@ export default function AdminPanel() {
               )}
 
               {user?.role === "administrator" && (
+                <TabsContent value="smtp-settings" className="space-y-6">
+                  <SmtpSettings />
+                </TabsContent>
+              )}
+
+              {user?.role === "administrator" && (
                 <TabsContent value="users" className="space-y-6">
                   <Card>
                     <CardHeader>

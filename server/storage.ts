@@ -29,6 +29,7 @@ import {
   type InsertPrivacyPolicy,
   type InsertTermsOfService,
   type InsertSmtpSettings,
+  type SmtpSettings,
   type InsertUser,
   type CreateUser,
 } from "@shared/schema";
@@ -587,6 +588,11 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return created;
     }
+  }
+
+  async getSmtpSettings(): Promise<SmtpSettings | undefined> {
+    const [settings] = await db.select().from(smtpSettings).limit(1);
+    return settings;
   }
 }
 

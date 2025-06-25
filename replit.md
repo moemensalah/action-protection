@@ -32,7 +32,7 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 
 ## Recent Changes
 
-### 2025-06-25: Google Maps Integration + Social Media Enhancement + Security + Admin UI Fixes
+### 2025-06-25: Ghost Products Management + Category Sorting Production Fix
 - ✓ Fixed Google Maps URL saving in admin panel (missing field added to mutation)
 - ✓ Contact page map section now clickable when URL is set in admin panel
 - ✓ Enhanced update-production.sh script to include database migrations (npm run db:push)
@@ -51,6 +51,10 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Cleaned up ghost products created during previous editing bug (removed 7 duplicate/inconsistent products)
 - ✓ Database now has 12 products matching exactly what appears in admin panel and website
 - ✓ Created production-safe database cleanup tools for identifying and removing ghost products
+- ✓ Implemented ghost products filtering on website (only valid products shown to users)
+- ✓ Added Ghost Products management section in admin panel for manual cleanup
+- ✓ Created production category sorting fix script for missing sort_order column
+- ✓ Category sorting works in development, production fix script ready for deployment
 
 ### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode

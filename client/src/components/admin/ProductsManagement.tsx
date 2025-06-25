@@ -90,16 +90,18 @@ export function ProductsManagement() {
   });
   const categories = categoriesResponse?.categories || [];
 
-  // Fetch products
-  const { data: productsData = { products: [] }, isLoading } = useQuery({
-    queryKey: ["/api/products", { category: selectedCategory }],
+  // Fetch products (admin view - shows all products including inactive)
+  const { data: productsData = [], isLoading } = useQuery({
+    queryKey: ["/api/admin/products"],
   });
 
+  const allProducts = Array.isArray(productsData) ? productsData : [];
+  
   const filteredProducts = selectedCategory === "all" 
-    ? (productsData as any)?.products || []
-    : (productsData as any)?.products?.filter((product: Product) => 
+    ? allProducts
+    : allProducts.filter((product: Product) => 
         (categories as any[]).find((cat: any) => cat.id === product.categoryId)?.slug === selectedCategory
-      ) || [];
+      );
 
   const getCategoryName = (categoryId: number) => {
     const category = (categories as any[]).find((cat: any) => cat.id === categoryId);
@@ -144,7 +146,7 @@ export function ProductsManagement() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
       setIsDialogOpen(false);
       resetForm();
       toast({
@@ -197,7 +199,7 @@ export function ProductsManagement() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
       toast({
         title: isRTL ? "تم حذف المنتج" : "Product Deleted",
         description: isRTL ? "تم حذف المنتج بنجاح" : "Product deleted successfully",

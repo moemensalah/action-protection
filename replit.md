@@ -55,6 +55,8 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Added Ghost Products management section in admin panel for manual cleanup
 - ✓ Created production category sorting fix script for missing sort_order column
 - ✓ Category sorting works in development, production fix script ready for deployment
+- ✓ Fixed admin panel product count display by adding missing GET /api/admin/products endpoint
+- ✓ Admin panel now correctly shows all products (including inactive) and accurate count
 
 ### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode

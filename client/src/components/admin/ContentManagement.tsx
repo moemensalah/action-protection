@@ -285,6 +285,7 @@ export function ContentManagement() {
         workingHours: data.workingHours,
         workingHoursAr: data.workingHoursAr,
         socialMediaLinks: data.socialMediaLinks,
+        googleMapsUrl: data.googleMapsUrl,
         isActive: data.isActive
       };
       return await apiRequest("/api/admin/contact", {

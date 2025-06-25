@@ -105,8 +105,12 @@ export function CategoriesManagement() {
       });
     },
     onSuccess: () => {
+      // Force immediate refetch of all category-related queries
       queryClient.invalidateQueries({ queryKey: ["/api/admin/categories"] });
+      queryClient.refetchQueries({ queryKey: ["/api/admin/categories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      queryClient.refetchQueries({ queryKey: ["/api/categories"] });
+      
       setIsDialogOpen(false);
       resetForm();
       toast({
@@ -133,8 +137,12 @@ export function CategoriesManagement() {
       });
     },
     onSuccess: () => {
+      // Force immediate refetch of all category-related queries
       queryClient.invalidateQueries({ queryKey: ["/api/admin/categories"] });
+      queryClient.refetchQueries({ queryKey: ["/api/admin/categories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      queryClient.refetchQueries({ queryKey: ["/api/categories"] });
+      
       setIsDialogOpen(false);
       setEditingCategory(null);
       resetForm();
@@ -160,9 +168,14 @@ export function CategoriesManagement() {
       });
     },
     onSuccess: () => {
+      // Force immediate refetch of all related queries
       queryClient.invalidateQueries({ queryKey: ["/api/admin/categories"] });
+      queryClient.refetchQueries({ queryKey: ["/api/admin/categories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      queryClient.refetchQueries({ queryKey: ["/api/categories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.refetchQueries({ queryKey: ["/api/products"] });
+      
       toast({
         title: isRTL ? "تم حذف الفئة" : "Category Deleted",
         description: isRTL ? "تم حذف الفئة وجميع منتجاتها بنجاح" : "Category and all its products deleted successfully",

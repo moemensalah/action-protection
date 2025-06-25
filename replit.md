@@ -78,6 +78,9 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Categories management now updates instantly after creating, editing, reordering, or deleting categories
 - ✓ Created production deployment script (fix-production-cache-invalidation.sh) to update production with cache invalidation fixes
 - ✓ Production needs to be rebuilt and redeployed to get real-time update functionality
+- ✓ Created production permissions fix scripts to resolve EACCES build errors
+- ✓ fix-production-permissions.sh - Comprehensive permissions fix for entire project
+- ✓ fix-build-permissions-only.sh - Quick fix for build directory permissions only
 
 ### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode

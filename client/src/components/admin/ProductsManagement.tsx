@@ -126,6 +126,20 @@ export function ProductsManagement() {
       .sort((a: Product, b: Product) => (a.sortOrder || 0) - (b.sortOrder || 0));
   };
 
+  // Helper function to check if reorder button should be disabled
+  const isReorderDisabled = (product: Product, direction: 'up' | 'down') => {
+    if (reorderMutation.isPending) return true;
+    
+    const categoryProducts = sortedProducts.filter(p => p.categoryId === product.categoryId);
+    const categoryIndex = categoryProducts.findIndex(p => p.id === product.id);
+    
+    if (direction === 'up') {
+      return categoryIndex === 0;
+    } else {
+      return categoryIndex === categoryProducts.length - 1;
+    }
+  };
+
   // Sort products by sortOrder for display
   const sortedProducts = [...filteredProducts].sort((a: Product, b: Product) => (a.sortOrder || 0) - (b.sortOrder || 0));
   
@@ -692,7 +706,7 @@ export function ProductsManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleReorder(product.id, 'up')}
-                              disabled={index === 0 || reorderMutation.isPending}
+                              disabled={isReorderDisabled(product, 'up')}
                               className="p-1 h-6 w-6"
                             >
                               <ChevronUp className="h-4 w-4" />
@@ -701,7 +715,7 @@ export function ProductsManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleReorder(product.id, 'down')}
-                              disabled={index === sortedProducts.length - 1 || reorderMutation.isPending}
+                              disabled={isReorderDisabled(product, 'down')}
                               className="p-1 h-6 w-6"
                             >
                               <ChevronDown className="h-4 w-4" />
@@ -718,7 +732,7 @@ export function ProductsManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleReorder(product.id, 'up')}
-                              disabled={index === 0 || reorderMutation.isPending}
+                              disabled={isReorderDisabled(product, 'up')}
                               className="p-1 h-6 w-6"
                             >
                               <ChevronUp className="h-4 w-4" />
@@ -727,7 +741,7 @@ export function ProductsManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleReorder(product.id, 'down')}
-                              disabled={index === sortedProducts.length - 1 || reorderMutation.isPending}
+                              disabled={isReorderDisabled(product, 'down')}
                               className="p-1 h-6 w-6"
                             >
                               <ChevronDown className="h-4 w-4" />

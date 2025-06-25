@@ -280,6 +280,7 @@ export class DatabaseStorage implements IStorage {
           isNotNull(products.categoryId)
         )
       )
+      .orderBy(asc(products.categoryId), asc(products.sortOrder))
       .then(results => results.map(result => result.products));
   }
 
@@ -300,12 +301,13 @@ export class DatabaseStorage implements IStorage {
           isNotNull(products.nameEn),
           isNotNull(products.nameAr)
         )
-      );
+      )
+      .orderBy(asc(products.sortOrder));
   }
 
   // Admin-only method to get ALL products including ghost/invalid ones
   async getAllProductsForAdmin(): Promise<Product[]> {
-    return await db.select().from(products).orderBy(desc(products.createdAt));
+    return await db.select().from(products).orderBy(asc(products.categoryId), asc(products.sortOrder));
   }
 
   async getProductsByCategorySlug(slug: string): Promise<Product[]> {

@@ -26,7 +26,11 @@ interface ContactUs {
     twitter?: string;
     facebook?: string;
     snapchat?: string;
+    linkedin?: string;
+    youtube?: string;
+    tiktok?: string;
   };
+  googleMapsUrl?: string;
   isActive: boolean;
 }
 

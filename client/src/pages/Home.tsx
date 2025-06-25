@@ -33,8 +33,19 @@ export default function Home() {
     queryKey: ["/api/categories"],
   });
 
+  // Fetch products to get category counts
+  const { data: productsResponse } = useQuery<{ products: any[] }>({
+    queryKey: ["/api/products"],
+  });
+
   const categories = categoriesResponse?.categories || [];
   const activeCategories = categories.filter((cat: Category) => cat.isActive);
+  const products = productsResponse?.products || [];
+
+  // Calculate product count for each category
+  const getCategoryProductCount = (categoryId: number) => {
+    return products.filter(product => product.categoryId === categoryId && product.isActive).length;
+  };
 
   const handleCategoryClick = (category: Category) => {
     setLocation(`/menu?category=${category.slug}`);
@@ -85,7 +96,7 @@ export default function Home() {
                 <CategoryCard
                   key={category.id}
                   category={category}
-                  productCount={0}
+                  productCount={getCategoryProductCount(category.id)}
                   onClick={() => handleCategoryClick(category)}
                 />
               ))}

@@ -104,6 +104,7 @@ export const contactUs = pgTable("contact_us", {
   workingHours: varchar("working_hours", { length: 255 }),
   workingHoursAr: varchar("working_hours_ar", { length: 255 }),
   socialMediaLinks: jsonb("social_media_links"), // Store as JSON: {facebook, instagram, twitter, etc.}
+  googleMapsUrl: text("google_maps_url"), // Google Maps link for location
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

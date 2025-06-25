@@ -47,7 +47,11 @@ interface ContactUs {
     twitter?: string;
     facebook?: string;
     snapchat?: string;
+    linkedin?: string;
+    youtube?: string;
+    tiktok?: string;
   };
+  googleMapsUrl?: string;
   isActive: boolean;
 }
 
@@ -95,6 +99,7 @@ export function ContentManagement() {
     workingHours: "",
     workingHoursAr: "",
     socialMediaLinks: {},
+    googleMapsUrl: "",
     isActive: true
   });
 
@@ -185,6 +190,7 @@ export function ContentManagement() {
         workingHours: contactUs.workingHours || "",
         workingHoursAr: contactUs.workingHoursAr || "",
         socialMediaLinks: contactUs.socialMediaLinks || {},
+        googleMapsUrl: contactUs.googleMapsUrl || "",
         isActive: contactUs.isActive ?? true
       });
     }
@@ -818,7 +824,48 @@ export function ContentManagement() {
                         socialMediaLinks: { ...prev.socialMediaLinks, snapchat: e.target.value }
                       }))}
                     />
+                    <Input
+                      placeholder="LinkedIn URL"
+                      value={contactData.socialMediaLinks?.linkedin || ""}
+                      onChange={(e) => setContactData(prev => ({
+                        ...prev,
+                        socialMediaLinks: { ...prev.socialMediaLinks, linkedin: e.target.value }
+                      }))}
+                    />
+                    <Input
+                      placeholder="YouTube URL"
+                      value={contactData.socialMediaLinks?.youtube || ""}
+                      onChange={(e) => setContactData(prev => ({
+                        ...prev,
+                        socialMediaLinks: { ...prev.socialMediaLinks, youtube: e.target.value }
+                      }))}
+                    />
+                    <Input
+                      placeholder="TikTok URL"
+                      value={contactData.socialMediaLinks?.tiktok || ""}
+                      onChange={(e) => setContactData(prev => ({
+                        ...prev,
+                        socialMediaLinks: { ...prev.socialMediaLinks, tiktok: e.target.value }
+                      }))}
+                    />
                   </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="googleMapsUrl" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                    <MapPin className="h-4 w-4" />
+                    {isRTL ? "رابط خرائط جوجل" : "Google Maps URL"}
+                  </Label>
+                  <Input
+                    id="googleMapsUrl"
+                    value={contactData.googleMapsUrl || ""}
+                    onChange={(e) => setContactData(prev => ({ ...prev, googleMapsUrl: e.target.value }))}
+                    placeholder="https://maps.google.com/..."
+                    dir="ltr"
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {isRTL ? "أضف رابط موقعك من خرائط جوجل لتمكين النقر على الخريطة" : "Add your Google Maps location link to enable map click navigation"}
+                  </p>
                 </div>
 
                 <Button type="submit" disabled={updateContactMutation.isPending} className="flex items-center gap-2">

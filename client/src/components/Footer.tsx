@@ -1,6 +1,6 @@
 import { useLanguage } from "@/hooks/useLanguage";
-import { Facebook, Instagram } from "lucide-react";
-import { SiTiktok } from "react-icons/si";
+import { Facebook, Instagram, Linkedin, Youtube, Twitter } from "lucide-react";
+import { SiTiktok, SiSnapchat } from "react-icons/si";
 import { useQuery } from "@tanstack/react-query";
 
 interface FooterContent {
@@ -26,6 +26,9 @@ interface ContactUs {
     twitter?: string;
     facebook?: string;
     snapchat?: string;
+    linkedin?: string;
+    youtube?: string;
+    tiktok?: string;
   };
 }
 
@@ -130,9 +133,9 @@ export function Footer() {
                       href={contactData.socialMediaLinks.twitter} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-gray-600 dark:text-gray-300 hover:text-purple-500 transition-colors"
+                      className="text-gray-600 dark:text-gray-300 hover:text-blue-400 transition-colors"
                     >
-                      <SiTiktok className="h-6 w-6" />
+                      <Twitter className="h-6 w-6" />
                     </a>
                   )}
                   {contactData.socialMediaLinks?.facebook && (
@@ -143,6 +146,46 @@ export function Footer() {
                       className="text-gray-600 dark:text-gray-300 hover:text-blue-500 transition-colors"
                     >
                       <Facebook className="h-6 w-6" />
+                    </a>
+                  )}
+                  {contactData.socialMediaLinks?.snapchat && (
+                    <a 
+                      href={contactData.socialMediaLinks.snapchat} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-gray-600 dark:text-gray-300 hover:text-yellow-400 transition-colors"
+                    >
+                      <SiSnapchat className="h-6 w-6" />
+                    </a>
+                  )}
+                  {contactData.socialMediaLinks?.linkedin && (
+                    <a 
+                      href={contactData.socialMediaLinks.linkedin} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors"
+                    >
+                      <Linkedin className="h-6 w-6" />
+                    </a>
+                  )}
+                  {contactData.socialMediaLinks?.youtube && (
+                    <a 
+                      href={contactData.socialMediaLinks.youtube} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-gray-600 dark:text-gray-300 hover:text-red-500 transition-colors"
+                    >
+                      <Youtube className="h-6 w-6" />
+                    </a>
+                  )}
+                  {contactData.socialMediaLinks?.tiktok && (
+                    <a 
+                      href={contactData.socialMediaLinks.tiktok} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-gray-600 dark:text-gray-300 hover:text-purple-500 transition-colors"
+                    >
+                      <SiTiktok className="h-6 w-6" />
                     </a>
                   )}
                 </div>

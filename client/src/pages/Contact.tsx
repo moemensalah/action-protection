@@ -349,7 +349,14 @@ export default function Contact() {
               {isRTL ? "موقعنا" : "Find Us"}
             </h2>
             
-            <div className="bg-gray-200 dark:bg-gray-800 rounded-lg h-64 flex items-center justify-center">
+            <div 
+              className={`bg-gray-200 dark:bg-gray-800 rounded-lg h-64 flex items-center justify-center ${contactData?.googleMapsUrl ? 'cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors' : ''}`}
+              onClick={() => {
+                if (contactData?.googleMapsUrl) {
+                  window.open(contactData.googleMapsUrl, '_blank', 'noopener,noreferrer');
+                }
+              }}
+            >
               {isLoading ? (
                 <div className="text-center">
                   <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded mx-auto mb-4 animate-pulse"></div>
@@ -360,13 +367,22 @@ export default function Contact() {
                 <div className="text-center">
                   <MapPin className="h-12 w-12 text-primary mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {isRTL ? "الخريطة التفاعلية" : "Interactive Map"}
+                    {isRTL ? "موقعنا" : "Our Location"}
                   </h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground mb-2">
                     {isRTL ? contactData.addressAr : contactData.address}
                   </p>
+                  {contactData.googleMapsUrl && (
+                    <p className="text-sm text-primary">
+                      {isRTL ? "انقر لفتح في خرائط جوجل" : "Click to open in Google Maps"}
+                    </p>
+                  )}
                 </div>
-              ) : null}
+              ) : (
+                <div className="text-center text-muted-foreground">
+                  {isRTL ? "لا توجد معلومات الموقع متاحة" : "No location information available"}
+                </div>
+              )}
             </div>
           </div>
         </div>

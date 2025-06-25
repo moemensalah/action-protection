@@ -268,20 +268,37 @@ export class DatabaseStorage implements IStorage {
   // Products
   async getProducts(): Promise<Product[]> {
     // Only return products with valid names and categories for public website
-    return await db
-      .select()
+    const results = await db
+      .select({
+        id: products.id,
+        nameEn: products.nameEn,
+        nameAr: products.nameAr,
+        descriptionEn: products.descriptionEn,
+        descriptionAr: products.descriptionAr,
+        price: products.price,
+        image: products.image,
+        categoryId: products.categoryId,
+        sortOrder: products.sortOrder,
+        isActive: products.isActive,
+        createdAt: products.createdAt,
+        updatedAt: products.updatedAt,
+        categoryName: categories.nameEn,
+        categorySlug: categories.slug
+      })
       .from(products)
       .innerJoin(categories, eq(products.categoryId, categories.id))
       .where(
         and(
           eq(products.isActive, true),
+          eq(categories.isActive, true),
           isNotNull(products.nameEn),
           isNotNull(products.nameAr),
           isNotNull(products.categoryId)
         )
       )
-      .orderBy(asc(products.categoryId), asc(products.sortOrder))
-      .then(results => results.map(result => result.products));
+      .orderBy(asc(categories.sortOrder), asc(products.sortOrder));
+    
+    return results;
   }
 
   async getProductById(id: number): Promise<Product | undefined> {

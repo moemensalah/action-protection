@@ -105,7 +105,7 @@ export function ProductsManagement() {
 
   const getCategoryName = (categoryId: number) => {
     const category = (categories as any[]).find((cat: any) => cat.id === categoryId);
-    return category ? (isRTL ? category.nameAr : category.nameEn) : '';
+    return category ? (isRTL ? category.nameAr : category.nameEn) : (isRTL ? "غير مصنف" : "Uncategorized");
   };
 
   const handleDelete = (product: Product) => {

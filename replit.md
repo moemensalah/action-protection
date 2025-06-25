@@ -59,6 +59,10 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Admin panel now correctly shows all products (including inactive) and accurate count
 - ✓ Fixed product sorting within categories by correcting button disabled logic and cache invalidation
 - ✓ Products now properly reorder within their categories with immediate UI updates
+- ✓ Fixed frontend cache invalidation for product reordering with immediate UI refresh
+- ✓ Added proper sorting by category and sort_order for both website and admin panel
+- ✓ Fixed uncategorized products display in admin panel (shows "Uncategorized" instead of blank)
+- ✓ Website now follows admin panel sorting order per category with proper database ordering
 
 ### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode

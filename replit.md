@@ -66,6 +66,9 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Fixed category sorting cache invalidation in admin panel for immediate UI updates
 - ✓ Categories properly displayed on website with correct sort order matching admin panel
 - ✓ Both product and category sorting now work consistently across admin and public interfaces
+- ✓ Created production-safe category sorting fix script (fix-production-category-sorting-safe.sh)
+- ✓ Handles duplicate sort_order values, NULL values, and normalizes sequential ordering
+- ✓ Non-destructive fix that preserves all data while fixing indexing issues
 
 ### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode

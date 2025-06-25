@@ -39,11 +39,14 @@ export function getSession() {
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
+    rolling: true,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // Keep false for now, will be handled by Cloudflare
       maxAge: sessionTtl,
+      sameSite: 'lax'
     },
+    name: 'latelounge.session'
   });
 }
 

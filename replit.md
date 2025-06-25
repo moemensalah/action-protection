@@ -69,6 +69,9 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Created production-safe category sorting fix script (fix-production-category-sorting-safe.sh)
 - ✓ Handles duplicate sort_order values, NULL values, and normalizes sequential ordering
 - ✓ Non-destructive fix that preserves all data while fixing indexing issues
+- ✓ Switched database driver from pg to @neondatabase/serverless to resolve development environment connection timeout issues
+- ✓ Fixed database connection pool exhaustion by implementing proper connection limits and timeout configurations
+- ✓ Production deployment uses different database setup, so development changes don't impact production environment
 
 ### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode

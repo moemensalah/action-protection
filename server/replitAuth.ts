@@ -7,7 +7,6 @@ import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
-import { pool } from "./db";
 
 // Allow bypassing Replit domains check for production deployment
 const REPLIT_DOMAINS = process.env.REPLIT_DOMAINS || "localhost:3000,127.0.0.1:3000";
@@ -34,7 +33,6 @@ export function getSession() {
     createTableIfMissing: false,
     ttl: sessionTtl,
     tableName: "sessions",
-    pool: pool, // Reuse the existing connection pool
   });
   return session({
     secret: process.env.SESSION_SECRET || 'fallback-session-secret-for-production',

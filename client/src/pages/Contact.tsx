@@ -9,8 +9,8 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { Footer } from "@/components/Footer";
 import { SEO, getBreadcrumbSchema } from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Phone, Mail, Clock, Send, MessageCircle } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { MapPin, Phone, Mail, Clock, Send, MessageCircle, Loader2 } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 interface ContactUs {
   id: number;
@@ -325,9 +325,9 @@ export default function Contact() {
                       className="w-full gap-2" 
                       disabled={submitMutation.isPending}
                     >
-                      {isSubmitting ? (
+                      {submitMutation.isPending ? (
                         <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                          <Loader2 className="h-4 w-4 animate-spin" />
                           {isRTL ? "جاري الإرسال..." : "Sending..."}
                         </>
                       ) : (

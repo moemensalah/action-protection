@@ -76,6 +76,8 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Admin panel now updates instantly after creating, editing, moving, or deleting products without manual refresh
 - ✓ Fixed categories section real-time updates by adding cache invalidation and refetch to all CRUD mutations
 - ✓ Categories management now updates instantly after creating, editing, reordering, or deleting categories
+- ✓ Created production deployment script (fix-production-cache-invalidation.sh) to update production with cache invalidation fixes
+- ✓ Production needs to be rebuilt and redeployed to get real-time update functionality
 
 ### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode

@@ -114,6 +114,16 @@ export function ProductsManagement() {
     reorderMutation.mutate({ id: productId, direction });
   };
 
+  // Get products within the current category for proper sorting context
+  const getCurrentCategoryProducts = (productId: number) => {
+    const product = sortedProducts.find((p: Product) => p.id === productId);
+    if (!product) return [];
+    
+    // Return all products in the same category, sorted by sortOrder
+    return sortedProducts.filter((p: Product) => p.categoryId === product.categoryId)
+      .sort((a: Product, b: Product) => (a.sortOrder || 0) - (b.sortOrder || 0));
+  };
+
   // Sort products by sortOrder for display
   const sortedProducts = [...filteredProducts].sort((a: Product, b: Product) => (a.sortOrder || 0) - (b.sortOrder || 0));
   

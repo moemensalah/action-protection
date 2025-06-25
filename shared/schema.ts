@@ -111,7 +111,20 @@ export const contactUs = pgTable("contact_us", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-
+// SMTP Settings table
+export const smtpSettings = pgTable("smtp_settings", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  host: varchar("host", { length: 255 }).notNull(),
+  port: integer("port").notNull(),
+  username: varchar("username", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 }).notNull(),
+  secure: boolean("secure").default(true), // Use SSL/TLS
+  fromName: varchar("from_name", { length: 255 }).notNull(),
+  fromEmail: varchar("from_email", { length: 255 }).notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
 
 // Footer content table
 export const footerContent = pgTable("footer_content", {
@@ -165,22 +178,7 @@ export const termsOfService = pgTable("terms_of_service", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// SMTP Settings table
-export const smtpSettings = pgTable("smtp_settings", {
-  id: serial("id").primaryKey(),
-  host: varchar("host", { length: 255 }).notNull(),
-  port: integer("port").notNull().default(587),
-  username: varchar("username", { length: 255 }).notNull(),
-  password: varchar("password", { length: 255 }).notNull(),
-  fromEmail: varchar("from_email", { length: 255 }).notNull(),
-  fromName: varchar("from_name", { length: 255 }).notNull(),
-  isActive: boolean("is_active").default(true),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
 
-export type InsertSmtpSettings = typeof smtpSettings.$inferInsert;
-export type SmtpSettings = typeof smtpSettings.$inferSelect;
 
 // Relations
 export const categoriesRelations = relations(categories, ({ many }) => ({
@@ -249,8 +247,7 @@ export const insertSmtpSettingsSchema = createInsertSchema(smtpSettings).omit({
   updatedAt: true,
 });
 
-export type InsertTermsOfService = typeof termsOfService.$inferInsert;
-export type TermsOfService = typeof termsOfService.$inferSelect;
+
 
 export const upsertUserSchema = createInsertSchema(users).omit({
   createdAt: true,

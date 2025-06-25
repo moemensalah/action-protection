@@ -323,7 +323,7 @@ export default function Contact() {
                     <Button 
                       type="submit" 
                       className="w-full gap-2" 
-                      disabled={isSubmitting}
+                      disabled={submitMutation.isPending}
                     >
                       {isSubmitting ? (
                         <>

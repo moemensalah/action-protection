@@ -9,14 +9,14 @@ if [ -f .env ]; then
 fi
 
 echo "📋 Checking category sort_order column..."
-SORT_ORDER_EXISTS=$(psql -h $PGHOST -p $PGPORT -U $PGUSER -d $PGDATABASE -t -c "SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'categories' AND column_name = 'sort_order';")
+SORT_ORDER_EXISTS=$(psql "$DATABASE_URL" -t -c "SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'categories' AND column_name = 'sort_order';" | tr -d ' ')
 
-if [ "$SORT_ORDER_EXISTS" -eq "0" ]; then
+if [ "$SORT_ORDER_EXISTS" = "0" ]; then
     echo "❌ sort_order column missing. Adding it..."
-    psql -h $PGHOST -p $PGPORT -U $PGUSER -d $PGDATABASE -c "ALTER TABLE categories ADD COLUMN sort_order INTEGER DEFAULT 0;"
+    psql "$DATABASE_URL" -c "ALTER TABLE categories ADD COLUMN sort_order INTEGER DEFAULT 0;"
     
     echo "🔄 Setting initial sort_order values..."
-    psql -h $PGHOST -p $PGPORT -U $PGUSER -d $PGDATABASE -c "
+    psql "$DATABASE_URL" -c "
         WITH ordered_categories AS (
             SELECT id, ROW_NUMBER() OVER (ORDER BY id) as new_order
             FROM categories
@@ -31,10 +31,10 @@ else
 fi
 
 echo "📋 Current categories with sort order:"
-psql -h $PGHOST -p $PGPORT -U $PGUSER -d $PGDATABASE -c "SELECT id, name_en, name_ar, sort_order FROM categories ORDER BY sort_order, id;"
+psql "$DATABASE_URL" -c "SELECT id, name_en, name_ar, sort_order FROM categories ORDER BY sort_order, id;"
 
 echo "🚀 Restarting PM2 application..."
-pm2 restart latelounge-cafe
+pm2 restart latelounge
 
 echo "📊 Checking PM2 status..."
 pm2 status

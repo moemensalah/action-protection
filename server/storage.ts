@@ -34,7 +34,7 @@ import {
 } from "@shared/schema";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
-import { eq, lt, gt, desc, asc, and } from "drizzle-orm";
+import { eq, lt, gt, desc, asc, and, isNotNull } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -64,6 +64,7 @@ export interface IStorage {
   
   // Products
   getProducts(): Promise<Product[]>;
+  getAllProductsForAdmin(): Promise<Product[]>;
   getProductById(id: number): Promise<Product | undefined>;
   getProductsByCategory(categoryId: number): Promise<Product[]>;
   getProductsByCategorySlug(slug: string): Promise<Product[]>;

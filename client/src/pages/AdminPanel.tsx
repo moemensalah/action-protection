@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Shield, Users, FolderOpen, Package, FileText, Settings, LogOut, Menu, X } from "lucide-react";
+import { Shield, Users, FolderOpen, Package, FileText, Settings, LogOut, Menu, X, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +10,7 @@ import { ProductsManagement } from "@/components/admin/ProductsManagement";
 import { ContentManagement } from "@/components/admin/ContentManagement";
 import { UsersManagement } from "@/components/admin/UsersManagement";
 import { GhostProductsManagement } from "@/components/admin/GhostProductsManagement";
+import SmtpSettings from "@/components/admin/SmtpSettings";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 
 export default function AdminPanel() {
@@ -55,6 +56,15 @@ export default function AdminPanel() {
       nameAr: "المحتوى",
       descEn: "Manage pages and content",
       descAr: "إدارة الصفحات والمحتوى",
+      roles: ["administrator"]
+    },
+    {
+      id: "smtp-settings",
+      icon: Mail,
+      nameEn: "SMTP Settings",
+      nameAr: "إعدادات البريد",
+      descEn: "Configure email settings",
+      descAr: "تكوين إعدادات البريد الإلكتروني",
       roles: ["administrator"]
     },
     {

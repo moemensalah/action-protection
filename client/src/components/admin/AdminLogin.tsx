@@ -116,31 +116,33 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
             </Button>
           </form>
           
-          <div className="mt-6 space-y-2">
-            <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-              {isRTL ? "حسابات تجريبية:" : "Demo Accounts:"}
-            </p>
-            <div className="grid grid-cols-1 gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => handleDemoLogin("admin")}
-                className="text-xs"
-              >
-                <Shield className="h-3 w-3 mr-2" />
-                {isRTL ? "مدير (admin@latelounge.sa)" : "Admin (admin@latelounge.sa)"}
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => handleDemoLogin("moderator")}
-                className="text-xs"
-              >
-                <Shield className="h-3 w-3 mr-2" />
-                {isRTL ? "مشرف (moderator@latelounge.sa)" : "Moderator (moderator@latelounge.sa)"}
-              </Button>
+          {import.meta.env.DEV && (
+            <div className="mt-6 space-y-2">
+              <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                {isRTL ? "حسابات تجريبية:" : "Demo Accounts:"}
+              </p>
+              <div className="grid grid-cols-1 gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleDemoLogin("admin")}
+                  className="text-xs"
+                >
+                  <Shield className="h-3 w-3 mr-2" />
+                  {isRTL ? "مدير (admin@latelounge.sa)" : "Admin (admin@latelounge.sa)"}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleDemoLogin("moderator")}
+                  className="text-xs"
+                >
+                  <Shield className="h-3 w-3 mr-2" />
+                  {isRTL ? "مشرف (moderator@latelounge.sa)" : "Moderator (moderator@latelounge.sa)"}
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

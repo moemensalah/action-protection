@@ -252,7 +252,7 @@ export default function SmtpSettings() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-2 space-x-reverse">
+            <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Switch
                 id="isActive"
                 checked={formData.isActive}
@@ -263,11 +263,11 @@ export default function SmtpSettings() {
               </Label>
             </div>
 
-            <div className="flex gap-4 pt-4">
+            <div className={`flex gap-4 pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Button 
                 type="submit" 
                 disabled={saveMutation.isPending}
-                className="flex items-center gap-2"
+                className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
               >
                 <Shield className="h-4 w-4" />
                 {saveMutation.isPending 
@@ -281,7 +281,7 @@ export default function SmtpSettings() {
                 variant="outline"
                 onClick={handleTestEmail}
                 disabled={testMutation.isPending || !formData.fromEmail}
-                className="flex items-center gap-2"
+                className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
               >
                 <Mail className="h-4 w-4" />
                 {testMutation.isPending 

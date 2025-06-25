@@ -88,6 +88,7 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Contact form now sends emails using admin-configured SMTP settings
 - ✓ Fixed SMTP settings authentication issues by using session-based auth instead of Replit auth middleware
 - ✓ SMTP settings now properly accessible to administrators in admin panel
+- ✓ Fixed RTL layout issues in SMTP settings toggle and action buttons for proper Arabic display
 
 ### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode

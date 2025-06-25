@@ -6,10 +6,29 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import express from "express";
+import session from "express-session";
+import createMemoryStore from "memorystore";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
+  
+  // Session middleware for local admin authentication
+  const MemoryStore = createMemoryStore(session);
+  
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'latelounge-admin-secret-key',
+    store: new MemoryStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    }),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false, // Set to true in production with HTTPS
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+  }));
 
   // Create uploads directory if it doesn't exist
   const uploadsDir = path.join(process.cwd(), 'uploads');

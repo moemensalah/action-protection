@@ -64,7 +64,7 @@ export function UsersManagement() {
   // Create user mutation
   const createUserMutation = useMutation({
     mutationFn: async (userData: UserForm) => {
-      return apiRequest('/api/auth/local/register', {
+      return apiRequest('/api/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),

@@ -116,6 +116,48 @@
     letter-spacing: 0.01em;
   }
   
+  /* Dark mode dropdown fixes */
+  .dark [data-radix-select-content] {
+    background-color: rgb(31 41 55);
+    border-color: rgb(75 85 99);
+    color: rgb(255 255 255);
+  }
+
+  .dark [data-radix-select-item] {
+    color: rgb(255 255 255);
+  }
+
+  .dark [data-radix-select-item]:hover {
+    background-color: rgb(55 65 81);
+    color: rgb(255 255 255);
+  }
+
+  .dark [data-radix-select-item][data-highlighted] {
+    background-color: rgb(55 65 81);
+    color: rgb(255 255 255);
+  }
+
+  /* Light mode dropdown fixes */
+  [data-radix-select-content] {
+    background-color: rgb(255 255 255);
+    border-color: rgb(229 231 235);
+    color: rgb(17 24 39);
+  }
+
+  [data-radix-select-item] {
+    color: rgb(17 24 39);
+  }
+
+  [data-radix-select-item]:hover {
+    background-color: rgb(243 244 246);
+    color: rgb(17 24 39);
+  }
+
+  [data-radix-select-item][data-highlighted] {
+    background-color: rgb(243 244 246);
+    color: rgb(17 24 39);
+  }
+
   /* RTL Select Component Fixes */
   [dir="rtl"] [data-radix-select-content] {
     text-align: right;

@@ -321,54 +321,38 @@ export class DatabaseStorage implements IStorage {
     const product = await this.getProductById(id);
     if (!product) throw new Error('Product not found');
 
-    const currentOrder = product.sortOrder ?? 0;
-    const categoryId = product.categoryId;
-    
-    if (direction === 'up') {
-      // Find the product with the next lower sortOrder within the same category
-      const [prevProduct] = await db
-        .select()
-        .from(products)
-        .where(and(
-          eq(products.categoryId, categoryId),
-          lt(products.sortOrder, currentOrder)
-        ))
-        .orderBy(desc(products.sortOrder))
-        .limit(1);
-      
-      if (prevProduct) {
-        // Swap sort orders
-        await db.update(products)
-          .set({ sortOrder: prevProduct.sortOrder, updatedAt: new Date() })
-          .where(eq(products.id, id));
-        
-        await db.update(products)
-          .set({ sortOrder: currentOrder, updatedAt: new Date() })
-          .where(eq(products.id, prevProduct.id));
-      }
+    // Get all products in the same category, ordered by sortOrder
+    const categoryProducts = await db
+      .select()
+      .from(products)
+      .where(eq(products.categoryId, product.categoryId))
+      .orderBy(asc(products.sortOrder));
+
+    // Find current product index
+    const currentIndex = categoryProducts.findIndex(p => p.id === id);
+    if (currentIndex === -1) return;
+
+    let targetIndex: number;
+    if (direction === 'up' && currentIndex > 0) {
+      targetIndex = currentIndex - 1;
+    } else if (direction === 'down' && currentIndex < categoryProducts.length - 1) {
+      targetIndex = currentIndex + 1;
     } else {
-      // Find the product with the next higher sortOrder within the same category
-      const [nextProduct] = await db
-        .select()
-        .from(products)
-        .where(and(
-          eq(products.categoryId, categoryId),
-          gt(products.sortOrder, currentOrder)
-        ))
-        .orderBy(asc(products.sortOrder))
-        .limit(1);
-      
-      if (nextProduct) {
-        // Swap sort orders
-        await db.update(products)
-          .set({ sortOrder: nextProduct.sortOrder, updatedAt: new Date() })
-          .where(eq(products.id, id));
-        
-        await db.update(products)
-          .set({ sortOrder: currentOrder, updatedAt: new Date() })
-          .where(eq(products.id, nextProduct.id));
-      }
+      return; // Already at the edge, can't move further
     }
+
+    // Swap the products
+    const currentProduct = categoryProducts[currentIndex];
+    const targetProduct = categoryProducts[targetIndex];
+
+    // Update both products with swapped sort orders
+    await db.update(products)
+      .set({ sortOrder: targetProduct.sortOrder, updatedAt: new Date() })
+      .where(eq(products.id, currentProduct.id));
+
+    await db.update(products)
+      .set({ sortOrder: currentProduct.sortOrder, updatedAt: new Date() })
+      .where(eq(products.id, targetProduct.id));
   }
 
   // About Us

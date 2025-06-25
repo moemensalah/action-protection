@@ -32,7 +32,7 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 
 ## Recent Changes
 
-### 2025-06-25: Google Maps Integration + Social Media Enhancement + Security
+### 2025-06-25: Google Maps Integration + Social Media Enhancement + Security + Admin UI Fixes
 - ✓ Fixed Google Maps URL saving in admin panel (missing field added to mutation)
 - ✓ Contact page map section now clickable when URL is set in admin panel
 - ✓ Enhanced update-production.sh script to include database migrations (npm run db:push)
@@ -43,6 +43,9 @@ Comprehensive bilingual cafe website featuring Arabic/English support with RTL l
 - ✓ Fixed user management authentication issues in production (added missing middleware and validation)
 - ✓ Fixed user creation endpoint error (changed from /api/auth/local/register to /api/admin/users)
 - ✓ Fixed production session authentication issues (resolved duplicate session middleware conflicts)
+- ✓ Fixed product sorting functionality (up/down buttons now work correctly within categories)
+- ✓ Resolved product editing duplicate creation issue (now properly updates existing products)
+- ✓ Fixed dark mode dropdown text visibility (proper color contrast in both light and dark modes)
 
 ### 2025-06-24: Theme & Language Defaults + Enhanced Hero + Production Assets
 - ✓ Changed default theme from dark to light mode

@@ -9,6 +9,7 @@ import { CategoriesManagement } from "@/components/admin/CategoriesManagement";
 import { ProductsManagement } from "@/components/admin/ProductsManagement";
 import { ContentManagement } from "@/components/admin/ContentManagement";
 import { UsersManagement } from "@/components/admin/UsersManagement";
+import { GhostProductsManagement } from "@/components/admin/GhostProductsManagement";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 
 export default function AdminPanel() {

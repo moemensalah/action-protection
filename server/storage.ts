@@ -266,7 +266,20 @@ export class DatabaseStorage implements IStorage {
 
   // Products
   async getProducts(): Promise<Product[]> {
-    return await db.select().from(products).where(eq(products.isActive, true));
+    // Only return products with valid names and categories for public website
+    return await db
+      .select()
+      .from(products)
+      .innerJoin(categories, eq(products.categoryId, categories.id))
+      .where(
+        and(
+          eq(products.isActive, true),
+          isNotNull(products.nameEn),
+          isNotNull(products.nameAr),
+          isNotNull(products.categoryId)
+        )
+      )
+      .then(results => results.map(result => result.products));
   }
 
   async getProductById(id: number): Promise<Product | undefined> {
@@ -275,10 +288,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProductsByCategory(categoryId: number): Promise<Product[]> {
+    // Only return valid products for public website
     return await db
       .select()
       .from(products)
-      .where(eq(products.categoryId, categoryId));
+      .where(
+        and(
+          eq(products.categoryId, categoryId),
+          eq(products.isActive, true),
+          isNotNull(products.nameEn),
+          isNotNull(products.nameAr)
+        )
+      );
+  }
+
+  // Admin-only method to get ALL products including ghost/invalid ones
+  async getAllProductsForAdmin(): Promise<Product[]> {
+    return await db.select().from(products).orderBy(desc(products.createdAt));
   }
 
   async getProductsByCategorySlug(slug: string): Promise<Product[]> {

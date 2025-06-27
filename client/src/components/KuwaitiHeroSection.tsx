@@ -18,7 +18,8 @@ export function KuwaitiHeroSection() {
   const backgrounds = [
     "/assets/g-class-cinematic-bg.png",
     "/assets/jeep-wrangler-bg-1.png", 
-    "/assets/jeep-wrangler-bg-2.png"
+    "/assets/jeep-wrangler-bg-2.png",
+    "/assets/nissan-patrol-bg.png"
   ];
 
   // Background rotation effect

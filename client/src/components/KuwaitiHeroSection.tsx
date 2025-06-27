@@ -11,8 +11,8 @@ export function KuwaitiHeroSection() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const words = isRTL 
-    ? ["مع أكشن بروتكشن", "حماية سيارتك مضمونة", "سلمنا المفتاح وسيب الباقي علينا", "أقوى مركز لحماية سيارتك في الكويت"]
-    : ["WITH ACTION PROTECTION", "YOUR CAR PROTECTION GUARANTEED", "GIVE US THE KEY AND LEAVE THE REST TO US", "STRONGEST CAR PROTECTION CENTER IN KUWAIT"];
+    ? ["حماية سيارتك مضمونة", "سلمنا المفتاح وسيب الباقي علينا", "أقوى مركز لحماية سيارتك في الكويت"]
+    : ["YOUR CAR PROTECTION GUARANTEED", "GIVE US THE KEY AND LEAVE THE REST TO US", "STRONGEST CAR PROTECTION CENTER IN KUWAIT"];
 
   useEffect(() => {
     const currentWord = words[currentWordIndex];
@@ -57,14 +57,27 @@ export function KuwaitiHeroSection() {
       {/* Typing Text Overlay - Positioned Absolutely on Left */}
       <div className={`absolute top-1/2 left-8 lg:left-16 transform -translate-y-1/2 z-20`}>
         <div className="space-y-8">
-          {/* Typing Animation Text */}
+          {/* Static Company Name */}
+          <div className="space-y-3">
+            <div className={`text-2xl lg:text-4xl font-bold text-white drop-shadow-xl ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
+              <span className="text-orange-400">
+                {isRTL ? "مع أكشن" : "WITH ACTION"}
+              </span>
+              {" "}
+              <span className="text-blue-400">
+                {isRTL ? "بروتكشن" : "PROTECTION"}
+              </span>
+            </div>
+          </div>
+
+          {/* Typing Animation Text - Smaller */}
           <div className="space-y-4">
-            <h1 className={`text-3xl lg:text-5xl font-bold text-white drop-shadow-2xl ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
+            <h2 className={`text-xl lg:text-2xl font-bold text-white drop-shadow-2xl ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
               <span className="block min-h-[1.5em]">
                 {typedText}
                 <span className="animate-pulse">|</span>
               </span>
-            </h1>
+            </h2>
           </div>
 
           {/* CTA Buttons - Side by Side */}

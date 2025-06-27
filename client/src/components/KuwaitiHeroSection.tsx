@@ -70,6 +70,29 @@ export function KuwaitiHeroSection() {
           />
         ))}
         
+        {/* Smoking/Dust Particle Effects */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Floating particles */}
+          <div className="absolute w-2 h-2 bg-white/10 rounded-full animate-pulse top-1/4 left-1/4" 
+               style={{ animationDelay: '0s', animationDuration: '4s' }}></div>
+          <div className="absolute w-1 h-1 bg-white/20 rounded-full animate-pulse top-1/3 right-1/3"
+               style={{ animationDelay: '1s', animationDuration: '3s' }}></div>
+          <div className="absolute w-3 h-3 bg-white/5 rounded-full animate-pulse bottom-1/3 left-1/2"
+               style={{ animationDelay: '2s', animationDuration: '5s' }}></div>
+          <div className="absolute w-1 h-1 bg-white/15 rounded-full animate-pulse top-1/2 right-1/4"
+               style={{ animationDelay: '3s', animationDuration: '4s' }}></div>
+          <div className="absolute w-2 h-2 bg-white/8 rounded-full animate-pulse bottom-1/4 right-1/2"
+               style={{ animationDelay: '4s', animationDuration: '6s' }}></div>
+          
+          {/* Floating smoke wisps */}
+          <div className="absolute bottom-0 left-1/4 w-32 h-32 bg-gradient-radial from-white/5 to-transparent rounded-full blur-xl animate-pulse"
+               style={{ animationDelay: '0s', animationDuration: '8s' }}></div>
+          <div className="absolute bottom-0 right-1/3 w-24 h-24 bg-gradient-radial from-white/3 to-transparent rounded-full blur-2xl animate-pulse"
+               style={{ animationDelay: '2s', animationDuration: '10s' }}></div>
+          <div className="absolute top-1/3 left-1/3 w-20 h-20 bg-gradient-radial from-white/4 to-transparent rounded-full blur-xl animate-pulse"
+               style={{ animationDelay: '4s', animationDuration: '7s' }}></div>
+        </div>
+
         {/* Subtle overlay for text readability */}
         <div className="absolute inset-0 bg-black/30"></div>
         

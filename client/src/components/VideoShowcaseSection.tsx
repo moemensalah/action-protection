@@ -4,17 +4,29 @@ import { useState, useEffect } from "react";
 export function VideoShowcaseSection() {
   const { isRTL } = useLanguage();
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [showText, setShowText] = useState(false);
 
   const videos = [
     "/assets/rolls-royce-video.mp4",
     "/assets/g-class-video.mp4"
   ];
 
-  // Auto-rotate videos every 10 seconds
+  const textMessages = [
+    { ar: "سيارتك متميزة معانا", en: "YOUR CAR IS SPECIAL WITH US" },
+    { ar: "حماية فائقة للسيارات الفاخرة", en: "SUPERIOR PROTECTION FOR LUXURY CARS" }
+  ];
+
+  // Auto-rotate videos every 12 seconds with text transition
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
-    }, 10000);
+      setShowText(true);
+      
+      setTimeout(() => {
+        setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
+        setShowText(false);
+      }, 2000); // Show text for 2 seconds
+      
+    }, 12000); // Total cycle: 12 seconds
 
     return () => clearInterval(interval);
   }, [videos.length]);
@@ -45,11 +57,12 @@ export function VideoShowcaseSection() {
           <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/20 via-blue-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
           
           <div className="relative bg-black/50 rounded-xl overflow-hidden shadow-2xl">
+            {/* Videos */}
             {videos.map((video, index) => (
               <video
                 key={video}
                 className={`w-full h-auto max-h-[70vh] object-cover transition-opacity duration-1000 ${
-                  index === currentVideoIndex ? 'opacity-100' : 'opacity-0 absolute inset-0'
+                  index === currentVideoIndex && !showText ? 'opacity-100' : 'opacity-0 absolute inset-0'
                 }`}
                 autoPlay
                 muted
@@ -64,6 +77,26 @@ export function VideoShowcaseSection() {
                 }
               </video>
             ))}
+
+            {/* Text Transition */}
+            <div className={`absolute inset-0 bg-black flex items-center justify-center transition-opacity duration-1000 ${
+              showText ? 'opacity-100' : 'opacity-0'
+            }`}>
+              <div className="text-center px-8">
+                <h3 className={`text-4xl md:text-6xl font-bold text-white mb-4 ${
+                  isRTL ? 'font-arabic' : ''
+                } animate-pulse`}>
+                  {isRTL ? textMessages[currentVideoIndex]?.ar : textMessages[currentVideoIndex]?.en}
+                </h3>
+                
+                {/* Decorative elements */}
+                <div className="flex justify-center items-center space-x-4 rtl:space-x-reverse">
+                  <div className="w-12 h-0.5 bg-gradient-to-r from-transparent to-orange-500"></div>
+                  <div className="w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
+                  <div className="w-12 h-0.5 bg-gradient-to-l from-transparent to-blue-500"></div>
+                </div>
+              </div>
+            </div>
 
           </div>
         </div>

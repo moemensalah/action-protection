@@ -9,11 +9,28 @@ export function KuwaitiHeroSection() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
   const words = isRTL 
     ? ["حماية سيارتك مضمونة", "سلمنا المفتاح وسيب الباقي علينا", "أقوى مركز لحماية سيارتك في الكويت"]
     : ["YOUR CAR PROTECTION GUARANTEED", "GIVE US THE KEY AND LEAVE THE REST TO US", "STRONGEST CAR PROTECTION CENTER IN KUWAIT"];
 
+  const backgrounds = [
+    "/assets/g-class-cinematic-bg.png",
+    "/assets/jeep-wrangler-bg-1.png", 
+    "/assets/jeep-wrangler-bg-2.png"
+  ];
+
+  // Background rotation effect
+  useEffect(() => {
+    const bgInterval = setInterval(() => {
+      setCurrentBgIndex((prevIndex) => (prevIndex + 1) % backgrounds.length);
+    }, 8000);
+
+    return () => clearInterval(bgInterval);
+  }, [backgrounds.length]);
+
+  // Typing animation effect
   useEffect(() => {
     const currentWord = words[currentWordIndex];
     const typingSpeed = isDeleting ? 50 : 100;
@@ -39,13 +56,18 @@ export function KuwaitiHeroSection() {
 
   return (
     <section className="relative min-h-screen overflow-hidden">
-      {/* Full Background Image */}
+      {/* Rotating Background Images */}
       <div className="absolute inset-0 w-full h-full">
-        <img
-          src="/assets/g-class-cinematic-bg.png"
-          alt="Mercedes G-Class Cinematic Background"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        {backgrounds.map((bg, index) => (
+          <img
+            key={bg}
+            src={bg}
+            alt={`Cinematic Car Background ${index + 1}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              index === currentBgIndex ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        ))}
         
         {/* Subtle overlay for text readability */}
         <div className="absolute inset-0 bg-black/30"></div>

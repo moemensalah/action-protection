@@ -106,14 +106,21 @@ export function CarBrandSlider() {
                     key={`${slideIndex}-${index}`}
                     className="flex-1 max-w-xs h-20 flex items-center justify-center transform hover:scale-110 transition-all duration-300 opacity-70 hover:opacity-100"
                   >
-                    <img
-                      src={brand.logo}
-                      alt={brand.alt}
-                      className="max-h-16 max-w-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-                      onError={(e) => {
-                        e.currentTarget.src = `https://via.placeholder.com/200x80/666666/FFFFFF?text=${brand.name}`;
-                      }}
-                    />
+                    <div className="w-full h-16 flex items-center justify-center">
+                      <img
+                        src={brand.logo}
+                        alt={brand.alt}
+                        className="max-h-16 max-w-32 object-contain filter brightness-0 opacity-60 hover:brightness-100 hover:opacity-100 transition-all duration-300"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `<div class="flex items-center justify-center h-16 text-gray-600 dark:text-gray-400 font-semibold text-sm px-2 text-center">${brand.name}</div>`;
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>

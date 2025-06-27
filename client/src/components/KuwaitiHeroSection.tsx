@@ -16,13 +16,15 @@ export function KuwaitiHeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-purple-900 via-gray-900 to-orange-900 overflow-hidden">
-      {/* Video Background Effects */}
+    <section className="relative min-h-screen bg-gradient-to-br from-purple-900/90 via-gray-800/80 to-orange-800/90 overflow-hidden">
+      {/* Seamless Video Color Integration */}
       <div className="absolute inset-0">
-        {/* Purple-orange ambient lighting to match video */}
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-purple-600/20 via-transparent to-orange-600/20"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-orange-500/30 via-purple-500/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-gradient-radial from-purple-400/20 via-transparent to-transparent rounded-full blur-2xl"></div>
+        {/* Extended video color palette across background */}
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-purple-800/40 via-gray-900/60 to-orange-700/40"></div>
+        <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-l from-orange-600/20 via-purple-600/15 to-gray-800/30"></div>
+        {/* Subtle atmospheric effects */}
+        <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-gradient-radial from-orange-500/15 via-purple-500/10 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 left-1/3 w-[600px] h-[400px] bg-gradient-radial from-purple-400/10 via-transparent to-transparent rounded-full blur-2xl"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-screen flex items-center">
@@ -53,9 +55,9 @@ export function KuwaitiHeroSection() {
                 </video>
               </div>
               
-              {/* Enhanced Video Glow Effects */}
-              <div className="absolute -inset-8 bg-gradient-to-r from-purple-500/30 via-pink-500/20 to-orange-500/30 rounded-3xl blur-3xl animate-pulse"></div>
-              <div className="absolute -inset-4 bg-gradient-to-r from-purple-400/15 via-transparent to-orange-400/15 rounded-2xl blur-2xl"></div>
+              {/* Subtle Video Integration Effects */}
+              <div className="absolute -inset-6 bg-gradient-to-r from-purple-500/10 via-gray-600/5 to-orange-500/10 rounded-3xl blur-2xl"></div>
+              <div className="absolute -inset-3 bg-gradient-to-r from-purple-400/5 via-transparent to-orange-400/5 rounded-2xl blur-xl"></div>
             </div>
           </div>
 
@@ -63,18 +65,18 @@ export function KuwaitiHeroSection() {
           <div className={`relative ${isRTL ? 'lg:order-1' : 'lg:order-2'} flex flex-col justify-center ${isRTL ? 'text-right' : 'text-left'}`}>
             <div className="space-y-8">
               {/* Main Slogan */}
-              <div className="space-y-4">
-                <h1 className={`text-6xl lg:text-8xl font-bold leading-tight ${isRTL ? 'font-arabic' : ''}`}>
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 animate-pulse">
+              <div className="space-y-3">
+                <h1 className={`text-4xl lg:text-6xl font-bold leading-tight text-white ${isRTL ? 'font-arabic' : ''}`}>
+                  <span className="block">
                     {isRTL ? "معنا" : "WITH US"}
                   </span>
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-yellow-400 to-red-400">
+                  <span className="block">
                     {isRTL ? "حماية" : "PROTECTION"}
                   </span>
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                  <span className="block">
                     {isRTL ? "سيارتك" : "GUARANTEED"}
                   </span>
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-blue-400 to-purple-400">
+                  <span className="block">
                     {isRTL ? "مضمونة" : "FOR YOUR CAR"}
                   </span>
                 </h1>

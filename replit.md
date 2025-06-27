@@ -32,7 +32,7 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 
 ## Recent Changes
 
-### 2025-06-27: Complete Transformation to Action Protection
+### 2025-06-27: Complete Transformation to Action Protection + Kuwaiti Localization
 - ✓ Transformed LateLounge Cafe into Action Protection car protection company
 - ✓ Updated company branding and logo to Action Protection with automotive theme
 - ✓ Replaced all cafe categories with automotive protection services:
@@ -50,6 +50,13 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Updated SEO content for Action Protection with relevant automotive keywords
 - ✓ Changed company information to Action Protection across all components
 - ✓ Updated contact information and footer content for car protection business
+- ✓ Converted all pricing from Saudi Riyal (SAR) to Kuwaiti Dinar (KWD)
+- ✓ Updated currency display to show "KWD" in English and "د.ك" in Arabic
+- ✓ Fixed car brand logos to appear white in dark mode using CSS invert filter
+- ✓ Created professional hero section with black background and corner light effects
+- ✓ Added modern car illustration on left and animated Action Protection logo on right
+- ✓ Updated header logo throughout site to new Action Protection branding
+- ✓ Implemented auto-scrolling customer reviews without visible scrollbars
 
 ### 2025-06-25: Ghost Products Management + Category Sorting Production Fix
 - ✓ Fixed Google Maps URL saving in admin panel (missing field added to mutation)

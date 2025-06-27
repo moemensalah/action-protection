@@ -27,24 +27,7 @@ export function VideoShowcaseSection() {
               }
             </video>
             
-            {/* Video overlay with brand text */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none">
-              <div className="absolute bottom-8 left-8 right-8">
-                <h3 className={`text-2xl md:text-3xl font-bold text-white mb-2 ${
-                  isRTL ? 'font-arabic text-right' : 'text-left'
-                }`}>
-                  {isRTL ? "رولز رويس - قمة الرفاهية" : "ROLLS ROYCE - PINNACLE OF LUXURY"}
-                </h3>
-                <p className={`text-gray-200 text-lg ${
-                  isRTL ? 'font-arabic text-right' : 'text-left'
-                }`}>
-                  {isRTL 
-                    ? "حماية متقدمة للسيارات الفاخرة بأعلى معايير الجودة"
-                    : "Advanced protection for luxury vehicles with the highest quality standards"
-                  }
-                </p>
-              </div>
-            </div>
+
           </div>
         </div>
 

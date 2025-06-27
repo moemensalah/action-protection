@@ -11,8 +11,8 @@ export function KuwaitiHeroSection() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const words = isRTL 
-    ? ["معنا", "حماية", "سيارتك", "مضمونة"]
-    : ["WITH US", "PROTECTION", "GUARANTEED", "FOR YOUR CAR"];
+    ? ["مع أكشن بروتكشن", "حماية سيارتك مضمونة", "سلمنا المفتاح وسيب الباقي علينا", "أقوى مركز لحماية سيارتك في الكويت"]
+    : ["WITH ACTION PROTECTION", "YOUR CAR PROTECTION GUARANTEED", "GIVE US THE KEY AND LEAVE THE REST TO US", "STRONGEST CAR PROTECTION CENTER IN KUWAIT"];
 
   useEffect(() => {
     const currentWord = words[currentWordIndex];
@@ -56,43 +56,24 @@ export function KuwaitiHeroSection() {
 
       {/* Typing Text Overlay - Positioned Absolutely on Left */}
       <div className={`absolute top-1/2 left-8 lg:left-16 transform -translate-y-1/2 z-20`}>
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Typing Animation Text */}
-          <div className="space-y-2">
-            <h1 className={`text-4xl lg:text-6xl font-bold text-white drop-shadow-2xl ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
-              <span className="block min-h-[1.2em]">
+          <div className="space-y-4">
+            <h1 className={`text-3xl lg:text-5xl font-bold text-white drop-shadow-2xl ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
+              <span className="block min-h-[1.5em]">
                 {typedText}
                 <span className="animate-pulse">|</span>
               </span>
             </h1>
           </div>
-          
-          {/* Company Name */}
-          <div className="space-y-3">
-            <div className={`text-2xl lg:text-4xl font-bold text-white drop-shadow-xl ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
-              <span className="text-orange-400">
-                {isRTL ? "أكشن" : "ACTION"}
-              </span>
-              {" "}
-              <span className="text-blue-400">
-                {isRTL ? "بروتكشن" : "PROTECTION"}
-              </span>
-            </div>
-            <p className={`text-base lg:text-xl text-gray-200 max-w-md drop-shadow-lg ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
-              {isRTL 
-                ? "الخبرة الكويتية في حماية وعناية المركبات الفاخرة"
-                : "Kuwaiti Expertise in Luxury Vehicle Protection & Care"
-              }
-            </p>
-          </div>
 
-          {/* CTA Buttons */}
-          <div className={`flex flex-col gap-4 ${isRTL ? 'items-end' : 'items-start'}`}>
+          {/* CTA Buttons - Side by Side */}
+          <div className={`flex gap-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700 text-white px-8 py-4 text-lg font-bold rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm"
             >
-              {isRTL ? "احجز موعد" : "Book Appointment"}
+              {isRTL ? "اطلب الآن" : "Order Now"}
               {isRTL ? <ArrowLeft className="mr-2 w-5 h-5" /> : <ArrowRight className="ml-2 w-5 h-5" />}
             </Button>
             
@@ -101,7 +82,7 @@ export function KuwaitiHeroSection() {
               size="lg"
               className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg font-bold rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm"
             >
-              {isRTL ? "اتصل بنا" : "Call Us"}
+              {isRTL ? "تواصل معنا" : "Contact Us"}
             </Button>
           </div>
         </div>

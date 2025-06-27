@@ -4,43 +4,63 @@ import { useState, useEffect } from "react";
 const carBrands = [
   {
     name: "Mercedes-Benz",
-    logo: "https://logos-world.net/wp-content/uploads/2020/04/Mercedes-Logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/2048px-Mercedes-Logo.svg.png",
     alt: "Mercedes-Benz Logo"
   },
   {
     name: "BMW",
-    logo: "https://logos-world.net/wp-content/uploads/2020/04/BMW-Logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BMW.svg/2048px-BMW.svg.png",
     alt: "BMW Logo"
   },
   {
     name: "Audi",
-    logo: "https://logos-world.net/wp-content/uploads/2020/04/Audi-Logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Audi-Logo_2016.svg/2560px-Audi-Logo_2016.svg.png",
     alt: "Audi Logo"
   },
   {
     name: "Lexus",
-    logo: "https://logos-world.net/wp-content/uploads/2020/04/Lexus-Logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Lexus_logo.svg/2560px-Lexus_logo.svg.png",
     alt: "Lexus Logo"
   },
   {
     name: "Toyota",
-    logo: "https://logos-world.net/wp-content/uploads/2020/04/Toyota-Logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Toyota.svg/2560px-Toyota.svg.png",
     alt: "Toyota Logo"
   },
   {
     name: "Honda",
-    logo: "https://logos-world.net/wp-content/uploads/2020/04/Honda-Logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Honda_logo.svg/2560px-Honda_logo.svg.png",
     alt: "Honda Logo"
   },
   {
     name: "Porsche",
-    logo: "https://logos-world.net/wp-content/uploads/2020/04/Porsche-Logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Porsche_logo.svg/2048px-Porsche_logo.svg.png",
     alt: "Porsche Logo"
   },
   {
     name: "Jaguar",
-    logo: "https://logos-world.net/wp-content/uploads/2020/04/Jaguar-Logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Jaguar_logo.svg/2560px-Jaguar_logo.svg.png",
     alt: "Jaguar Logo"
+  },
+  {
+    name: "Land Rover",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Land_Rover_logo.svg/2560px-Land_Rover_logo.svg.png",
+    alt: "Land Rover Logo"
+  },
+  {
+    name: "Nissan",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Nissan_logo.svg/2560px-Nissan_logo.svg.png",
+    alt: "Nissan Logo"
+  },
+  {
+    name: "Hyundai",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Hyundai_Motor_Company_logo.svg/2560px-Hyundai_Motor_Company_logo.svg.png",
+    alt: "Hyundai Logo"
+  },
+  {
+    name: "Volkswagen",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Volkswagen_logo_2019.svg/2048px-Volkswagen_logo_2019.svg.png",
+    alt: "Volkswagen Logo"
   }
 ];
 
@@ -50,17 +70,11 @@ export function CarBrandSlider() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % Math.ceil(carBrands.length / 4));
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % Math.ceil(carBrands.length / 6));
     }, 3000);
 
     return () => clearInterval(interval);
   }, []);
-
-  const getVisibleBrands = () => {
-    const brandsPerSlide = 4;
-    const startIndex = currentIndex * brandsPerSlide;
-    return carBrands.slice(startIndex, startIndex + brandsPerSlide);
-  };
 
   return (
     <section className="py-16 bg-gray-100 dark:bg-gray-800">
@@ -85,26 +99,21 @@ export function CarBrandSlider() {
               direction: isRTL ? 'rtl' : 'ltr'
             }}
           >
-            {Array.from({ length: Math.ceil(carBrands.length / 4) }).map((_, slideIndex) => (
-              <div key={slideIndex} className="flex w-full flex-shrink-0 justify-center space-x-8">
-                {carBrands.slice(slideIndex * 4, (slideIndex + 1) * 4).map((brand, index) => (
+            {Array.from({ length: Math.ceil(carBrands.length / 6) }).map((_, slideIndex) => (
+              <div key={slideIndex} className="flex w-full flex-shrink-0 justify-center items-center space-x-8 px-4">
+                {carBrands.slice(slideIndex * 6, (slideIndex + 1) * 6).map((brand, index) => (
                   <div
                     key={`${slideIndex}-${index}`}
-                    className="flex-1 max-w-xs bg-white dark:bg-gray-700 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+                    className="flex-1 max-w-xs h-20 flex items-center justify-center transform hover:scale-110 transition-all duration-300 opacity-70 hover:opacity-100"
                   >
-                    <div className="flex items-center justify-center h-24 mb-4">
-                      <img
-                        src={brand.logo}
-                        alt={brand.alt}
-                        className="max-h-full max-w-full object-contain filter hover:brightness-110 transition-all duration-300"
-                        onError={(e) => {
-                          e.currentTarget.src = `https://via.placeholder.com/200x80/000000/FFFFFF?text=${brand.name}`;
-                        }}
-                      />
-                    </div>
-                    <h3 className="text-center text-lg font-semibold text-foreground">
-                      {brand.name}
-                    </h3>
+                    <img
+                      src={brand.logo}
+                      alt={brand.alt}
+                      className="max-h-16 max-w-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                      onError={(e) => {
+                        e.currentTarget.src = `https://via.placeholder.com/200x80/666666/FFFFFF?text=${brand.name}`;
+                      }}
+                    />
                   </div>
                 ))}
               </div>
@@ -113,7 +122,7 @@ export function CarBrandSlider() {
 
           {/* Navigation dots */}
           <div className="flex justify-center mt-8 space-x-2">
-            {Array.from({ length: Math.ceil(carBrands.length / 4) }).map((_, index) => (
+            {Array.from({ length: Math.ceil(carBrands.length / 6) }).map((_, index) => (
               <button
                 key={index}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${

@@ -21,20 +21,20 @@ export function LogoSection() {
   // Typing slogans with multiple words
   const slogans = {
     en: [
-      "Premium Coffee Experience for Coffee Lovers",
-      "Artisan Beverages & Delicious Fresh Treats",
-      "Where Quality Always Meets Perfect Comfort",
-      "Fresh Roasted Daily with Premium Beans",
-      "Your Perfect Coffee Destination Every Day",
-      "Exceptional Taste Every Single Time"
+      "Advanced Vehicle Protection Solutions",
+      "Premium Thermal Insulation & Paint Protection",
+      "Professional Polishing & Ceramic Coating",
+      "Complete Automotive Care & Detailing",
+      "Your Vehicle's Ultimate Protection Partner",
+      "Excellence in Every Service We Provide"
     ],
     ar: [
-      "تجربة قهوة مميزة لعشاق القهوة الأصيلة",
-      "مشروبات حرفية وحلويات طازجة لذيذة",
-      "حيث تلتقي الجودة دائماً بالراحة المثالية",
-      "محمصة طازجة يومياً بحبوب مميزة",
-      "وجهتك المثالية للقهوة في كل يوم",
-      "طعم استثنائي في كل مرة ولحظة"
+      "حلول حماية مركبات متقدمة ومبتكرة",
+      "عزل حراري فاخر وحماية طلاء احترافية",
+      "تلميع احترافي وطلاء سيراميكي متطور",
+      "رعاية وتفصيل سيارات شاملة ومتكاملة",
+      "شريك الحماية المثالي لمركبتك الثمينة",
+      "التميز في كل خدمة نقدمها لكم"
     ]
   };
 
@@ -88,37 +88,34 @@ export function LogoSection() {
 
   return (
     <div className="relative py-16 md:py-24 overflow-hidden">
-      {/* Enhanced background with drinks, hookah, and food */}
+      {/* Enhanced background with luxury cars and automotive services */}
       <div className="absolute inset-0 z-0">
-        {/* Left side - Coffee and drinks */}
+        {/* Left side - Luxury car detailing */}
         <div className="absolute left-0 top-0 w-1/3 h-full">
           <img 
-            src="/assets/artisan-coffee-pastry-delight-91179007_1750782813470.jpg"
-            alt="Artisan coffee with latte art and pastry"
+            src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+            alt="Professional car detailing and protection services"
             className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>
         </div>
         
-        {/* Center - Food and atmosphere */}
+        {/* Center - High-end automotive work */}
         <div className="absolute left-1/3 top-0 w-1/3 h-full">
           <img 
-            src="https://picsum.photos/600/800?random=3&food"
-            alt="Delicious food and cuisine"
+            src="https://images.unsplash.com/photo-1563436589-0a6c8b59a0b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+            alt="Premium vehicle protection and ceramic coating"
             className="w-full h-full object-cover opacity-35 dark:opacity-25 animate-pulse"
             style={{ animationDelay: '2s' }}
-            onError={(e) => {
-              e.currentTarget.src = "https://via.placeholder.com/600x800/FF8C00/FFFFFF?text=Food+%26+Cuisine";
-            }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/60 to-white/70 dark:from-gray-800/70 dark:via-gray-800/60 dark:to-gray-800/70"></div>
         </div>
         
-        {/* Right side - Hookah lounge */}
+        {/* Right side - Car paint protection */}
         <div className="absolute right-0 top-0 w-1/3 h-full">
           <img 
-            src="/assets/friends-engaging-over-hookah-in-a-cozy-lounge-71035690_1750782931870.jpg"
-            alt="Friends enjoying hookah in cozy lounge atmosphere"
+            src="https://images.unsplash.com/photo-1520340149328-78e7e6bb4692?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+            alt="Professional automotive painting and thermal protection"
             className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
             style={{ animationDelay: '4s' }}
           />
@@ -135,10 +132,12 @@ export function LogoSection() {
       <div className="container mx-auto px-4 text-center relative z-10">
         <div className="animate-bounce-slow mb-8">
           <img 
-            src={getLogo()} 
-            alt={isRTL ? "ليت لاونج" : "LateLounge"}
+            src="/assets/action-protection-logo.png"
+            alt={isRTL ? "أكشن بروتكشن" : "Action Protection"}
             className="h-32 md:h-48 lg:h-56 mx-auto object-contain filter drop-shadow-2xl"
-
+            onError={(e) => {
+              e.currentTarget.src = "https://via.placeholder.com/400x150/FF8C00/FFFFFF?text=Action+Protection";
+            }}
           />
         </div>
         

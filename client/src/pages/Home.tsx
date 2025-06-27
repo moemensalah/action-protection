@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { CategoryCard } from "@/components/CategoryCard";
 import { KuwaitiHeroSection } from "@/components/KuwaitiHeroSection";
 import { CarBrandSlider } from "@/components/CarBrandSlider";
+import { VideoShowcaseSection } from "@/components/VideoShowcaseSection";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { Footer } from "@/components/Footer";
 import { SEO, getOrganizationSchema, getBreadcrumbSchema } from "@/components/SEO";
@@ -106,6 +107,9 @@ export default function Home() {
 
       {/* Car Brand Slider */}
       <CarBrandSlider />
+
+      {/* Video Showcase Section */}
+      <VideoShowcaseSection />
 
       {/* Customer Reviews */}
       <ReviewsSection />

@@ -1,8 +1,6 @@
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { CategoryCard } from "@/components/CategoryCard";
-import { AnimatedBackground } from "@/components/AnimatedBackground";
-import { LogoSection } from "@/components/LogoSection";
+import { KuwaitiHeroSection } from "@/components/KuwaitiHeroSection";
 import { CarBrandSlider } from "@/components/CarBrandSlider";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { Footer } from "@/components/Footer";
@@ -72,9 +70,8 @@ export default function Home() {
           ...getBreadcrumbSchema(breadcrumbItems)
         }}
       />
-      <AnimatedBackground />
-      {/* Logo Section */}
-      <LogoSection />
+      {/* Kuwaiti Hero Section */}
+      <KuwaitiHeroSection />
 
       {/* Categories Section */}
       <section className="py-16 bg-white dark:bg-gray-900 theme-transition">

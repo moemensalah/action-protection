@@ -1,6 +1,7 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { Star, Quote } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useState, useEffect } from "react";
 
 const reviews = [
   {
@@ -67,6 +68,19 @@ const reviews = [
 
 export function ReviewsSection() {
   const { t, isRTL, language } = useLanguage();
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => {
+        const maxVisible = Math.floor(window.innerWidth / 344); // Calculate how many cards fit
+        const maxIndex = Math.max(0, reviews.length - maxVisible);
+        return (prevIndex + 1) % (maxIndex + 1);
+      });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, index) => (
@@ -94,8 +108,14 @@ export function ReviewsSection() {
           </p>
         </div>
 
-        <div className="overflow-x-auto">
-          <div className="flex space-x-6 pb-4" style={{ width: 'max-content' }}>
+        <div className="overflow-hidden">
+          <div 
+            className="flex space-x-6 pb-4 transition-transform duration-1000 ease-in-out"
+            style={{ 
+              width: `${reviews.length * 320 + (reviews.length - 1) * 24}px`,
+              transform: `translateX(-${currentIndex * 344}px)`
+            }}
+          >
             {reviews.map((review) => (
               <Card key={review.id} className="flex-shrink-0 w-80 p-5 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white dark:bg-gray-800 border-none shadow-lg">
                 <div className="relative">

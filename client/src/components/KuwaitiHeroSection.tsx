@@ -16,157 +16,112 @@ export function KuwaitiHeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-screen bg-black overflow-hidden">
-      {/* Corner Light Effects */}
+    <section className="relative min-h-screen bg-gradient-to-br from-purple-900 via-gray-900 to-orange-900 overflow-hidden">
+      {/* Video Background Effects */}
       <div className="absolute inset-0">
-        {/* Top-left corner light */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-radial from-blue-400/30 via-blue-500/10 to-transparent rounded-full blur-3xl"></div>
-        {/* Bottom-right corner light */}
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-radial from-orange-400/20 via-orange-500/10 to-transparent rounded-full blur-3xl"></div>
-        {/* Additional ambient light */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-gradient-radial from-white/5 via-transparent to-transparent rounded-full blur-3xl"></div>
+        {/* Purple-orange ambient lighting to match video */}
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-purple-600/20 via-transparent to-orange-600/20"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-orange-500/30 via-purple-500/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-gradient-radial from-purple-400/20 via-transparent to-transparent rounded-full blur-2xl"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-screen flex items-center">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center w-full">
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full ${isRTL ? 'lg:grid-flow-col-dense' : ''}`}>
           
-          {/* Cinematic G-Class Car - Left Side */}
-          <div className="relative lg:order-1 flex justify-center">
+          {/* Cinematic G-Class Video - Left Side (Right in RTL) */}
+          <div className={`relative ${isRTL ? 'lg:order-2' : 'lg:order-1'} flex justify-center`}>
             <div className="relative">
-              {/* Cinematic G-Class Image */}
-              <div className="w-full max-w-lg">
-                <img
-                  src="/assets/g-class-hero.png"
-                  alt={isRTL ? "مرسيدس جي كلاس" : "Mercedes G-Class"}
-                  className="w-full h-auto object-contain rounded-lg"
+              {/* Video Container */}
+              <div className="w-full max-w-2xl">
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-auto object-cover rounded-2xl shadow-2xl"
                   style={{
-                    filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.3))'
+                    filter: 'drop-shadow(0 0 40px rgba(147, 51, 234, 0.4))'
                   }}
-                />
+                >
+                  <source src="/assets/g-class-hero-video.mp4" type="video/mp4" />
+                  {/* Fallback image if video fails */}
+                  <img
+                    src="/assets/g-class-hero.png"
+                    alt={isRTL ? "مرسيدس جي كلاس" : "Mercedes G-Class"}
+                    className="w-full h-auto object-contain rounded-2xl"
+                  />
+                </video>
               </div>
               
-              {/* Enhanced Light Effects around the image */}
-              <div className="absolute -inset-8 bg-gradient-to-r from-blue-500/20 via-purple-500/15 to-orange-500/20 rounded-2xl blur-3xl animate-pulse"></div>
-              <div className="absolute -inset-4 bg-gradient-to-r from-blue-400/10 via-transparent to-orange-400/10 rounded-xl blur-2xl"></div>
-              <div className="absolute -inset-2 bg-gradient-to-r from-white/5 to-transparent rounded-lg blur-lg"></div>
+              {/* Enhanced Video Glow Effects */}
+              <div className="absolute -inset-8 bg-gradient-to-r from-purple-500/30 via-pink-500/20 to-orange-500/30 rounded-3xl blur-3xl animate-pulse"></div>
+              <div className="absolute -inset-4 bg-gradient-to-r from-purple-400/15 via-transparent to-orange-400/15 rounded-2xl blur-2xl"></div>
             </div>
           </div>
 
-          {/* Center Content */}
-          <div className="space-y-8 text-center lg:order-2">
-            <div className="space-y-6">
-              <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
-                <span className="block text-blue-400">
-                  {isRTL ? "أكشن" : "ACTION"}
-                </span>
-                <span className="block text-orange-400">
-                  {isRTL ? "بروتكشن" : "PROTECTION"}
-                </span>
-              </h1>
-              
-              <p className="text-xl lg:text-2xl text-gray-300 max-w-lg mx-auto">
-                {isRTL 
-                  ? "خدمات حماية مركبات متقدمة"
-                  : "Advanced Vehicle Protection Services"
-                }
-              </p>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-xl transform hover:scale-105 transition-all duration-300"
-              >
-                {isRTL ? "اكتشف خدماتنا" : "Discover Our Services"}
-                {isRTL ? <ArrowLeft className="ml-2 w-5 h-5" /> : <ArrowRight className="ml-2 w-5 h-5" />}
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-2 border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-xl transform hover:scale-105 transition-all duration-300"
-              >
-                {isRTL ? "تواصل معنا" : "Contact Us"}
-              </Button>
-            </div>
-          </div>
-
-          {/* Smiling Car Worker - Right Side */}
-          <div className="relative lg:order-3 flex justify-center">
-            <div className="relative">
-              {/* Car Worker Illustration */}
-              <div className="w-full max-w-sm">
-                <svg viewBox="0 0 300 400" className="w-full h-auto">
-                  <defs>
-                    <linearGradient id="skinGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#d4a574" />
-                      <stop offset="100%" stopColor="#c49464" />
-                    </linearGradient>
-                    <linearGradient id="uniformGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#1e40af" />
-                      <stop offset="100%" stopColor="#1e3a8a" />
-                    </linearGradient>
-                    <filter id="workerGlow">
-                      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                      <feMerge> 
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
-                  </defs>
-                  
-                  {/* Body */}
-                  <ellipse cx="150" cy="280" rx="60" ry="80" fill="url(#uniformGradient)" filter="url(#workerGlow)" />
-                  
-                  {/* Arms */}
-                  <ellipse cx="90" cy="240" rx="20" ry="50" fill="url(#uniformGradient)" transform="rotate(-20 90 240)" />
-                  <ellipse cx="210" cy="240" rx="20" ry="50" fill="url(#uniformGradient)" transform="rotate(20 210 240)" />
-                  
-                  {/* Hands */}
-                  <circle cx="75" cy="280" r="12" fill="url(#skinGradient)" />
-                  <circle cx="225" cy="280" r="12" fill="url(#skinGradient)" />
-                  
-                  {/* Head */}
-                  <circle cx="150" cy="140" r="45" fill="url(#skinGradient)" filter="url(#workerGlow)" />
-                  
-                  {/* Hair */}
-                  <path d="M 110 110 Q 150 90 190 110 Q 185 120 150 125 Q 115 120 110 110" fill="#2d1810" />
-                  
-                  {/* Eyes */}
-                  <ellipse cx="135" cy="130" rx="6" ry="8" fill="#1f2937" />
-                  <ellipse cx="165" cy="130" rx="6" ry="8" fill="#1f2937" />
-                  <circle cx="137" cy="128" r="2" fill="white" />
-                  <circle cx="167" cy="128" r="2" fill="white" />
-                  
-                  {/* Smile */}
-                  <path d="M 125 155 Q 150 170 175 155" stroke="#8b4513" strokeWidth="3" fill="none" strokeLinecap="round" />
-                  
-                  {/* Nose */}
-                  <ellipse cx="150" cy="145" rx="3" ry="5" fill="#c49464" />
-                  
-                  {/* Work Badge */}
-                  <rect x="130" y="220" width="40" height="20" rx="3" fill="#fbbf24" />
-                  <text x="150" y="235" textAnchor="middle" fontSize="8" fill="#1f2937" fontWeight="bold">ACTION</text>
-                  
-                  {/* Tool in Hand */}
-                  <rect x="70" y="270" width="15" height="4" rx="2" fill="#6b7280" />
-                  <circle cx="68" cy="272" r="3" fill="#374151" />
-                  
-                  {/* Legs */}
-                  <ellipse cx="130" cy="360" rx="15" ry="40" fill="#1e3a8a" />
-                  <ellipse cx="170" cy="360" rx="15" ry="40" fill="#1e3a8a" />
-                  
-                  {/* Shoes */}
-                  <ellipse cx="130" cy="390" rx="18" ry="8" fill="#1f2937" />
-                  <ellipse cx="170" cy="390" rx="18" ry="8" fill="#1f2937" />
-                </svg>
+          {/* Big Arabic/English Text - Right Side (Left in RTL) */}
+          <div className={`relative ${isRTL ? 'lg:order-1' : 'lg:order-2'} flex flex-col justify-center ${isRTL ? 'text-right' : 'text-left'}`}>
+            <div className="space-y-8">
+              {/* Main Slogan */}
+              <div className="space-y-4">
+                <h1 className={`text-6xl lg:text-8xl font-bold leading-tight ${isRTL ? 'font-arabic' : ''}`}>
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 animate-pulse">
+                    {isRTL ? "معنا" : "WITH US"}
+                  </span>
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-yellow-400 to-red-400">
+                    {isRTL ? "حماية" : "PROTECTION"}
+                  </span>
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                    {isRTL ? "سيارتك" : "GUARANTEED"}
+                  </span>
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-blue-400 to-purple-400">
+                    {isRTL ? "مضمونة" : "FOR YOUR CAR"}
+                  </span>
+                </h1>
               </div>
               
-              {/* Worker Glow Effects */}
-              <div className="absolute -inset-4 bg-gradient-to-l from-orange-500/20 via-orange-400/10 to-transparent rounded-xl blur-2xl animate-pulse"></div>
-              <div className="absolute -inset-2 bg-gradient-to-l from-white/5 to-transparent rounded-lg blur-lg"></div>
+              {/* Company Name */}
+              <div className="space-y-2">
+                <div className={`text-3xl lg:text-5xl font-bold text-white ${isRTL ? 'font-arabic' : ''}`}>
+                  <span className="text-blue-400">
+                    {isRTL ? "أكشن" : "ACTION"}
+                  </span>
+                  {" "}
+                  <span className="text-orange-400">
+                    {isRTL ? "بروتكشن" : "PROTECTION"}
+                  </span>
+                </div>
+                <p className={`text-xl lg:text-2xl text-gray-300 max-w-lg ${isRTL ? 'font-arabic mr-0' : 'ml-0'}`}>
+                  {isRTL 
+                    ? "الخبرة الكويتية في حماية وعناية المركبات الفاخرة"
+                    : "Kuwaiti Expertise in Luxury Vehicle Protection & Care"
+                  }
+                </p>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className={`flex flex-col sm:flex-row gap-6 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-purple-600 to-orange-600 hover:from-purple-700 hover:to-orange-700 text-white px-10 py-5 text-xl font-bold rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300"
+                >
+                  {isRTL ? "احجز موعد" : "Book Appointment"}
+                  {isRTL ? <ArrowLeft className="mr-3 w-6 h-6" /> : <ArrowRight className="ml-3 w-6 h-6" />}
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="border-3 border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-black px-10 py-5 text-xl font-bold rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+                >
+                  {isRTL ? "اتصل بنا" : "Call Us"}
+                </Button>
+              </div>
             </div>
+
+            {/* Floating decorative elements */}
+            <div className="absolute -z-10 top-10 right-10 w-24 h-24 bg-purple-500/20 rounded-full blur-xl animate-bounce"></div>
+            <div className="absolute -z-10 bottom-20 left-10 w-16 h-16 bg-orange-500/20 rounded-full blur-lg animate-pulse"></div>
           </div>
         </div>
       </div>

@@ -94,48 +94,50 @@ export function ReviewsSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {reviews.map((review) => (
-            <Card key={review.id} className="p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white dark:bg-gray-800 border-none shadow-lg">
-              <div className="relative">
-                <Quote className="absolute -top-2 -left-2 w-8 h-8 text-orange-400 opacity-20" />
-                
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-bold text-lg text-foreground">
-                      {language === "ar" ? review.nameAr : review.nameEn}
-                    </h4>
-                    <div className="flex space-x-1">
-                      {renderStars(review.rating)}
-                    </div>
-                  </div>
+        <div className="overflow-x-auto">
+          <div className="flex space-x-6 pb-4" style={{ width: 'max-content' }}>
+            {reviews.map((review) => (
+              <Card key={review.id} className="flex-shrink-0 w-80 p-5 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white dark:bg-gray-800 border-none shadow-lg">
+                <div className="relative">
+                  <Quote className="absolute -top-2 -left-2 w-6 h-6 text-orange-400 opacity-20" />
                   
-                  <div className="text-sm text-muted-foreground mb-2">
-                    <span className="font-medium">{review.carModel}</span>
-                    <span className="mx-2">•</span>
-                    <span>{review.service}</span>
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-bold text-base text-foreground truncate">
+                        {language === "ar" ? review.nameAr : review.nameEn}
+                      </h4>
+                      <div className="flex space-x-1">
+                        {renderStars(review.rating)}
+                      </div>
+                    </div>
+                    
+                    <div className="text-xs text-muted-foreground mb-2">
+                      <span className="font-medium">{review.carModel}</span>
+                      <span className="mx-1">•</span>
+                      <span className="truncate">{review.service}</span>
+                    </div>
                   </div>
-                </div>
 
-                <blockquote className="text-gray-700 dark:text-gray-300 leading-relaxed italic">
-                  "{language === "ar" ? review.reviewAr : review.reviewEn}"
-                </blockquote>
+                  <blockquote className="text-gray-700 dark:text-gray-300 leading-relaxed italic text-sm line-clamp-4">
+                    "{language === "ar" ? review.reviewAr : review.reviewEn}"
+                  </blockquote>
 
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-orange-600 dark:text-orange-400 font-medium">
-                      {isRTL ? "عميل معتمد" : "Verified Customer"}
-                    </span>
-                    <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">
-                        {(language === "ar" ? review.nameAr : review.nameEn).charAt(0)}
+                  <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-orange-600 dark:text-orange-400 font-medium">
+                        {isRTL ? "عميل معتمد" : "Verified Customer"}
                       </span>
+                      <div className="w-6 h-6 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">
+                          {(language === "ar" ? review.nameAr : review.nameEn).charAt(0)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            ))}
+          </div>
         </div>
 
         <div className="text-center mt-12">

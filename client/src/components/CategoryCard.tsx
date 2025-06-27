@@ -42,7 +42,7 @@ export function CategoryCard({ category, productCount, onClick }: CategoryCardPr
 
   return (
     <Card 
-      className="automotive-category-card group relative h-96 rounded-3xl overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-500"
+      className="automotive-category-card group relative h-72 rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-500"
       onClick={onClick}
     >
       <div className="relative h-full">
@@ -64,22 +64,18 @@ export function CategoryCard({ category, productCount, onClick }: CategoryCardPr
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20 group-hover:from-black/90 group-hover:via-black/60 group-hover:to-black/30 transition-all duration-500"></div>
         
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white p-8">
-            <div className="mb-6 transform group-hover:scale-110 transition-transform duration-500">
+          <div className="text-center text-white p-4">
+            <div className="mb-3 transform group-hover:scale-110 transition-transform duration-500">
               {getIcon()}
             </div>
             
-            <h3 className="text-3xl font-bold mb-3 tracking-wide">
+            <h3 className="text-2xl font-bold mb-2 tracking-wide">
               {language === "ar" ? category.nameAr : category.nameEn}
             </h3>
             
-            <p className="text-sm opacity-90 mb-6 leading-relaxed max-w-xs mx-auto">
+            <p className="text-sm opacity-90 leading-relaxed max-w-xs mx-auto">
               {language === "ar" ? category.descriptionAr : category.descriptionEn}
             </p>
-            
-            <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 text-sm font-medium shadow-lg">
-              {productCount} {t("items")}
-            </Badge>
           </div>
         </div>
         

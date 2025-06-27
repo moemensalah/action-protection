@@ -30,56 +30,81 @@ export function KuwaitiHeroSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-screen flex items-center">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center w-full">
           
-          {/* Modern Car - Left Side */}
-          <div className="relative lg:order-1">
+          {/* G-Class Mercedes Car - Left Side */}
+          <div className="relative lg:order-1 flex justify-center">
             <div className="relative">
-              {/* Modern Car SVG */}
-              <div className="w-full max-w-md mx-auto">
-                <svg viewBox="0 0 400 200" className="w-full h-auto">
-                  {/* Car Body */}
+              {/* G-Class Mercedes SVG */}
+              <div className="w-full max-w-lg">
+                <svg viewBox="0 0 500 300" className="w-full h-auto">
                   <defs>
-                    <linearGradient id="carGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#1e40af" />
-                      <stop offset="50%" stopColor="#3b82f6" />
-                      <stop offset="100%" stopColor="#1e3a8a" />
+                    <linearGradient id="gClassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#2c3e50" />
+                      <stop offset="50%" stopColor="#34495e" />
+                      <stop offset="100%" stopColor="#1a252f" />
                     </linearGradient>
-                    <filter id="glow">
-                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <filter id="carGlow">
+                      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
                       <feMerge> 
                         <feMergeNode in="coloredBlur"/>
                         <feMergeNode in="SourceGraphic"/>
                       </feMerge>
                     </filter>
+                    <linearGradient id="lightGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#60a5fa" opacity="0.8" />
+                      <stop offset="100%" stopColor="#3b82f6" opacity="0.4" />
+                    </linearGradient>
                   </defs>
                   
-                  {/* Main car body */}
-                  <path d="M50 120 Q50 100 80 100 L320 100 Q350 100 350 120 L350 140 Q350 160 320 160 L80 160 Q50 160 50 140 Z" 
-                        fill="url(#carGradient)" filter="url(#glow)" />
+                  {/* G-Class Body - Boxy SUV Shape */}
+                  <rect x="60" y="120" width="300" height="100" rx="8" 
+                        fill="url(#gClassGradient)" filter="url(#carGlow)" />
                   
-                  {/* Car roof */}
-                  <path d="M90 100 Q90 80 120 80 L280 80 Q310 80 310 100 L290 100 L110 100 Z" 
-                        fill="#1e3a8a" opacity="0.8" />
+                  {/* Front Section */}
+                  <rect x="360" y="130" width="40" height="80" rx="5" 
+                        fill="#2c3e50" />
+                  
+                  {/* Rear Section */}
+                  <rect x="40" y="130" width="20" height="80" rx="5" 
+                        fill="#2c3e50" />
                   
                   {/* Windows */}
-                  <rect x="100" y="85" width="200" height="15" rx="5" fill="#60a5fa" opacity="0.3" />
+                  <rect x="80" y="100" width="60" height="25" rx="3" 
+                        fill="#60a5fa" opacity="0.3" />
+                  <rect x="160" y="100" width="80" height="25" rx="3" 
+                        fill="#60a5fa" opacity="0.3" />
+                  <rect x="260" y="100" width="80" height="25" rx="3" 
+                        fill="#60a5fa" opacity="0.3" />
                   
-                  {/* Wheels */}
-                  <circle cx="120" cy="150" r="20" fill="#374151" stroke="#6b7280" strokeWidth="2" />
-                  <circle cx="280" cy="150" r="20" fill="#374151" stroke="#6b7280" strokeWidth="2" />
-                  <circle cx="120" cy="150" r="12" fill="#1f2937" />
-                  <circle cx="280" cy="150" r="12" fill="#1f2937" />
+                  {/* Wheels - Large SUV wheels */}
+                  <circle cx="120" cy="230" r="25" fill="#1f2937" stroke="#374151" strokeWidth="3" />
+                  <circle cx="320" cy="230" r="25" fill="#1f2937" stroke="#374151" strokeWidth="3" />
+                  <circle cx="120" cy="230" r="15" fill="#111827" />
+                  <circle cx="320" cy="230" r="15" fill="#111827" />
+                  
+                  {/* G-Class Distinctive Grille */}
+                  <rect x="370" y="140" width="25" height="40" rx="2" 
+                        fill="#4b5563" stroke="#6b7280" strokeWidth="1" />
+                  <line x1="375" y1="145" x2="375" y2="175" stroke="#9ca3af" strokeWidth="1" />
+                  <line x1="385" y1="145" x2="385" y2="175" stroke="#9ca3af" strokeWidth="1" />
                   
                   {/* Headlights */}
-                  <ellipse cx="340" cy="125" rx="8" ry="12" fill="#fbbf24" opacity="0.8" />
-                  <ellipse cx="340" cy="135" rx="8" ry="8" fill="#f59e0b" />
+                  <ellipse cx="395" cy="150" rx="8" ry="15" fill="#fbbf24" opacity="0.9" />
+                  <ellipse cx="395" cy="170" rx="8" ry="15" fill="#f59e0b" opacity="0.9" />
                   
-                  {/* Side details */}
-                  <line x1="100" y1="130" x2="300" y2="130" stroke="#60a5fa" strokeWidth="2" opacity="0.5" />
+                  {/* Side Details */}
+                  <line x1="80" y1="160" x2="340" y2="160" stroke="#60a5fa" strokeWidth="2" opacity="0.6" />
+                  <rect x="90" y="180" width="20" height="8" rx="2" fill="#6b7280" />
+                  <rect x="130" y="180" width="20" height="8" rx="2" fill="#6b7280" />
+                  
+                  {/* Light Effect */}
+                  <rect x="0" y="120" width="500" height="4" fill="url(#lightGradient)" opacity="0.6" />
+                  <rect x="0" y="200" width="500" height="2" fill="url(#lightGradient)" opacity="0.4" />
                 </svg>
               </div>
               
-              {/* Car glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent rounded-full blur-xl"></div>
+              {/* Enhanced Car Glow Effects */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/30 via-blue-400/20 to-transparent rounded-xl blur-2xl animate-pulse"></div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-white/10 to-transparent rounded-lg blur-xl"></div>
             </div>
           </div>
 
@@ -123,36 +148,80 @@ export function KuwaitiHeroSection() {
             </div>
           </div>
 
-          {/* Animated Logo - Right Side */}
+          {/* Smiling Car Worker - Right Side */}
           <div className="relative lg:order-3 flex justify-center">
             <div className="relative">
-              <div 
-                className="inline-flex items-center justify-center w-64 h-64 bg-gradient-to-br from-blue-600/20 to-orange-600/20 rounded-full backdrop-blur-sm border border-white/10 transform"
-                style={{ 
-                  transform: `rotate(${logoPosition * 0.3}deg) scale(${1 + Math.sin(logoPosition * 0.05) * 0.1})` 
-                }}
-              >
-                {/* Animated Logo Content */}
-                <div className="text-center space-y-4">
-                  <div className="relative">
-                    <Shield 
-                      className="w-16 h-16 text-blue-400 mx-auto animate-pulse" 
-                      style={{ filter: 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.5))' }}
-                    />
-                    <Car 
-                      className="w-12 h-12 text-orange-400 absolute -bottom-2 -right-2 animate-bounce"
-                      style={{ filter: 'drop-shadow(0 0 8px rgba(251, 146, 60, 0.5))' }}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-white font-bold text-xl tracking-wider">ACTION</div>
-                    <div className="text-orange-400 font-bold text-xl tracking-wider">PROTECTION</div>
-                  </div>
-                </div>
+              {/* Car Worker Illustration */}
+              <div className="w-full max-w-sm">
+                <svg viewBox="0 0 300 400" className="w-full h-auto">
+                  <defs>
+                    <linearGradient id="skinGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#d4a574" />
+                      <stop offset="100%" stopColor="#c49464" />
+                    </linearGradient>
+                    <linearGradient id="uniformGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#1e40af" />
+                      <stop offset="100%" stopColor="#1e3a8a" />
+                    </linearGradient>
+                    <filter id="workerGlow">
+                      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                      <feMerge> 
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  
+                  {/* Body */}
+                  <ellipse cx="150" cy="280" rx="60" ry="80" fill="url(#uniformGradient)" filter="url(#workerGlow)" />
+                  
+                  {/* Arms */}
+                  <ellipse cx="90" cy="240" rx="20" ry="50" fill="url(#uniformGradient)" transform="rotate(-20 90 240)" />
+                  <ellipse cx="210" cy="240" rx="20" ry="50" fill="url(#uniformGradient)" transform="rotate(20 210 240)" />
+                  
+                  {/* Hands */}
+                  <circle cx="75" cy="280" r="12" fill="url(#skinGradient)" />
+                  <circle cx="225" cy="280" r="12" fill="url(#skinGradient)" />
+                  
+                  {/* Head */}
+                  <circle cx="150" cy="140" r="45" fill="url(#skinGradient)" filter="url(#workerGlow)" />
+                  
+                  {/* Hair */}
+                  <path d="M 110 110 Q 150 90 190 110 Q 185 120 150 125 Q 115 120 110 110" fill="#2d1810" />
+                  
+                  {/* Eyes */}
+                  <ellipse cx="135" cy="130" rx="6" ry="8" fill="#1f2937" />
+                  <ellipse cx="165" cy="130" rx="6" ry="8" fill="#1f2937" />
+                  <circle cx="137" cy="128" r="2" fill="white" />
+                  <circle cx="167" cy="128" r="2" fill="white" />
+                  
+                  {/* Smile */}
+                  <path d="M 125 155 Q 150 170 175 155" stroke="#8b4513" strokeWidth="3" fill="none" strokeLinecap="round" />
+                  
+                  {/* Nose */}
+                  <ellipse cx="150" cy="145" rx="3" ry="5" fill="#c49464" />
+                  
+                  {/* Work Badge */}
+                  <rect x="130" y="220" width="40" height="20" rx="3" fill="#fbbf24" />
+                  <text x="150" y="235" textAnchor="middle" fontSize="8" fill="#1f2937" fontWeight="bold">ACTION</text>
+                  
+                  {/* Tool in Hand */}
+                  <rect x="70" y="270" width="15" height="4" rx="2" fill="#6b7280" />
+                  <circle cx="68" cy="272" r="3" fill="#374151" />
+                  
+                  {/* Legs */}
+                  <ellipse cx="130" cy="360" rx="15" ry="40" fill="#1e3a8a" />
+                  <ellipse cx="170" cy="360" rx="15" ry="40" fill="#1e3a8a" />
+                  
+                  {/* Shoes */}
+                  <ellipse cx="130" cy="390" rx="18" ry="8" fill="#1f2937" />
+                  <ellipse cx="170" cy="390" rx="18" ry="8" fill="#1f2937" />
+                </svg>
               </div>
               
-              {/* Logo glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-orange-500/10 rounded-full blur-2xl animate-pulse"></div>
+              {/* Worker Glow Effects */}
+              <div className="absolute -inset-4 bg-gradient-to-l from-orange-500/20 via-orange-400/10 to-transparent rounded-xl blur-2xl animate-pulse"></div>
+              <div className="absolute -inset-2 bg-gradient-to-l from-white/5 to-transparent rounded-lg blur-lg"></div>
             </div>
           </div>
         </div>

@@ -7,9 +7,8 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useTheme } from "@/components/ThemeProvider";
-// Logo assets served from public directory with cache busting
-const englishDarkLogoImg = "/assets/english-dark_1750523791780.png?v=" + Date.now();
-const englishWhiteLogoImg = "/assets/english-white_1750523827323.png?v=" + Date.now();
+// Action Protection logo (transparent, works on all backgrounds)
+const actionProtectionLogo = "/assets/action-protection-logo.png?v=" + Date.now();
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +18,7 @@ export function Navbar() {
   const [location] = useLocation();
 
   const getLogoSrc = () => {
-    return theme === 'dark' ? englishDarkLogoImg : englishWhiteLogoImg;
+    return actionProtectionLogo;
   };
 
   const navLinks = [

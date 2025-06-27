@@ -16,20 +16,76 @@ export function KuwaitiHeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-blue-900 via-gray-900 to-black overflow-hidden">
-      {/* Animated Background Elements */}
+    <section className="relative min-h-screen bg-black overflow-hidden">
+      {/* Corner Light Effects */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-blue-500/10 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-24 h-24 bg-orange-500/10 rounded-full animate-bounce"></div>
-        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-green-500/10 rounded-full animate-ping"></div>
+        {/* Top-left corner light */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-radial from-blue-400/30 via-blue-500/10 to-transparent rounded-full blur-3xl"></div>
+        {/* Bottom-right corner light */}
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-radial from-orange-400/20 via-orange-500/10 to-transparent rounded-full blur-3xl"></div>
+        {/* Additional ambient light */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-gradient-radial from-white/5 via-transparent to-transparent rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-screen flex items-center">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center w-full">
           
-          {/* Text Content */}
-          <div className={`space-y-8 ${isRTL ? 'lg:order-2 text-right' : 'lg:order-1 text-left'}`}>
-            <div className="space-y-4">
+          {/* Modern Car - Left Side */}
+          <div className="relative lg:order-1">
+            <div className="relative">
+              {/* Modern Car SVG */}
+              <div className="w-full max-w-md mx-auto">
+                <svg viewBox="0 0 400 200" className="w-full h-auto">
+                  {/* Car Body */}
+                  <defs>
+                    <linearGradient id="carGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#1e40af" />
+                      <stop offset="50%" stopColor="#3b82f6" />
+                      <stop offset="100%" stopColor="#1e3a8a" />
+                    </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge> 
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  
+                  {/* Main car body */}
+                  <path d="M50 120 Q50 100 80 100 L320 100 Q350 100 350 120 L350 140 Q350 160 320 160 L80 160 Q50 160 50 140 Z" 
+                        fill="url(#carGradient)" filter="url(#glow)" />
+                  
+                  {/* Car roof */}
+                  <path d="M90 100 Q90 80 120 80 L280 80 Q310 80 310 100 L290 100 L110 100 Z" 
+                        fill="#1e3a8a" opacity="0.8" />
+                  
+                  {/* Windows */}
+                  <rect x="100" y="85" width="200" height="15" rx="5" fill="#60a5fa" opacity="0.3" />
+                  
+                  {/* Wheels */}
+                  <circle cx="120" cy="150" r="20" fill="#374151" stroke="#6b7280" strokeWidth="2" />
+                  <circle cx="280" cy="150" r="20" fill="#374151" stroke="#6b7280" strokeWidth="2" />
+                  <circle cx="120" cy="150" r="12" fill="#1f2937" />
+                  <circle cx="280" cy="150" r="12" fill="#1f2937" />
+                  
+                  {/* Headlights */}
+                  <ellipse cx="340" cy="125" rx="8" ry="12" fill="#fbbf24" opacity="0.8" />
+                  <ellipse cx="340" cy="135" rx="8" ry="8" fill="#f59e0b" />
+                  
+                  {/* Side details */}
+                  <line x1="100" y1="130" x2="300" y2="130" stroke="#60a5fa" strokeWidth="2" opacity="0.5" />
+                </svg>
+              </div>
+              
+              {/* Car glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent rounded-full blur-xl"></div>
+            </div>
+          </div>
+
+          {/* Center Content */}
+          <div className="space-y-8 text-center lg:order-2">
+            <div className="space-y-6">
               <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
                 <span className="block text-blue-400">
                   {isRTL ? "أكشن" : "ACTION"}
@@ -39,37 +95,16 @@ export function KuwaitiHeroSection() {
                 </span>
               </h1>
               
-              <p className="text-xl lg:text-2xl text-gray-300 max-w-lg">
+              <p className="text-xl lg:text-2xl text-gray-300 max-w-lg mx-auto">
                 {isRTL 
-                  ? "خدمات حماية مركبات متقدمة مع الخبرة الكويتية الأصيلة"
-                  : "Advanced Vehicle Protection Services with Authentic Kuwaiti Expertise"
+                  ? "خدمات حماية مركبات متقدمة"
+                  : "Advanced Vehicle Protection Services"
                 }
               </p>
-              
-              <p className="text-lg text-gray-400 max-w-md">
-                {isRTL
-                  ? "نقدم أفضل خدمات العزل الحراري وحماية الطلاء والتلميع الاحترافي لمركبتك الفاخرة"
-                  : "We provide the finest thermal insulation, paint protection, and professional polishing for your luxury vehicle"
-                }
-              </p>
-            </div>
-
-            {/* Animated Logo */}
-            <div className="relative">
-              <div 
-                className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-600 to-orange-600 p-4 rounded-2xl shadow-2xl transform"
-                style={{ 
-                  transform: `rotate(${logoPosition * 0.5}deg) scale(${1 + Math.sin(logoPosition * 0.1) * 0.1})` 
-                }}
-              >
-                <Shield className="w-8 h-8 text-white animate-pulse" />
-                <span className="text-white font-bold text-xl">ACTION PROTECTION</span>
-                <Car className="w-8 h-8 text-white animate-bounce" />
-              </div>
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-xl transform hover:scale-105 transition-all duration-300"
@@ -88,53 +123,36 @@ export function KuwaitiHeroSection() {
             </div>
           </div>
 
-          {/* Kuwaiti Man with Car Image */}
-          <div className={`relative ${isRTL ? 'lg:order-1' : 'lg:order-2'}`}>
+          {/* Animated Logo - Right Side */}
+          <div className="relative lg:order-3 flex justify-center">
             <div className="relative">
-              {/* Car Background with Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent rounded-3xl"></div>
-              
-              {/* Main Image Container */}
-              <div className="relative bg-gradient-to-br from-blue-800/20 to-orange-800/20 rounded-3xl p-8 backdrop-blur-sm border border-white/10">
-                
-                {/* Kuwaiti Man Illustration */}
-                <div className="relative mb-6">
-                  <div className="w-64 h-80 mx-auto bg-gradient-to-b from-white/10 to-white/5 rounded-2xl flex items-end justify-center p-6 backdrop-blur-sm">
-                    {/* Kuwaiti Traditional Dress Figure */}
-                    <div className="text-center">
-                      <div className="w-20 h-20 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full mx-auto mb-4 shadow-xl"></div>
-                      <div className="w-32 h-40 bg-gradient-to-b from-white to-gray-100 rounded-t-full mx-auto shadow-xl relative">
-                        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-gold bg-gradient-to-r from-yellow-400 to-yellow-600 rounded"></div>
-                      </div>
-                      <div className="mt-2 text-white font-bold text-lg">
-                        {isRTL ? "خبير كويتي" : "Kuwaiti Expert"}
-                      </div>
-                    </div>
+              <div 
+                className="inline-flex items-center justify-center w-64 h-64 bg-gradient-to-br from-blue-600/20 to-orange-600/20 rounded-full backdrop-blur-sm border border-white/10 transform"
+                style={{ 
+                  transform: `rotate(${logoPosition * 0.3}deg) scale(${1 + Math.sin(logoPosition * 0.05) * 0.1})` 
+                }}
+              >
+                {/* Animated Logo Content */}
+                <div className="text-center space-y-4">
+                  <div className="relative">
+                    <Shield 
+                      className="w-16 h-16 text-blue-400 mx-auto animate-pulse" 
+                      style={{ filter: 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.5))' }}
+                    />
+                    <Car 
+                      className="w-12 h-12 text-orange-400 absolute -bottom-2 -right-2 animate-bounce"
+                      style={{ filter: 'drop-shadow(0 0 8px rgba(251, 146, 60, 0.5))' }}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-white font-bold text-xl tracking-wider">ACTION</div>
+                    <div className="text-orange-400 font-bold text-xl tracking-wider">PROTECTION</div>
                   </div>
                 </div>
-
-                {/* Luxury Car Silhouette */}
-                <div className="relative">
-                  <div className="w-full h-32 bg-gradient-to-r from-gray-800 to-gray-600 rounded-xl shadow-2xl relative overflow-hidden">
-                    {/* Car Shape */}
-                    <div className="absolute inset-2 bg-gradient-to-r from-blue-900 to-blue-700 rounded-lg"></div>
-                    <div className="absolute top-4 left-4 right-4 h-8 bg-gradient-to-r from-gray-300 to-gray-100 rounded opacity-20"></div>
-                    
-                    {/* Wheels */}
-                    <div className="absolute bottom-2 left-8 w-8 h-8 bg-gray-900 rounded-full border-2 border-gray-600"></div>
-                    <div className="absolute bottom-2 right-8 w-8 h-8 bg-gray-900 rounded-full border-2 border-gray-600"></div>
-                  </div>
-                  
-                  {/* Car Brand Badge */}
-                  <div className="absolute -top-4 right-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl">
-                    {isRTL ? "سيارة فاخرة" : "Luxury Vehicle"}
-                  </div>
-                </div>
-
-                {/* Floating Elements */}
-                <div className="absolute top-8 right-8 w-12 h-12 bg-blue-500/30 rounded-full animate-ping"></div>
-                <div className="absolute bottom-8 left-8 w-8 h-8 bg-orange-500/30 rounded-full animate-pulse"></div>
               </div>
+              
+              {/* Logo glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-orange-500/10 rounded-full blur-2xl animate-pulse"></div>
             </div>
           </div>
         </div>

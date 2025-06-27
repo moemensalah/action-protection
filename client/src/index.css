@@ -37,6 +37,10 @@
   --cafe-accent: hsl(16, 100%, 60%);
 }
 
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
 .dark {
   --background: hsl(240, 10%, 3.9%);
   --foreground: hsl(0, 0%, 98%);

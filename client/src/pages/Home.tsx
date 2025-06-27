@@ -56,12 +56,12 @@ export default function Home() {
       <SEO 
         title={isRTL ? "الرئيسية" : "Home"}
         description={isRTL 
-          ? "مرحباً بكم في ليت لاونج - تجربة قهوة مميزة مع أفضل المشروبات والمأكولات في أجواء دافئة ومريحة. اكتشف قائمتنا المتنوعة من القهوة المميزة والحلويات الطازجة."
-          : "Welcome to LateLounge - Premium coffee experience with the finest beverages and culinary delights in a warm, inviting atmosphere. Discover our diverse menu of specialty coffee and fresh desserts."
+          ? "مرحباً بكم في أكشن بروتكشن - خدمات حماية مركبات متقدمة مع العزل الحراري وحماية الطلاء والتلميع الاحترافي. اكتشف خدماتنا الشاملة لحماية وعناية مركبتك."
+          : "Welcome to Action Protection - Advanced vehicle protection services with thermal insulation, paint protection, and professional polishing. Discover our comprehensive services for vehicle protection and care."
         }
         keywords={isRTL
-          ? "ليت لاونج, قهوة مميزة, مقهى الرياض, قهوة طازجة, إفطار, حلويات, مشروبات ساخنة, مشروبات باردة"
-          : "LateLounge, premium coffee, Riyadh cafe, fresh coffee, breakfast, desserts, hot beverages, cold drinks"
+          ? "أكشن بروتكشن, حماية مركبات, عزل حراري, حماية طلاء, تلميع سيارات, طلاء سيراميكي, تنظيف سيارات, حماية داخلية"
+          : "Action Protection, vehicle protection, thermal insulation, paint protection, car polishing, ceramic coating, car cleaning, interior protection"
         }
         url="/"
         type="website"

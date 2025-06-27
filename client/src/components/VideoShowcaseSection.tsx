@@ -6,23 +6,6 @@ export function VideoShowcaseSection() {
   return (
     <section className="py-20 bg-gradient-to-b from-black via-gray-900 to-black">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className={`text-4xl md:text-5xl font-bold text-white mb-6 ${
-            isRTL ? 'font-arabic' : ''
-          }`}>
-            {isRTL ? "تجربة الرفاهية الحقيقية" : "EXPERIENCE TRUE LUXURY"}
-          </h2>
-          <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
-            isRTL ? 'font-arabic' : ''
-          }`}>
-            {isRTL 
-              ? "اكتشف مستوى جديد من الحماية والأناقة مع خدماتنا المتخصصة للسيارات الفاخرة"
-              : "Discover a new level of protection and elegance with our specialized luxury vehicle services"
-            }
-          </p>
-        </div>
-
         {/* Video Container */}
         <div className="relative max-w-6xl mx-auto">
           {/* Decorative frame */}

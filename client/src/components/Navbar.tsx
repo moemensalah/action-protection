@@ -36,7 +36,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
             <img 
               src={getLogoSrc()} 
-              alt={isRTL ? "ليت لاونج" : "LateLounge"}
+              alt={isRTL ? "أكشن بروتكشن" : "Action Protection"}
               className="h-12 w-auto object-contain logo-bounce"
             />
           </Link>

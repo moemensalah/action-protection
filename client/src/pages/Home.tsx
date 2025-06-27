@@ -107,6 +107,12 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Car Brand Slider */}
+      <CarBrandSlider />
+
+      {/* Customer Reviews */}
+      <ReviewsSection />
+
       <Footer />
     </div>
   );

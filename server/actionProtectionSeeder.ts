@@ -23,7 +23,7 @@ export async function seedActionProtectionData() {
         descriptionEn: "Advanced thermal insulation solutions for vehicle protection",
         descriptionAr: "حلول عزل حراري متقدمة لحماية المركبات",
         slug: "thermal-insulator",
-        image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        image: "https://images.unsplash.com/photo-1609205807107-e4ec2120c5b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
         isActive: true,
         sortOrder: 1
       },

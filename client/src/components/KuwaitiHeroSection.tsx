@@ -5,100 +5,104 @@ import { useState, useEffect } from "react";
 
 export function KuwaitiHeroSection() {
   const { t, isRTL } = useLanguage();
-  const [logoPosition, setLogoPosition] = useState(0);
+  const [typedText, setTypedText] = useState("");
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const words = isRTL 
+    ? ["معنا", "حماية", "سيارتك", "مضمونة"]
+    : ["WITH US", "PROTECTION", "GUARANTEED", "FOR YOUR CAR"];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setLogoPosition(prev => (prev + 1) % 360);
-    }, 50);
+    const currentWord = words[currentWordIndex];
+    const typingSpeed = isDeleting ? 50 : 100;
+    const pauseTime = isDeleting ? 1000 : 2000;
 
-    return () => clearInterval(interval);
-  }, []);
+    const timeout = setTimeout(() => {
+      if (!isDeleting && currentCharIndex < currentWord.length) {
+        setTypedText(currentWord.substring(0, currentCharIndex + 1));
+        setCurrentCharIndex(currentCharIndex + 1);
+      } else if (isDeleting && currentCharIndex > 0) {
+        setTypedText(currentWord.substring(0, currentCharIndex - 1));
+        setCurrentCharIndex(currentCharIndex - 1);
+      } else if (!isDeleting && currentCharIndex === currentWord.length) {
+        setTimeout(() => setIsDeleting(true), pauseTime);
+      } else if (isDeleting && currentCharIndex === 0) {
+        setIsDeleting(false);
+        setCurrentWordIndex((currentWordIndex + 1) % words.length);
+      }
+    }, typingSpeed);
+
+    return () => clearTimeout(timeout);
+  }, [currentCharIndex, currentWordIndex, isDeleting, words]);
 
   return (
     <section className="relative min-h-screen overflow-hidden">
-      {/* Full Background Video */}
+      {/* Full Background Image */}
       <div className="absolute inset-0 w-full h-full">
-        <video
-          autoPlay
-          muted
-          playsInline
+        <img
+          src="/assets/g-class-cinematic-bg.png"
+          alt="Mercedes G-Class Cinematic Background"
           className="absolute inset-0 w-full h-full object-cover"
-          onEnded={() => {
-            // Video will stop after playing once
-          }}
-        >
-          <source src="/assets/g-class-background-video.mp4" type="video/mp4" />
-          {/* Fallback gradient background if video fails */}
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800"></div>
-        </video>
+        />
         
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/50"></div>
+        {/* Subtle overlay for text readability */}
+        <div className="absolute inset-0 bg-black/30"></div>
         
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/40"></div>
+        {/* Gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/20"></div>
       </div>
 
-      {/* Content Overlay */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-screen flex items-center">
-        <div className={`w-full ${isRTL ? 'text-right' : 'text-left'}`}>
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            {/* Main Slogan */}
-            <div className="space-y-4">
-              <h1 className={`text-5xl lg:text-7xl font-bold leading-tight text-white drop-shadow-2xl ${isRTL ? 'font-arabic' : ''}`}>
-                <span className="block">
-                  {isRTL ? "معنا" : "WITH US"}
-                </span>
-                <span className="block">
-                  {isRTL ? "حماية" : "PROTECTION"}
-                </span>
-                <span className="block">
-                  {isRTL ? "سيارتك" : "GUARANTEED"}
-                </span>
-                <span className="block text-blue-400">
-                  {isRTL ? "مضمونة" : "FOR YOUR CAR"}
-                </span>
-              </h1>
+      {/* Typing Text Overlay - Positioned Absolutely on Left */}
+      <div className={`absolute top-1/2 ${isRTL ? 'right-8 lg:right-16' : 'left-8 lg:left-16'} transform -translate-y-1/2 z-20`}>
+        <div className="space-y-6">
+          {/* Typing Animation Text */}
+          <div className="space-y-2">
+            <h1 className={`text-4xl lg:text-6xl font-bold text-white drop-shadow-2xl ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
+              <span className="block min-h-[1.2em]">
+                {typedText}
+                <span className="animate-pulse">|</span>
+              </span>
+            </h1>
+          </div>
+          
+          {/* Company Name */}
+          <div className="space-y-3">
+            <div className={`text-2xl lg:text-4xl font-bold text-white drop-shadow-xl ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
+              <span className="text-orange-400">
+                {isRTL ? "أكشن" : "ACTION"}
+              </span>
+              {" "}
+              <span className="text-blue-400">
+                {isRTL ? "بروتكشن" : "PROTECTION"}
+              </span>
             </div>
-            
-            {/* Company Name */}
-            <div className="space-y-4">
-              <div className={`text-4xl lg:text-6xl font-bold text-white drop-shadow-xl ${isRTL ? 'font-arabic' : ''}`}>
-                <span className="text-orange-400">
-                  {isRTL ? "أكشن" : "ACTION"}
-                </span>
-                {" "}
-                <span className="text-blue-400">
-                  {isRTL ? "بروتكشن" : "PROTECTION"}
-                </span>
-              </div>
-              <p className={`text-xl lg:text-3xl text-gray-200 max-w-3xl mx-auto drop-shadow-lg ${isRTL ? 'font-arabic' : ''}`}>
-                {isRTL 
-                  ? "الخبرة الكويتية في حماية وعناية المركبات الفاخرة"
-                  : "Kuwaiti Expertise in Luxury Vehicle Protection & Care"
-                }
-              </p>
-            </div>
+            <p className={`text-base lg:text-xl text-gray-200 max-w-md drop-shadow-lg ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
+              {isRTL 
+                ? "الخبرة الكويتية في حماية وعناية المركبات الفاخرة"
+                : "Kuwaiti Expertise in Luxury Vehicle Protection & Care"
+              }
+            </p>
+          </div>
 
-            {/* CTA Buttons */}
-            <div className={`flex flex-col sm:flex-row gap-6 justify-center ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700 text-white px-12 py-6 text-xl font-bold rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm"
-              >
-                {isRTL ? "احجز موعد" : "Book Appointment"}
-                {isRTL ? <ArrowLeft className="mr-3 w-6 h-6" /> : <ArrowRight className="ml-3 w-6 h-6" />}
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-3 border-white text-white hover:bg-white hover:text-black px-12 py-6 text-xl font-bold rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm"
-              >
-                {isRTL ? "اتصل بنا" : "Call Us"}
-              </Button>
-            </div>
+          {/* CTA Buttons */}
+          <div className={`flex flex-col gap-4 ${isRTL ? 'items-end' : 'items-start'}`}>
+            <Button 
+              size="lg" 
+              className="bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700 text-white px-8 py-4 text-lg font-bold rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+            >
+              {isRTL ? "احجز موعد" : "Book Appointment"}
+              {isRTL ? <ArrowLeft className="mr-2 w-5 h-5" /> : <ArrowRight className="ml-2 w-5 h-5" />}
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg font-bold rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+            >
+              {isRTL ? "اتصل بنا" : "Call Us"}
+            </Button>
           </div>
         </div>
       </div>

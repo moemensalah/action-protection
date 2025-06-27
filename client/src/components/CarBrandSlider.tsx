@@ -4,63 +4,63 @@ import { useState, useEffect } from "react";
 const carBrands = [
   {
     name: "Mercedes-Benz",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/2048px-Mercedes-Logo.svg.png",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/mercedes.svg",
     alt: "Mercedes-Benz Logo"
   },
   {
     name: "BMW",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BMW.svg/2048px-BMW.svg.png",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/bmw.svg",
     alt: "BMW Logo"
   },
   {
     name: "Audi",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Audi-Logo_2016.svg/2560px-Audi-Logo_2016.svg.png",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/audi.svg",
     alt: "Audi Logo"
   },
   {
     name: "Lexus",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Lexus_logo.svg/2560px-Lexus_logo.svg.png",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/lexus.svg",
     alt: "Lexus Logo"
   },
   {
     name: "Toyota",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Toyota.svg/2560px-Toyota.svg.png",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/toyota.svg",
     alt: "Toyota Logo"
   },
   {
     name: "Honda",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Honda_logo.svg/2560px-Honda_logo.svg.png",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/honda.svg",
     alt: "Honda Logo"
   },
   {
     name: "Porsche",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Porsche_logo.svg/2048px-Porsche_logo.svg.png",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/porsche.svg",
     alt: "Porsche Logo"
   },
   {
     name: "Jaguar",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Jaguar_logo.svg/2560px-Jaguar_logo.svg.png",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/jaguar.svg",
     alt: "Jaguar Logo"
   },
   {
-    name: "Land Rover",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Land_Rover_logo.svg/2560px-Land_Rover_logo.svg.png",
-    alt: "Land Rover Logo"
-  },
-  {
     name: "Nissan",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Nissan_logo.svg/2560px-Nissan_logo.svg.png",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/nissan.svg",
     alt: "Nissan Logo"
   },
   {
     name: "Hyundai",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Hyundai_Motor_Company_logo.svg/2560px-Hyundai_Motor_Company_logo.svg.png",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/hyundai.svg",
     alt: "Hyundai Logo"
   },
   {
     name: "Volkswagen",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Volkswagen_logo_2019.svg/2048px-Volkswagen_logo_2019.svg.png",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/volkswagen.svg",
     alt: "Volkswagen Logo"
+  },
+  {
+    name: "Ford",
+    logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@v9/icons/ford.svg",
+    alt: "Ford Logo"
   }
 ];
 

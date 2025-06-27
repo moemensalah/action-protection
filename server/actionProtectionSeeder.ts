@@ -23,7 +23,7 @@ export async function seedActionProtectionData() {
         descriptionEn: "Advanced thermal insulation solutions for vehicle protection",
         descriptionAr: "حلول عزل حراري متقدمة لحماية المركبات",
         slug: "thermal-insulator",
-        image: "https://images.unsplash.com/photo-1609205807107-e4ec2120c5b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80",
         isActive: true,
         sortOrder: 1
       },
@@ -34,7 +34,7 @@ export async function seedActionProtectionData() {
         descriptionEn: "Complete thermal protection systems for automotive applications",
         descriptionAr: "أنظمة حماية حرارية متكاملة للتطبيقات السيارات",
         slug: "thermal-protection",
-        image: "https://images.unsplash.com/photo-1609205807107-e4ec2120c5b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80",
         isActive: true,
         sortOrder: 2
       },
@@ -45,7 +45,7 @@ export async function seedActionProtectionData() {
         descriptionEn: "Comprehensive vehicle protection services and products",
         descriptionAr: "خدمات ومنتجات حماية شاملة للمركبات",
         slug: "protection",
-        image: "https://images.unsplash.com/photo-1563436589-0a6c8b59a0b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80",
         isActive: true,
         sortOrder: 3
       },
@@ -56,7 +56,7 @@ export async function seedActionProtectionData() {
         descriptionEn: "Professional car polishing and detailing services",
         descriptionAr: "خدمات تلميع وتفصيل السيارات الاحترافية",
         slug: "polish",
-        image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        image: "https://images.unsplash.com/photo-1607603750913-68b40e49fc67?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80",
         isActive: true,
         sortOrder: 4
       },
@@ -67,7 +67,7 @@ export async function seedActionProtectionData() {
         descriptionEn: "Professional automotive painting and interior cleaning services",
         descriptionAr: "خدمات طلاء السيارات والتنظيف الداخلي الاحترافية",
         slug: "painting-vacuuming",
-        image: "https://images.unsplash.com/photo-1520340149328-78e7e6bb4692?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80",
         isActive: true,
         sortOrder: 5
       }

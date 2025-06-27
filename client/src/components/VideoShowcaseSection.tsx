@@ -1,7 +1,23 @@
 import { useLanguage } from "@/hooks/useLanguage";
+import { useState, useEffect } from "react";
 
 export function VideoShowcaseSection() {
   const { isRTL } = useLanguage();
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+
+  const videos = [
+    "/assets/rolls-royce-video.mp4",
+    "/assets/g-class-video.mp4"
+  ];
+
+  // Auto-rotate videos every 10 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [videos.length]);
 
   return (
     <section className="py-20 bg-gradient-to-b from-black via-gray-900 to-black">
@@ -29,21 +45,25 @@ export function VideoShowcaseSection() {
           <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/20 via-blue-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
           
           <div className="relative bg-black/50 rounded-xl overflow-hidden shadow-2xl">
-            <video
-              className="w-full h-auto max-h-[70vh] object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-              controls={false}
-            >
-              <source src="/assets/rolls-royce-video.mp4" type="video/mp4" />
-              {isRTL 
-                ? "متصفحك لا يدعم تشغيل الفيديو"
-                : "Your browser does not support the video tag."
-              }
-            </video>
-            
+            {videos.map((video, index) => (
+              <video
+                key={video}
+                className={`w-full h-auto max-h-[70vh] object-cover transition-opacity duration-1000 ${
+                  index === currentVideoIndex ? 'opacity-100' : 'opacity-0 absolute inset-0'
+                }`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls={false}
+              >
+                <source src={video} type="video/mp4" />
+                {isRTL 
+                  ? "متصفحك لا يدعم تشغيل الفيديو"
+                  : "Your browser does not support the video tag."
+                }
+              </video>
+            ))}
 
           </div>
         </div>

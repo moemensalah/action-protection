@@ -90,33 +90,33 @@ export function LogoSection() {
     <div className="relative py-16 md:py-24 overflow-hidden">
       {/* Enhanced background with luxury cars and automotive services */}
       <div className="absolute inset-0 z-0">
-        {/* Left side - Luxury car detailing */}
+        {/* Left side - Luxury car with protection */}
         <div className="absolute left-0 top-0 w-1/3 h-full">
           <img 
-            src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
-            alt="Professional car detailing and protection services"
-            className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
+            src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+            alt="Luxury car with professional protection services"
+            className="w-full h-full object-cover opacity-50 dark:opacity-40 animate-pulse"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>
         </div>
         
-        {/* Center - High-end automotive work */}
+        {/* Center - Car detailing and ceramic coating */}
         <div className="absolute left-1/3 top-0 w-1/3 h-full">
           <img 
-            src="https://images.unsplash.com/photo-1563436589-0a6c8b59a0b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
-            alt="Premium vehicle protection and ceramic coating"
-            className="w-full h-full object-cover opacity-35 dark:opacity-25 animate-pulse"
+            src="https://images.unsplash.com/photo-1609205807107-e4ec2120c5b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+            alt="Professional car detailing and ceramic coating work"
+            className="w-full h-full object-cover opacity-45 dark:opacity-35 animate-pulse"
             style={{ animationDelay: '2s' }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/60 to-white/70 dark:from-gray-800/70 dark:via-gray-800/60 dark:to-gray-800/70"></div>
         </div>
         
-        {/* Right side - Car paint protection */}
+        {/* Right side - High-end sports car */}
         <div className="absolute right-0 top-0 w-1/3 h-full">
           <img 
-            src="https://images.unsplash.com/photo-1520340149328-78e7e6bb4692?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
-            alt="Professional automotive painting and thermal protection"
-            className="w-full h-full object-cover opacity-40 dark:opacity-30 animate-pulse"
+            src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+            alt="High-end sports car with premium paint protection"
+            className="w-full h-full object-cover opacity-50 dark:opacity-40 animate-pulse"
             style={{ animationDelay: '4s' }}
           />
           <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-white/80 dark:to-gray-800/80"></div>

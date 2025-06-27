@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { CategoryCard } from "@/components/CategoryCard";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { LogoSection } from "@/components/LogoSection";
+import { CarBrandSlider } from "@/components/CarBrandSlider";
+import { ReviewsSection } from "@/components/ReviewsSection";
 import { Footer } from "@/components/Footer";
 import { SEO, getOrganizationSchema, getBreadcrumbSchema } from "@/components/SEO";
 import { useLanguage } from "@/hooks/useLanguage";

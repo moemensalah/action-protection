@@ -110,23 +110,27 @@ export function ReviewsSection() {
 
         <div className="overflow-hidden">
           <div 
-            className="flex space-x-6 pb-4 transition-transform duration-1000 ease-in-out"
+            className={`flex pb-4 transition-transform duration-1000 ease-in-out ${
+              isRTL ? 'space-x-reverse space-x-6' : 'space-x-6'
+            }`}
             style={{ 
               width: `${reviews.length * 320 + (reviews.length - 1) * 24}px`,
-              transform: `translateX(-${currentIndex * 344}px)`
+              transform: isRTL 
+                ? `translateX(${currentIndex * 344}px)` 
+                : `translateX(-${currentIndex * 344}px)`
             }}
           >
             {reviews.map((review) => (
               <Card key={review.id} className="flex-shrink-0 w-80 p-5 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white dark:bg-gray-800 border-none shadow-lg">
                 <div className="relative">
-                  <Quote className="absolute -top-2 -left-2 w-6 h-6 text-orange-400 opacity-20" />
+                  <Quote className={`absolute -top-2 w-6 h-6 text-orange-400 opacity-20 ${isRTL ? '-right-2' : '-left-2'}`} />
                   
                   <div className="mb-3">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className={`flex items-center justify-between mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <h4 className="font-bold text-base text-foreground truncate">
                         {language === "ar" ? review.nameAr : review.nameEn}
                       </h4>
-                      <div className="flex space-x-1">
+                      <div className={`flex ${isRTL ? 'space-x-reverse space-x-1' : 'space-x-1'}`}>
                         {renderStars(review.rating)}
                       </div>
                     </div>
@@ -143,7 +147,7 @@ export function ReviewsSection() {
                   </blockquote>
 
                   <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between">
+                    <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <span className="text-xs text-orange-600 dark:text-orange-400 font-medium">
                         {isRTL ? "عميل معتمد" : "Verified Customer"}
                       </span>
@@ -161,8 +165,8 @@ export function ReviewsSection() {
         </div>
 
         <div className="text-center mt-12">
-          <div className="inline-flex items-center space-x-2 bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg">
-            <div className="flex space-x-1">
+          <div className={`inline-flex items-center bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+            <div className={`flex ${isRTL ? 'space-x-reverse space-x-1' : 'space-x-1'}`}>
               {renderStars(5)}
             </div>
             <span className="text-lg font-bold text-foreground">5.0</span>

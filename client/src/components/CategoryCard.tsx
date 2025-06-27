@@ -50,6 +50,15 @@ export function CategoryCard({ category, productCount, onClick }: CategoryCardPr
           src={getImageUrl(category.image)}
           alt={language === "ar" ? category.nameAr : category.nameEn}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          onError={(e) => {
+            // Fallback to a gradient background if image fails to load
+            const target = e.currentTarget;
+            target.style.display = 'none';
+            const parent = target.parentElement;
+            if (parent) {
+              parent.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+          }}
         />
         
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20 group-hover:from-black/90 group-hover:via-black/60 group-hover:to-black/30 transition-all duration-500"></div>

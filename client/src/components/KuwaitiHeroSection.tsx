@@ -55,7 +55,7 @@ export function KuwaitiHeroSection() {
       </div>
 
       {/* Typing Text Overlay - Positioned Absolutely on Left */}
-      <div className={`absolute top-1/2 ${isRTL ? 'right-8 lg:right-16' : 'left-8 lg:left-16'} transform -translate-y-1/2 z-20`}>
+      <div className={`absolute top-1/2 left-8 lg:left-16 transform -translate-y-1/2 z-20`}>
         <div className="space-y-6">
           {/* Typing Animation Text */}
           <div className="space-y-2">

@@ -110,7 +110,7 @@ export function CarBrandSlider() {
                       <img
                         src={brand.logo}
                         alt={brand.alt}
-                        className="max-h-16 max-w-32 object-contain filter brightness-0 opacity-60 hover:brightness-100 hover:opacity-100 transition-all duration-300"
+                        className="max-h-16 max-w-32 object-contain filter brightness-0 dark:brightness-0 dark:invert opacity-60 hover:brightness-100 dark:hover:brightness-0 dark:hover:invert hover:opacity-100 transition-all duration-300"
                         onError={(e) => {
                           const target = e.currentTarget;
                           target.style.display = 'none';

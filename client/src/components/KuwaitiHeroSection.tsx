@@ -157,7 +157,7 @@ export function KuwaitiHeroSection() {
             <Button 
               variant="outline" 
               size="lg"
-              className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg font-bold rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+              className="border-2 border-white text-white hover:bg-white hover:text-gray-900 dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-black px-8 py-4 text-lg font-bold rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm bg-black/20 dark:bg-transparent"
             >
               {isRTL ? "تواصل معنا" : "Contact Us"}
             </Button>

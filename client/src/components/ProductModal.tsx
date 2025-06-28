@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getImageUrl } from "@/lib/utils";
+import { getDefaultProductImage } from "@/lib/defaultImages";
 interface Product {
   id: number;
   nameEn: string;
@@ -35,6 +36,14 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
 
   if (!product) return null;
 
+  // Get image URL - use default if no image is set
+  const getProductImageUrl = () => {
+    if (product.image && product.image.trim() !== '') {
+      return getImageUrl(product.image);
+    }
+    return getDefaultProductImage(product.categoryId, product.nameEn);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={`max-w-2xl max-h-[90vh] overflow-y-auto ${isRTL ? 'text-right' : ''}`} dir={isRTL ? "rtl" : "ltr"}>
@@ -50,7 +59,7 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
         <div className="space-y-6">
           <div className="relative">
             <img
-              src={getImageUrl(product.image)}
+              src={getProductImageUrl()}
               alt={language === "ar" ? product.nameAr : product.nameEn}
               className="w-full h-64 sm:h-80 object-cover rounded-lg"
             />

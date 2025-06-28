@@ -2,10 +2,10 @@ export const translations = {
   en: {
     // Navigation
     home: "Home",
-    menu: "Menu",
+    menu: "Products",
     about: "About",
     contact: "Contact",
-    search: "Search menu...",
+    search: "Search products...",
     
     // Common
     loading: "Loading...",
@@ -74,10 +74,10 @@ export const translations = {
   ar: {
     // Navigation
     home: "الرئيسية",
-    menu: "القائمة",
+    menu: "المنتجات",
     about: "من نحن",
     contact: "اتصل بنا",
-    search: "البحث في القائمة...",
+    search: "البحث في المنتجات...",
     
     // Common
     loading: "جاري التحميل...",

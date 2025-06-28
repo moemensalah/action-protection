@@ -4,18 +4,16 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
-// Logo assets served from public directory with cache busting
-const englishDarkLogoImg = "/assets/english-dark_1750523791780.png?v=" + Date.now();
-const englishWhiteLogoImg = "/assets/english-white_1750523827323.png?v=" + Date.now();
-
 export function LogoSection() {
   const { language, t, isRTL } = useLanguage();
   const { theme } = useTheme();
   const [, setLocation] = useLocation();
 
-  // Select the appropriate logo based on theme (always English for both languages)
+  // Select the appropriate logo based on theme
   const getLogo = () => {
-    return theme === 'dark' ? englishDarkLogoImg : englishWhiteLogoImg;
+    return theme === 'dark' 
+      ? "/assets/action-protection-logo-white.png?v=" + Date.now()
+      : "/assets/action-protection-logo-dark.png?v=" + Date.now();
   };
 
   // Typing slogans with multiple words
@@ -132,12 +130,9 @@ export function LogoSection() {
       <div className="container mx-auto px-4 text-center relative z-10">
         <div className="animate-bounce-slow mb-8">
           <img 
-            src="/assets/action-protection-logo.png"
+            src={getLogo()}
             alt={isRTL ? "أكشن بروتكشن" : "Action Protection"}
             className="h-32 md:h-48 lg:h-56 mx-auto object-contain filter drop-shadow-2xl"
-            onError={(e) => {
-              e.currentTarget.src = "https://via.placeholder.com/400x150/FF8C00/FFFFFF?text=Action+Protection";
-            }}
           />
         </div>
         

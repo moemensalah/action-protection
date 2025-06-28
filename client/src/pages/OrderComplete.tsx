@@ -52,7 +52,7 @@ export default function OrderComplete() {
   const { data: orderDetails, isLoading } = useQuery({
     queryKey: ["/api/orders", orderNumber],
     enabled: !!orderNumber,
-  });
+  }) as { data: OrderDetails | undefined, isLoading: boolean };
 
   if (!orderNumber) {
     setLocation("/");

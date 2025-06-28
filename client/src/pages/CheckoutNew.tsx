@@ -80,9 +80,11 @@ export default function CheckoutNew() {
 
       if (response.ok) {
         const result = await response.json();
-        setOrderNumber(result.orderNumber || `AP-${Date.now()}`);
-        setOrderPlaced(true);
+        const orderNum = result.orderNumber || `AP-${Date.now()}`;
+        localStorage.setItem('lastOrderNumber', orderNum);
         clearCart();
+        setLocation(`/order-complete?order=${orderNum}`);
+        return;
       } else {
         throw new Error("Failed to place order");
       }

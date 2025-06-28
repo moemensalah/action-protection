@@ -49,7 +49,7 @@ export default function MyOrders() {
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["/api/my-orders"],
     enabled: !!user,
-  });
+  }) as { data: Order[], isLoading: boolean };
 
   const getStatusIcon = (status: string) => {
     switch (status) {

@@ -918,7 +918,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Set up session
-      req.session.userId = user.id;
+      (req.session as any).userId = user.id;
       res.json({ user: { id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email } });
     } catch (error) {
       console.error("Login error:", error);
@@ -937,11 +937,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/auth/local/user', async (req, res) => {
     try {
-      if (!req.session.userId) {
+      if (!(req.session as any).userId) {
         return res.status(401).json({ message: "Not authenticated" });
       }
 
-      const user = await storage.getUser(req.session.userId);
+      const user = await storage.getUser((req.session as any).userId);
       if (!user) {
         return res.status(401).json({ message: "User not found" });
       }
@@ -963,7 +963,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create order
       const orderData = {
-        userId: userId || req.session.userId || 'guest',
+        userId: userId || (req.session as any).userId || 'guest',
         orderNumber,
         customerName: `${firstName} ${lastName}`,
         customerPhone: phone,
@@ -999,11 +999,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/my-orders', async (req, res) => {
     try {
-      if (!req.session.userId) {
+      if (!(req.session as any).userId) {
         return res.status(401).json({ message: "Not authenticated" });
       }
 
-      const orders = await storage.getUserOrders(req.session.userId);
+      const orders = await storage.getUserOrders((req.session as any).userId);
       res.json(orders);
     } catch (error) {
       console.error("Error fetching user orders:", error);

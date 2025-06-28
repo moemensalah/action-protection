@@ -16,7 +16,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
   const { isRTL } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: ""
   });
 
@@ -59,8 +59,8 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
 
   const handleDemoLogin = (type: "admin" | "moderator") => {
     const credentials = type === "admin" 
-      ? { username: "admin", password: "admin123456" }
-      : { username: "hai", password: "newpassword123" };
+      ? { email: "admin@actionprotection.kw", password: "admin123456" }
+      : { email: "haitham2@hmaserv.com", password: "securepass123" };
     
     setFormData(credentials);
   };
@@ -83,13 +83,13 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="username">{isRTL ? "اسم المستخدم" : "Username"}</Label>
+              <Label htmlFor="email">{isRTL ? "البريد الإلكتروني" : "Email"}</Label>
               <Input
-                id="username"
-                type="text"
-                value={formData.username}
-                onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-                placeholder={isRTL ? "أدخل اسم المستخدم" : "Enter your username"}
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                placeholder={isRTL ? "أدخل البريد الإلكتروني" : "Enter your email"}
                 required
               />
             </div>

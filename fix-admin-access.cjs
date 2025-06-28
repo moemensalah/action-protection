@@ -1,12 +1,10 @@
 const { Pool } = require('@neondatabase/serverless');
-const { drizzle } = require('drizzle-orm/neon-serverless');
 
 async function updateAdminRole() {
   try {
     console.log('Updating admin user role to administrator...');
     
     const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-    const db = drizzle(pool);
     
     // Update the newly created admin user to administrator role
     const result = await pool.query(

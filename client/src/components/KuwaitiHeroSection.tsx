@@ -96,11 +96,11 @@ export function KuwaitiHeroSection() {
                style={{ animationDelay: '4s', animationDuration: '7s' }}></div>
         </div>
 
-        {/* Subtle overlay for text readability */}
-        <div className="absolute inset-0 bg-black/30"></div>
+        {/* Minimal overlay for text readability only */}
+        <div className="absolute inset-0 bg-black/10"></div>
         
-        {/* Gradient overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/20"></div>
+        {/* Light gradient overlay for text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent"></div>
       </div>
 
       {/* Typing Text Overlay - Positioned Absolutely on Left */}

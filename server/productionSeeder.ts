@@ -442,11 +442,11 @@ Trust us to safeguard your investment with unmatched quality and professional se
     console.log("📞 Seeding contact us...");
     await db.insert(contactUs).values({
       id: 1,
-      phone: "+966 11 555 0123",
-      whatsapp: "+966 50 123 4567",
-      email: "info@actionprotection.sa",
-      address: "123 King Fahd Road, Riyadh, Saudi Arabia",
-      addressAr: "123 طريق الملك فهد، الرياض، المملكة العربية السعودية",
+      phone: "+965 2245 0123",
+      whatsapp: "+965 9988 7766",
+      email: "info@actionprotection.kw",
+      address: "123 Al-Salam Street, Kuwait City, Kuwait",
+      addressAr: "123 شارع السلام، مدينة الكويت، الكويت",
       workingHours: "Sunday - Thursday: 8:00 AM - 6:00 PM",
       workingHoursAr: "الأحد - الخميس: 8:00 ص - 6:00 م",
       socialMediaLinks: JSON.stringify({
@@ -458,7 +458,7 @@ Trust us to safeguard your investment with unmatched quality and professional se
         youtube: "https://youtube.com/actionprotection",
         tiktok: "https://tiktok.com/@actionprotection"
       }),
-      googleMapsUrl: "https://maps.google.com/?q=Riyadh+Saudi+Arabia",
+      googleMapsUrl: "https://maps.google.com/?q=Kuwait+City+Kuwait",
       isActive: true
     }).onConflictDoNothing();
 

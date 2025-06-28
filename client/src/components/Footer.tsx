@@ -1,6 +1,6 @@
 import { useLanguage } from "@/hooks/useLanguage";
-import { Facebook, Instagram, Linkedin, Youtube, Twitter } from "lucide-react";
-import { SiTiktok, SiSnapchat } from "react-icons/si";
+import { Facebook, Instagram, Linkedin, Youtube, Twitter, CreditCard, Smartphone } from "lucide-react";
+import { SiTiktok, SiSnapchat, SiVisa, SiApplepay } from "react-icons/si";
 import { useQuery } from "@tanstack/react-query";
 
 interface FooterContent {
@@ -46,7 +46,38 @@ export function Footer() {
   const isLoading = footerLoading || contactLoading;
 
   return (
-    <footer className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-12 border-t border-gray-200 dark:border-gray-700">
+    <>
+      {/* Payment Methods Section */}
+      <div className="bg-gray-50 dark:bg-gray-800 py-8 border-t border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              {t("acceptedPaymentMethods")}
+            </h3>
+            <div className="flex justify-center items-center gap-8">
+              {/* Visa */}
+              <div className="flex items-center gap-2 bg-white dark:bg-gray-700 px-4 py-2 rounded-lg shadow-sm">
+                <SiVisa className="w-8 h-8 text-blue-600" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Visa</span>
+              </div>
+              
+              {/* KNET */}
+              <div className="flex items-center gap-2 bg-white dark:bg-gray-700 px-4 py-2 rounded-lg shadow-sm">
+                <CreditCard className="w-6 h-6 text-green-600" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">KNET</span>
+              </div>
+              
+              {/* Apple Pay */}
+              <div className="flex items-center gap-2 bg-white dark:bg-gray-700 px-4 py-2 rounded-lg shadow-sm">
+                <SiApplepay className="w-8 h-8 text-gray-800 dark:text-white" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Apple Pay</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-12 border-t border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand Section */}
@@ -206,5 +237,6 @@ export function Footer() {
         </div>
       </div>
     </footer>
+    </>
   );
 }

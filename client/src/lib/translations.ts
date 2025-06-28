@@ -70,6 +70,7 @@ export const translations = {
     mainDishesDesc: "Sandwiches, salads, and hearty meals",
     desserts: "Desserts",
     dessertsDesc: "Cakes, pastries, and sweet treats",
+    acceptedPaymentMethods: "Accepted Payment Methods",
   },
   ar: {
     // Navigation
@@ -142,6 +143,7 @@ export const translations = {
     mainDishesDesc: "السندويشات والسلطات والوجبات الدسمة",
     desserts: "الحلويات",
     dessertsDesc: "الكعك والمعجنات والحلويات اللذيذة",
+    acceptedPaymentMethods: "طرق الدفع المقبولة",
   },
 };
 

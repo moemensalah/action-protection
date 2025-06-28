@@ -83,7 +83,7 @@ export default function About() {
         <div 
           className="absolute inset-0 opacity-40"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=600')`,
+            backgroundImage: `url('https://images.unsplash.com/photo-1563720223185-11003d516935?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=600')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
@@ -96,8 +96,8 @@ export default function About() {
             </h1>
             <p className="text-xl text-gray-200 max-w-2xl">
               {isRTL 
-                ? "اكتشف قصة شغفنا بالقهوة والمأكولات الفاخرة" 
-                : "Discover the story behind our passion for exceptional coffee and cuisine"
+                ? "اكتشف قصة شغفنا بحماية المركبات والخدمات المتميزة" 
+                : "Discover the story behind our passion for vehicle protection and exceptional service"
               }
             </p>
           </div>

@@ -12,7 +12,7 @@ import Home from "@/pages/Home";
 import Menu from "@/pages/Menu";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
-import Checkout from "@/pages/Checkout";
+import Checkout from "@/pages/CheckoutNew";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
 import AdminPanel from "@/pages/AdminPanel";

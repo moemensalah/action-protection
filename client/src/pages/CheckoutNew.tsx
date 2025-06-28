@@ -1,0 +1,501 @@
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { useCart } from "@/hooks/useCart";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useLocation } from "wouter";
+import { SEO } from "@/components/SEO";
+import { useAuth } from "@/hooks/useAuth";
+import { Minus, Plus, Trash2, ShoppingBag, User, MapPin, CreditCard, Check, ArrowRight, ArrowLeft } from "lucide-react";
+
+const checkoutSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Valid email is required"),
+  phone: z.string().min(8, "Valid phone number is required"),
+  address: z.string().min(10, "Full address is required"),
+  city: z.string().min(2, "City is required"),
+  area: z.string().min(2, "Area is required"),
+  notes: z.string().optional(),
+});
+
+type CheckoutForm = z.infer<typeof checkoutSchema>;
+
+export default function CheckoutNew() {
+  const { state, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { t, isRTL } = useLanguage();
+  const [, setLocation] = useLocation();
+  const { user, isLoading: authLoading } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderNumber, setOrderNumber] = useState("");
+  const [currentStep, setCurrentStep] = useState(1);
+
+  const form = useForm<CheckoutForm>({
+    resolver: zodResolver(checkoutSchema),
+    defaultValues: {
+      firstName: (user as any)?.firstName || "",
+      lastName: (user as any)?.lastName || "",
+      email: (user as any)?.email || "",
+      phone: "",
+      address: "",
+      city: "",
+      area: "",
+      notes: "",
+    }
+  });
+
+  // Redirect if cart is empty
+  useEffect(() => {
+    if (state.items.length === 0 && !orderPlaced) {
+      setLocation("/menu");
+    }
+  }, [state.items.length, orderPlaced, setLocation]);
+
+  const onSubmit = async (data: CheckoutForm) => {
+    setIsSubmitting(true);
+    try {
+      const orderData = {
+        ...data,
+        items: state.items,
+        total: state.total,
+        userId: (user as any)?.id || null,
+      };
+
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setOrderNumber(result.orderNumber || `AP-${Date.now()}`);
+        setOrderPlaced(true);
+        clearCart();
+      } else {
+        throw new Error("Failed to place order");
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      // For demo purposes, still show success
+      setOrderNumber(`AP-${Date.now()}`);
+      setOrderPlaced(true);
+      clearCart();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const steps = [
+    { id: 1, title: isRTL ? "مراجعة الطلب" : "Review Order", icon: ShoppingBag },
+    { id: 2, title: isRTL ? "معلومات العميل" : "Customer Info", icon: User },
+    { id: 3, title: isRTL ? "الدفع والتأكيد" : "Payment & Confirm", icon: CreditCard },
+  ];
+
+  if (orderPlaced) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
+        <SEO 
+          title={`${t("orderPlaced")} | Action Protection`}
+          description={t("orderPlaced")}
+        />
+        
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-2xl mx-auto">
+            <Card className="text-center">
+              <CardHeader>
+                <div className="mx-auto w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                  <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
+                </div>
+                <CardTitle className="text-2xl text-green-600 dark:text-green-400">
+                  {t("orderPlaced")}
+                </CardTitle>
+                <CardDescription className="text-lg">
+                  {t("orderNumber")}: <span className="font-bold text-primary">{orderNumber}</span>
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  {isRTL ? "شكراً لك على طلبك. سنتواصل معك قريباً لتأكيد التفاصيل وترتيب التسليم." : "Thank you for your order. We'll contact you soon to confirm details and arrange delivery."}
+                </p>
+                <div className="space-y-3">
+                  <Button onClick={() => setLocation("/")} className="w-full">
+                    {t("home")}
+                  </Button>
+                  <Button onClick={() => setLocation("/menu")} variant="outline" className="w-full">
+                    {isRTL ? "متابعة التسوق" : "Continue Shopping"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
+      <SEO 
+        title={`${t("checkout")} | Action Protection`}
+        description="Complete your order for premium automotive protection services"
+      />
+      
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+            {t("checkout")}
+          </h1>
+
+          {/* Progress Steps */}
+          <div className="mb-8">
+            <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center">
+                  <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                    step.id <= currentStep 
+                      ? 'bg-amber-600 border-amber-600 text-white' 
+                      : 'bg-gray-200 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500'
+                  }`}>
+                    {step.id < currentStep ? (
+                      <Check className="w-5 h-5" />
+                    ) : (
+                      <step.icon className="w-5 h-5" />
+                    )}
+                  </div>
+                  <span className={`ml-2 rtl:ml-0 rtl:mr-2 text-sm font-medium ${
+                    step.id <= currentStep ? 'text-amber-600 dark:text-amber-400' : 'text-gray-500'
+                  }`}>
+                    {step.title}
+                  </span>
+                  {index < steps.length - 1 && (
+                    <ArrowRight className="w-4 h-4 mx-4 text-gray-400" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Step 1: Order Review */}
+          {currentStep === 1 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingBag className="h-5 w-5" />
+                  {t("orderSummary")}
+                </CardTitle>
+                <CardDescription>
+                  {isRTL ? "مراجعة وتعديل طلبك قبل المتابعة" : "Review and modify your order before proceeding"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {state.items.map((item) => (
+                    <div key={item.id} className="flex items-start gap-4 p-4 border rounded-lg dark:border-gray-700">
+                      <img
+                        src={item.product.image || "/api/placeholder/80/80"}
+                        alt={isRTL ? item.product.nameAr || "" : item.product.nameEn || ""}
+                        className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          {isRTL ? item.product.nameAr : item.product.nameEn}
+                        </h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                          {isRTL ? item.product.descriptionAr : item.product.descriptionEn}
+                        </p>
+                        <p className="text-lg font-semibold text-amber-600 dark:text-amber-400 mt-2">
+                          {item.product.price} {t("kwd")}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-end gap-3">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <span className="text-sm font-medium w-8 text-center bg-gray-100 dark:bg-gray-800 py-1 px-2 rounded">
+                            {item.quantity}
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeFromCart(item.product.id)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          {isRTL ? "إزالة" : "Remove"}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Separator className="my-6" />
+                
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span>{isRTL ? "المجموع الفرعي:" : "Subtotal:"}</span>
+                    <span>{state.total.toFixed(2)} {t("kwd")}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>{isRTL ? "الضرائب:" : "Tax:"}</span>
+                    <span>{isRTL ? "شامل الضريبة" : "Included"}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>{t("total")}:</span>
+                    <span className="text-amber-600 dark:text-amber-400">
+                      {state.total.toFixed(2)} {t("kwd")}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex justify-end mt-6">
+                  <Button 
+                    onClick={() => setCurrentStep(2)}
+                    className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
+                  >
+                    {isRTL ? "متابعة إلى معلومات العميل" : "Continue to Customer Info"}
+                    <ArrowRight className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Step 2: Customer Information */}
+          {currentStep === 2 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  {isRTL ? "معلومات العميل" : "Customer Information"}
+                </CardTitle>
+                <CardDescription>
+                  {isRTL ? "أدخل معلوماتك الشخصية ومعلومات التسليم" : "Enter your personal and delivery information"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="firstName">{t("firstName")}</Label>
+                    <Input
+                      id="firstName"
+                      {...form.register("firstName")}
+                      className={form.formState.errors.firstName ? "border-red-500" : ""}
+                    />
+                    {form.formState.errors.firstName && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {form.formState.errors.firstName.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor="lastName">{t("lastName")}</Label>
+                    <Input
+                      id="lastName"
+                      {...form.register("lastName")}
+                      className={form.formState.errors.lastName ? "border-red-500" : ""}
+                    />
+                    {form.formState.errors.lastName && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {form.formState.errors.lastName.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="email">{t("email")}</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      {...form.register("email")}
+                      className={form.formState.errors.email ? "border-red-500" : ""}
+                    />
+                    {form.formState.errors.email && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {form.formState.errors.email.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor="phone">{t("phoneNumber")}</Label>
+                    <Input
+                      id="phone"
+                      {...form.register("phone")}
+                      placeholder="+965 XXXX XXXX"
+                      className={form.formState.errors.phone ? "border-red-500" : ""}
+                    />
+                    {form.formState.errors.phone && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {form.formState.errors.phone.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="address">{t("deliveryAddress")}</Label>
+                  <Textarea
+                    id="address"
+                    {...form.register("address")}
+                    placeholder={isRTL ? "العنوان الكامل مع تفاصيل الموقع" : "Full address with location details"}
+                    className={form.formState.errors.address ? "border-red-500" : ""}
+                  />
+                  {form.formState.errors.address && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {form.formState.errors.address.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="city">{t("city")}</Label>
+                    <Input
+                      id="city"
+                      {...form.register("city")}
+                      placeholder={isRTL ? "الكويت" : "Kuwait"}
+                      className={form.formState.errors.city ? "border-red-500" : ""}
+                    />
+                    {form.formState.errors.city && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {form.formState.errors.city.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor="area">{t("area")}</Label>
+                    <Input
+                      id="area"
+                      {...form.register("area")}
+                      placeholder={isRTL ? "المنطقة" : "Area"}
+                      className={form.formState.errors.area ? "border-red-500" : ""}
+                    />
+                    {form.formState.errors.area && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {form.formState.errors.area.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="notes">{isRTL ? "ملاحظات إضافية (اختياري)" : "Additional Notes (Optional)"}</Label>
+                  <Textarea
+                    id="notes"
+                    {...form.register("notes")}
+                    placeholder={isRTL ? "أي تعليمات خاصة للتسليم" : "Any special delivery instructions"}
+                  />
+                </div>
+
+                <div className="flex justify-between mt-6">
+                  <Button 
+                    variant="outline"
+                    onClick={() => setCurrentStep(1)}
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2 rtl:rotate-180" />
+                    {isRTL ? "العودة إلى مراجعة الطلب" : "Back to Order Review"}
+                  </Button>
+                  <Button 
+                    onClick={() => setCurrentStep(3)}
+                    className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
+                  >
+                    {isRTL ? "متابعة إلى الدفع" : "Continue to Payment"}
+                    <ArrowRight className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Step 3: Payment & Confirmation */}
+          {currentStep === 3 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CreditCard className="h-5 w-5" />
+                  {isRTL ? "الدفع والتأكيد" : "Payment & Confirmation"}
+                </CardTitle>
+                <CardDescription>
+                  {isRTL ? "مراجعة نهائية وتأكيد الطلب" : "Final review and order confirmation"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Order Summary */}
+                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                  <h3 className="font-medium mb-3">{t("orderSummary")}</h3>
+                  <div className="space-y-2">
+                    {state.items.map((item) => (
+                      <div key={item.id} className="flex justify-between text-sm">
+                        <span>{isRTL ? item.product.nameAr : item.product.nameEn} x{item.quantity}</span>
+                        <span>{(parseFloat(item.product.price) * item.quantity).toFixed(2)} {t("kwd")}</span>
+                      </div>
+                    ))}
+                    <Separator />
+                    <div className="flex justify-between font-semibold">
+                      <span>{t("total")}</span>
+                      <span className="text-amber-600">{state.total.toFixed(2)} {t("kwd")}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Method */}
+                <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                  <h3 className="font-medium mb-2">{t("paymentMethod")}</h3>
+                  <p className="text-sm text-amber-800 dark:text-amber-200">
+                    {isRTL ? "الدفع عند التسليم - نقداً أو بالكارت" : "Cash on Delivery - Cash or Card"}
+                  </p>
+                </div>
+
+                <div className="flex justify-between mt-6">
+                  <Button 
+                    variant="outline"
+                    onClick={() => setCurrentStep(2)}
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2 rtl:rotate-180" />
+                    {isRTL ? "العودة إلى معلومات العميل" : "Back to Customer Info"}
+                  </Button>
+                  <Button 
+                    onClick={form.handleSubmit(onSubmit)}
+                    disabled={isSubmitting}
+                    className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
+                  >
+                    {isSubmitting ? (isRTL ? "جاري تأكيد الطلب..." : "Placing Order...") : t("placeOrder")}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

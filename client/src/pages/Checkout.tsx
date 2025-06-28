@@ -7,12 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/hooks/useCart";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useLocation } from "wouter";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/hooks/useAuth";
-import { Minus, Plus, Trash2, ShoppingBag, User, MapPin, CreditCard } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, User, MapPin, CreditCard, Check, ArrowRight } from "lucide-react";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -35,6 +37,7 @@ export default function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
+  const [currentStep, setCurrentStep] = useState(1);
 
   const form = useForm<CheckoutForm>({
     resolver: zodResolver(checkoutSchema),
@@ -148,6 +151,12 @@ export default function Checkout() {
     );
   }
 
+  const steps = [
+    { id: 1, title: isRTL ? "مراجعة الطلب" : "Review Order", icon: ShoppingBag },
+    { id: 2, title: isRTL ? "معلومات العميل" : "Customer Info", icon: User },
+    { id: 3, title: isRTL ? "الدفع والتأكيد" : "Payment & Confirm", icon: CreditCard },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
       <SEO 
@@ -156,12 +165,41 @@ export default function Checkout() {
       />
       
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
             {t("checkout")}
           </h1>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Progress Steps */}
+          <div className="mb-8">
+            <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center">
+                  <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                    step.id <= currentStep 
+                      ? 'bg-amber-600 border-amber-600 text-white' 
+                      : 'bg-gray-200 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500'
+                  }`}>
+                    {step.id < currentStep ? (
+                      <Check className="w-5 h-5" />
+                    ) : (
+                      <step.icon className="w-5 h-5" />
+                    )}
+                  </div>
+                  <span className={`ml-2 rtl:ml-0 rtl:mr-2 text-sm font-medium ${
+                    step.id <= currentStep ? 'text-amber-600 dark:text-amber-400' : 'text-gray-500'
+                  }`}>
+                    {step.title}
+                  </span>
+                  {index < steps.length - 1 && (
+                    <ArrowRight className="w-4 h-4 mx-4 text-gray-400" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-6">
             {/* Order Summary */}
             <div className="order-2 lg:order-1">
               <Card>

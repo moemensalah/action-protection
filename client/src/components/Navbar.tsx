@@ -84,22 +84,22 @@ export function Navbar() {
             
             {/* User Authentication */}
             {!isLoading && (
-              user ? (
+              typedUser ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="flex items-center gap-2">
                       <User className="h-4 w-4" />
                       <span className="hidden sm:inline">
-                        {user.firstName || (isRTL ? "حسابي" : "My Account")}
+                        {typedUser.firstName || (isRTL ? "حسابي" : "My Account")}
                       </span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align={isRTL ? "start" : "end"} className="w-56">
                     <div className="px-2 py-1.5 text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.username}
+                      {typedUser.firstName ? `${typedUser.firstName} ${typedUser.lastName || ''}`.trim() : typedUser.id}
                     </div>
                     <div className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
-                      {user.email}
+                      {typedUser.email}
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
@@ -184,13 +184,13 @@ export function Navbar() {
               {/* Mobile Authentication */}
               <div className="border-t border-gray-200 dark:border-gray-800 pt-4 mt-4">
                 {!isLoading && (
-                  user ? (
+                  typedUser ? (
                     <div className="flex flex-col space-y-3">
                       <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.username}
+                        {typedUser.firstName ? `${typedUser.firstName} ${typedUser.lastName || ''}`.trim() : typedUser.id}
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">
-                        {user.email}
+                        {typedUser.email}
                       </div>
                       <Link
                         href="/my-orders"

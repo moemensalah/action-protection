@@ -73,11 +73,15 @@ export function ReviewsSection() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => {
-        const maxVisible = Math.floor(window.innerWidth / 344); // Calculate how many cards fit
-        const maxIndex = Math.max(0, reviews.length - maxVisible);
-        return (prevIndex + 1) % (maxIndex + 1);
+        // Simple increment with reset - always keep scrolling
+        const nextIndex = prevIndex + 1;
+        // Reset to 0 when we've shown all reviews
+        if (nextIndex >= reviews.length - 2) {
+          return 0;
+        }
+        return nextIndex;
       });
-    }, 5000);
+    }, 3000); // Reduced to 3 seconds for faster scrolling
 
     return () => clearInterval(interval);
   }, []);

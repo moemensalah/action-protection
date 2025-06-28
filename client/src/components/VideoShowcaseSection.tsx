@@ -16,19 +16,31 @@ export function VideoShowcaseSection() {
     { ar: "حماية فائقة للسيارات الفاخرة", en: "SUPERIOR PROTECTION FOR LUXURY CARS" }
   ];
 
-  // Auto-rotate videos every 12 seconds with text transition
+  // Auto-rotate videos with text transitions
   useEffect(() => {
-    const interval = setInterval(() => {
-      setShowText(true);
+    let timeoutId: NodeJS.Timeout;
+    
+    const cycle = () => {
+      // Show video for 8 seconds
+      setShowText(false);
       
-      setTimeout(() => {
-        setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
-        setShowText(false);
-      }, 2000); // Show text for 2 seconds
-      
-    }, 12000); // Total cycle: 12 seconds
-
-    return () => clearInterval(interval);
+      timeoutId = setTimeout(() => {
+        // Show text for 3 seconds
+        setShowText(true);
+        
+        timeoutId = setTimeout(() => {
+          // Switch to next video
+          setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
+          cycle(); // Restart cycle
+        }, 3000);
+      }, 8000);
+    };
+    
+    cycle(); // Start the cycle
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [videos.length]);
 
   return (

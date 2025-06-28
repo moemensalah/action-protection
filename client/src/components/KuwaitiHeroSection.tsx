@@ -112,10 +112,7 @@ export function KuwaitiHeroSection() {
               <div className="inline-block relative">
                 <div className="animate-float">
                   <img 
-                    key={theme}
-                    src={theme === 'dark' 
-                      ? "/assets/action-protection-logo-dark.png?v=" + Date.now()
-                      : "/assets/action-protection-logo-white.png?v=" + Date.now()}
+                    src="/assets/action-protection-logo-dark.png"
                     alt={isRTL ? "أكشن بروتكشن" : "Action Protection"}
                     className="h-16 lg:h-24 object-contain filter drop-shadow-2xl transform transition-all duration-1000 hover:scale-110"
                   />

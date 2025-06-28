@@ -434,7 +434,7 @@ Trust us to safeguard your investment with unmatched quality and professional se
       ]),
       missionEn: "To provide world-class vehicle protection services that preserve and enhance the value of luxury automobiles through innovative technology and exceptional craftsmanship.",
       missionAr: "تقديم خدمات حماية المركبات عالمية المستوى التي تحافظ على قيمة السيارات الفاخرة وتعززها من خلال التكنولوجيا المبتكرة والحرفية الاستثنائية.",
-      image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+      image: "https://images.unsplash.com/photo-1563720223185-11003d516935?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
       isActive: true
     }).onConflictDoNothing();
 

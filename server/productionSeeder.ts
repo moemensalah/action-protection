@@ -468,8 +468,8 @@ Trust us to safeguard your investment with unmatched quality and professional se
       id: 1,
       companyNameEn: "Action Protection",
       companyNameAr: "أكشن بروتكشن",
-      descriptionEn: "Professional vehicle protection services in Kuwait with advanced thermal insulation, paint protection, polishing, and cleaning solutions.",
-      descriptionAr: "خدمات حماية المركبات الاحترافية في الكويت مع العزل الحراري المتقدم وحماية الطلاء والتلميع والتنظيف.",
+      descriptionEn: "Professional vehicle protection services in Kuwait. We accept Visa, KNET, and Apple Pay for your convenience.",
+      descriptionAr: "خدمات حماية المركبات الاحترافية في الكويت. نقبل فيزا وكي نت وأبل باي لراحتكم.",
       copyrightText: "© 2025 Action Protection. All rights reserved.",
       quickLinks: JSON.stringify([
         { nameEn: "About Us", nameAr: "من نحن", url: "/about" },

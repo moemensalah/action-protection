@@ -81,7 +81,7 @@ export default function About() {
       <section className="relative h-64 gradient-hero overflow-hidden">
         <div className="absolute inset-0 bg-black/50"></div>
         <div 
-          className="absolute inset-0 opacity-40"
+          className="absolute inset-0 opacity-40 animate-ken-burns"
           style={{
             backgroundImage: `url('https://images.unsplash.com/photo-1563720223185-11003d516935?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=600')`,
             backgroundSize: 'cover',
@@ -89,12 +89,24 @@ export default function About() {
           }}
         />
         
+        {/* Animated gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-transparent to-purple-600/20 animate-gradient-x"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/10 to-transparent animate-pulse-slow"></div>
+        
+        {/* Floating particles */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white/30 rounded-full animate-float-1"></div>
+          <div className="absolute top-3/4 right-1/3 w-1 h-1 bg-blue-300/40 rounded-full animate-float-2"></div>
+          <div className="absolute top-1/2 left-3/4 w-1.5 h-1.5 bg-white/20 rounded-full animate-float-3"></div>
+          <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-purple-300/30 rounded-full animate-float-1"></div>
+        </div>
+        
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div className="text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in-up">
               {isRTL ? "من نحن" : "About Us"}
             </h1>
-            <p className="text-xl text-gray-200 max-w-2xl">
+            <p className="text-xl text-gray-200 max-w-2xl animate-fade-in-up animation-delay-300">
               {isRTL 
                 ? "اكتشف قصة شغفنا بحماية المركبات والخدمات المتميزة" 
                 : "Discover the story behind our passion for vehicle protection and exceptional service"
@@ -105,8 +117,16 @@ export default function About() {
       </section>
 
       {/* Main Content */}
-      <section className="py-16 bg-white dark:bg-gray-900 theme-transition">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-16 bg-white dark:bg-gray-900 theme-transition overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 opacity-5 dark:opacity-10">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-blue-500 rounded-full animate-float-1"></div>
+          <div className="absolute top-40 right-20 w-24 h-24 bg-purple-500 rounded-full animate-float-2"></div>
+          <div className="absolute bottom-20 left-1/3 w-40 h-40 bg-green-500 rounded-full animate-float-3"></div>
+          <div className="absolute bottom-40 right-1/4 w-20 h-20 bg-blue-400 rounded-full animate-float-1"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Story Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             <div>

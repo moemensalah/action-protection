@@ -122,7 +122,7 @@ export default function Contact() {
       <section className="relative h-64 gradient-hero overflow-hidden">
         <div className="absolute inset-0 bg-black/50"></div>
         <div 
-          className="absolute inset-0 opacity-40"
+          className="absolute inset-0 opacity-40 animate-ken-burns-reverse"
           style={{
             backgroundImage: `url('https://images.unsplash.com/photo-1563720223185-11003d516935?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=600')`,
             backgroundSize: 'cover',
@@ -130,12 +130,25 @@ export default function Contact() {
           }}
         />
         
+        {/* Animated gradient overlays with different pattern */}
+        <div className="absolute inset-0 bg-gradient-to-l from-green-600/20 via-transparent to-blue-600/20 animate-gradient-x-reverse"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-green-500/10 to-transparent animate-pulse-slow"></div>
+        
+        {/* Floating particles with different positions */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-white/30 rounded-full animate-float-2"></div>
+          <div className="absolute top-2/3 left-1/3 w-1 h-1 bg-green-300/40 rounded-full animate-float-1"></div>
+          <div className="absolute top-1/2 right-3/4 w-1.5 h-1.5 bg-white/20 rounded-full animate-float-3"></div>
+          <div className="absolute top-1/4 left-1/5 w-1 h-1 bg-blue-300/30 rounded-full animate-float-2"></div>
+          <div className="absolute top-3/4 right-1/5 w-1.5 h-1.5 bg-green-200/25 rounded-full animate-float-1"></div>
+        </div>
+        
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div className="text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in-up">
               {isRTL ? "اتصل بنا" : "Contact Us"}
             </h1>
-            <p className="text-xl text-gray-200 max-w-2xl">
+            <p className="text-xl text-gray-200 max-w-2xl animate-fade-in-up animation-delay-300">
               {isRTL 
                 ? "نحن هنا للمساعدة! تواصل معنا لأي استفسارات أو تعليقات" 
                 : "We're here to help! Reach out to us for any questions or feedback"

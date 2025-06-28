@@ -19,22 +19,22 @@
   --card-foreground: hsl(20, 14.3%, 4.1%);
   --border: hsl(20, 5.9%, 90%);
   --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(24, 75%, 47%);
+  --primary: hsl(30, 100%, 55%);
   --primary-foreground: hsl(60, 9.1%, 97.8%);
   --secondary: hsl(60, 4.8%, 95.9%);
   --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(16, 100%, 60%);
+  --accent: hsl(30, 100%, 55%);
   --accent-foreground: hsl(60, 9.1%, 97.8%);
   --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(60, 9.1%, 97.8%);
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
   
-  /* Custom cafe colors */
-  --cafe-brown: hsl(24, 75%, 47%);
-  --cafe-cream: hsl(45, 100%, 96%);
-  --cafe-dark: hsl(20, 14.3%, 4.1%);
-  --cafe-accent: hsl(16, 100%, 60%);
+  /* Custom Action Protection colors */
+  --action-orange: hsl(30, 100%, 55%);
+  --action-cream: hsl(45, 100%, 96%);
+  --action-dark: hsl(20, 14.3%, 4.1%);
+  --action-accent: hsl(30, 100%, 55%);
 }
 
 .bg-gradient-radial {
@@ -52,11 +52,11 @@
   --card-foreground: hsl(0, 0%, 98%);
   --border: hsl(240, 3.7%, 15.9%);
   --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(24, 75%, 47%);
+  --primary: hsl(30, 100%, 55%);
   --primary-foreground: hsl(60, 9.1%, 97.8%);
   --secondary: hsl(240, 3.7%, 15.9%);
   --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(16, 100%, 60%);
+  --accent: hsl(30, 100%, 55%);
   --accent-foreground: hsl(0, 0%, 98%);
   --destructive: hsl(0, 62.8%, 30.6%);
   --destructive-foreground: hsl(0, 0%, 98%);

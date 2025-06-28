@@ -106,7 +106,7 @@ export function KuwaitiHeroSection() {
           {/* Static Company Name */}
           <div className="space-y-3">
             <div className={`text-2xl lg:text-4xl font-bold text-white drop-shadow-xl ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
-              <span className="text-orange-400">
+              <span style={{ color: 'hsl(30, 100%, 55%)' }}>
                 {isRTL ? "مع أكشن" : "WITH ACTION"}
               </span>
               {" "}
@@ -130,7 +130,8 @@ export function KuwaitiHeroSection() {
           <div className={`flex gap-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
             <Button 
               size="lg" 
-              className="bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700 text-white px-8 py-4 text-lg font-bold rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+              style={{ background: 'linear-gradient(to right, #3B82F6, hsl(30, 100%, 55%))' }}
+              className="hover:opacity-90 text-white px-8 py-4 text-lg font-bold rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm"
             >
               {isRTL ? "اطلب الآن" : "Order Now"}
               {isRTL ? <ArrowLeft className="mr-2 w-5 h-5" /> : <ArrowRight className="ml-2 w-5 h-5" />}

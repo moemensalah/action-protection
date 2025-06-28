@@ -70,7 +70,7 @@ export function VideoShowcaseSection() {
         {/* Video Container */}
         <div className="relative max-w-6xl mx-auto">
           {/* Decorative frame */}
-          <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/20 via-blue-500/20 to-orange-500/20 rounded-2xl blur-xl"></div>
+          <div className="absolute -inset-4 rounded-2xl blur-xl" style={{ background: 'linear-gradient(to right, hsla(30, 100%, 55%, 0.2), hsla(220, 91%, 58%, 0.2), hsla(30, 100%, 55%, 0.2))' }}></div>
           
           <div className="relative bg-black/50 rounded-xl overflow-hidden shadow-2xl">
             {/* Videos */}
@@ -107,9 +107,9 @@ export function VideoShowcaseSection() {
                 
                 {/* Decorative elements */}
                 <div className="flex justify-center items-center space-x-4 rtl:space-x-reverse">
-                  <div className="w-12 h-0.5 bg-gradient-to-r from-transparent to-orange-500"></div>
-                  <div className="w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
-                  <div className="w-12 h-0.5 bg-gradient-to-l from-transparent to-blue-500"></div>
+                  <div className="w-12 h-0.5" style={{ background: 'linear-gradient(to right, transparent, hsl(30, 100%, 55%))' }}></div>
+                  <div className="w-3 h-3 rounded-full animate-pulse" style={{ backgroundColor: 'hsl(30, 100%, 55%)' }}></div>
+                  <div className="w-12 h-0.5" style={{ background: 'linear-gradient(to left, transparent, #3B82F6)' }}></div>
                 </div>
               </div>
             </div>

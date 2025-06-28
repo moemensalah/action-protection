@@ -126,15 +126,30 @@ export function LogoSection() {
         {/* Center radial gradient for natural blending */}
         <div className="absolute inset-0 bg-radial-gradient from-white/50 via-white/20 to-transparent dark:from-gray-800/50 dark:via-gray-800/20 dark:to-transparent"></div>
       </div>
-      {/* Main Logo */}
+      {/* Main Logo with Professional Animations */}
       <div className="container mx-auto px-4 text-center relative z-10">
-        <div className="animate-bounce-slow mb-8">
-          <img 
-            key={theme}
-            src={getLogo()}
-            alt={isRTL ? "أكشن بروتكشن" : "Action Protection"}
-            className="h-32 md:h-48 lg:h-56 mx-auto object-contain filter drop-shadow-2xl"
-          />
+        <div className="mb-8 relative">
+          <div className="animate-float">
+            <img 
+              key={theme}
+              src={getLogo()}
+              alt={isRTL ? "أكشن بروتكشن" : "Action Protection"}
+              className="h-24 md:h-32 lg:h-40 mx-auto object-contain filter drop-shadow-2xl transform transition-all duration-1000 hover:scale-110 animate-fade-in-up"
+            />
+          </div>
+          
+          {/* Animated glow effect behind logo */}
+          <div className="absolute inset-0 -z-10">
+            <div className="h-24 md:h-32 lg:h-40 mx-auto bg-gradient-to-r from-orange-400/20 via-orange-500/30 to-orange-400/20 blur-xl animate-pulse-glow rounded-full transform scale-150"></div>
+          </div>
+          
+          {/* Animated particles around logo */}
+          <div className="absolute inset-0 -z-5">
+            <div className="animate-float-delayed-1 absolute top-1/4 left-1/4 w-2 h-2 bg-orange-400/60 rounded-full blur-sm"></div>
+            <div className="animate-float-delayed-2 absolute top-3/4 right-1/4 w-1 h-1 bg-orange-500/70 rounded-full blur-sm"></div>
+            <div className="animate-float-delayed-3 absolute top-1/2 left-1/6 w-1.5 h-1.5 bg-orange-300/50 rounded-full blur-sm"></div>
+            <div className="animate-float-delayed-4 absolute top-1/3 right-1/6 w-1 h-1 bg-orange-600/60 rounded-full blur-sm"></div>
+          </div>
         </div>
         
         {/* Typing Animation Slogans */}

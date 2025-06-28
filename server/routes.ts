@@ -887,6 +887,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create new user
       const newUser = await storage.createLocalUser({
+        username: email, // Use email as username
         firstName,
         lastName,
         email,
@@ -894,7 +895,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Set up session
-      req.session.userId = newUser.id;
+      (req.session as any).userId = newUser.id;
       res.json({ user: { id: newUser.id, firstName, lastName, email } });
     } catch (error) {
       console.error("Registration error:", error);

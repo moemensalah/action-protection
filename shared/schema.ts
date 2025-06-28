@@ -419,4 +419,3 @@ export type InsertPrivacyPolicy = z.infer<typeof insertPrivacyPolicySchema>;
 export type InsertTermsOfService = z.infer<typeof insertTermsOfServiceSchema>;
 export type InsertSmtpSettings = z.infer<typeof insertSmtpSettingsSchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type CreateUser = z.infer<typeof createUserSchema>;

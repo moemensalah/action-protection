@@ -9,6 +9,8 @@ import {
   privacyPolicy,
   termsOfService,
   smtpSettings,
+  orders,
+  orderItems,
   type User,
   type UpsertUser,
   type Category,
@@ -20,6 +22,8 @@ import {
   type PrivacyPolicy,
   type TermsOfService,
   type SmtpSettings,
+  type Order,
+  type OrderItem,
   type InsertCategory,
   type InsertProduct,
   type InsertAboutUs,
@@ -29,7 +33,8 @@ import {
   type InsertPrivacyPolicy,
   type InsertTermsOfService,
   type InsertSmtpSettings,
-  type SmtpSettings,
+  type InsertOrder,
+  type InsertOrderItem,
   type InsertUser,
   type CreateUser,
 } from "@shared/schema";
@@ -632,7 +637,7 @@ export class DatabaseStorage implements IStorage {
     return orderItem;
   }
 
-  async getUserOrders(userId: string): Promise<Order[]> {
+  async getUserOrders(userId: string): Promise<any[]> {
     const userOrders = await db
       .select()
       .from(orders)
@@ -653,7 +658,7 @@ export class DatabaseStorage implements IStorage {
     return ordersWithItems;
   }
 
-  async getOrderByNumber(orderNumber: string): Promise<Order | undefined> {
+  async getOrderByNumber(orderNumber: string): Promise<any | undefined> {
     const [order] = await db
       .select()
       .from(orders)

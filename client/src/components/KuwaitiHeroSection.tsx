@@ -1,10 +1,12 @@
 import { useLanguage } from "@/hooks/useLanguage";
+import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Shield, Car } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export function KuwaitiHeroSection() {
   const { t, isRTL } = useLanguage();
+  const { theme } = useTheme();
   const [typedText, setTypedText] = useState("");
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
@@ -104,16 +106,33 @@ export function KuwaitiHeroSection() {
       {/* Typing Text Overlay - Positioned Absolutely on Left */}
       <div className={`absolute top-1/2 left-8 lg:left-16 transform -translate-y-1/2 z-20`}>
         <div className="space-y-8">
-          {/* Static Company Name */}
+          {/* Action Protection Logo */}
           <div className="space-y-3">
-            <div className={`text-2xl lg:text-4xl font-bold text-white drop-shadow-xl ${isRTL ? 'font-arabic text-right' : 'text-left'}`}>
-              <span style={{ color: 'hsl(30, 100%, 55%)' }}>
-                {isRTL ? "مع أكشن" : "WITH ACTION"}
-              </span>
-              {" "}
-              <span className="text-blue-400">
-                {isRTL ? "بروتكشن" : "PROTECTION"}
-              </span>
+            <div className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              <div className="inline-block relative">
+                <div className="animate-float">
+                  <img 
+                    key={theme}
+                    src={theme === 'dark' 
+                      ? "/assets/action-protection-logo-dark.png?v=" + Date.now()
+                      : "/assets/action-protection-logo-white.png?v=" + Date.now()}
+                    alt={isRTL ? "أكشن بروتكشن" : "Action Protection"}
+                    className="h-16 lg:h-24 object-contain filter drop-shadow-2xl transform transition-all duration-1000 hover:scale-110"
+                  />
+                </div>
+                
+                {/* Animated glow effect behind logo */}
+                <div className="absolute inset-0 -z-10">
+                  <div className="h-16 lg:h-24 bg-gradient-to-r from-orange-400/20 via-orange-500/30 to-orange-400/20 blur-xl animate-pulse-glow rounded-full transform scale-150"></div>
+                </div>
+                
+                {/* Animated particles around logo */}
+                <div className="absolute inset-0 -z-5">
+                  <div className="animate-float-delayed-1 absolute top-1/4 left-1/4 w-1.5 h-1.5 bg-orange-400/70 rounded-full blur-sm"></div>
+                  <div className="animate-float-delayed-2 absolute top-3/4 right-1/4 w-1 h-1 bg-orange-500/80 rounded-full blur-sm"></div>
+                  <div className="animate-float-delayed-3 absolute top-1/2 left-1/6 w-1 h-1 bg-orange-300/60 rounded-full blur-sm"></div>
+                </div>
+              </div>
             </div>
           </div>
 

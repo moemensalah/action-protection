@@ -1011,6 +1011,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User Address Management API
+  app.get('/api/addresses', async (req, res) => {
+    try {
+      if (!(req.session as any).userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const addresses = await storage.getUserAddresses((req.session as any).userId);
+      res.json(addresses);
+    } catch (error) {
+      console.error("Error fetching user addresses:", error);
+      res.status(500).json({ message: "Failed to fetch addresses" });
+    }
+  });
+
+  app.post('/api/addresses', async (req, res) => {
+    try {
+      if (!(req.session as any).userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const addressData = {
+        ...req.body,
+        userId: (req.session as any).userId
+      };
+
+      const address = await storage.createUserAddress(addressData);
+      res.json(address);
+    } catch (error) {
+      console.error("Error creating address:", error);
+      res.status(500).json({ message: "Failed to create address" });
+    }
+  });
+
+  app.put('/api/addresses/:id', async (req, res) => {
+    try {
+      if (!(req.session as any).userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const addressId = parseInt(req.params.id);
+      const address = await storage.updateUserAddress(addressId, req.body);
+      res.json(address);
+    } catch (error) {
+      console.error("Error updating address:", error);
+      res.status(500).json({ message: "Failed to update address" });
+    }
+  });
+
+  app.delete('/api/addresses/:id', async (req, res) => {
+    try {
+      if (!(req.session as any).userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const addressId = parseInt(req.params.id);
+      await storage.deleteUserAddress(addressId);
+      res.json({ message: "Address deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting address:", error);
+      res.status(500).json({ message: "Failed to delete address" });
+    }
+  });
+
+  app.post('/api/addresses/:id/set-default', async (req, res) => {
+    try {
+      if (!(req.session as any).userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const addressId = parseInt(req.params.id);
+      await storage.setDefaultAddress((req.session as any).userId, addressId);
+      res.json({ message: "Default address updated successfully" });
+    } catch (error) {
+      console.error("Error setting default address:", error);
+      res.status(500).json({ message: "Failed to set default address" });
+    }
+  });
+
   app.get('/api/orders/:orderNumber', async (req, res) => {
     try {
       const { orderNumber } = req.params;

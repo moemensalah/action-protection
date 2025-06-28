@@ -372,6 +372,12 @@ export const insertSmtpSettingsSchema = createInsertSchema(smtpSettings).omit({
   updatedAt: true,
 });
 
+export const insertUserAddressSchema = createInsertSchema(userAddresses).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertCustomerAddressSchema = createInsertSchema(customerAddresses).omit({
   id: true,
   createdAt: true,
@@ -424,6 +430,8 @@ export type WidgetSettings = typeof widgetSettings.$inferSelect;
 export type PrivacyPolicy = typeof privacyPolicy.$inferSelect;
 export type TermsOfService = typeof termsOfService.$inferSelect;
 export type SmtpSettings = typeof smtpSettings.$inferSelect;
+export type UserAddress = typeof userAddresses.$inferSelect;
+export type InsertUserAddress = z.infer<typeof insertUserAddressSchema>;
 export type CustomerAddress = typeof customerAddresses.$inferSelect;
 export type InsertCustomerAddress = z.infer<typeof insertCustomerAddressSchema>;
 export type CartItem = typeof cartItems.$inferSelect;

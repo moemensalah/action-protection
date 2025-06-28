@@ -120,7 +120,10 @@ export function VideoShowcaseSection() {
         {/* Call to Action */}
         <div className="text-center mt-12">
           <div className={`inline-flex flex-col sm:flex-row gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
-            <button className="px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+            <button 
+              style={{ background: 'linear-gradient(to right, hsl(30, 100%, 55%), hsl(30, 100%, 50%))' }}
+              className="px-8 py-4 text-white font-semibold rounded-lg hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
               {isRTL ? "احجز موعدك الآن" : "Book Your Appointment"}
             </button>
             <button className="px-8 py-4 border-2 border-blue-500 text-blue-400 font-semibold rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-300">

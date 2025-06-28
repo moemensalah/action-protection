@@ -134,9 +134,12 @@ export function CarBrandSlider() {
                 key={index}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index === currentIndex
-                    ? 'bg-orange-500 scale-125'
-                    : 'bg-gray-300 dark:bg-gray-600 hover:bg-orange-300 dark:hover:bg-orange-400'
+                    ? 'scale-125'
+                    : 'bg-gray-300 dark:bg-gray-600 hover:opacity-75'
                 }`}
+                style={{
+                  backgroundColor: index === currentIndex ? 'hsl(30, 100%, 55%)' : undefined
+                }}
                 onClick={() => setCurrentIndex(index)}
               />
             ))}

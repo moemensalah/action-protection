@@ -106,12 +106,12 @@ export default function Contact() {
       <SEO 
         title={isRTL ? "اتصل بنا" : "Contact Us"}
         description={isRTL 
-          ? "تواصل مع ليت لاونج - نحن هنا لخدمتك. اتصل بنا أو زر موقعنا للاستمتاع بأفضل تجربة قهوة. مفتوح يومياً من 6 صباحاً حتى 11 مساءً."
-          : "Contact LateLounge - We're here to serve you. Call us or visit our location for the finest coffee experience. Open daily from 6 AM to 11 PM."
+          ? "تواصل مع أكشن بروتكشن - نحن هنا لحماية مركبتك. احجز موعدك لخدمات العزل الحراري والطلاء الواقي والتلميع المتقدم. مفتوح من الأحد للخميس."
+          : "Contact Action Protection - We're here to protect your vehicle. Book your appointment for thermal insulation, protective coating, and advanced polishing services. Open Sunday to Thursday."
         }
         keywords={isRTL
-          ? "اتصل بنا, عنوان ليت لاونج, رقم الهاتف, البريد الإلكتروني, ساعات العمل, موقعنا"
-          : "contact us, LateLounge address, phone number, email, opening hours, location"
+          ? "اتصل بنا, أكشن بروتكشن, حماية السيارات, العزل الحراري, موعد, خدمات السيارات"
+          : "contact us, Action Protection, car protection, thermal insulation, appointment, vehicle services"
         }
         url="/contact"
         type="website"
@@ -124,7 +124,7 @@ export default function Contact() {
         <div 
           className="absolute inset-0 opacity-40"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=600')`,
+            backgroundImage: `url('https://images.unsplash.com/photo-1563720223185-11003d516935?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=600')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}

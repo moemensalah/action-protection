@@ -65,12 +65,12 @@ export default function About() {
       <SEO 
         title={isRTL ? "من نحن" : "About Us"}
         description={isRTL 
-          ? "تعرف على قصة ليت لاونج وشغفنا بتقديم أفضل تجربة قهوة. فريقنا المتخصص يعمل على تحضير أجود أنواع القهوة والمأكولات في بيئة مريحة ودافئة."
-          : "Learn about LateLounge's story and our passion for delivering the finest coffee experience. Our dedicated team crafts premium coffee and culinary delights in a comfortable, welcoming environment."
+          ? "تعرف على قصة أكشن بروتكشن وخبرتنا في حماية المركبات الفاخرة. فريقنا المتخصص يقدم أفضل خدمات العزل الحراري والطلاء الواقي والتلميع المتقدم."
+          : "Learn about Action Protection's story and our expertise in luxury vehicle protection. Our specialized team delivers premium thermal insulation, protective coating, and advanced polishing services."
         }
         keywords={isRTL
-          ? "من نحن, قصة ليت لاونج, فريق العمل, تجربة القهوة, جودة الخدمة, بيئة مريحة"
-          : "about us, LateLounge story, team, coffee experience, quality service, comfortable environment"
+          ? "من نحن, أكشن بروتكشن, حماية المركبات, العزل الحراري, الطلاء الواقي, تلميع السيارات"
+          : "about us, Action Protection, vehicle protection, thermal insulation, protective coating, car polishing"
         }
         url="/about"
         type="website"
@@ -83,7 +83,7 @@ export default function About() {
         <div 
           className="absolute inset-0 opacity-40"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1521017432531-fbd92d768814?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=600')`,
+            backgroundImage: `url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=600')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}

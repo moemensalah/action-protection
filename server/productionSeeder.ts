@@ -382,26 +382,59 @@ export async function seedProductionData() {
     console.log("ℹ️ Seeding about us...");
     await db.insert(aboutUs).values({
       id: 1,
-      titleEn: "About LateLounge",
-      titleAr: "حول ليت لاونج",
-      contentEn: `Welcome to LateLounge, where exceptional coffee meets warm hospitality. Our passion for quality drives everything we do, from sourcing the finest beans to creating memorable experiences for every guest.
+      titleEn: "About Action Protection",
+      titleAr: "حول أكشن بروتكشن",
+      contentEn: `Welcome to Action Protection, where automotive excellence meets advanced protection technology. Our passion for preserving luxury vehicles drives everything we do, from cutting-edge thermal insulation to premium protective coatings.
 
-Founded with a vision to bring authentic coffeehouse culture to our community, we take pride in our artisanal approach to coffee preparation and our commitment to excellence.
+Founded with a vision to revolutionize vehicle protection in the region, we take pride in our innovative approach to automotive care and our unwavering commitment to excellence.
 
-Our skilled baristas craft each cup with precision and care, ensuring that every sip delivers the perfect balance of flavor and aroma. Whether you're seeking a quiet moment of reflection or a vibrant space to connect with friends, LateLounge offers the ideal atmosphere.
+Our certified technicians apply each protection layer with precision and expertise, ensuring that every vehicle receives the ultimate defense against environmental hazards. Whether you drive a luxury sedan, premium SUV, or high-performance sports car, Action Protection delivers comprehensive solutions tailored to your needs.
 
-We believe in supporting local communities and sustainable practices, which is why we carefully select our suppliers and ingredients. Our menu features a diverse selection of specialty drinks, fresh pastries, and wholesome meals prepared with the finest ingredients.
+We believe in using only the finest materials and proven technologies, which is why we partner with leading global manufacturers of automotive protection products. Our services include thermal insulation, paint protection films, ceramic coatings, and professional detailing.
 
-Join us for an unforgettable culinary journey where tradition meets innovation, and every visit becomes a cherished memory.`,
-      contentAr: `مرحباً بكم في ليت لاونج، حيث تلتقي القهوة الاستثنائية بالضيافة الدافئة. شغفنا بالجودة يقود كل ما نقوم به، من مصادر أجود حبوب القهوة إلى خلق تجارب لا تُنسى لكل ضيف.
+Trust us to safeguard your investment with unmatched quality and professional service that exceeds expectations.`,
+      contentAr: `مرحباً بكم في أكشن بروتكشن، حيث يلتقي التميز السيارات بتكنولوجيا الحماية المتقدمة. شغفنا بالحفاظ على المركبات الفاخرة يقود كل ما نقوم به، من العزل الحراري المتطور إلى الطلاءات الواقية المتميزة.
 
-تأسسنا برؤية لجلب ثقافة المقاهي الأصيلة إلى مجتمعنا، ونفخر بنهجنا الحرفي في تحضير القهوة والتزامنا بالتميز.
+تأسسنا برؤية لثورة حماية المركبات في المنطقة، ونفخر بنهجنا المبتكر في العناية بالسيارات والتزامنا الثابت بالتميز.
 
-يحضر باريستا ماهرون كل كوب بدقة وعناية، مما يضمن أن كل رشفة تقدم التوازن المثالي للنكهة والرائحة. سواء كنتم تبحثون عن لحظة هدوء للتأمل أو مساحة نابضة بالحياة للتواصل مع الأصدقاء، يقدم ليت لاونج الأجواء المثالية.
+يطبق فنيونا المعتمدون كل طبقة حماية بدقة وخبرة، مما يضمن أن كل مركبة تحصل على الدفاع الأقصى ضد المخاطر البيئية. سواء كنتم تقودون سيارة فاخرة أو سيارة دفع رباعي متميزة أو سيارة رياضية عالية الأداء، توفر أكشن بروتكشن حلولاً شاملة مصممة خصيصاً لاحتياجاتكم.
 
-نؤمن بدعم المجتمعات المحلية والممارسات المستدامة، ولهذا نختار بعناية موردينا ومكوناتنا. تتميز قائمتنا بتشكيلة متنوعة من المشروبات المتخصصة والمعجنات الطازجة والوجبات الصحية المحضرة بأجود المكونات.
+نؤمن باستخدام أجود المواد والتقنيات المجربة فقط، ولهذا نتشارك مع الشركات المصنعة العالمية الرائدة لمنتجات حماية السيارات. تشمل خدماتنا العزل الحراري وأفلام حماية الطلاء والطلاءات السيراميكية والتنظيف الاحترافي.
 
-انضموا إلينا لرحلة طهي لا تُنسى حيث يلتقي التقليد بالابتكار، وتصبح كل زيارة ذكرى عزيزة.`,
+ثقوا بنا لحماية استثماركم بجودة لا مثيل لها وخدمة احترافية تفوق التوقعات.`,
+      features: JSON.stringify([
+        {
+          icon: "Shield",
+          titleEn: "Advanced Protection",
+          titleAr: "حماية متقدمة",
+          descEn: "State-of-the-art protection technology for your luxury vehicle",
+          descAr: "تكنولوجيا حماية متطورة لمركبتكم الفاخرة"
+        },
+        {
+          icon: "Award", 
+          titleEn: "Certified Excellence",
+          titleAr: "تميز معتمد",
+          descEn: "Certified technicians with years of automotive protection expertise",
+          descAr: "فنيون معتمدون بخبرة سنوات في حماية السيارات"
+        },
+        {
+          icon: "Users",
+          titleEn: "Customer Focused",
+          titleAr: "تركيز على العملاء", 
+          descEn: "Personalized service tailored to each vehicle's specific needs",
+          descAr: "خدمة شخصية مصممة لاحتياجات كل مركبة"
+        },
+        {
+          icon: "Clock",
+          titleEn: "Timely Service",
+          titleAr: "خدمة في الوقت المحدد",
+          descEn: "Efficient service delivery without compromising on quality",
+          descAr: "تسليم خدمة فعال دون التنازل عن الجودة"
+        }
+      ]),
+      missionEn: "To provide world-class vehicle protection services that preserve and enhance the value of luxury automobiles through innovative technology and exceptional craftsmanship.",
+      missionAr: "تقديم خدمات حماية المركبات عالمية المستوى التي تحافظ على قيمة السيارات الفاخرة وتعززها من خلال التكنولوجيا المبتكرة والحرفية الاستثنائية.",
+      image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
       isActive: true
     }).onConflictDoNothing();
 
@@ -409,18 +442,23 @@ Join us for an unforgettable culinary journey where tradition meets innovation, 
     console.log("📞 Seeding contact us...");
     await db.insert(contactUs).values({
       id: 1,
-      phone: "+966 11 555 1234",
-      whatsapp: "966555555555",
-      email: "contact@latelounge.sa",
-      address: "456 Coffee Street, Riyadh",
-      addressAr: "456 شارع القهوة، الرياض",
-      workingHours: "Daily: 6AM-12AM",
-      workingHoursAr: "يومياً: 6ص-12م",
+      phone: "+966 11 555 0123",
+      whatsapp: "+966 50 123 4567",
+      email: "info@actionprotection.sa",
+      address: "123 King Fahd Road, Riyadh, Saudi Arabia",
+      addressAr: "123 طريق الملك فهد، الرياض، المملكة العربية السعودية",
+      workingHours: "Sunday - Thursday: 8:00 AM - 6:00 PM",
+      workingHoursAr: "الأحد - الخميس: 8:00 ص - 6:00 م",
       socialMediaLinks: JSON.stringify({
-        twitter: "https://twitter.com/latelounge_sa",
-        facebook: "https://facebook.com/latelounge",
-        instagram: "https://instagram.com/latelounge_sa"
+        instagram: "https://instagram.com/actionprotection",
+        twitter: "https://twitter.com/actionprotection",
+        facebook: "https://facebook.com/actionprotection",
+        snapchat: "https://snapchat.com/add/actionprotection",
+        linkedin: "https://linkedin.com/company/actionprotection",
+        youtube: "https://youtube.com/actionprotection",
+        tiktok: "https://tiktok.com/@actionprotection"
       }),
+      googleMapsUrl: "https://maps.google.com/?q=Riyadh+Saudi+Arabia",
       isActive: true
     }).onConflictDoNothing();
 
@@ -428,14 +466,14 @@ Join us for an unforgettable culinary journey where tradition meets innovation, 
     console.log("🦶 Seeding footer content...");
     await db.insert(footerContent).values({
       id: 1,
-      companyNameEn: "LateLounge",
-      companyNameAr: "ليت لاونج",
-      descriptionEn: "Your premium destination for exceptional coffee and memorable moments.",
-      descriptionAr: "وجهتكم المميزة للقهوة الاستثنائية واللحظات التي لا تُنسى.",
-      copyrightText: "© 2024 LateLounge. All rights reserved.",
+      companyNameEn: "Action Protection",
+      companyNameAr: "أكشن بروتكشن",
+      descriptionEn: "Your trusted partner for premium vehicle protection and automotive excellence.",
+      descriptionAr: "شريككم الموثوق لحماية المركبات المتميزة والتميز السيارات.",
+      copyrightText: "© 2024 Action Protection. All rights reserved.",
       quickLinks: JSON.stringify([
         { nameEn: "About Us", nameAr: "من نحن", url: "/about" },
-        { nameEn: "Menu", nameAr: "القائمة", url: "/menu" },
+        { nameEn: "Services", nameAr: "الخدمات", url: "/services" },
         { nameEn: "Contact", nameAr: "اتصل بنا", url: "/contact" },
         { nameEn: "Privacy Policy", nameAr: "سياسة الخصوصية", url: "/privacy-policy" }
       ]),

@@ -13,7 +13,6 @@ export const translations = {
     back: "Back",
     next: "Next",
     previous: "Previous",
-    addToCart: "Add to Cart",
     viewAll: "View All",
     showMore: "Show More",
     showLess: "Show Less",
@@ -71,6 +70,41 @@ export const translations = {
     desserts: "Desserts",
     dessertsDesc: "Cakes, pastries, and sweet treats",
     acceptedPaymentMethods: "Accepted Payment Methods",
+    
+    // Cart & Checkout
+    cart: "Cart",
+    cartEmpty: "Your cart is empty",
+    startShopping: "Start Shopping",
+    proceedToCheckout: "Proceed to Checkout",
+    checkout: "Checkout",
+    addToCart: "Add to Cart",
+    removeFromCart: "Remove",
+    quantity: "Quantity",
+    total: "Total",
+    subtotal: "Subtotal",
+    
+    // Authentication
+    login: "Login",
+    register: "Register",
+    logout: "Logout",
+    username: "Username",
+    password: "Password",
+    confirmPassword: "Confirm Password",
+    email: "Email",
+    firstName: "First Name",
+    lastName: "Last Name",
+    phoneNumber: "Phone",
+    deliveryAddress: "Address",
+    city: "City",
+    area: "Area",
+    
+    // Order
+    orderSummary: "Order Summary",
+    deliveryInfo: "Delivery Information",
+    paymentMethod: "Payment Method",
+    placeOrder: "Place Order",
+    orderPlaced: "Order Placed Successfully",
+    orderNumber: "Order Number",
   },
   ar: {
     // Navigation
@@ -86,7 +120,6 @@ export const translations = {
     back: "رجوع",
     next: "التالي",
     previous: "السابق",
-    addToCart: "إضافة للسلة",
     viewAll: "عرض الكل",
     showMore: "عرض المزيد",
     showLess: "عرض أقل",
@@ -144,6 +177,41 @@ export const translations = {
     desserts: "الحلويات",
     dessertsDesc: "الكعك والمعجنات والحلويات اللذيذة",
     acceptedPaymentMethods: "طرق الدفع المقبولة",
+    
+    // Cart & Checkout
+    cart: "السلة",
+    cartEmpty: "سلتك فارغة",
+    startShopping: "ابدأ التسوق",
+    proceedToCheckout: "المتابعة للدفع",
+    checkout: "الدفع",
+    addToCart: "إضافة للسلة",
+    removeFromCart: "إزالة",
+    quantity: "الكمية",
+    total: "المجموع",
+    subtotal: "المجموع الفرعي",
+    
+    // Authentication
+    login: "تسجيل الدخول",
+    register: "إنشاء حساب",
+    logout: "تسجيل الخروج",
+    username: "اسم المستخدم",
+    password: "كلمة المرور",
+    confirmPassword: "تأكيد كلمة المرور",
+    email: "البريد الإلكتروني",
+    firstName: "الاسم الأول",
+    lastName: "اسم العائلة",
+    phoneNumber: "رقم الهاتف",
+    deliveryAddress: "عنوان التسليم",
+    city: "المدينة",
+    area: "المنطقة",
+    
+    // Order
+    orderSummary: "ملخص الطلب",
+    deliveryInfo: "معلومات التسليم",
+    paymentMethod: "طريقة الدفع",
+    placeOrder: "تأكيد الطلب",
+    orderPlaced: "تم تأكيد الطلب بنجاح",
+    orderNumber: "رقم الطلب",
   },
 };
 

@@ -3,6 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/hooks/useLanguage";
+import { CartProvider } from "@/hooks/useCart";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navbar } from "@/components/Navbar";
@@ -39,14 +40,16 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <LanguageProvider>
-          <TooltipProvider>
-            <div className="min-h-screen bg-background theme-transition">
-              <Navbar />
-              <Router />
-              {!isAdminPanel && <TawkWidget />}
-              <Toaster />
-            </div>
-          </TooltipProvider>
+          <CartProvider>
+            <TooltipProvider>
+              <div className="min-h-screen bg-background theme-transition">
+                <Navbar />
+                <Router />
+                {!isAdminPanel && <TawkWidget />}
+                <Toaster />
+              </div>
+            </TooltipProvider>
+          </CartProvider>
         </LanguageProvider>
       </ThemeProvider>
     </QueryClientProvider>

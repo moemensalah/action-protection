@@ -16,6 +16,7 @@ export function KuwaitiHeroSection() {
     : ["YOUR CAR PROTECTION GUARANTEED", "GIVE US THE KEY AND LEAVE THE REST TO US", "STRONGEST CAR PROTECTION CENTER IN KUWAIT"];
 
   const backgrounds = [
+    "/assets/mercedes-g-class-ultra-wide.png",
     "/assets/g-class-cinematic-bg.png",
     "/assets/jeep-wrangler-bg-1.png", 
     "/assets/jeep-wrangler-bg-2.png",

@@ -865,9 +865,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         password,
       });
 
-      // Set up session
-      (req.session as any).userId = newUser.id;
-      res.json({ user: { id: newUser.id, firstName, lastName, email } });
+      // Automatically log in the user after registration
+      (req.session as any).localUser = {
+        id: newUser.id,
+        username: newUser.username,
+        email: newUser.email,
+        role: newUser.role,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName
+      };
+
+      res.json({
+        user: {
+          id: newUser.id,
+          username: newUser.username,
+          email: newUser.email,
+          role: newUser.role,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName
+        },
+        message: "Registration successful"
+      });
     } catch (error) {
       console.error("Registration error:", error);
       res.status(500).json({ message: "Registration failed" });

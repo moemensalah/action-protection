@@ -21,6 +21,8 @@ interface FooterContent {
 interface ContactUs {
   phone: string;
   email: string;
+  address: string;
+  addressAr: string;
   socialMediaLinks?: {
     instagram?: string;
     twitter?: string;
@@ -41,6 +43,7 @@ export function Footer() {
 
   const { data: contactData, isLoading: contactLoading } = useQuery<ContactUs>({
     queryKey: ["/api/contact"],
+    staleTime: 0,
   });
 
   const isLoading = footerLoading || contactLoading;
@@ -142,7 +145,7 @@ export function Footer() {
             ) : contactData ? (
               <>
                 <div className="space-y-2 text-gray-600 dark:text-gray-300">
-                  <p>📍 {t("address")}</p>
+                  <p>📍 {isRTL ? contactData.addressAr : contactData.address}</p>
                   <p>📞 {contactData.phone}</p>
                   <p>✉️ {contactData.email}</p>
                 </div>

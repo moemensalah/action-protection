@@ -76,19 +76,23 @@ export default function Home() {
 
       {/* Categories Section */}
       <section className="py-16 bg-white dark:bg-gray-900 theme-transition relative overflow-hidden">
-        {/* Subtle light animation background */}
+        {/* Spotlight animation background */}
         <div className="absolute inset-0 pointer-events-none z-0">
-          {/* Soft ambient light waves */}
-          <div className="absolute inset-0 bg-gradient-to-br from-orange-50/30 via-transparent to-blue-50/20 dark:from-orange-900/20 dark:via-transparent dark:to-blue-900/15 animate-pulse"
-               style={{ animationDuration: '8s' }}></div>
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-amber-50/15 to-transparent dark:from-transparent dark:via-amber-900/10 dark:to-transparent animate-pulse"
-               style={{ animationDelay: '4s', animationDuration: '12s' }}></div>
+          {/* Moving spotlight beams */}
+          <div className="absolute top-0 left-1/4 w-32 h-full bg-gradient-to-b from-yellow-200/25 via-yellow-100/15 to-transparent dark:from-yellow-400/20 dark:via-yellow-300/10 dark:to-transparent transform -skew-x-12 animate-pulse"
+               style={{ animationDelay: '0s', animationDuration: '6s' }}></div>
+          <div className="absolute top-0 right-1/3 w-24 h-full bg-gradient-to-b from-blue-200/20 via-blue-100/12 to-transparent dark:from-blue-400/15 dark:via-blue-300/8 dark:to-transparent transform skew-x-6 animate-pulse"
+               style={{ animationDelay: '2s', animationDuration: '8s' }}></div>
+          <div className="absolute top-0 left-1/2 w-28 h-full bg-gradient-to-b from-orange-200/22 via-orange-100/13 to-transparent dark:from-orange-400/17 dark:via-orange-300/9 dark:to-transparent transform -skew-x-8 animate-pulse"
+               style={{ animationDelay: '4s', animationDuration: '10s' }}></div>
           
-          {/* Gentle floating light orbs - centered and subtle */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-radial from-orange-200/15 via-transparent to-transparent dark:from-orange-400/10 dark:via-transparent dark:to-transparent rounded-full blur-3xl animate-pulse"
-               style={{ animationDelay: '0s', animationDuration: '10s' }}></div>
-          <div className="absolute top-1/3 left-1/3 w-64 h-64 bg-gradient-radial from-blue-200/12 via-transparent to-transparent dark:from-blue-400/8 dark:via-transparent dark:to-transparent rounded-full blur-2xl animate-pulse"
-               style={{ animationDelay: '5s', animationDuration: '15s' }}></div>
+          {/* Spotlight circles moving across */}
+          <div className="absolute top-1/4 left-0 w-48 h-48 bg-gradient-radial from-white/20 via-yellow-100/10 to-transparent dark:from-white/15 dark:via-yellow-200/8 dark:to-transparent rounded-full blur-2xl animate-pulse"
+               style={{ animationDelay: '1s', animationDuration: '7s' }}></div>
+          <div className="absolute top-2/3 right-0 w-36 h-36 bg-gradient-radial from-white/18 via-blue-100/9 to-transparent dark:from-white/13 dark:via-blue-200/7 dark:to-transparent rounded-full blur-xl animate-pulse"
+               style={{ animationDelay: '3s', animationDuration: '9s' }}></div>
+          <div className="absolute top-1/2 left-1/3 w-40 h-40 bg-gradient-radial from-white/16 via-orange-100/8 to-transparent dark:from-white/12 dark:via-orange-200/6 dark:to-transparent rounded-full blur-2xl animate-pulse"
+               style={{ animationDelay: '5s', animationDuration: '11s' }}></div>
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

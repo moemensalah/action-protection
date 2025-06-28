@@ -15,10 +15,8 @@ export function Navbar() {
   const [location] = useLocation();
 
   const getLogoSrc = () => {
-    // Use white logo for dark mode, dark logo for light mode
-    return theme === 'dark' 
-      ? "/assets/action-protection-logo-white.png?v=" + Date.now()
-      : "/assets/action-protection-logo-dark.png?v=" + Date.now();
+    // Use transparent logo that works on all backgrounds
+    return "/assets/action-protection-logo-transparent.png?v=" + Date.now();
   };
 
   const navLinks = [

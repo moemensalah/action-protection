@@ -29,9 +29,13 @@ export function VideoShowcaseSection() {
         setShowText(true);
         
         timeoutId = setTimeout(() => {
-          // Switch to next video
+          // Switch to next video while text is still showing
           setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
-          cycle(); // Restart cycle
+          
+          // Small delay to ensure video loads, then hide text
+          timeoutId = setTimeout(() => {
+            cycle(); // Restart cycle
+          }, 100);
         }, 3000);
       }, 8000);
     };
@@ -73,9 +77,9 @@ export function VideoShowcaseSection() {
             {videos.map((video, index) => (
               <video
                 key={video}
-                className={`w-full h-auto max-h-[70vh] object-cover transition-opacity duration-1000 ${
-                  index === currentVideoIndex && !showText ? 'opacity-100' : 'opacity-0 absolute inset-0'
-                }`}
+                className={`w-full h-auto max-h-[70vh] object-cover transition-opacity duration-500 ${
+                  index === currentVideoIndex && !showText ? 'opacity-100' : 'opacity-0'
+                } ${index !== currentVideoIndex ? 'absolute inset-0' : ''}`}
                 autoPlay
                 muted
                 loop
@@ -91,8 +95,8 @@ export function VideoShowcaseSection() {
             ))}
 
             {/* Text Transition */}
-            <div className={`absolute inset-0 bg-black flex items-center justify-center transition-opacity duration-1000 ${
-              showText ? 'opacity-100' : 'opacity-0'
+            <div className={`absolute inset-0 bg-black flex items-center justify-center transition-opacity duration-500 ${
+              showText ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}>
               <div className="text-center px-8">
                 <h3 className={`text-4xl md:text-6xl font-bold text-white mb-4 ${

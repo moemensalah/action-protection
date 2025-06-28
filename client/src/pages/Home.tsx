@@ -76,29 +76,31 @@ export default function Home() {
 
       {/* Categories Section */}
       <section className="py-16 bg-white dark:bg-gray-900 theme-transition relative overflow-hidden">
-        {/* Animated smoke background */}
+        {/* Animated light effects background */}
         <div className="absolute inset-0 pointer-events-none z-0">
-          {/* Base smoke gradients - more visible */}
-          <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-gray-400/50 via-gray-300/25 to-transparent dark:from-gray-600/40 dark:via-gray-500/20 dark:to-transparent"></div>
-          <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-gray-400/50 via-gray-300/25 to-transparent dark:from-gray-600/40 dark:via-gray-500/20 dark:to-transparent"></div>
+          {/* Base light gradients */}
+          <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-orange-100/20 via-amber-50/10 to-transparent dark:from-orange-900/15 dark:via-amber-800/8 dark:to-transparent"></div>
+          <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-blue-50/15 via-sky-50/8 to-transparent dark:from-blue-900/12 dark:via-sky-800/6 dark:to-transparent"></div>
           
-          {/* Animated smoke wisps - more prominent */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-64 bg-gradient-to-br from-gray-400/40 via-gray-300/20 to-transparent dark:from-gray-500/30 dark:via-gray-400/15 dark:to-transparent rounded-full blur-3xl animate-pulse"
-               style={{ animationDelay: '0s', animationDuration: '8s' }}></div>
-          <div className="absolute top-1/3 right-1/4 w-80 h-48 bg-gradient-to-bl from-gray-500/35 via-gray-400/18 to-transparent dark:from-gray-400/25 dark:via-gray-300/12 dark:to-transparent rounded-full blur-2xl animate-pulse"
-               style={{ animationDelay: '3s', animationDuration: '10s' }}></div>
-          <div className="absolute bottom-1/3 left-1/3 w-72 h-56 bg-gradient-to-tr from-gray-400/38 via-gray-300/19 to-transparent dark:from-gray-500/28 dark:via-gray-400/14 dark:to-transparent rounded-full blur-3xl animate-pulse"
-               style={{ animationDelay: '6s', animationDuration: '12s' }}></div>
-          <div className="absolute top-1/2 right-1/3 w-64 h-40 bg-gradient-to-tl from-gray-300/36 via-gray-200/18 to-transparent dark:from-gray-600/26 dark:via-gray-500/13 dark:to-transparent rounded-full blur-2xl animate-pulse"
-               style={{ animationDelay: '9s', animationDuration: '7s' }}></div>
+          {/* Floating light orbs */}
+          <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-gradient-radial from-orange-300/20 via-amber-200/10 to-transparent dark:from-orange-400/15 dark:via-amber-300/8 dark:to-transparent rounded-full blur-3xl animate-pulse"
+               style={{ animationDelay: '0s', animationDuration: '6s' }}></div>
+          <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-gradient-radial from-blue-300/18 via-sky-200/9 to-transparent dark:from-blue-400/13 dark:via-sky-300/7 dark:to-transparent rounded-full blur-2xl animate-pulse"
+               style={{ animationDelay: '2s', animationDuration: '8s' }}></div>
+          <div className="absolute bottom-1/3 left-1/3 w-72 h-72 bg-gradient-radial from-purple-200/16 via-violet-100/8 to-transparent dark:from-purple-400/12 dark:via-violet-300/6 dark:to-transparent rounded-full blur-3xl animate-pulse"
+               style={{ animationDelay: '4s', animationDuration: '10s' }}></div>
+          <div className="absolute top-1/2 right-1/3 w-56 h-56 bg-gradient-radial from-green-200/14 via-emerald-100/7 to-transparent dark:from-green-400/10 dark:via-emerald-300/5 dark:to-transparent rounded-full blur-2xl animate-pulse"
+               style={{ animationDelay: '6s', animationDuration: '7s' }}></div>
           
-          {/* Floating particles - more visible */}
-          <div className="absolute top-1/6 left-1/6 w-6 h-6 bg-gray-500/60 dark:bg-gray-400/40 rounded-full blur-sm animate-bounce"
-               style={{ animationDelay: '1s', animationDuration: '5s' }}></div>
-          <div className="absolute top-2/3 right-1/5 w-5 h-5 bg-gray-400/55 dark:bg-gray-500/35 rounded-full blur-sm animate-bounce"
-               style={{ animationDelay: '4s', animationDuration: '6s' }}></div>
-          <div className="absolute bottom-1/4 left-2/3 w-7 h-7 bg-gray-300/50 dark:bg-gray-600/30 rounded-full blur-sm animate-bounce"
-               style={{ animationDelay: '7s', animationDuration: '8s' }}></div>
+          {/* Twinkling light spots */}
+          <div className="absolute top-1/6 left-1/6 w-4 h-4 bg-yellow-300/80 dark:bg-yellow-400/60 rounded-full blur-sm animate-ping"
+               style={{ animationDelay: '1s', animationDuration: '3s' }}></div>
+          <div className="absolute top-2/3 right-1/5 w-3 h-3 bg-blue-400/70 dark:bg-blue-300/50 rounded-full blur-sm animate-ping"
+               style={{ animationDelay: '3s', animationDuration: '4s' }}></div>
+          <div className="absolute bottom-1/4 left-2/3 w-5 h-5 bg-orange-400/75 dark:bg-orange-300/55 rounded-full blur-sm animate-ping"
+               style={{ animationDelay: '5s', animationDuration: '5s' }}></div>
+          <div className="absolute top-3/4 right-2/3 w-2 h-2 bg-purple-400/65 dark:bg-purple-300/45 rounded-full blur-sm animate-ping"
+               style={{ animationDelay: '7s', animationDuration: '6s' }}></div>
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

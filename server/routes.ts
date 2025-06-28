@@ -99,17 +99,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Local authentication routes
   app.post('/api/auth/local/login', async (req, res) => {
     try {
-      const { username, password } = req.body;
+      const { email, password } = req.body;
       
-      if (!username || !password) {
-        return res.status(400).json({ message: "Username and password are required" });
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
       }
 
-      // Find user by username or email
-      let user = await storage.getUserByUsername(username);
-      if (!user) {
-        user = await storage.getUserByEmail(username);
-      }
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
 
       if (!user || !user.isActive) {
         return res.status(401).json({ message: "Invalid credentials" });

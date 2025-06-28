@@ -32,6 +32,19 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 
 ## Recent Changes
 
+### 2025-06-28: About Us & Contact Us Content + Background Animations
+- ✓ Updated About Us page with comprehensive Action Protection automotive content
+- ✓ Replaced About Us hero image with luxury car showroom background
+- ✓ Updated Contact Us page with vehicle protection service descriptions
+- ✓ Replaced Contact Us hero image with automotive workshop background
+- ✓ Modified production seeder with Action Protection company information
+- ✓ Added automotive-focused features section (Advanced Protection, Certified Excellence, Customer Focused, Timely Service)
+- ✓ Updated mission statement to reflect vehicle protection services
+- ✓ Fixed client reviews auto-scroll functionality that was stopping
+- ✓ Implemented categories section background animations (gradient waves)
+- ✓ Reduced hero section overlays from 30% to 10% opacity for better image clarity
+- ✓ Enhanced image quality by minimizing background overlays affecting car photography
+
 ### 2025-06-27: Complete Transformation to Action Protection + Kuwaiti Localization
 - ✓ Transformed LateLounge Cafe into Action Protection car protection company
 - ✓ Updated company branding and logo to Action Protection with automotive theme

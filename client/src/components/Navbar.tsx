@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageToggle } from "@/components/ui/language-toggle";
+import { CartDropdown } from "@/components/CartDropdown";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useTheme } from "@/components/ThemeProvider";
 export function Navbar() {
@@ -61,6 +62,7 @@ export function Navbar() {
 
           {/* Language & Theme Controls */}
           <div className="flex items-center space-x-4 rtl:space-x-reverse">
+            <CartDropdown />
             <LanguageToggle />
             <ThemeToggle />
 

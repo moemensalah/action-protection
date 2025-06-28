@@ -105,6 +105,7 @@ export const translations = {
     placeOrder: "Place Order",
     orderPlaced: "Order Placed Successfully",
     orderNumber: "Order Number",
+    kwd: "KWD",
   },
   ar: {
     // Navigation
@@ -212,6 +213,7 @@ export const translations = {
     placeOrder: "تأكيد الطلب",
     orderPlaced: "تم تأكيد الطلب بنجاح",
     orderNumber: "رقم الطلب",
+    kwd: "د.ك",
   },
 };
 

@@ -84,8 +84,8 @@ export function CartDropdown() {
                 <div key={item.id} className="p-4 border-b dark:border-gray-700 last:border-b-0">
                   <div className="flex items-start gap-3">
                     <img
-                      src={item.product.image}
-                      alt={isRTL ? item.product.nameAr : item.product.nameEn}
+                      src={item.product.image || "/api/placeholder/80/80"}
+                      alt={isRTL ? item.product.nameAr || "" : item.product.nameEn || ""}
                       className="w-12 h-12 object-cover rounded-lg"
                     />
                     <div className="flex-1 min-w-0">

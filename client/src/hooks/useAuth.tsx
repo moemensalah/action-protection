@@ -1,5 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { User } from "@shared/schema";
+
+interface User {
+  id: string;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  profileImageUrl: string | null;
+}
 
 export function useAuth() {
   const { data: user, isLoading } = useQuery<User>({

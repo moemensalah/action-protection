@@ -1,8 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Eye } from "lucide-react";
+import { Eye, ShoppingCart, Plus } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useCart } from "@/hooks/useCart";
+import { useToast } from "@/hooks/use-toast";
 import { getImageUrl } from "@/lib/utils";
 import { getDefaultProductImage } from "@/lib/defaultImages";
 
@@ -10,14 +12,18 @@ interface Product {
   id: number;
   nameEn: string;
   nameAr: string;
-  descriptionEn: string;
-  descriptionAr: string;
+  descriptionEn: string | null;
+  descriptionAr: string | null;
   price: string;
   categoryId: number;
-  image: string;
-  isActive: boolean;
-  isFeatured: boolean;
-  isAvailable: boolean;
+  image: string | null;
+  isActive: boolean | null;
+  isFeatured: boolean | null;
+  isAvailable: boolean | null;
+  sortOrder: number | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  stock: number | null;
 }
 
 interface ProductCardProps {
@@ -27,6 +33,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onViewDetails }: ProductCardProps) {
   const { language, t } = useLanguage();
+  const { addToCart } = useCart();
+  const { toast } = useToast();
 
   // Get image URL - use default if no image is set
   const getProductImageUrl = () => {
@@ -34,6 +42,16 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
       return getImageUrl(product.image);
     }
     return getDefaultProductImage(product.categoryId, product.nameEn);
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the card click
+    addToCart(product, 1);
+    toast({
+      title: t("addToCart"),
+      description: `${language === "ar" ? product.nameAr : product.nameEn} ${t("addToCart")}`,
+      duration: 2000,
+    });
   };
 
   return (
@@ -65,19 +83,30 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
           {language === "ar" ? product.descriptionAr : product.descriptionEn}
         </p>
         
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <span className="text-2xl font-bold text-primary">
-            {product.price} {t("sar")}
+            {product.price} {t("kwd")}
           </span>
           
           <Button
             onClick={() => onViewDetails?.(product)}
-            className="gap-2 bg-primary hover:bg-primary/90"
+            variant="outline"
+            size="sm"
+            className="gap-2"
           >
             <Eye className="h-4 w-4" />
             {t("viewDetails")}
           </Button>
         </div>
+        
+        <Button
+          onClick={handleAddToCart}
+          className="w-full gap-2 bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
+          disabled={!product.isAvailable}
+        >
+          <ShoppingCart className="h-4 w-4" />
+          {product.isAvailable ? t("addToCart") : "غير متوفر"}
+        </Button>
       </CardContent>
     </Card>
   );

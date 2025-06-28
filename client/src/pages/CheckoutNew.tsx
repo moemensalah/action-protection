@@ -14,7 +14,8 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useLocation } from "wouter";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/hooks/useAuth";
-import { Minus, Plus, Trash2, ShoppingBag, User, MapPin, CreditCard, Check, ArrowRight, ArrowLeft } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, User, MapPin, CreditCard, Check, ArrowRight, ArrowLeft, LogIn, UserPlus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -38,6 +39,8 @@ export default function CheckoutNew() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
 
   const form = useForm<CheckoutForm>({
     resolver: zodResolver(checkoutSchema),
@@ -302,6 +305,70 @@ export default function CheckoutNew() {
                   {isRTL ? "أدخل معلوماتك الشخصية ومعلومات التسليم" : "Enter your personal and delivery information"}
                 </CardDescription>
               </CardHeader>
+              
+              {/* Authentication Options */}
+              {!user && (
+                <CardContent className="border-b pb-6 mb-6">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold mb-2">
+                      {isRTL ? "لديك حساب؟" : "Have an account?"}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      {isRTL ? "قم بتسجيل الدخول لحفظ معلوماتك وتتبع طلباتك" : "Sign in to save your information and track your orders"}
+                    </p>
+                    <div className="flex gap-3 justify-center">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setAuthMode('login');
+                          setShowAuthDialog(true);
+                        }}
+                        className="flex items-center gap-2"
+                      >
+                        <LogIn className="h-4 w-4" />
+                        {isRTL ? "تسجيل الدخول" : "Sign In"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setAuthMode('register');
+                          setShowAuthDialog(true);
+                        }}
+                        className="flex items-center gap-2"
+                      >
+                        <UserPlus className="h-4 w-4" />
+                        {isRTL ? "إنشاء حساب" : "Create Account"}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-3">
+                      {isRTL ? "أو تابع كضيف" : "Or continue as guest"}
+                    </p>
+                  </div>
+                </CardContent>
+              )}
+              
+              {user && (
+                <CardContent className="border-b pb-6 mb-6">
+                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center">
+                        <User className="h-5 w-5 text-green-600 dark:text-green-400" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-green-800 dark:text-green-200">
+                          {isRTL ? "مرحباً" : "Welcome"}, {(user as any)?.firstName || 'User'}
+                        </p>
+                        <p className="text-sm text-green-600 dark:text-green-400">
+                          {isRTL ? "ستتمكن من تتبع طلبك في صفحة طلباتي" : "You'll be able to track your order in My Orders"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              )}
+              
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -498,6 +565,62 @@ export default function CheckoutNew() {
           )}
         </div>
       </div>
+
+      {/* Authentication Dialog */}
+      <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {authMode === 'login' 
+                ? (isRTL ? "تسجيل الدخول" : "Sign In") 
+                : (isRTL ? "إنشاء حساب جديد" : "Create New Account")
+              }
+            </DialogTitle>
+            <DialogDescription>
+              {authMode === 'login' 
+                ? (isRTL ? "ادخل بياناتك لتسجيل الدخول" : "Enter your credentials to sign in")
+                : (isRTL ? "أنشئ حساباً جديداً لحفظ معلوماتك" : "Create a new account to save your information")
+              }
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="text-center">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                {isRTL ? "يمكنك تسجيل الدخول أو إنشاء حساب بسرعة" : "You can quickly sign in or create an account"}
+              </p>
+              <div className="space-y-3">
+                <Button
+                  type="button"
+                  className="w-full"
+                  onClick={() => {
+                    setLocation('/login');
+                    setShowAuthDialog(false);
+                  }}
+                >
+                  <LogIn className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
+                  {isRTL ? "الذهاب لصفحة تسجيل الدخول" : "Go to Login Page"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    setLocation('/register');
+                    setShowAuthDialog(false);
+                  }}
+                >
+                  <UserPlus className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
+                  {isRTL ? "الذهاب لصفحة إنشاء حساب" : "Go to Register Page"}
+                </Button>
+              </div>
+              <p className="text-xs text-gray-500 mt-4">
+                {isRTL ? "ستعود تلقائياً إلى صفحة الطلب بعد تسجيل الدخول" : "You'll automatically return to checkout after signing in"}
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

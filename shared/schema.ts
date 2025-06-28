@@ -43,6 +43,22 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// User Addresses table
+export const userAddresses = pgTable("user_addresses", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  userId: varchar("user_id").notNull(),
+  title: varchar("title", { length: 100 }).notNull(), // Home, Work, etc.
+  firstName: varchar("first_name").notNull(),
+  lastName: varchar("last_name").notNull(),
+  phone: varchar("phone").notNull(),
+  address: text("address").notNull(),
+  city: varchar("city").notNull(),
+  area: varchar("area").notNull(),
+  isDefault: boolean("is_default").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Categories table
 export const categories = pgTable("categories", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
@@ -251,9 +267,17 @@ export const productsRelations = relations(products, ({ one, many }) => ({
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({
-  addresses: many(customerAddresses),
+  addresses: many(userAddresses),
+  customerAddresses: many(customerAddresses),
   cartItems: many(cartItems),
   orders: many(orders),
+}));
+
+export const userAddressesRelations = relations(userAddresses, ({ one }) => ({
+  user: one(users, {
+    fields: [userAddresses.userId],
+    references: [users.id],
+  }),
 }));
 
 export const customerAddressesRelations = relations(customerAddresses, ({ one }) => ({

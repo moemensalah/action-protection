@@ -9,9 +9,11 @@ export function LogoSection() {
   const { theme } = useTheme();
   const [, setLocation] = useLocation();
 
-  // Use transparent logo that works on all backgrounds
+  // Select the appropriate logo based on theme
   const getLogo = () => {
-    return "/assets/action-protection-logo-transparent.png?v=" + Date.now();
+    return theme === 'dark' 
+      ? "/assets/action-protection-logo-white.png?v=" + Date.now()
+      : "/assets/action-protection-logo-dark.png?v=" + Date.now();
   };
 
   // Typing slogans with multiple words

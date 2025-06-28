@@ -40,16 +40,16 @@ export default function MyOrders() {
   const { user, isLoading: authLoading } = useAuth();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  // Redirect if not logged in
-  if (!authLoading && !user) {
-    setLocation("/login");
-    return null;
-  }
-
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["/api/my-orders"],
     enabled: !!user,
   }) as { data: Order[], isLoading: boolean };
+
+  // Redirect if not logged in - moved after all hooks
+  if (!authLoading && !user) {
+    setLocation("/login");
+    return null;
+  }
 
   const getStatusIcon = (status: string) => {
     switch (status) {

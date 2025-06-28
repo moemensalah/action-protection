@@ -143,10 +143,11 @@ export default function Login() {
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   {isRTL ? "ليس لديك حساب؟" : "Don't have an account?"}{" "}
-                  <Link href="/register">
-                    <a className="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 font-medium">
-                      {isRTL ? "إنشاء حساب جديد" : "Create Account"}
-                    </a>
+                  <Link 
+                    href="/register"
+                    className="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 font-medium"
+                  >
+                    {isRTL ? "إنشاء حساب جديد" : "Create Account"}
                   </Link>
                 </p>
               </div>

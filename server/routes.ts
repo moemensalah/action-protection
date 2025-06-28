@@ -874,6 +874,158 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Local authentication routes
+  app.post('/api/auth/local/register', async (req, res) => {
+    try {
+      const { firstName, lastName, email, password } = req.body;
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+
+      // Create new user
+      const newUser = await storage.createLocalUser({
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+
+      // Set up session
+      req.session.userId = newUser.id;
+      res.json({ user: { id: newUser.id, firstName, lastName, email } });
+    } catch (error) {
+      console.error("Registration error:", error);
+      res.status(500).json({ message: "Registration failed" });
+    }
+  });
+
+  app.post('/api/auth/local/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const isValid = await storage.validatePassword(user, password);
+      if (!isValid) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      // Set up session
+      req.session.userId = user.id;
+      res.json({ user: { id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email } });
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  app.post('/api/auth/local/logout', (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Logout failed" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
+  app.get('/api/auth/local/user', async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      res.json({ id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email });
+    } catch (error) {
+      console.error("User fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Order management routes
+  app.post('/api/orders', async (req, res) => {
+    try {
+      const { firstName, lastName, email, phone, address, city, area, notes, items, total, userId } = req.body;
+      
+      // Generate order number
+      const orderNumber = `AP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Create order
+      const orderData = {
+        userId: userId || req.session.userId || 'guest',
+        orderNumber,
+        customerName: `${firstName} ${lastName}`,
+        customerPhone: phone,
+        customerEmail: email,
+        deliveryAddress: `${address}, ${area}, ${city}`,
+        totalAmount: total.toString(),
+        status: 'pending' as const,
+        paymentMethod: 'cash' as const,
+        paymentStatus: 'pending' as const,
+        notes: notes || null,
+      };
+
+      const newOrder = await storage.createOrder(orderData);
+
+      // Create order items
+      for (const item of items) {
+        await storage.createOrderItem({
+          orderId: newOrder.id,
+          productId: item.product.id,
+          productName: item.product.nameEn,
+          productPrice: item.product.price,
+          quantity: item.quantity,
+          subtotal: (parseFloat(item.product.price) * item.quantity).toString(),
+        });
+      }
+
+      res.json({ orderNumber, orderId: newOrder.id });
+    } catch (error) {
+      console.error("Order creation error:", error);
+      res.status(500).json({ message: "Failed to create order" });
+    }
+  });
+
+  app.get('/api/my-orders', async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const orders = await storage.getUserOrders(req.session.userId);
+      res.json(orders);
+    } catch (error) {
+      console.error("Error fetching user orders:", error);
+      res.status(500).json({ message: "Failed to fetch orders" });
+    }
+  });
+
+  app.get('/api/orders/:orderNumber', async (req, res) => {
+    try {
+      const { orderNumber } = req.params;
+      const order = await storage.getOrderByNumber(orderNumber);
+      
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      res.json(order);
+    } catch (error) {
+      console.error("Error fetching order:", error);
+      res.status(500).json({ message: "Failed to fetch order" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

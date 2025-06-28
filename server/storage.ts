@@ -102,6 +102,12 @@ export interface IStorage {
   // SMTP Settings
   getSmtpSettings(): Promise<SmtpSettings | undefined>;
   createOrUpdateSmtpSettings(settingsData: InsertSmtpSettings): Promise<SmtpSettings>;
+  
+  // Order Management
+  createOrder(orderData: InsertOrder): Promise<Order>;
+  createOrderItem(orderItemData: InsertOrderItem): Promise<OrderItem>;
+  getUserOrders(userId: string): Promise<Order[]>;
+  getOrderByNumber(orderNumber: string): Promise<Order | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -609,9 +615,59 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getSmtpSettings(): Promise<SmtpSettings | undefined> {
-    const [settings] = await db.select().from(smtpSettings).limit(1);
-    return settings;
+  // Order Management
+  async createOrder(orderData: InsertOrder): Promise<Order> {
+    const [order] = await db
+      .insert(orders)
+      .values(orderData)
+      .returning();
+    return order;
+  }
+
+  async createOrderItem(orderItemData: InsertOrderItem): Promise<OrderItem> {
+    const [orderItem] = await db
+      .insert(orderItems)
+      .values(orderItemData)
+      .returning();
+    return orderItem;
+  }
+
+  async getUserOrders(userId: string): Promise<Order[]> {
+    const userOrders = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.userId, userId))
+      .orderBy(desc(orders.createdAt));
+
+    // Get order items for each order
+    const ordersWithItems = await Promise.all(
+      userOrders.map(async (order) => {
+        const items = await db
+          .select()
+          .from(orderItems)
+          .where(eq(orderItems.orderId, order.id));
+        return { ...order, items };
+      })
+    );
+
+    return ordersWithItems;
+  }
+
+  async getOrderByNumber(orderNumber: string): Promise<Order | undefined> {
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.orderNumber, orderNumber));
+
+    if (!order) return undefined;
+
+    // Get order items
+    const items = await db
+      .select()
+      .from(orderItems)
+      .where(eq(orderItems.orderId, order.id));
+
+    return { ...order, items };
   }
 }
 

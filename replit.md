@@ -32,7 +32,7 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 
 ## Recent Changes
 
-### 2025-06-28: Complete Order Management System + User Authentication
+### 2025-06-28: Complete Order Management System + User Authentication + Address Management
 - ✓ Implemented comprehensive user registration and login system with local authentication
 - ✓ Added secure password hashing with bcrypt and session-based authentication
 - ✓ Created order tracking system with complete order history and status management
@@ -45,6 +45,13 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Integrated user authentication with checkout process for logged-in users
 - ✓ Added logout functionality and proper session management throughout the system
 - ✓ Created order completion redirect flow from checkout to dedicated completion page
+- ✓ Implemented comprehensive address management system with CRUD operations
+- ✓ Added user addresses page (My Addresses) with create, edit, delete, and set default functionality
+- ✓ Created address management API endpoints with proper authentication and validation
+- ✓ Added login/register options during checkout process with authentication dialog
+- ✓ Built address selection and management features for logged-in users during checkout
+- ✓ Implemented default address functionality with automatic selection for returning users
+- ✓ Added proper database schema for user addresses with relations and constraints
 
 ### 2025-06-28: Checkout Page Redesign + Navigation Updates & Product Images
 - ✓ Redesigned checkout page with professional 3-step layout (Review Order, Customer Info, Payment & Confirm)

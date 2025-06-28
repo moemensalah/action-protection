@@ -16,6 +16,7 @@ import Checkout from "@/pages/CheckoutNew";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import MyOrders from "@/pages/MyOrders";
+import MyAddresses from "@/pages/MyAddresses";
 import OrderComplete from "@/pages/OrderComplete";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
@@ -33,6 +34,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/my-orders" component={MyOrders} />
+      <Route path="/my-addresses" component={MyAddresses} />
       <Route path="/order-complete" component={OrderComplete} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/terms-of-service" component={TermsOfService} />

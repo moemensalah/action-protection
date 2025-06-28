@@ -43,7 +43,7 @@ export function CartDropdown() {
       
       <DropdownMenuContent 
         align={isRTL ? "start" : "end"} 
-        className="w-80 p-0 max-h-96 overflow-hidden"
+        className="w-80 p-0 max-h-[500px] overflow-hidden flex flex-col"
       >
         <div className="p-4 border-b dark:border-gray-700">
           <div className="flex items-center justify-between">
@@ -79,7 +79,7 @@ export function CartDropdown() {
           </div>
         ) : (
           <>
-            <div className="max-h-64 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto max-h-64">
               {state.items.map((item) => (
                 <div key={item.id} className="p-4 border-b dark:border-gray-700 last:border-b-0">
                   <div className="flex items-start gap-3">
@@ -93,7 +93,7 @@ export function CartDropdown() {
                         {isRTL ? item.product.nameAr : item.product.nameEn}
                       </h4>
                       <p className="text-sm text-amber-600 dark:text-amber-400 font-medium">
-                        {item.product.price} {t("sar")}
+                        {item.product.price} {t("kwd")}
                       </p>
                       
                       <div className="flex items-center justify-between mt-2">
@@ -134,13 +134,13 @@ export function CartDropdown() {
               ))}
             </div>
             
-            <div className="p-4 bg-gray-50 dark:bg-gray-800">
-              <div className="flex items-center justify-between mb-4">
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
+              <div className={`flex items-center justify-between mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <span className="font-semibold text-gray-900 dark:text-white">
                   {t("total")}:
                 </span>
                 <span className="font-bold text-lg text-amber-600 dark:text-amber-400">
-                  {state.total.toFixed(2)} {t("sar")}
+                  {state.total.toFixed(2)} {t("kwd")}
                 </span>
               </div>
               

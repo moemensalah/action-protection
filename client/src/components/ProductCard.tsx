@@ -102,10 +102,10 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
         <Button
           onClick={handleAddToCart}
           className="w-full gap-2 bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
-          disabled={!product.isAvailable}
+          disabled={!product.isAvailable || (product.stock !== null && product.stock <= 0)}
         >
           <ShoppingCart className="h-4 w-4" />
-          {product.isAvailable ? t("addToCart") : "غير متوفر"}
+          {product.isAvailable && (product.stock === null || product.stock > 0) ? t("addToCart") : "غير متوفر"}
         </Button>
       </CardContent>
     </Card>

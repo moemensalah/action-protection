@@ -159,8 +159,17 @@ export default function Contact() {
       </section>
 
       {/* Main Content */}
-      <section className="py-16 bg-white dark:bg-gray-900 theme-transition">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-16 bg-white dark:bg-gray-900 theme-transition overflow-hidden">
+        {/* Animated background elements with different positioning */}
+        <div className="absolute inset-0 opacity-5 dark:opacity-10">
+          <div className="absolute top-32 right-16 w-28 h-28 bg-green-500 rounded-full animate-float-2"></div>
+          <div className="absolute top-60 left-24 w-36 h-36 bg-blue-500 rounded-full animate-float-1"></div>
+          <div className="absolute bottom-32 right-1/3 w-22 h-22 bg-purple-500 rounded-full animate-float-3"></div>
+          <div className="absolute bottom-60 left-1/4 w-18 h-18 bg-green-400 rounded-full animate-float-2"></div>
+          <div className="absolute top-1/2 left-1/2 w-14 h-14 bg-blue-400 rounded-full animate-float-1"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Contact Info */}
             <div className="lg:col-span-1">

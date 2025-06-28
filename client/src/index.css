@@ -285,6 +285,7 @@
   .theme-transition {
     transition: all 0.3s ease-in-out;
   }
+}
   
   /* Custom scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
@@ -449,10 +450,24 @@
     animation-delay: 0.3s;
     opacity: 0;
   }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--foreground));
-  }
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground));
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--foreground));
+}
 
 @layer components {
   /* Category card hover effects */

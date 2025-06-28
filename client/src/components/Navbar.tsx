@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Coffee, Search, Menu, X } from "lucide-react";
+import { Coffee, Search, Menu, X, User, Package, MapPin, LogOut, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -8,11 +8,29 @@ import { LanguageToggle } from "@/components/ui/language-toggle";
 import { CartDropdown } from "@/components/CartDropdown";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useTheme } from "@/components/ThemeProvider";
+import { useAuth } from "@/hooks/useAuth";
+
+interface User {
+  id: string;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  profileImageUrl: string | null;
+}
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { t, isRTL } = useLanguage();
   const { theme } = useTheme();
+  const { user, isLoading } = useAuth();
+  const typedUser = user as User | undefined;
   const [location] = useLocation();
 
   const getLogoSrc = () => {
@@ -63,6 +81,68 @@ export function Navbar() {
           {/* Language & Theme Controls */}
           <div className="flex items-center space-x-4 rtl:space-x-reverse">
             <CartDropdown />
+            
+            {/* User Authentication */}
+            {!isLoading && (
+              user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      <span className="hidden sm:inline">
+                        {user.firstName || (isRTL ? "حسابي" : "My Account")}
+                      </span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align={isRTL ? "start" : "end"} className="w-56">
+                    <div className="px-2 py-1.5 text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.username}
+                    </div>
+                    <div className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
+                      {user.email}
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/my-orders" className="flex items-center gap-2 w-full">
+                        <Package className="h-4 w-4" />
+                        {isRTL ? "طلباتي" : "My Orders"}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/my-addresses" className="flex items-center gap-2 w-full">
+                        <MapPin className="h-4 w-4" />
+                        {isRTL ? "عناويني" : "My Addresses"}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={() => window.location.href = '/api/logout'}
+                      className="flex items-center gap-2 text-red-600 dark:text-red-400"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      {isRTL ? "تسجيل الخروج" : "Logout"}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href="/login" className="flex items-center gap-2">
+                      <LogIn className="h-4 w-4" />
+                      <span className="hidden sm:inline">
+                        {isRTL ? "تسجيل الدخول" : "Login"}
+                      </span>
+                    </Link>
+                  </Button>
+                  <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
+                    <Link href="/register">
+                      {isRTL ? "إنشاء حساب" : "Sign Up"}
+                    </Link>
+                  </Button>
+                </div>
+              )
+            )}
+            
             <LanguageToggle />
             <ThemeToggle />
 
@@ -101,6 +181,66 @@ export function Navbar() {
                 </Link>
               ))}
               
+              {/* Mobile Authentication */}
+              <div className="border-t border-gray-200 dark:border-gray-800 pt-4 mt-4">
+                {!isLoading && (
+                  user ? (
+                    <div className="flex flex-col space-y-3">
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.username}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {user.email}
+                      </div>
+                      <Link
+                        href="/my-orders"
+                        className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Package className="h-4 w-4" />
+                        {isRTL ? "طلباتي" : "My Orders"}
+                      </Link>
+                      <Link
+                        href="/my-addresses"
+                        className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <MapPin className="h-4 w-4" />
+                        {isRTL ? "عناويني" : "My Addresses"}
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          window.location.href = '/api/logout';
+                        }}
+                        className="flex items-center gap-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium transition-colors text-left"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        {isRTL ? "تسجيل الخروج" : "Logout"}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col space-y-3">
+                      <Link
+                        href="/login"
+                        className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <LogIn className="h-4 w-4" />
+                        {isRTL ? "تسجيل الدخول" : "Login"}
+                      </Link>
+                      <Link
+                        href="/register"
+                        className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <User className="h-4 w-4" />
+                        {isRTL ? "إنشاء حساب" : "Sign Up"}
+                      </Link>
+                    </div>
+                  )
+                )}
+              </div>
 
             </div>
           </div>

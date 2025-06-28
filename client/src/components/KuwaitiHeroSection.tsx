@@ -101,6 +101,20 @@ export function KuwaitiHeroSection() {
         
         {/* Light gradient overlay for text contrast */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent"></div>
+        
+        {/* Smoke effects at top and bottom only */}
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-gray-900/40 via-gray-800/20 to-transparent pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-gray-900/40 via-gray-800/20 to-transparent pointer-events-none"></div>
+        
+        {/* Animated smoke wisps at edges */}
+        <div className="absolute top-0 left-0 w-64 h-24 bg-gradient-to-br from-white/8 via-white/4 to-transparent rounded-full blur-3xl animate-pulse opacity-60 pointer-events-none"
+             style={{ animationDelay: '0s', animationDuration: '6s' }}></div>
+        <div className="absolute top-0 right-0 w-48 h-20 bg-gradient-to-bl from-white/6 via-white/3 to-transparent rounded-full blur-2xl animate-pulse opacity-70 pointer-events-none"
+             style={{ animationDelay: '2s', animationDuration: '8s' }}></div>
+        <div className="absolute bottom-0 left-1/4 w-56 h-28 bg-gradient-to-tr from-white/7 via-white/3 to-transparent rounded-full blur-3xl animate-pulse opacity-50 pointer-events-none"
+             style={{ animationDelay: '4s', animationDuration: '10s' }}></div>
+        <div className="absolute bottom-0 right-1/3 w-40 h-24 bg-gradient-to-tl from-white/5 via-white/2 to-transparent rounded-full blur-2xl animate-pulse opacity-60 pointer-events-none"
+             style={{ animationDelay: '6s', animationDuration: '7s' }}></div>
       </div>
 
       {/* Typing Text Overlay - Positioned Absolutely on Left */}

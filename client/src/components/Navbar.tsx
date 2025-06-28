@@ -35,6 +35,7 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
             <img 
+              key={theme} 
               src={getLogoSrc()} 
               alt={isRTL ? "أكشن بروتكشن" : "Action Protection"}
               className="h-12 w-auto object-contain logo-bounce"

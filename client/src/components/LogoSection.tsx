@@ -130,6 +130,7 @@ export function LogoSection() {
       <div className="container mx-auto px-4 text-center relative z-10">
         <div className="animate-bounce-slow mb-8">
           <img 
+            key={theme}
             src={getLogo()}
             alt={isRTL ? "أكشن بروتكشن" : "Action Protection"}
             className="h-32 md:h-48 lg:h-56 mx-auto object-contain filter drop-shadow-2xl"

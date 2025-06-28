@@ -49,10 +49,12 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
     addToCart(product, 1);
     toast({
       title: t("addToCart"),
-      description: `${language === "ar" ? product.nameAr : product.nameEn} ${t("addToCart")}`,
+      description: `${language === "ar" ? product.nameAr : product.nameEn} added to cart`,
       duration: 2000,
     });
   };
+
+
 
   return (
     <Card className="product-card group overflow-hidden shadow-lg hover:shadow-xl">
@@ -105,7 +107,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
           disabled={!product.isAvailable || (product.stock !== null && product.stock <= 0)}
         >
           <ShoppingCart className="h-4 w-4" />
-          {product.isAvailable && (product.stock === null || product.stock > 0) ? t("addToCart") : "غير متوفر"}
+          {product.isAvailable && (product.stock === null || product.stock > 0) ? t("addToCart") : (language === "ar" ? "غير متوفر" : "Out of Stock")}
         </Button>
       </CardContent>
     </Card>

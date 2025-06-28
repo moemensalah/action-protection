@@ -283,6 +283,9 @@ export class DatabaseStorage implements IStorage {
         categoryId: products.categoryId,
         sortOrder: products.sortOrder,
         isActive: products.isActive,
+        isFeatured: products.isFeatured,
+        isAvailable: products.isAvailable,
+        stock: products.stock,
         createdAt: products.createdAt,
         updatedAt: products.updatedAt,
         categoryName: categories.nameEn,
@@ -312,7 +315,23 @@ export class DatabaseStorage implements IStorage {
   async getProductsByCategory(categoryId: number): Promise<Product[]> {
     // Only return valid products for public website
     return await db
-      .select()
+      .select({
+        id: products.id,
+        nameEn: products.nameEn,
+        nameAr: products.nameAr,
+        descriptionEn: products.descriptionEn,
+        descriptionAr: products.descriptionAr,
+        price: products.price,
+        image: products.image,
+        categoryId: products.categoryId,
+        sortOrder: products.sortOrder,
+        isActive: products.isActive,
+        isFeatured: products.isFeatured,
+        isAvailable: products.isAvailable,
+        stock: products.stock,
+        createdAt: products.createdAt,
+        updatedAt: products.updatedAt
+      })
       .from(products)
       .where(
         and(

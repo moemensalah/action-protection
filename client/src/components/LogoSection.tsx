@@ -12,8 +12,8 @@ export function LogoSection() {
   // Select the appropriate logo based on theme
   const getLogo = () => {
     return theme === 'dark' 
-      ? "/assets/action-protection-logo-white.png?v=" + Date.now()
-      : "/assets/action-protection-logo-dark.png?v=" + Date.now();
+      ? "/assets/action-protection-logo-dark.png?v=" + Date.now()
+      : "/assets/action-protection-logo-white.png?v=" + Date.now();
   };
 
   // Typing slogans with multiple words

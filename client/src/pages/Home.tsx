@@ -75,8 +75,33 @@ export default function Home() {
       <KuwaitiHeroSection />
 
       {/* Categories Section */}
-      <section className="py-16 bg-white dark:bg-gray-900 theme-transition">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 bg-white dark:bg-gray-900 theme-transition relative overflow-hidden">
+        {/* Animated smoke background */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Base smoke gradients */}
+          <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-gray-200/30 via-gray-300/10 to-transparent dark:from-gray-700/20 dark:via-gray-600/5 dark:to-transparent"></div>
+          <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-gray-200/30 via-gray-300/10 to-transparent dark:from-gray-700/20 dark:via-gray-600/5 dark:to-transparent"></div>
+          
+          {/* Animated smoke wisps */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-64 bg-gradient-to-br from-gray-300/20 via-gray-200/10 to-transparent dark:from-gray-600/15 dark:via-gray-500/8 dark:to-transparent rounded-full blur-3xl animate-pulse opacity-60"
+               style={{ animationDelay: '0s', animationDuration: '8s' }}></div>
+          <div className="absolute top-1/3 right-1/4 w-80 h-48 bg-gradient-to-bl from-gray-400/15 via-gray-300/8 to-transparent dark:from-gray-500/12 dark:via-gray-400/6 dark:to-transparent rounded-full blur-2xl animate-pulse opacity-70"
+               style={{ animationDelay: '3s', animationDuration: '10s' }}></div>
+          <div className="absolute bottom-1/3 left-1/3 w-72 h-56 bg-gradient-to-tr from-gray-300/18 via-gray-200/9 to-transparent dark:from-gray-600/13 dark:via-gray-500/7 dark:to-transparent rounded-full blur-3xl animate-pulse opacity-50"
+               style={{ animationDelay: '6s', animationDuration: '12s' }}></div>
+          <div className="absolute top-1/2 right-1/3 w-64 h-40 bg-gradient-to-tl from-gray-200/16 via-gray-100/8 to-transparent dark:from-gray-700/11 dark:via-gray-600/5 dark:to-transparent rounded-full blur-2xl animate-pulse opacity-60"
+               style={{ animationDelay: '9s', animationDuration: '7s' }}></div>
+          
+          {/* Floating particles */}
+          <div className="absolute top-1/6 left-1/6 w-4 h-4 bg-gray-400/30 dark:bg-gray-500/20 rounded-full blur-sm animate-bounce opacity-40"
+               style={{ animationDelay: '1s', animationDuration: '5s' }}></div>
+          <div className="absolute top-2/3 right-1/5 w-3 h-3 bg-gray-300/25 dark:bg-gray-600/15 rounded-full blur-sm animate-bounce opacity-50"
+               style={{ animationDelay: '4s', animationDuration: '6s' }}></div>
+          <div className="absolute bottom-1/4 left-2/3 w-5 h-5 bg-gray-200/20 dark:bg-gray-700/12 rounded-full blur-sm animate-bounce opacity-35"
+               style={{ animationDelay: '7s', animationDuration: '8s' }}></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-foreground mb-4">
               {t("ourCategories")}

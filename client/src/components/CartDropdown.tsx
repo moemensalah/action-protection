@@ -135,13 +135,26 @@ export function CartDropdown() {
             </div>
             
             <div className="p-4 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
-              <div className={`flex items-center justify-between mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <span className="font-semibold text-gray-900 dark:text-white">
-                  {t("total")}:
-                </span>
-                <span className="font-bold text-lg text-amber-600 dark:text-amber-400">
-                  {state.total.toFixed(2)} {t("kwd")}
-                </span>
+              <div className="flex items-center justify-between mb-4">
+                {isRTL ? (
+                  <>
+                    <span className="font-bold text-lg text-amber-600 dark:text-amber-400">
+                      {state.total.toFixed(2)} {t("kwd")}
+                    </span>
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      :{t("total")}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      {t("total")}:
+                    </span>
+                    <span className="font-bold text-lg text-amber-600 dark:text-amber-400">
+                      {state.total.toFixed(2)} {t("kwd")}
+                    </span>
+                  </>
+                )}
               </div>
               
               <Button 

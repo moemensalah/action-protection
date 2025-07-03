@@ -171,6 +171,14 @@ export default function CheckoutNew() {
 
   // Watch form values to trigger re-render when validation state changes
   const watchedValues = form.watch();
+  
+  // Debug form value changes
+  useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => {
+      console.log("Form field changed:", { name, type, value: value?.[name as any] });
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   const onSubmit = async (data: CheckoutForm) => {
     console.log("Form submission started");

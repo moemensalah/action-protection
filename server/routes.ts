@@ -1106,13 +1106,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/admin/hero-section', async (req, res) => {
+  app.put('/api/admin/hero-section', requireAdmin, async (req, res) => {
     try {
-      console.log("Content-Type:", req.headers['content-type']);
-      console.log("Raw Body:", req.body);
-      console.log("Hero Section Update Request Body:", JSON.stringify(req.body, null, 2));
       const updatedHeroSection = await storage.updateHeroSection(req.body);
-      console.log("Hero Section Updated Successfully:", JSON.stringify(updatedHeroSection, null, 2));
       res.json(updatedHeroSection);
     } catch (error) {
       console.error("Error updating hero section:", error);

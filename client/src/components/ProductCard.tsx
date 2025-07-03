@@ -32,7 +32,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onViewDetails }: ProductCardProps) {
-  const { language, t } = useLanguage();
+  const { language, t, isRTL } = useLanguage();
   const { addToCart } = useCart();
   const { toast } = useToast();
 
@@ -77,15 +77,15 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
       </div>
       
       <CardContent className="p-6">
-        <h3 className="text-xl font-semibold mb-2 text-foreground">
+        <h3 className={`text-xl font-semibold mb-2 text-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
           {language === "ar" ? product.nameAr : product.nameEn}
         </h3>
         
-        <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
+        <p className={`text-muted-foreground mb-4 text-sm leading-relaxed ${isRTL ? 'text-right' : 'text-left'}`}>
           {language === "ar" ? product.descriptionAr : product.descriptionEn}
         </p>
         
-        <div className="flex items-center justify-between mb-4">
+        <div className={`flex items-center justify-between mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <span className="text-2xl font-bold text-primary">
             {product.price} {t("kwd")}
           </span>
@@ -94,7 +94,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
             onClick={() => onViewDetails?.(product)}
             variant="outline"
             size="sm"
-            className="gap-2"
+            className={`gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
           >
             <Eye className="h-4 w-4" />
             {t("viewDetails")}
@@ -103,7 +103,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
         
         <Button
           onClick={handleAddToCart}
-          className="w-full gap-2 bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
+          className={`w-full gap-2 bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 ${isRTL ? 'flex-row-reverse' : ''}`}
           disabled={!product.isAvailable || (product.stock !== null && product.stock <= 0)}
         >
           <ShoppingCart className="h-4 w-4" />

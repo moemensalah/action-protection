@@ -210,8 +210,8 @@ export default function OrderManagement() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {isRTL ? "إجمالي الطلبات" : "Total Orders"}
                 </p>

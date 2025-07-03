@@ -202,8 +202,8 @@ export default function WebsiteUsersManagement() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {isRTL ? "إجمالي المستخدمين" : "Total Users"}
                 </p>
@@ -218,8 +218,8 @@ export default function WebsiteUsersManagement() {
 
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {isRTL ? "المستخدمون النشطون" : "Active Users"}
                 </p>
@@ -234,8 +234,8 @@ export default function WebsiteUsersManagement() {
 
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {isRTL ? "المستخدمون الجدد هذا الشهر" : "New Users This Month"}
                 </p>
@@ -522,16 +522,16 @@ export default function WebsiteUsersManagement() {
             ) : (
               <div className="space-y-2">
                 {userOrders.map((order: Order) => (
-                  <div key={order.id} className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 rounded">
-                    <div>
+                  <div key={order.id} className={`flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 rounded ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className={isRTL ? 'text-right' : 'text-left'}>
                       <span className="font-medium">#{order.orderNumber}</span>
-                      <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+                      <span className={`text-sm text-gray-600 dark:text-gray-400 ${isRTL ? 'mr-2' : 'ml-2'}`}>
                         {formatDate(order.createdAt)}
                       </span>
                     </div>
-                    <div className="text-right">
+                    <div className={isRTL ? 'text-left' : 'text-right'}>
                       <span className="font-medium">{order.totalAmount} {t("kwd")}</span>
-                      <Badge className="ml-2" variant={order.status === 'delivered' ? 'default' : 'secondary'}>
+                      <Badge className={isRTL ? 'mr-2' : 'ml-2'} variant={order.status === 'delivered' ? 'default' : 'secondary'}>
                         {order.status}
                       </Badge>
                     </div>

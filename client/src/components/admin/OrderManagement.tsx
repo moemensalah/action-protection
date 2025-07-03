@@ -226,8 +226,8 @@ export default function OrderManagement() {
 
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {isRTL ? "الطلبات المعلقة" : "Pending Orders"}
                 </p>
@@ -242,8 +242,8 @@ export default function OrderManagement() {
 
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {isRTL ? "الطلبات المكتملة" : "Completed Orders"}
                 </p>
@@ -258,8 +258,8 @@ export default function OrderManagement() {
 
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {isRTL ? "إجمالي الإيرادات" : "Total Revenue"}
                 </p>

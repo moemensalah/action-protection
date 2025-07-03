@@ -180,7 +180,40 @@ export default function CheckoutNew() {
     return () => subscription.unsubscribe();
   }, [form]);
 
+  // Conditional submit handler that bypasses form validation for existing addresses
+  const handleOrderSubmission = async () => {
+    console.log("Button clicked - starting order submission");
+    console.log("User:", user);
+    console.log("Selected address ID:", selectedAddressId);
+    console.log("Show new address form:", showNewAddressForm);
+    
+    // If using existing address, bypass form validation
+    if (user && selectedAddressId && !showNewAddressForm) {
+      const selectedAddress = addresses?.find(addr => addr.id === selectedAddressId);
+      if (selectedAddress) {
+        await processOrder({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: selectedAddress.phone,
+          address: selectedAddress.address,
+          city: selectedAddress.city,
+          area: selectedAddress.area,
+          notes: selectedAddress.notes || ""
+        });
+        return;
+      }
+    }
+    
+    // If creating new address, trigger form validation
+    form.handleSubmit(onSubmit)();
+  };
+
   const onSubmit = async (data: CheckoutForm) => {
+    await processOrder(data);
+  };
+
+  const processOrder = async (data: CheckoutForm) => {
     console.log("Form submission started");
     console.log("Form data received:", data);
     console.log("User:", user);
@@ -914,17 +947,7 @@ export default function CheckoutNew() {
                     {isRTL ? "العودة إلى معلومات العميل" : "Back to Customer Info"}
                   </Button>
                   <Button 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      console.log("Button clicked - starting form validation");
-                      console.log("Form errors:", form.formState.errors);
-                      console.log("Form values:", form.getValues());
-                      console.log("Form is valid:", form.formState.isValid);
-                      form.handleSubmit(onSubmit, (errors) => {
-                        console.log("Form validation failed:", errors);
-                        alert("Form validation failed. Check console for details.");
-                      })(e);
-                    }}
+                    onClick={handleOrderSubmission}
                     disabled={isSubmitting}
                     className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
                   >

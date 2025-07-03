@@ -160,7 +160,9 @@ export function HeroSectionManager() {
   };
 
   const handleSave = () => {
-    updateMutation.mutate(formData);
+    // Exclude logoImage from the data sent to API since it's no longer editable
+    const { logoImage, ...dataToSave } = formData;
+    updateMutation.mutate(dataToSave);
   };
 
   if (isLoading) {

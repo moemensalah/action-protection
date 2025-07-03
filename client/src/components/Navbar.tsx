@@ -87,7 +87,7 @@ export function Navbar() {
               typedUser ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <User className="h-4 w-4" />
                       <span className="hidden sm:inline">
                         {typedUser.firstName || (isRTL ? "حسابي" : "My Account")}
@@ -103,13 +103,13 @@ export function Navbar() {
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href="/my-orders" className="flex items-center gap-2 w-full">
+                      <Link href="/my-orders" className={`flex items-center gap-2 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Package className="h-4 w-4" />
                         {isRTL ? "طلباتي" : "My Orders"}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/my-addresses" className="flex items-center gap-2 w-full">
+                      <Link href="/my-addresses" className={`flex items-center gap-2 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <MapPin className="h-4 w-4" />
                         {isRTL ? "عناويني" : "My Addresses"}
                       </Link>
@@ -120,7 +120,7 @@ export function Navbar() {
                         await fetch("/api/auth/local/logout", { method: "POST" });
                         window.location.href = '/';
                       }}
-                      className="flex items-center gap-2 text-red-600 dark:text-red-400"
+                      className={`flex items-center gap-2 text-red-600 dark:text-red-400 ${isRTL ? 'flex-row-reverse' : ''}`}
                     >
                       <LogOut className="h-4 w-4" />
                       {isRTL ? "تسجيل الخروج" : "Logout"}
@@ -130,7 +130,7 @@ export function Navbar() {
               ) : (
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="sm" asChild>
-                    <Link href="/login" className="flex items-center gap-2">
+                    <Link href="/login" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <LogIn className="h-4 w-4" />
                       <span className="hidden sm:inline">
                         {isRTL ? "تسجيل الدخول" : "Login"}
@@ -197,7 +197,7 @@ export function Navbar() {
                       </div>
                       <Link
                         href="/my-orders"
-                        className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        className={`flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <Package className="h-4 w-4" />
@@ -205,7 +205,7 @@ export function Navbar() {
                       </Link>
                       <Link
                         href="/my-addresses"
-                        className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        className={`flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <MapPin className="h-4 w-4" />
@@ -217,7 +217,7 @@ export function Navbar() {
                           await fetch("/api/auth/local/logout", { method: "POST" });
                           window.location.href = '/';
                         }}
-                        className="flex items-center gap-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium transition-colors text-left"
+                        className={`flex items-center gap-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium transition-colors ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}
                       >
                         <LogOut className="h-4 w-4" />
                         {isRTL ? "تسجيل الخروج" : "Logout"}
@@ -227,7 +227,7 @@ export function Navbar() {
                     <div className="flex flex-col space-y-3">
                       <Link
                         href="/login"
-                        className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        className={`flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <LogIn className="h-4 w-4" />
@@ -235,7 +235,7 @@ export function Navbar() {
                       </Link>
                       <Link
                         href="/register"
-                        className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors"
+                        className={`flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <User className="h-4 w-4" />

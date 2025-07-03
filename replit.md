@@ -49,6 +49,10 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Resolved price display issue in order details - now correctly shows actual amount instead of just currency symbol
 - ✓ Fixed userOrders.map error in WebsiteUsersManagement by properly handling API response array format
 - ✓ Enhanced order item price display by using correct productPrice field instead of missing price field
+- ✓ Fixed RTL direction for username dropdown menu in website header - icons now appear first on right then name in Arabic
+- ✓ Applied flex-row-reverse layout to all dropdown menu items (My Orders, My Addresses, Logout) for proper RTL display
+- ✓ Fixed mobile menu authentication links to follow same RTL pattern with proper icon positioning
+- ✓ Enhanced desktop login button with proper RTL support maintaining consistent direction across all user interface elements
 - ✓ Enhanced MyOrders page with comprehensive sorting functionality - orders now display newest first by default
 - ✓ Added advanced status filtering system with dropdown filter for all order statuses (pending, confirmed, preparing, ready, delivered, cancelled)
 - ✓ Implemented robust pagination system with proper RTL layout support and Arabic/English text direction handling

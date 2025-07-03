@@ -26,6 +26,7 @@ export default function OrderManagement() {
   
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [userFilter, setUserFilter] = useState<string>("all");
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [editingOrder, setEditingOrder] = useState<OrderWithDetails | null>(null);
@@ -38,6 +39,11 @@ export default function OrderManagement() {
   // Get order statistics
   const { data: stats } = useQuery({
     queryKey: ["/api/admin/orders/stats"],
+  });
+
+  // Fetch website users for filtering
+  const { data: websiteUsers } = useQuery({
+    queryKey: ["/api/admin/website-users"],
   });
 
   // Update order mutation
@@ -99,7 +105,10 @@ export default function OrderManagement() {
     const matchesStatus = 
       statusFilter === "all" || order.status === statusFilter;
     
-    return matchesSearch && matchesStatus;
+    const matchesUser = 
+      userFilter === "all" || order.websiteUserId?.toString() === userFilter;
+    
+    return matchesSearch && matchesStatus && matchesUser;
   }) || [];
 
   const handleUpdateOrderStatus = (order: OrderWithDetails, newStatus: string) => {
@@ -222,17 +231,34 @@ export default function OrderManagement() {
           className={`max-w-sm ${isRTL ? 'text-right' : 'text-left'}`}
         />
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className={`w-[200px] ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
             <SelectValue placeholder={t("orders.filterByStatus")} />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("orders.allOrders")}</SelectItem>
-            <SelectItem value="pending">{t("orders.pending")}</SelectItem>
-            <SelectItem value="confirmed">{t("orders.confirmed")}</SelectItem>
-            <SelectItem value="preparing">{t("orders.preparing")}</SelectItem>
-            <SelectItem value="ready">{t("orders.ready")}</SelectItem>
-            <SelectItem value="delivered">{t("orders.delivered")}</SelectItem>
-            <SelectItem value="cancelled">{t("orders.cancelled")}</SelectItem>
+          <SelectContent className={isRTL ? 'text-right' : 'text-left'} dir={isRTL ? 'rtl' : 'ltr'}>
+            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="all">{t("orders.allOrders")}</SelectItem>
+            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="pending">{t("orders.pending")}</SelectItem>
+            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="confirmed">{t("orders.confirmed")}</SelectItem>
+            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="preparing">{t("orders.preparing")}</SelectItem>
+            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="ready">{t("orders.ready")}</SelectItem>
+            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="delivered">{t("orders.delivered")}</SelectItem>
+            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="cancelled">{t("orders.cancelled")}</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={userFilter} onValueChange={setUserFilter}>
+          <SelectTrigger className={`w-[250px] ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+            <SelectValue placeholder={t("orders.filterByUser")} />
+          </SelectTrigger>
+          <SelectContent className={isRTL ? 'text-right' : 'text-left'} dir={isRTL ? 'rtl' : 'ltr'}>
+            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="all">{t("orders.allUsers")}</SelectItem>
+            {websiteUsers?.map((user: WebsiteUser) => (
+              <SelectItem 
+                key={user.id} 
+                className={isRTL ? 'text-right' : 'text-left'} 
+                value={user.id.toString()}
+              >
+                {user.firstName} {user.lastName} ({user.email})
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

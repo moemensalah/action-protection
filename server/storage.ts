@@ -816,9 +816,18 @@ export class DatabaseStorage implements IStorage {
     const existingExperience = await this.getExperienceSection();
     
     if (existingExperience) {
+      // Convert date strings to Date objects if needed
+      const cleanData = { ...experienceData };
+      if (cleanData.createdAt && typeof cleanData.createdAt === 'string') {
+        cleanData.createdAt = new Date(cleanData.createdAt);
+      }
+      if (cleanData.updatedAt && typeof cleanData.updatedAt === 'string') {
+        cleanData.updatedAt = new Date(cleanData.updatedAt);
+      }
+      
       const [updatedExperience] = await db
         .update(experienceSection)
-        .set({ ...experienceData, updatedAt: new Date() })
+        .set({ ...cleanData, updatedAt: new Date() })
         .where(eq(experienceSection.id, existingExperience.id))
         .returning();
       return updatedExperience;

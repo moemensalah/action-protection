@@ -1129,7 +1129,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put('/api/admin/experience-section', requireAdmin, async (req, res) => {
     try {
-      const updatedExperienceSection = await storage.updateExperienceSection(req.body);
+      // Filter out read-only fields from the request body
+      const { id, createdAt, updatedAt, ...updateData } = req.body;
+      const updatedExperienceSection = await storage.updateExperienceSection(updateData);
       res.json(updatedExperienceSection);
     } catch (error) {
       console.error("Error updating experience section:", error);

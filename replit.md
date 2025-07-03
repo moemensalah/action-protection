@@ -32,7 +32,7 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 
 ## Recent Changes
 
-### 2025-07-03: Complete CMS System Implementation + Hero Section File Upload Enhancement
+### 2025-07-03: Complete CMS System Implementation + Hero Section File Upload Enhancement + Website User Authentication Fix
 - ✓ Implemented comprehensive CMS system with database schema for hero sections, experience sections, and customer reviews
 - ✓ Created HeroSectionManager component for editing hero section images and typing words through admin panel
 - ✓ Built ExperienceSectionManager component for managing "Experience True Luxury" video/text content
@@ -68,6 +68,12 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Enhanced Hero Section admin interface with image thumbnail previews instead of text file paths
 - ✓ Removed unused Main Title and Subtitle fields from admin panel (not displayed on website)
 - ✓ Hero Section admin now shows only relevant fields: Background Images (with thumbnails) and Typing Words
+- ✓ FIXED CRITICAL WEBSITE USER AUTHENTICATION ISSUE: Resolved session persistence problem causing immediate logout after login
+- ✓ Fixed session variable mismatch between login (userId) and authentication check (localUser) 
+- ✓ Updated user authentication endpoint to properly fetch website users from database using session userId
+- ✓ Fixed logout functionality to properly destroy sessions and clear cookies for complete logout
+- ✓ Verified complete website user authentication flow - registration, login, session persistence, and logout all working correctly
+- ✓ Maintained security separation between website users and admin users with proper access control
 
 ### 2025-06-28: Complete Order Management System + User Authentication + Address Management
 - ✓ Implemented comprehensive user registration and login system with local authentication

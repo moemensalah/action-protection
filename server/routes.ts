@@ -2,6 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { db } from "./db";
+import { websiteUsers } from "@shared/schema";
+import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import multer from "multer";
 import path from "path";
@@ -138,17 +141,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post('/api/auth/local/logout', (req, res) => {
-    (req.session as any).localUser = null;
-    res.json({ message: "Logout successful" });
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Session destruction error:', err);
+        return res.status(500).json({ message: "Logout failed" });
+      }
+      res.clearCookie('connect.sid');
+      res.json({ message: "Logout successful" });
+    });
   });
 
-  app.get('/api/auth/local/user', (req: any, res) => {
-    if (req.session && req.session.localUser) {
+  app.get('/api/auth/local/user', async (req: any, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const user = await db.select().from(websiteUsers).where(eq(websiteUsers.id, userId)).limit(1);
+      if (!user.length) {
+        return res.status(401).json({ message: "User not found" });
+      }
+      const websiteUser = user[0];
+
       // Refresh session to keep it alive
       req.session.touch();
-      res.json(req.session.localUser);
-    } else {
-      res.status(401).json({ message: "Not authenticated" });
+
+      res.json({
+        id: websiteUser.id,
+        email: websiteUser.email,
+        firstName: websiteUser.firstName,
+        lastName: websiteUser.lastName
+      });
+    } catch (error) {
+      console.error("User fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
     }
   });
 

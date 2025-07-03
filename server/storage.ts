@@ -766,7 +766,7 @@ export class DatabaseStorage implements IStorage {
     const userOrders = await db
       .select()
       .from(orders)
-      .where(eq(orders.userId, userId))
+      .where(eq(orders.websiteUserId, parseInt(userId)))
       .orderBy(desc(orders.createdAt));
 
     // Get order items for each order

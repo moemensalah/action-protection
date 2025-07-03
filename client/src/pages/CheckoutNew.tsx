@@ -300,6 +300,8 @@ export default function CheckoutNew() {
       const orderNum = result.orderNumber || `AP-${Date.now()}`;
       localStorage.setItem('lastOrderNumber', orderNum);
       
+      console.log("Checkout: Order created successfully, redirecting to:", `/order-complete?order=${orderNum}`);
+      
       // Invalidate cache to refresh orders and addresses
       queryClient.invalidateQueries({ queryKey: ["/api/my-orders"] });
       queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });

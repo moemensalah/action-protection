@@ -36,12 +36,16 @@ export default function OrderComplete() {
   const [, setLocation] = useLocation();
   const { user, isLoading: authLoading } = useAuth();
   const [orderNumber, setOrderNumber] = useState<string>("");
+  const [hasCheckedParams, setHasCheckedParams] = useState(false);
 
   // Get order number from URL or local storage
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const orderNum = urlParams.get('order') || localStorage.getItem('lastOrderNumber') || "";
+    console.log("OrderComplete: URL params:", window.location.search);
+    console.log("OrderComplete: Order number found:", orderNum);
     setOrderNumber(orderNum);
+    setHasCheckedParams(true);
     
     // Clear the order number from localStorage after displaying
     if (orderNum) {
@@ -49,12 +53,15 @@ export default function OrderComplete() {
     }
   }, []);
 
-  // Redirect if no order number found
+  // Redirect if no order number found (only after we've checked URL params)
   useEffect(() => {
-    if (orderNumber === "" && !authLoading) {
-      setLocation("/");
-    }
-  }, [orderNumber, authLoading, setLocation]);
+    console.log("OrderComplete: Redirect check:", { hasCheckedParams, orderNumber, authLoading });
+    // Temporarily disabled to debug
+    // if (hasCheckedParams && orderNumber === "" && !authLoading) {
+    //   console.log("OrderComplete: Redirecting to home - no order number found");
+    //   setLocation("/");
+    // }
+  }, [orderNumber, authLoading, setLocation, hasCheckedParams]);
 
   const { data: orderDetails, isLoading } = useQuery({
     queryKey: ["/api/orders", orderNumber],

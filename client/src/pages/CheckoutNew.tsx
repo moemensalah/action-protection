@@ -143,6 +143,35 @@ export default function CheckoutNew() {
     }
   }, [state.items.length, orderPlaced, setLocation]);
 
+  // Check if new address form is valid
+  const isNewAddressFormValid = () => {
+    if (!showNewAddressForm) return false;
+    const values = form.getValues();
+    return values.firstName && 
+           values.lastName && 
+           values.email && 
+           values.phone && 
+           values.address && 
+           values.city && 
+           values.area &&
+           values.firstName.length > 0 &&
+           values.lastName.length > 0 &&
+           values.email.includes('@') &&
+           values.phone.length >= 8 &&
+           values.address.length >= 10 &&
+           values.city.length >= 2 &&
+           values.area.length >= 2;
+  };
+
+  // Check if user can proceed to payment
+  const canProceedToPayment = () => {
+    if (!user) return true; // Guest users can always proceed if form is filled
+    return selectedAddressId || isNewAddressFormValid();
+  };
+
+  // Watch form values to trigger re-render when validation state changes
+  const watchedValues = form.watch();
+
   const onSubmit = async (data: CheckoutForm) => {
     setIsSubmitting(true);
     try {
@@ -697,7 +726,7 @@ export default function CheckoutNew() {
                   <Button 
                     onClick={() => setCurrentStep(3)}
                     className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
-                    disabled={user && !selectedAddressId && !showNewAddressForm}
+                    disabled={!canProceedToPayment()}
                   >
                     {isRTL ? "متابعة إلى الدفع" : "Continue to Payment"}
                     <ArrowRight className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180" />

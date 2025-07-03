@@ -28,35 +28,34 @@ export function VideoShowcaseSection() {
     }
   ];
 
-  // Auto-rotate videos with text transitions
+  // Simplified rotation logic using timeout sequence
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    
-    const cycle = () => {
-      // Show video for 8 seconds
+    if (videos.length === 0) return;
+
+    let timeout1: NodeJS.Timeout;
+    let timeout2: NodeJS.Timeout;
+
+    const startCycle = () => {
+      // Phase 1: Show video (hide text)
       setShowText(false);
       
-      timeoutId = setTimeout(() => {
-        // Show text (corresponding to current video) for 3 seconds
+      // Phase 2: After 8 seconds, show text
+      timeout1 = setTimeout(() => {
         setShowText(true);
         
-        timeoutId = setTimeout(() => {
-          // Hide text and switch to next video
-          setShowText(false);
-          setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
-          
-          // Small delay to ensure video loads, then restart cycle
-          timeoutId = setTimeout(() => {
-            cycle(); // Restart cycle with new video
-          }, 100);
+        // Phase 3: After 3 more seconds, switch to next video and repeat
+        timeout2 = setTimeout(() => {
+          setCurrentVideoIndex(prev => (prev + 1) % videos.length);
+          startCycle(); // Restart the cycle
         }, 3000);
       }, 8000);
     };
-    
-    cycle(); // Start the cycle
-    
+
+    startCycle();
+
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
+      clearTimeout(timeout1);
+      clearTimeout(timeout2);
     };
   }, [videos.length]);
 

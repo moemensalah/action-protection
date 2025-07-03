@@ -130,7 +130,8 @@ export default function WebsiteUsersManagement() {
   // Fetch user orders
   const fetchUserOrders = async (userId: number) => {
     try {
-      const orders = await apiRequest(`/api/admin/website-users/${userId}/orders`);
+      const response = await apiRequest(`/api/admin/website-users/${userId}/orders`);
+      const orders = Array.isArray(response) ? response : [];
       setUserOrders(orders);
       setShowUserOrders(true);
     } catch (error) {

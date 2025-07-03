@@ -347,32 +347,30 @@ export default function OrderManagement() {
           {currentOrders.map((order: OrderWithDetails) => (
             <Card key={order.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <div className={isRTL ? 'text-right' : 'text-left'}>
-                      <h3 className="font-semibold text-lg">
-                        {isRTL ? "طلب رقم" : "Order"} #{order.orderNumber}
-                      </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {order.websiteUser ? `${order.websiteUser.firstName} ${order.websiteUser.lastName}` : 'Unknown User'}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Unknown Date'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <Badge className={getStatusColor(order.status || 'pending')}>
-                      {getStatusText(order.status || 'pending')}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                <div className={`flex items-start justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  {/* RTL: Order info on the right / LTR: Order info on the left */}
+                  <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                    <h3 className="font-semibold text-lg mb-2">
+                      {isRTL ? "طلب رقم" : "Order"} #{order.orderNumber}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                      {order.websiteUser ? `${order.websiteUser.firstName} ${order.websiteUser.lastName}` : 'Unknown User'}
+                    </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Unknown Date'}
+                    </p>
+                  </div>
+
+                  {/* RTL: Status, price, items on the left / LTR: Status, price, items on the right */}
+                  <div className={`flex-1 ${isRTL ? 'text-left' : 'text-right'}`}>
+                    <div className={`flex items-center gap-2 mb-2 ${isRTL ? 'justify-start' : 'justify-end'}`}>
+                      <Badge className={getStatusColor(order.status || 'pending')}>
+                        {getStatusText(order.status || 'pending')}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                       {isRTL ? "المبلغ الإجمالي:" : "Total:"} 
-                      <span className="font-semibold text-amber-600 dark:text-amber-400 ml-1">
+                      <span className={`font-semibold text-amber-600 dark:text-amber-400 ${isRTL ? 'mr-1' : 'ml-1'}`}>
                         {order.totalAmount} {t("kwd")}
                       </span>
                     </p>
@@ -380,6 +378,9 @@ export default function OrderManagement() {
                       {isRTL ? "عدد المنتجات:" : "Items:"} {order.items?.length || 0}
                     </p>
                   </div>
+                </div>
+
+                <div className={`flex items-center justify-between mt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Button
                       variant="outline"
@@ -535,7 +536,7 @@ export default function OrderManagement() {
                   {selectedOrder.items?.map((item: OrderItem, index: number) => (
                     <div key={index} className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-800 rounded">
                       <span>{item.productName}</span>
-                      <span>{item.quantity} × {item.price} {t("kwd")}</span>
+                      <span>{item.quantity} × {item.productPrice} {t("kwd")}</span>
                     </div>
                   ))}
                 </div>

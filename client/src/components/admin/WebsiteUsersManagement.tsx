@@ -296,7 +296,7 @@ export default function WebsiteUsersManagement() {
           {currentUsers.map((user: WebsiteUserWithStats) => (
             <Card key={user.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
+                <div className={`flex items-center justify-between mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <div className={isRTL ? 'text-right' : 'text-left'}>
                       <h3 className="font-semibold text-lg">
@@ -318,20 +318,6 @@ export default function WebsiteUsersManagement() {
                 </div>
 
                 <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <div className={isRTL ? 'text-right' : 'text-left'}>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {isRTL ? "إجمالي الطلبات:" : "Total Orders:"} 
-                      <span className="font-semibold text-blue-600 dark:text-blue-400 ml-1">
-                        {user.totalOrders || 0}
-                      </span>
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {isRTL ? "إجمالي المبلغ المنفق:" : "Total Spent:"} 
-                      <span className="font-semibold text-amber-600 dark:text-amber-400 ml-1">
-                        {user.totalSpent || "0"} {t("kwd")}
-                      </span>
-                    </p>
-                  </div>
                   <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Button
                       variant="outline"
@@ -377,6 +363,20 @@ export default function WebsiteUsersManagement() {
                       <Trash2 className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                       {isRTL ? "حذف" : "Delete"}
                     </Button>
+                  </div>
+                  <div className={isRTL ? 'text-left' : 'text-right'}>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {isRTL ? "إجمالي الطلبات:" : "Total Orders:"} 
+                      <span className={`font-semibold text-blue-600 dark:text-blue-400 ${isRTL ? 'mr-1' : 'ml-1'}`}>
+                        {user.totalOrders || 0}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {isRTL ? "إجمالي المبلغ المنفق:" : "Total Spent:"} 
+                      <span className={`font-semibold text-amber-600 dark:text-amber-400 ${isRTL ? 'mr-1' : 'ml-1'}`}>
+                        {user.totalSpent || "0"} {t("kwd")}
+                      </span>
+                    </p>
                   </div>
                 </div>
               </CardContent>

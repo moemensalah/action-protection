@@ -264,7 +264,7 @@ export default function OrderManagement() {
                   {isRTL ? "إجمالي الإيرادات" : "Total Revenue"}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {stats.totalRevenue || 0} {t("kwd")}
+                  {isRTL ? `${stats.totalRevenue || 0} ${t("kwd")}` : `${t("kwd")} ${stats.totalRevenue || 0}`}
                 </p>
               </div>
               <DollarSign className="w-8 h-8 text-amber-600" />
@@ -371,7 +371,7 @@ export default function OrderManagement() {
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                       {isRTL ? "المبلغ الإجمالي:" : "Total:"} 
                       <span className={`font-semibold text-amber-600 dark:text-amber-400 ${isRTL ? 'mr-1' : 'ml-1'}`}>
-                        {order.totalAmount} {t("kwd")}
+                        {isRTL ? `${order.totalAmount} ${t("kwd")}` : `${t("kwd")} ${order.totalAmount}`}
                       </span>
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -525,7 +525,7 @@ export default function OrderManagement() {
                 <div>
                   <h4 className="font-semibold mb-2">{isRTL ? "معلومات الطلب" : "Order Information"}</h4>
                   <p><strong>{isRTL ? "الحالة:" : "Status:"}</strong> {getStatusText(selectedOrder.status || 'pending')}</p>
-                  <p><strong>{isRTL ? "المبلغ الإجمالي:" : "Total Amount:"}</strong> {selectedOrder.totalAmount} {t("kwd")}</p>
+                  <p><strong>{isRTL ? "المبلغ الإجمالي:" : "Total Amount:"}</strong> {isRTL ? `${selectedOrder.totalAmount} ${t("kwd")}` : `${t("kwd")} ${selectedOrder.totalAmount}`}</p>
                   <p><strong>{isRTL ? "طريقة الدفع:" : "Payment Method:"}</strong> {selectedOrder.paymentMethod || 'N/A'}</p>
                   <p><strong>{isRTL ? "حالة الدفع:" : "Payment Status:"}</strong> {selectedOrder.paymentStatus || 'pending'}</p>
                 </div>
@@ -536,7 +536,7 @@ export default function OrderManagement() {
                   {selectedOrder.items?.map((item: OrderItem, index: number) => (
                     <div key={index} className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-800 rounded">
                       <span>{item.productName}</span>
-                      <span>{item.quantity} × {item.productPrice} {t("kwd")}</span>
+                      <span>{item.quantity} × {isRTL ? `${item.productPrice} ${t("kwd")}` : `${t("kwd")} ${item.productPrice}`}</span>
                     </div>
                   ))}
                 </div>

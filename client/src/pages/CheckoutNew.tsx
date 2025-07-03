@@ -175,12 +175,42 @@ export default function CheckoutNew() {
   const onSubmit = async (data: CheckoutForm) => {
     setIsSubmitting(true);
     try {
-      const orderData = {
-        ...data,
-        items: state.items,
-        totalAmount: state.total,
-        userId: (user as any)?.id || null,
-      };
+      // Prepare order data based on whether user selected existing address or is creating new one
+      let orderData;
+      
+      if (user && selectedAddressId) {
+        // User selected an existing address
+        const selectedAddress = addresses?.find(addr => addr.id === selectedAddressId);
+        if (selectedAddress) {
+          orderData = {
+            firstName: selectedAddress.firstName,
+            lastName: selectedAddress.lastName,
+            email: selectedAddress.email,
+            phone: selectedAddress.phone,
+            address: selectedAddress.address,
+            city: selectedAddress.city,
+            area: selectedAddress.area,
+            notes: data.notes || "",
+            paymentMethod: paymentMethod,
+            items: state.items,
+            totalAmount: state.total,
+            userId: (user as any)?.id || null,
+          };
+        } else {
+          throw new Error("Selected address not found");
+        }
+      } else {
+        // User is creating a new address or is a guest
+        orderData = {
+          ...data,
+          paymentMethod: paymentMethod,
+          items: state.items,
+          totalAmount: state.total,
+          userId: (user as any)?.id || null,
+        };
+      }
+
+      console.log("Submitting order data:", orderData);
 
       const result = await apiRequest("/api/orders", {
         method: "POST",

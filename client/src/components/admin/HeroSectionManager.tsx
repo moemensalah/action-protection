@@ -226,23 +226,33 @@ export function HeroSectionManager() {
             {currentBackgroundImages.length === 0 ? (
               <p className="text-muted-foreground">No background images added yet.</p>
             ) : (
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {currentBackgroundImages.map((imageUrl: string, index: number) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Image className="h-5 w-5 text-muted-foreground" />
-                      <span className="text-sm font-medium">Image {index + 1}</span>
-                      <code className="text-xs bg-muted px-2 py-1 rounded">{imageUrl}</code>
+                  <div key={index} className="relative group border rounded-lg overflow-hidden">
+                    <div className="aspect-video bg-muted">
+                      <img 
+                        src={imageUrl} 
+                        alt={`Background image ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='60'%3E%3Crect width='100' height='60' fill='%23f3f4f6'/%3E%3Ctext x='50' y='35' text-anchor='middle' fill='%23666' font-size='12'%3EImage not found%3C/text%3E%3C/svg%3E";
+                        }}
+                      />
                     </div>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleRemoveBackgroundImage(index)}
-                      className="flex items-center gap-1"
-                    >
-                      <X className="h-3 w-3" />
-                      Remove
-                    </Button>
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleRemoveBackgroundImage(index)}
+                        className="flex items-center gap-1"
+                      >
+                        <X className="h-3 w-3" />
+                        Remove
+                      </Button>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/75 text-white text-xs p-2">
+                      Image {index + 1}
+                    </div>
                   </div>
                 ))}
               </div>

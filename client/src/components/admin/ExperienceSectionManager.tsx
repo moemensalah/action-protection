@@ -78,6 +78,7 @@ export function ExperienceSectionManager() {
   });
 
   const handleSave = () => {
+    console.log("Frontend: Form data being sent:", formData);
     updateMutation.mutate(formData);
   };
 

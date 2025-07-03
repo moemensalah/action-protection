@@ -49,13 +49,19 @@ export default function OrderComplete() {
     }
   }, []);
 
+  // Redirect if no order number found
+  useEffect(() => {
+    if (orderNumber === "" && !authLoading) {
+      setLocation("/");
+    }
+  }, [orderNumber, authLoading, setLocation]);
+
   const { data: orderDetails, isLoading } = useQuery({
     queryKey: ["/api/orders", orderNumber],
     enabled: !!orderNumber,
   }) as { data: OrderDetails | undefined, isLoading: boolean };
 
   if (!orderNumber) {
-    setLocation("/");
     return null;
   }
 

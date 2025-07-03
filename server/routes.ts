@@ -1157,6 +1157,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get order details by order number (for order completion page)
+  app.get('/api/orders/:orderNumber', async (req, res) => {
+    try {
+      const orderNumber = req.params.orderNumber;
+      const order = await storage.getOrderByNumber(orderNumber);
+      
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      
+      res.json(order);
+    } catch (error) {
+      console.error("Error fetching order by number:", error);
+      res.status(500).json({ message: "Failed to fetch order" });
+    }
+  });
+
   // User Address Management API
   app.get('/api/addresses', async (req, res) => {
     try {

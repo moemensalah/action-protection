@@ -58,15 +58,28 @@ export function ReviewsManager() {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   // Fetch reviews
-  const { data: reviews = [], isLoading } = useQuery({
+  const { data: reviewsData = [], isLoading } = useQuery({
     queryKey: ["/api/admin/reviews", statusFilter],
     queryFn: () => apiRequest(`/api/admin/reviews${statusFilter !== 'all' ? `?status=${statusFilter}` : ''}`),
   });
 
+  // Ensure reviews is always an array
+  const reviews = Array.isArray(reviewsData) ? reviewsData : [];
+
   // Fetch review settings
-  const { data: settings } = useQuery({
+  const { data: settingsData } = useQuery({
     queryKey: ["/api/admin/review-settings"],
   });
+
+  // Ensure settings has default values
+  const settings = settingsData || {
+    enableReviews: true,
+    autoApproveReviews: false,
+    requireOrderToReview: true,
+    showReviewsOnWebsite: true,
+    maxReviewsPerUser: 5,
+    reviewCooldownDays: 7
+  };
 
   // Approve review mutation
   const approveMutation = useMutation({

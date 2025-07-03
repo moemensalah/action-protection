@@ -44,9 +44,12 @@ export function WriteReview() {
   });
 
   // Fetch reviewable products for the user
-  const { data: products = [], isLoading } = useQuery({
+  const { data: productsData, isLoading } = useQuery({
     queryKey: ["/api/user/reviewable-products"],
   });
+
+  // Ensure products is always an array
+  const products = Array.isArray(productsData) ? productsData : [];
 
   // Submit review mutation
   const submitMutation = useMutation({

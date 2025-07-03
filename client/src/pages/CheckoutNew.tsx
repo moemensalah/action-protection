@@ -193,7 +193,7 @@ export default function CheckoutNew() {
       // Prepare order data based on whether user selected existing address or is creating new one
       let orderData;
       
-      if (user && selectedAddressId) {
+      if (user && selectedAddressId && !showNewAddressForm) {
         // User selected an existing address
         const selectedAddress = addresses?.find(addr => addr.id === selectedAddressId);
         if (selectedAddress) {
@@ -609,7 +609,10 @@ export default function CheckoutNew() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => setShowNewAddressForm(true)}
+                          onClick={() => {
+                            setShowNewAddressForm(true);
+                            setSelectedAddressId(null); // Clear selected address when creating new
+                          }}
                           className="w-full flex items-center gap-2"
                         >
                           <MapPin className="h-4 w-4" />
@@ -702,7 +705,10 @@ export default function CheckoutNew() {
                         <Label htmlFor="phone">{t("phoneNumber")}</Label>
                         <Input
                           id="phone"
-                          {...form.register("phone")}
+                          {...form.register("phone", {
+                            required: "Phone number is required",
+                            minLength: { value: 8, message: "Valid phone number is required" }
+                          })}
                           placeholder="+965 XXXX XXXX"
                           className={form.formState.errors.phone ? "border-red-500" : ""}
                         />

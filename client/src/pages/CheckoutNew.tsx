@@ -299,6 +299,11 @@ export default function CheckoutNew() {
 
       const orderNum = result.orderNumber || `AP-${Date.now()}`;
       localStorage.setItem('lastOrderNumber', orderNum);
+      
+      // Invalidate cache to refresh orders and addresses
+      queryClient.invalidateQueries({ queryKey: ["/api/my-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
+      
       clearCart();
       setLocation(`/order-complete?order=${orderNum}`);
       return;

@@ -59,21 +59,6 @@ export default function MyAddresses() {
     enabled: !!user,
   }) as { data: UserAddress[], isLoading: boolean };
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!authLoading && !user) {
-      setLocation("/login");
-    }
-  }, [authLoading, user, setLocation]);
-
-  if (authLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user) {
-    return null;
-  }
-
   const createAddressMutation = useMutation({
     mutationFn: async (data: AddressForm) => {
       return await apiRequest('/api/addresses', {
@@ -171,6 +156,22 @@ export default function MyAddresses() {
       });
     },
   });
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      setLocation("/login");
+    }
+  }, [authLoading, user, setLocation]);
+
+  // Early returns after all hooks
+  if (authLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return null;
+  }
 
   const handleAddAddress = () => {
     setEditingAddress(null);

@@ -37,16 +37,17 @@ export function VideoShowcaseSection() {
       setShowText(false);
       
       timeoutId = setTimeout(() => {
-        // Show text for 3 seconds
+        // Show text (corresponding to current video) for 3 seconds
         setShowText(true);
         
         timeoutId = setTimeout(() => {
-          // Switch to next video while text is still showing
+          // Hide text and switch to next video
+          setShowText(false);
           setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
           
-          // Small delay to ensure video loads, then hide text
+          // Small delay to ensure video loads, then restart cycle
           timeoutId = setTimeout(() => {
-            cycle(); // Restart cycle
+            cycle(); // Restart cycle with new video
           }, 100);
         }, 3000);
       }, 8000);

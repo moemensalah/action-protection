@@ -54,6 +54,8 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Added real Mercedes G-Class and Rolls-Royce video files to assets directory for proper display
 - ✓ Updated production seeder to include correct video URLs and text messages for experience section
 - ✓ Experience Section Management now properly handles rotating videos with corresponding text messages
+- ✓ Fixed Experience Section save functionality - resolved date conversion and field filtering issues
+- ✓ Fixed video showcase rotation pattern to properly alternate Video 1→Text 1→Video 2→Text 2 without repetition
 
 ### 2025-06-28: Complete Order Management System + User Authentication + Address Management
 - ✓ Implemented comprehensive user registration and login system with local authentication

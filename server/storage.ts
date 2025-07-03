@@ -791,16 +791,26 @@ export class DatabaseStorage implements IStorage {
     const existingHero = await this.getHeroSection();
     
     if (existingHero) {
+      // Clean the data and remove timestamp fields from the input
+      const cleanData = { ...heroData };
+      delete cleanData.createdAt;
+      delete cleanData.updatedAt;
+      
       const [updatedHero] = await db
         .update(heroSection)
-        .set({ ...heroData, updatedAt: new Date() })
+        .set({ ...cleanData, updatedAt: new Date() })
         .where(eq(heroSection.id, existingHero.id))
         .returning();
       return updatedHero;
     } else {
+      // For new records, also clean the timestamp fields
+      const cleanData = { ...heroData };
+      delete cleanData.createdAt;
+      delete cleanData.updatedAt;
+      
       const [newHero] = await db
         .insert(heroSection)
-        .values(heroData)
+        .values(cleanData)
         .returning();
       return newHero;
     }

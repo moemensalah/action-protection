@@ -162,6 +162,7 @@ export function HeroSectionManager() {
   const handleSave = () => {
     // Exclude logoImage from the data sent to API since it's no longer editable
     const { logoImage, ...dataToSave } = formData;
+    console.log('Hero Section Data to Save:', dataToSave);
     updateMutation.mutate(dataToSave);
   };
 

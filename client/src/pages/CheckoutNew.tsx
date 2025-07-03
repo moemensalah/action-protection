@@ -214,10 +214,15 @@ export default function CheckoutNew() {
 
       console.log("Submitting order data:", orderData);
 
-      const result = await apiRequest("/api/orders", {
+      const response = await apiRequest("/api/orders", {
         method: "POST",
         body: JSON.stringify(orderData),
       });
+
+      console.log("Order response received:", response);
+      
+      const result = await response.json();
+      console.log("Order result parsed:", result);
 
       const orderNum = result.orderNumber || `AP-${Date.now()}`;
       localStorage.setItem('lastOrderNumber', orderNum);
@@ -226,10 +231,14 @@ export default function CheckoutNew() {
       return;
     } catch (error) {
       console.error("Error placing order:", error);
-      // For demo purposes, still show success
-      setOrderNumber(`AP-${Date.now()}`);
-      setOrderPlaced(true);
-      clearCart();
+      
+      // Don't show fake success - show actual error
+      alert(`Order failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      
+      // For now, only clear cart and redirect if it was actually successful
+      // setOrderNumber(`AP-${Date.now()}`);
+      // setOrderPlaced(true);
+      // clearCart();
     } finally {
       setIsSubmitting(false);
     }

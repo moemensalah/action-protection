@@ -1113,24 +1113,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         notes: notes || null,
       };
 
+      console.log("Creating order with data:", orderData);
       const newOrder = await storage.createOrder(orderData);
+      console.log("Order created successfully:", newOrder);
 
       // Create order items
-      for (const item of items) {
-        await storage.createOrderItem({
-          orderId: newOrder.id,
-          productId: item.product.id,
-          productName: item.product.nameEn,
-          productPrice: item.product.price,
-          quantity: item.quantity,
-          subtotal: (parseFloat(item.product.price) * item.quantity).toString(),
-        });
+      if (items && Array.isArray(items)) {
+        console.log("Creating order items for:", items.length, "items");
+        for (const item of items) {
+          console.log("Creating order item:", item);
+          await storage.createOrderItem({
+            orderId: newOrder.id,
+            productId: item.product.id,
+            productName: item.product.nameEn,
+            productPrice: item.product.price,
+            quantity: item.quantity,
+            subtotal: (parseFloat(item.product.price) * item.quantity).toString(),
+          });
+        }
       }
 
+      console.log("Order creation completed successfully");
       res.json({ orderNumber, orderId: newOrder.id });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Order creation error:", error);
-      res.status(500).json({ message: "Failed to create order" });
+      console.error("Error stack:", error.stack);
+      console.error("Error details:", JSON.stringify(error, null, 2));
+      res.status(500).json({ message: "Failed to create order", error: error.message });
     }
   });
 

@@ -173,6 +173,13 @@ export default function CheckoutNew() {
   const watchedValues = form.watch();
 
   const onSubmit = async (data: CheckoutForm) => {
+    console.log("Form submission started");
+    console.log("Form data received:", data);
+    console.log("User:", user);
+    console.log("Selected address ID:", selectedAddressId);
+    console.log("Show new address form:", showNewAddressForm);
+    console.log("Payment method:", paymentMethod);
+    
     setIsSubmitting(true);
     try {
       // Prepare order data based on whether user selected existing address or is creating new one
@@ -893,7 +900,11 @@ export default function CheckoutNew() {
                     {isRTL ? "العودة إلى معلومات العميل" : "Back to Customer Info"}
                   </Button>
                   <Button 
-                    onClick={form.handleSubmit(onSubmit)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      console.log("Button clicked - starting form validation");
+                      form.handleSubmit(onSubmit)(e);
+                    }}
                     disabled={isSubmitting}
                     className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
                   >

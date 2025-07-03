@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Trash2, Edit, Eye, Package, DollarSign, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Trash2, Edit, Eye, Package, DollarSign, Clock, CheckCircle, XCircle, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { Order, OrderItem, WebsiteUser } from "@shared/schema";
@@ -30,21 +30,54 @@ export default function OrderManagement() {
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [editingOrder, setEditingOrder] = useState<OrderWithDetails | null>(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
 
   // Fetch orders with details
-  const { data: orders, isLoading } = useQuery({
+  const { data: orders = [], isLoading } = useQuery({
     queryKey: ["/api/admin/orders"],
   });
 
   // Get order statistics
-  const { data: stats } = useQuery({
+  const { data: stats = {} } = useQuery({
     queryKey: ["/api/admin/orders/stats"],
   });
 
   // Fetch website users for filtering
-  const { data: websiteUsers } = useQuery({
+  const { data: websiteUsers = [] } = useQuery({
     queryKey: ["/api/admin/website-users"],
   });
+
+  // Filter and paginate orders
+  const filteredOrders = useMemo(() => {
+    if (!orders) return [];
+    
+    return orders.filter((order: OrderWithDetails) => {
+      const matchesSearch = 
+        order.orderNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.websiteUser?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.websiteUser?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.websiteUser?.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = statusFilter === "all" || order.status === statusFilter;
+      const matchesUser = userFilter === "all" || order.websiteUserId?.toString() === userFilter;
+      
+      return matchesSearch && matchesStatus && matchesUser;
+    });
+  }, [orders, searchTerm, statusFilter, userFilter]);
+
+  // Reset page when filters change
+  const resetPageOnFilterChange = () => {
+    setCurrentPage(1);
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+  const startIndex = (currentPage - 1) * ordersPerPage;
+  const endIndex = startIndex + ordersPerPage;
+  const currentOrders = filteredOrders.slice(startIndex, endIndex);
 
   // Update order mutation
   const updateOrderMutation = useMutation({
@@ -59,14 +92,14 @@ export default function OrderManagement() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders/stats"] });
       toast({
-        title: t("orders.updateSuccess"),
+        title: isRTL ? "تم تحديث الطلب بنجاح" : "Order updated successfully",
         variant: "default",
       });
       setEditingOrder(null);
     },
     onError: () => {
       toast({
-        title: t("orders.updateError"),
+        title: isRTL ? "فشل في تحديث الطلب" : "Failed to update order",
         variant: "destructive",
       });
     },
@@ -83,33 +116,17 @@ export default function OrderManagement() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders/stats"] });
       toast({
-        title: t("orders.deleteSuccess"),
+        title: isRTL ? "تم حذف الطلب بنجاح" : "Order deleted successfully",
         variant: "default",
       });
     },
     onError: () => {
       toast({
-        title: t("orders.deleteError"),
+        title: isRTL ? "فشل في حذف الطلب" : "Failed to delete order",
         variant: "destructive",
       });
     },
   });
-
-  const filteredOrders = orders?.filter((order: OrderWithDetails) => {
-    const matchesSearch = 
-      order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customerEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.websiteUser?.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = 
-      statusFilter === "all" || order.status === statusFilter;
-    
-    const matchesUser = 
-      userFilter === "all" || order.websiteUserId?.toString() === userFilter;
-    
-    return matchesSearch && matchesStatus && matchesUser;
-  }) || [];
 
   const handleUpdateOrderStatus = (order: OrderWithDetails, newStatus: string) => {
     updateOrderMutation.mutate({
@@ -119,7 +136,7 @@ export default function OrderManagement() {
   };
 
   const handleDeleteOrder = (order: OrderWithDetails) => {
-    if (confirm(t("orders.deleteOrder"))) {
+    if (confirm(isRTL ? "هل أنت متأكد من حذف هذا الطلب؟" : "Are you sure you want to delete this order?")) {
       deleteOrderMutation.mutate(order.id);
     }
   };
@@ -131,131 +148,180 @@ export default function OrderManagement() {
     });
   };
 
-  const formatDate = (date: string | Date) => {
-    return new Date(date).toLocaleDateString(isRTL ? 'ar-KW' : 'en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
-      case 'confirmed': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
-      case 'preparing': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
-      case 'ready': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
-      case 'delivered': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300';
-      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+      case "pending": return "bg-yellow-100 text-yellow-800";
+      case "confirmed": return "bg-blue-100 text-blue-800";
+      case "preparing": return "bg-orange-100 text-orange-800";
+      case "ready": return "bg-purple-100 text-purple-800";
+      case "delivered": return "bg-green-100 text-green-800";
+      case "cancelled": return "bg-red-100 text-red-800";
+      default: return "bg-gray-100 text-gray-800";
     }
   };
 
-  const getPaymentStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
-      case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
-      case 'failed': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
-    }
+  const getStatusText = (status: string) => {
+    const statusMap: Record<string, { en: string; ar: string }> = {
+      pending: { en: "Pending", ar: "في الانتظار" },
+      confirmed: { en: "Confirmed", ar: "مؤكد" },
+      preparing: { en: "Preparing", ar: "قيد التحضير" },
+      ready: { en: "Ready", ar: "جاهز" },
+      delivered: { en: "Delivered", ar: "تم التسليم" },
+      cancelled: { en: "Cancelled", ar: "ملغي" }
+    };
+    return isRTL ? statusMap[status]?.ar || status : statusMap[status]?.en || status;
   };
 
   if (isLoading) {
-    return <div className="p-6">{t("loading")}</div>;
+    return (
+      <div className="space-y-4">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+          <div className="space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-16 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className={`flex justify-between items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <div>
-          <h2 className={`text-3xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>
-            {t("orders.management")}
-          </h2>
-          <p className={`text-gray-600 dark:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
-            {t("orders.title")}
-          </p>
+    <div className="space-y-6 p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          {isRTL ? "إدارة الطلبات" : "Order Management"}
+        </h1>
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {isRTL ? 
+            `إجمالي الطلبات: ${filteredOrders.length}` : 
+            `Total Orders: ${filteredOrders.length}`
+          }
         </div>
       </div>
 
       {/* Statistics Cards */}
-      {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t("orders.totalOrders")}</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalOrders}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t("orders.pendingOrders")}</CardTitle>
-              <Clock className="h-4 w-4 text-yellow-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.pendingOrders}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t("orders.completedOrders")}</CardTitle>
-              <CheckCircle className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.completedOrders}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t("orders.revenue")}</CardTitle>
-              <DollarSign className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalRevenue} {isRTL ? "د.ك" : "KWD"}</div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {isRTL ? "إجمالي الطلبات" : "Total Orders"}
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.totalOrders || 0}
+                </p>
+              </div>
+              <Package className="w-8 h-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {isRTL ? "الطلبات المعلقة" : "Pending Orders"}
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.pendingOrders || 0}
+                </p>
+              </div>
+              <Clock className="w-8 h-8 text-yellow-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {isRTL ? "الطلبات المكتملة" : "Completed Orders"}
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.completedOrders || 0}
+                </p>
+              </div>
+              <CheckCircle className="w-8 h-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {isRTL ? "إجمالي الإيرادات" : "Total Revenue"}
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.totalRevenue || 0} {t("kwd")}
+                </p>
+              </div>
+              <DollarSign className="w-8 h-8 text-amber-600" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Filters */}
-      <div className={`flex gap-4 items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <Input
-          placeholder={t("orders.searchPlaceholder")}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className={`max-w-sm ${isRTL ? 'text-right' : 'text-left'}`}
-        />
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className={`w-[200px] ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-            <SelectValue placeholder={t("orders.filterByStatus")} />
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <Input
+            placeholder={isRTL ? "البحث في الطلبات..." : "Search orders..."}
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              resetPageOnFilterChange();
+            }}
+            className="w-full"
+          />
+        </div>
+        
+        <Select 
+          value={statusFilter} 
+          onValueChange={(value) => {
+            setStatusFilter(value);
+            resetPageOnFilterChange();
+          }}
+        >
+          <SelectTrigger className="w-full sm:w-48">
+            <SelectValue placeholder={isRTL ? "فلترة بالحالة" : "Filter by Status"} />
           </SelectTrigger>
-          <SelectContent className={isRTL ? 'text-right' : 'text-left'} dir={isRTL ? 'rtl' : 'ltr'}>
-            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="all">{t("orders.allOrders")}</SelectItem>
-            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="pending">{t("orders.pending")}</SelectItem>
-            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="confirmed">{t("orders.confirmed")}</SelectItem>
-            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="preparing">{t("orders.preparing")}</SelectItem>
-            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="ready">{t("orders.ready")}</SelectItem>
-            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="delivered">{t("orders.delivered")}</SelectItem>
-            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="cancelled">{t("orders.cancelled")}</SelectItem>
+          <SelectContent>
+            <SelectItem value="all">{isRTL ? "كل الحالات" : "All Status"}</SelectItem>
+            <SelectItem value="pending">{getStatusText("pending")}</SelectItem>
+            <SelectItem value="confirmed">{getStatusText("confirmed")}</SelectItem>
+            <SelectItem value="preparing">{getStatusText("preparing")}</SelectItem>
+            <SelectItem value="ready">{getStatusText("ready")}</SelectItem>
+            <SelectItem value="delivered">{getStatusText("delivered")}</SelectItem>
+            <SelectItem value="cancelled">{getStatusText("cancelled")}</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={userFilter} onValueChange={setUserFilter}>
-          <SelectTrigger className={`w-[250px] ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-            <SelectValue placeholder={t("orders.filterByUser")} />
+
+        <Select 
+          value={userFilter} 
+          onValueChange={(value) => {
+            setUserFilter(value);
+            resetPageOnFilterChange();
+          }}
+        >
+          <SelectTrigger className="w-full sm:w-48">
+            <SelectValue placeholder={isRTL ? "فلترة بالمستخدم" : "Filter by User"} />
           </SelectTrigger>
-          <SelectContent className={isRTL ? 'text-right' : 'text-left'} dir={isRTL ? 'rtl' : 'ltr'}>
-            <SelectItem className={isRTL ? 'text-right' : 'text-left'} value="all">{t("orders.allUsers")}</SelectItem>
-            {websiteUsers?.map((user: WebsiteUser) => (
-              <SelectItem 
-                key={user.id} 
-                className={isRTL ? 'text-right' : 'text-left'} 
-                value={user.id.toString()}
-              >
+          <SelectContent>
+            <SelectItem value="all">{isRTL ? "كل المستخدمين" : "All Users"}</SelectItem>
+            {websiteUsers.map((user: WebsiteUser) => (
+              <SelectItem key={user.id} value={user.id.toString()}>
                 {user.firstName} {user.lastName} ({user.email})
               </SelectItem>
             ))}
@@ -263,289 +329,300 @@ export default function OrderManagement() {
         </Select>
       </div>
 
-      {/* Orders Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
-            {t("orders.title")} ({filteredOrders.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {filteredOrders.length === 0 ? (
-            <div className={`text-center py-8 text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>
-              {t("orders.noOrders")}
+      {/* Orders List */}
+      {currentOrders.length === 0 ? (
+        <Card>
+          <CardContent className="text-center py-12">
+            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              {isRTL ? "لا توجد طلبات" : "No Orders Found"}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              {isRTL ? "لا توجد طلبات تطابق معايير البحث" : "No orders match your search criteria"}
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {currentOrders.map((order: OrderWithDetails) => (
+            <Card key={order.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <h3 className="font-semibold text-lg">
+                        {isRTL ? "طلب رقم" : "Order"} #{order.orderNumber}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {order.websiteUser ? `${order.websiteUser.firstName} ${order.websiteUser.lastName}` : 'Unknown User'}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Unknown Date'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Badge className={getStatusColor(order.status || 'pending')}>
+                      {getStatusText(order.status || 'pending')}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {isRTL ? "المبلغ الإجمالي:" : "Total:"} 
+                      <span className="font-semibold text-amber-600 dark:text-amber-400 ml-1">
+                        {order.totalAmount} {t("kwd")}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {isRTL ? "عدد المنتجات:" : "Items:"} {order.items?.length || 0}
+                    </p>
+                  </div>
+                  <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedOrder(order);
+                        setShowOrderDetails(true);
+                      }}
+                    >
+                      <Eye className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      {isRTL ? "عرض التفاصيل" : "View Details"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingOrder(order)}
+                    >
+                      <Edit className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      {isRTL ? "تحرير" : "Edit"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteOrder(order)}
+                    >
+                      <Trash2 className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      {isRTL ? "حذف" : "Delete"}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {filteredOrders.length > 0 && totalPages > 1 && (
+        <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            {isRTL ? (
+              `إظهار ${startIndex + 1}-${Math.min(endIndex, filteredOrders.length)} من ${filteredOrders.length} طلبات`
+            ) : (
+              `Showing ${startIndex + 1}-${Math.min(endIndex, filteredOrders.length)} of ${filteredOrders.length} orders`
+            )}
+          </div>
+
+          <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className="w-8 h-8 p-0"
+            >
+              {isRTL ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="flex items-center gap-1"
+            >
+              {isRTL ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+              <span className="hidden sm:inline">{isRTL ? "السابق" : "Previous"}</span>
+            </Button>
+
+            <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = currentPage - 2 + i;
+                }
+
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={currentPage === pageNum ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className="w-8 h-8 p-0"
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className={`text-left p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{t("orders.orderDetails")}</th>
-                    <th className={`text-left p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{t("orders.customerInfo")}</th>
-                    <th className={`text-left p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{t("orders.paymentInfo")}</th>
-                    <th className={`text-left p-4 ${isRTL ? 'text-right' : 'text-left'}`}>Status</th>
-                    <th className={`text-left p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{t("actions")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredOrders.map((order: OrderWithDetails) => (
-                    <tr key={order.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800">
-                      <td className="p-4">
-                        <div className="space-y-1">
-                          <div className="font-medium">#{order.orderNumber}</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">
-                            {formatDate(order.createdAt)}
-                          </div>
-                          <div className="text-sm font-medium">
-                            {order.totalAmount} {isRTL ? "د.ك" : "KWD"}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {order.items.length} {t("orders.orderItems")}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="space-y-1">
-                          <div className="font-medium">{order.customerName}</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">
-                            {order.customerPhone}
-                          </div>
-                          {order.customerEmail && (
-                            <div className="text-sm text-gray-600 dark:text-gray-400">
-                              {order.customerEmail}
-                            </div>
-                          )}
-                          {order.websiteUser && (
-                            <div className="text-xs text-blue-600 dark:text-blue-400">
-                              User: {order.websiteUser.email}
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="space-y-1">
-                          <Badge variant="outline" className={getPaymentStatusColor(order.paymentStatus)}>
-                            {order.paymentStatus}
-                          </Badge>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">
-                            {order.paymentMethod}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <Select
-                          value={order.status}
-                          onValueChange={(value) => handleUpdateOrderStatus(order, value)}
-                        >
-                          <SelectTrigger className="w-[140px]">
-                            <Badge variant="outline" className={getStatusColor(order.status)}>
-                              {t(`orders.${order.status}`)}
-                            </Badge>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pending">{t("orders.pending")}</SelectItem>
-                            <SelectItem value="confirmed">{t("orders.confirmed")}</SelectItem>
-                            <SelectItem value="preparing">{t("orders.preparing")}</SelectItem>
-                            <SelectItem value="ready">{t("orders.ready")}</SelectItem>
-                            <SelectItem value="delivered">{t("orders.delivered")}</SelectItem>
-                            <SelectItem value="cancelled">{t("orders.cancelled")}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </td>
-                      <td className="p-4">
-                        <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => setSelectedOrder(order)}
-                              >
-                                <Eye className="h-4 w-4" />
-                                {t("orders.viewOrder")}
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-4xl">
-                              <DialogHeader>
-                                <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
-                                  {t("orders.orderDetails")} - #{selectedOrder?.orderNumber}
-                                </DialogTitle>
-                              </DialogHeader>
-                              {selectedOrder && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                  {/* Customer Information */}
-                                  <Card>
-                                    <CardHeader>
-                                      <CardTitle className="text-lg">{t("orders.customerInfo")}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="space-y-2">
-                                      <div><strong>{t("name")}:</strong> {selectedOrder.customerName}</div>
-                                      <div><strong>{t("phone")}:</strong> {selectedOrder.customerPhone}</div>
-                                      {selectedOrder.customerEmail && (
-                                        <div><strong>{t("email")}:</strong> {selectedOrder.customerEmail}</div>
-                                      )}
-                                      <div><strong>{t("address")}:</strong> {selectedOrder.deliveryAddress}</div>
-                                    </CardContent>
-                                  </Card>
 
-                                  {/* Payment Information */}
-                                  <Card>
-                                    <CardHeader>
-                                      <CardTitle className="text-lg">{t("orders.paymentInfo")}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="space-y-2">
-                                      <div><strong>{t("paymentMethod")}:</strong> {selectedOrder.paymentMethod}</div>
-                                      <div><strong>{t("paymentStatus")}:</strong> 
-                                        <Badge className={`ml-2 ${getPaymentStatusColor(selectedOrder.paymentStatus)}`}>
-                                          {selectedOrder.paymentStatus}
-                                        </Badge>
-                                      </div>
-                                      <div><strong>{t("total")}:</strong> {selectedOrder.totalAmount} {isRTL ? "د.ك" : "KWD"}</div>
-                                    </CardContent>
-                                  </Card>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="flex items-center gap-1"
+            >
+              <span className="hidden sm:inline">{isRTL ? "التالي" : "Next"}</span>
+              {isRTL ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+            </Button>
 
-                                  {/* Order Items */}
-                                  <Card className="md:col-span-2">
-                                    <CardHeader>
-                                      <CardTitle className="text-lg">{t("orders.orderItems")}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                      <div className="space-y-2">
-                                        {selectedOrder.items.map((item, index) => (
-                                          <div key={index} className={`flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-800 rounded ${isRTL ? 'flex-row-reverse' : ''}`}>
-                                            <div>
-                                              <div className="font-medium">{item.productName}</div>
-                                              <div className="text-sm text-gray-600 dark:text-gray-400">
-                                                {item.quantity} × {item.productPrice} {isRTL ? "د.ك" : "KWD"}
-                                              </div>
-                                            </div>
-                                            <div className="font-medium">
-                                              {item.subtotal} {isRTL ? "د.ك" : "KWD"}
-                                            </div>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </CardContent>
-                                  </Card>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+              className="w-8 h-8 p-0"
+            >
+              {isRTL ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+      )}
 
-                                  {/* Order Notes */}
-                                  {selectedOrder.notes && (
-                                    <Card className="md:col-span-2">
-                                      <CardHeader>
-                                        <CardTitle className="text-lg">{t("orders.orderNotes")}</CardTitle>
-                                      </CardHeader>
-                                      <CardContent>
-                                        <p className="text-gray-700 dark:text-gray-300">{selectedOrder.notes}</p>
-                                      </CardContent>
-                                    </Card>
-                                  )}
-                                </div>
-                              )}
-                            </DialogContent>
-                          </Dialog>
-
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => setEditingOrder(order)}
-                              >
-                                <Edit className="h-4 w-4" />
-                                {t("orders.editOrder")}
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
-                                  {t("orders.editOrder")} - #{editingOrder?.orderNumber}
-                                </DialogTitle>
-                              </DialogHeader>
-                              {editingOrder && (
-                                <div className="space-y-4">
-                                  <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                      <Label>{t("orders.updateStatus")}</Label>
-                                      <Select
-                                        value={editingOrder.status}
-                                        onValueChange={(value) => 
-                                          setEditingOrder({...editingOrder, status: value as any})
-                                        }
-                                      >
-                                        <SelectTrigger>
-                                          <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                          <SelectItem value="pending">{t("orders.pending")}</SelectItem>
-                                          <SelectItem value="confirmed">{t("orders.confirmed")}</SelectItem>
-                                          <SelectItem value="preparing">{t("orders.preparing")}</SelectItem>
-                                          <SelectItem value="ready">{t("orders.ready")}</SelectItem>
-                                          <SelectItem value="delivered">{t("orders.delivered")}</SelectItem>
-                                          <SelectItem value="cancelled">{t("orders.cancelled")}</SelectItem>
-                                        </SelectContent>
-                                      </Select>
-                                    </div>
-                                    <div>
-                                      <Label>{t("paymentStatus")}</Label>
-                                      <Select
-                                        value={editingOrder.paymentStatus}
-                                        onValueChange={(value) => 
-                                          setEditingOrder({...editingOrder, paymentStatus: value as any})
-                                        }
-                                      >
-                                        <SelectTrigger>
-                                          <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                          <SelectItem value="pending">Pending</SelectItem>
-                                          <SelectItem value="paid">Paid</SelectItem>
-                                          <SelectItem value="failed">Failed</SelectItem>
-                                        </SelectContent>
-                                      </Select>
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <Label>{t("orders.orderNotes")}</Label>
-                                    <Textarea
-                                      value={editingOrder.notes || ""}
-                                      onChange={(e) => 
-                                        setEditingOrder({...editingOrder, notes: e.target.value})
-                                      }
-                                      className={isRTL ? 'text-right' : 'text-left'}
-                                    />
-                                  </div>
-                                  <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                                    <Button
-                                      onClick={() => handleUpdateOrder(editingOrder, {
-                                        status: editingOrder.status,
-                                        paymentStatus: editingOrder.paymentStatus,
-                                        notes: editingOrder.notes
-                                      })}
-                                    >
-                                      {t("save")}
-                                    </Button>
-                                    <Button
-                                      variant="destructive"
-                                      onClick={() => handleDeleteOrder(editingOrder)}
-                                    >
-                                      <Trash2 className="h-4 w-4 mr-2" />
-                                      {t("orders.deleteOrder")}
-                                    </Button>
-                                  </div>
-                                </div>
-                              )}
-                            </DialogContent>
-                          </Dialog>
-                        </div>
-                      </td>
-                    </tr>
+      {/* Order Details Dialog */}
+      <Dialog open={showOrderDetails} onOpenChange={setShowOrderDetails}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>
+              {isRTL ? "تفاصيل الطلب" : "Order Details"} #{selectedOrder?.orderNumber}
+            </DialogTitle>
+            <DialogDescription>
+              {isRTL ? "عرض تفاصيل الطلب الكاملة" : "Complete order information and details"}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedOrder && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-semibold mb-2">{isRTL ? "معلومات العميل" : "Customer Information"}</h4>
+                  <p><strong>{isRTL ? "الاسم:" : "Name:"}</strong> {selectedOrder.websiteUser?.firstName} {selectedOrder.websiteUser?.lastName}</p>
+                  <p><strong>{isRTL ? "البريد الإلكتروني:" : "Email:"}</strong> {selectedOrder.websiteUser?.email}</p>
+                  <p><strong>{isRTL ? "رقم الطلب:" : "Order Number:"}</strong> {selectedOrder.orderNumber}</p>
+                  <p><strong>{isRTL ? "التاريخ:" : "Date:"}</strong> {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString() : 'Unknown'}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">{isRTL ? "معلومات الطلب" : "Order Information"}</h4>
+                  <p><strong>{isRTL ? "الحالة:" : "Status:"}</strong> {getStatusText(selectedOrder.status || 'pending')}</p>
+                  <p><strong>{isRTL ? "المبلغ الإجمالي:" : "Total Amount:"}</strong> {selectedOrder.totalAmount} {t("kwd")}</p>
+                  <p><strong>{isRTL ? "طريقة الدفع:" : "Payment Method:"}</strong> {selectedOrder.paymentMethod || 'N/A'}</p>
+                  <p><strong>{isRTL ? "حالة الدفع:" : "Payment Status:"}</strong> {selectedOrder.paymentStatus || 'pending'}</p>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">{isRTL ? "المنتجات" : "Items"}</h4>
+                <div className="space-y-2">
+                  {selectedOrder.items?.map((item: OrderItem, index: number) => (
+                    <div key={index} className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                      <span>{item.productName}</span>
+                      <span>{item.quantity} × {item.price} {t("kwd")}</span>
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Order Dialog */}
+      <Dialog open={!!editingOrder} onOpenChange={() => setEditingOrder(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {isRTL ? "تحرير الطلب" : "Edit Order"} #{editingOrder?.orderNumber}
+            </DialogTitle>
+            <DialogDescription>
+              {isRTL ? "تحديث معلومات الطلب" : "Update order information"}
+            </DialogDescription>
+          </DialogHeader>
+          {editingOrder && (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="status">{isRTL ? "الحالة" : "Status"}</Label>
+                <Select 
+                  value={editingOrder.status || 'pending'} 
+                  onValueChange={(value) => setEditingOrder({ ...editingOrder, status: value as any })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">{getStatusText("pending")}</SelectItem>
+                    <SelectItem value="confirmed">{getStatusText("confirmed")}</SelectItem>
+                    <SelectItem value="preparing">{getStatusText("preparing")}</SelectItem>
+                    <SelectItem value="ready">{getStatusText("ready")}</SelectItem>
+                    <SelectItem value="delivered">{getStatusText("delivered")}</SelectItem>
+                    <SelectItem value="cancelled">{getStatusText("cancelled")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="paymentStatus">{isRTL ? "حالة الدفع" : "Payment Status"}</Label>
+                <Select 
+                  value={editingOrder.paymentStatus || 'pending'} 
+                  onValueChange={(value) => setEditingOrder({ ...editingOrder, paymentStatus: value as any })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">{isRTL ? "في الانتظار" : "Pending"}</SelectItem>
+                    <SelectItem value="paid">{isRTL ? "مدفوع" : "Paid"}</SelectItem>
+                    <SelectItem value="failed">{isRTL ? "فشل" : "Failed"}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="notes">{isRTL ? "ملاحظات" : "Notes"}</Label>
+                <Textarea
+                  value={editingOrder.notes || ''}
+                  onChange={(e) => setEditingOrder({ ...editingOrder, notes: e.target.value })}
+                  placeholder={isRTL ? "أدخل ملاحظات إضافية..." : "Enter additional notes..."}
+                />
+              </div>
+
+              <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Button 
+                  onClick={() => handleUpdateOrder(editingOrder, {
+                    status: editingOrder.status,
+                    paymentStatus: editingOrder.paymentStatus,
+                    notes: editingOrder.notes
+                  })}
+                  disabled={updateOrderMutation.isPending}
+                >
+                  {isRTL ? "حفظ التغييرات" : "Save Changes"}
+                </Button>
+                <Button variant="outline" onClick={() => setEditingOrder(null)}>
+                  {isRTL ? "إلغاء" : "Cancel"}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

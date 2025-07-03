@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Edit, Eye, UserX, UserCheck, Calendar, Mail, Phone, ShoppingCart, DollarSign } from "lucide-react";
+import { Trash2, Edit, Eye, UserX, UserCheck, Calendar, Mail, Phone, ShoppingCart, DollarSign, Users, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { WebsiteUser, Order } from "@shared/schema";
@@ -35,16 +35,49 @@ export default function WebsiteUsersManagement() {
   const [userOrders, setUserOrders] = useState<Order[]>([]);
   const [showUserDetails, setShowUserDetails] = useState(false);
   const [showUserOrders, setShowUserOrders] = useState(false);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
 
   // Fetch website users with statistics
-  const { data: users, isLoading } = useQuery({
+  const { data: users = [], isLoading } = useQuery({
     queryKey: ["/api/admin/website-users"],
   });
 
   // Get user statistics
-  const { data: stats } = useQuery({
+  const { data: stats = {} } = useQuery({
     queryKey: ["/api/admin/website-users/stats"],
   });
+
+  // Filter and paginate users
+  const filteredUsers = useMemo(() => {
+    if (!users) return [];
+    
+    return users.filter((user: WebsiteUserWithStats) => {
+      const matchesSearch = 
+        user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = statusFilter === "all" || 
+        (statusFilter === "active" && user.isActive) ||
+        (statusFilter === "inactive" && !user.isActive);
+      
+      return matchesSearch && matchesStatus;
+    });
+  }, [users, searchTerm, statusFilter]);
+
+  // Reset page when filters change
+  const resetPageOnFilterChange = () => {
+    setCurrentPage(1);
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const startIndex = (currentPage - 1) * usersPerPage;
+  const endIndex = startIndex + usersPerPage;
+  const currentUsers = filteredUsers.slice(startIndex, endIndex);
 
   // Update user mutation
   const updateUserMutation = useMutation({
@@ -59,13 +92,13 @@ export default function WebsiteUsersManagement() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/website-users"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/website-users/stats"] });
       toast({
-        title: t("users.updateSuccess"),
+        title: isRTL ? "تم تحديث المستخدم بنجاح" : "User updated successfully",
         variant: "default",
       });
     },
     onError: () => {
       toast({
-        title: t("users.updateError"),
+        title: isRTL ? "فشل في تحديث المستخدم" : "Failed to update user",
         variant: "destructive",
       });
     },
@@ -82,49 +115,32 @@ export default function WebsiteUsersManagement() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/website-users"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/website-users/stats"] });
       toast({
-        title: t("users.deleteSuccess"),
+        title: isRTL ? "تم حذف المستخدم بنجاح" : "User deleted successfully",
         variant: "default",
       });
     },
     onError: () => {
       toast({
-        title: t("users.deleteError"),
+        title: isRTL ? "فشل في حذف المستخدم" : "Failed to delete user",
         variant: "destructive",
       });
     },
   });
 
-  // Get user orders
+  // Fetch user orders
   const fetchUserOrders = async (userId: number) => {
     try {
-      const response = await apiRequest(`/api/admin/website-users/${userId}/orders`);
-      // Ensure response is an array
-      const ordersData = Array.isArray(response) ? response : [];
-      setUserOrders(ordersData);
+      const orders = await apiRequest(`/api/admin/website-users/${userId}/orders`);
+      setUserOrders(orders);
       setShowUserOrders(true);
     } catch (error) {
-      console.error("Error fetching user orders:", error);
       setUserOrders([]);
       toast({
-        title: t("orders.updateError"),
+        title: isRTL ? "فشل في جلب طلبات المستخدم" : "Failed to fetch user orders",
         variant: "destructive",
       });
     }
   };
-
-  const filteredUsers = Array.isArray(users) ? users.filter((user: WebsiteUserWithStats) => {
-    const matchesSearch = 
-      user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = 
-      statusFilter === "all" ||
-      (statusFilter === "active" && user.isActive) ||
-      (statusFilter === "inactive" && !user.isActive);
-    
-    return matchesSearch && matchesStatus;
-  }) : [];
 
   const handleActivateUser = (user: WebsiteUserWithStats) => {
     updateUserMutation.mutate({
@@ -141,306 +157,384 @@ export default function WebsiteUsersManagement() {
   };
 
   const handleDeleteUser = (user: WebsiteUserWithStats) => {
-    if (confirm(t("users.deleteUser"))) {
+    if (confirm(isRTL ? "هل أنت متأكد من حذف هذا المستخدم؟" : "Are you sure you want to delete this user?")) {
       deleteUserMutation.mutate(user.id);
     }
   };
 
-  const formatDate = (date: string | Date) => {
-    return new Date(date).toLocaleDateString(isRTL ? 'ar-KW' : 'en-US');
-  };
-
   if (isLoading) {
-    return <div className="p-6">{t("loading")}</div>;
+    return (
+      <div className="space-y-4">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+          <div className="space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-16 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
-      <div className={`flex justify-between items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <div>
-          <h2 className={`text-3xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>
-            {t("users.management")}
-          </h2>
-          <p className={`text-gray-600 dark:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
-            {t("users.title")}
-          </p>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          {isRTL ? "إدارة مستخدمي الموقع" : "Website Users Management"}
+        </h1>
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {isRTL ? 
+            `إجمالي المستخدمين: ${filteredUsers.length}` : 
+            `Total Users: ${filteredUsers.length}`
+          }
         </div>
       </div>
 
       {/* Statistics Cards */}
-      {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <CardTitle className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.totalUsers")}</CardTitle>
-              <UserCheck className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>{(stats as any)?.totalUsers || 0}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <CardTitle className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.activeUsers")}</CardTitle>
-              <UserCheck className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>{(stats as any)?.activeUsers || 0}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <CardTitle className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.newUsers")}</CardTitle>
-              <Calendar className="h-4 w-4 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>{(stats as any)?.newUsersThisMonth || 0}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <CardTitle className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("orders.revenue")}</CardTitle>
-              <DollarSign className="h-4 w-4 text-yellow-600" />
-            </CardHeader>
-            <CardContent>
-              <div className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>
-                {(stats as any)?.totalRevenue || 0} {isRTL ? "د.ك" : "KWD"}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {isRTL ? "إجمالي المستخدمين" : "Total Users"}
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {(stats as any).totalUsers || 0}
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+              <Users className="w-8 h-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {isRTL ? "المستخدمون النشطون" : "Active Users"}
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {(stats as any).activeUsers || 0}
+                </p>
+              </div>
+              <UserCheck className="w-8 h-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {isRTL ? "المستخدمون الجدد هذا الشهر" : "New Users This Month"}
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {(stats as any).newUsersThisMonth || 0}
+                </p>
+              </div>
+              <Calendar className="w-8 h-8 text-purple-600" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Filters */}
-      <div className={`flex gap-4 items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <Input
-          placeholder={t("users.searchPlaceholder")}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className={`max-w-sm ${isRTL ? 'text-right' : 'text-left'}`}
-        />
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder={t("users.filterByStatus")} />
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <Input
+            placeholder={isRTL ? "البحث في المستخدمين..." : "Search users..."}
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              resetPageOnFilterChange();
+            }}
+            className="w-full"
+          />
+        </div>
+        
+        <Select value={statusFilter} onValueChange={(value) => {
+          setStatusFilter(value);
+          resetPageOnFilterChange();
+        }}>
+          <SelectTrigger className="w-full sm:w-48">
+            <SelectValue placeholder={isRTL ? "فلترة بالحالة" : "Filter by Status"} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{t("users.allUsers")}</SelectItem>
-            <SelectItem value="active">{t("users.activeOnly")}</SelectItem>
-            <SelectItem value="inactive">{t("users.inactiveOnly")}</SelectItem>
+            <SelectItem value="all">{isRTL ? "كل المستخدمين" : "All Users"}</SelectItem>
+            <SelectItem value="active">{isRTL ? "نشط فقط" : "Active Only"}</SelectItem>
+            <SelectItem value="inactive">{isRTL ? "غير نشط فقط" : "Inactive Only"}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      {/* Users Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
-            {t("users.title")} ({filteredUsers.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {filteredUsers.length === 0 ? (
-            <div className={`text-center py-8 text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>
-              {t("users.noUsers")}
+      {/* Users List */}
+      {currentUsers.length === 0 ? (
+        <Card>
+          <CardContent className="text-center py-12">
+            <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              {isRTL ? "لا يوجد مستخدمون" : "No Users Found"}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              {isRTL ? "لا يوجد مستخدمون يطابقون معايير البحث" : "No users match your search criteria"}
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {currentUsers.map((user: WebsiteUserWithStats) => (
+            <Card key={user.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <h3 className="font-semibold text-lg">
+                        {user.firstName} {user.lastName}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {user.email}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {isRTL ? "تاريخ التسجيل:" : "Registered:"} {formatDate(user.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Badge variant={user.isActive ? "default" : "secondary"}>
+                      {user.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {isRTL ? "إجمالي الطلبات:" : "Total Orders:"} 
+                      <span className="font-semibold text-blue-600 dark:text-blue-400 ml-1">
+                        {user.totalOrders || 0}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {isRTL ? "إجمالي المبلغ المنفق:" : "Total Spent:"} 
+                      <span className="font-semibold text-amber-600 dark:text-amber-400 ml-1">
+                        {user.totalSpent || "0"} {t("kwd")}
+                      </span>
+                    </p>
+                  </div>
+                  <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedUser(user);
+                        setShowUserDetails(true);
+                      }}
+                    >
+                      <Eye className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      {isRTL ? "عرض التفاصيل" : "View Details"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => fetchUserOrders(user.id)}
+                    >
+                      <ShoppingCart className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      {isRTL ? "عرض الطلبات" : "View Orders"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => user.isActive ? handleDeactivateUser(user) : handleActivateUser(user)}
+                    >
+                      {user.isActive ? (
+                        <>
+                          <UserX className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                          {isRTL ? "إلغاء التفعيل" : "Deactivate"}
+                        </>
+                      ) : (
+                        <>
+                          <UserCheck className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                          {isRTL ? "تفعيل" : "Activate"}
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteUser(user)}
+                    >
+                      <Trash2 className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      {isRTL ? "حذف" : "Delete"}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {filteredUsers.length > 0 && totalPages > 1 && (
+        <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            {isRTL ? (
+              `إظهار ${startIndex + 1}-${Math.min(endIndex, filteredUsers.length)} من ${filteredUsers.length} مستخدمين`
+            ) : (
+              `Showing ${startIndex + 1}-${Math.min(endIndex, filteredUsers.length)} of ${filteredUsers.length} users`
+            )}
+          </div>
+
+          <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className="w-8 h-8 p-0"
+            >
+              {isRTL ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="flex items-center gap-1"
+            >
+              {isRTL ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+              <span className="hidden sm:inline">{isRTL ? "السابق" : "Previous"}</span>
+            </Button>
+
+            <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = currentPage - 2 + i;
+                }
+
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={currentPage === pageNum ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className="w-8 h-8 p-0"
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className={`w-full ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                <thead>
-                  <tr className="border-b">
-                    <th className={`p-4 font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.personalInfo")}</th>
-                    <th className={`p-4 font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.accountInfo")}</th>
-                    <th className={`p-4 font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.orderHistory")}</th>
-                    <th className={`p-4 font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("actions")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.map((user: WebsiteUserWithStats) => (
-                    <tr key={user.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800">
-                      <td className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
-                        <div className="space-y-1">
-                          <div className="font-medium">{user.firstName} {user.lastName}</div>
-                          <div className={`text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                            <Mail className="h-3 w-3" />
-                            <span>{user.email}</span>
-                          </div>
-                          {user.phone && (
-                            <div className={`text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                              <Phone className="h-3 w-3" />
-                              <span>{user.phone}</span>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
-                        <div className="space-y-1">
-                          <Badge variant={user.isActive ? "default" : "secondary"}>
-                            {user.isActive ? t("active") : t("inactive")}
-                          </Badge>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">
-                            {t("users.registrationDate")}: {formatDate(user.createdAt)}
-                          </div>
-                          {user.lastLogin && (
-                            <div className="text-sm text-gray-600 dark:text-gray-400">
-                              {t("users.lastLogin")}: {formatDate(user.lastLogin)}
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
-                        <div className="space-y-1">
-                          <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                            <ShoppingCart className="h-3 w-3" />
-                            <span className="text-sm">{user.totalOrders} {t("users.totalOrders")}</span>
-                          </div>
-                          <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                            <DollarSign className="h-3 w-3" />
-                            <span className="text-sm">{user.totalSpent} {isRTL ? "د.ك" : "KWD"}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
-                        <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => fetchUserOrders(user.id)}
-                          >
-                            <Eye className="h-4 w-4" />
-                            {t("users.viewOrders")}
-                          </Button>
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => setSelectedUser(user)}
-                              >
-                                <Edit className="h-4 w-4" />
-                                {t("users.editUser")}
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
-                                  {t("users.userDetails")}
-                                </DialogTitle>
-                              </DialogHeader>
-                              {selectedUser && (
-                                <div className="space-y-4">
-                                  <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                      <label className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
-                                        {t("firstName")}
-                                      </label>
-                                      <Input value={selectedUser.firstName} readOnly />
-                                    </div>
-                                    <div>
-                                      <label className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
-                                        {t("lastName")}
-                                      </label>
-                                      <Input value={selectedUser.lastName} readOnly />
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <label className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
-                                      {t("email")}
-                                    </label>
-                                    <Input value={selectedUser.email} readOnly />
-                                  </div>
-                                  {selectedUser.phone && (
-                                    <div>
-                                      <label className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>
-                                        {t("phone")}
-                                      </label>
-                                      <Input value={selectedUser.phone} readOnly />
-                                    </div>
-                                  )}
-                                  <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                                    {selectedUser.isActive ? (
-                                      <Button
-                                        variant="destructive"
-                                        onClick={() => handleDeactivateUser(selectedUser)}
-                                      >
-                                        <UserX className="h-4 w-4 mr-2" />
-                                        {t("users.deactivateUser")}
-                                      </Button>
-                                    ) : (
-                                      <Button
-                                        variant="default"
-                                        onClick={() => handleActivateUser(selectedUser)}
-                                      >
-                                        <UserCheck className="h-4 w-4 mr-2" />
-                                        {t("users.activateUser")}
-                                      </Button>
-                                    )}
-                                    <Button
-                                      variant="destructive"
-                                      onClick={() => handleDeleteUser(selectedUser)}
-                                    >
-                                      <Trash2 className="h-4 w-4 mr-2" />
-                                      {t("users.deleteUser")}
-                                    </Button>
-                                  </div>
-                                </div>
-                              )}
-                            </DialogContent>
-                          </Dialog>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="flex items-center gap-1"
+            >
+              <span className="hidden sm:inline">{isRTL ? "التالي" : "Next"}</span>
+              {isRTL ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+              className="w-8 h-8 p-0"
+            >
+              {isRTL ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* User Details Dialog */}
+      <Dialog open={showUserDetails} onOpenChange={setShowUserDetails}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {isRTL ? "تفاصيل المستخدم" : "User Details"}
+            </DialogTitle>
+            <DialogDescription>
+              {isRTL ? "عرض معلومات المستخدم الكاملة" : "Complete user information and statistics"}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedUser && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-semibold mb-2">{isRTL ? "المعلومات الشخصية" : "Personal Information"}</h4>
+                  <p><strong>{isRTL ? "الاسم الأول:" : "First Name:"}</strong> {selectedUser.firstName}</p>
+                  <p><strong>{isRTL ? "الاسم الأخير:" : "Last Name:"}</strong> {selectedUser.lastName}</p>
+                  <p><strong>{isRTL ? "البريد الإلكتروني:" : "Email:"}</strong> {selectedUser.email}</p>
+                  <p><strong>{isRTL ? "رقم الهاتف:" : "Phone:"}</strong> {selectedUser.phone || 'N/A'}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">{isRTL ? "معلومات الحساب" : "Account Information"}</h4>
+                  <p><strong>{isRTL ? "الحالة:" : "Status:"}</strong> {selectedUser.isActive ? (isRTL ? "نشط" : "Active") : (isRTL ? "غير نشط" : "Inactive")}</p>
+                  <p><strong>{isRTL ? "تاريخ التسجيل:" : "Registration Date:"}</strong> {formatDate(selectedUser.createdAt)}</p>
+                  <p><strong>{isRTL ? "إجمالي الطلبات:" : "Total Orders:"}</strong> {selectedUser.totalOrders || 0}</p>
+                  <p><strong>{isRTL ? "إجمالي المبلغ المنفق:" : "Total Spent:"}</strong> {selectedUser.totalSpent || "0"} {t("kwd")}</p>
+                </div>
+              </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </DialogContent>
+      </Dialog>
 
       {/* User Orders Dialog */}
       <Dialog open={showUserOrders} onOpenChange={setShowUserOrders}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
-              {t("users.orderHistory")}
+            <DialogTitle>
+              {isRTL ? "طلبات المستخدم" : "User Orders"}
             </DialogTitle>
-            <DialogDescription className={isRTL ? 'text-right' : 'text-left'}>
-              {selectedUser && `${selectedUser.firstName} ${selectedUser.lastName}`}
+            <DialogDescription>
+              {isRTL ? "عرض جميع طلبات المستخدم" : "View all orders for this user"}
             </DialogDescription>
           </DialogHeader>
-          <div className="max-h-96 overflow-y-auto">
+          <div className="space-y-4">
             {userOrders.length === 0 ? (
-              <div className={`text-center py-8 text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>
-                {t("orders.noOrders")}
-              </div>
+              <p className="text-center text-gray-500 py-8">
+                {isRTL ? "لا توجد طلبات لهذا المستخدم" : "No orders found for this user"}
+              </p>
             ) : (
-              <div className="space-y-4">
-                {userOrders.map((order) => (
-                  <Card key={order.id}>
-                    <CardContent className="p-4">
-                      <div className={`flex justify-between items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div>
-                          <div className="font-medium">#{order.orderNumber}</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">
-                            {formatDate(order.createdAt)}
-                          </div>
-                        </div>
-                        <div className={`text-right ${isRTL ? 'text-left' : 'text-right'}`}>
-                          <Badge variant={
-                            order.status === 'delivered' ? 'default' :
-                            order.status === 'cancelled' ? 'destructive' :
-                            'secondary'
-                          }>
-                            {t(`orders.${order.status}`)}
-                          </Badge>
-                          <div className="text-sm font-medium">
-                            {order.totalAmount} {isRTL ? "د.ك" : "KWD"}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+              <div className="space-y-2">
+                {userOrders.map((order: Order) => (
+                  <div key={order.id} className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 rounded">
+                    <div>
+                      <span className="font-medium">#{order.orderNumber}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+                        {formatDate(order.createdAt)}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-medium">{order.totalAmount} {t("kwd")}</span>
+                      <Badge className="ml-2" variant={order.status === 'delivered' ? 'default' : 'secondary'}>
+                        {order.status}
+                      </Badge>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}

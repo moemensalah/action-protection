@@ -95,10 +95,10 @@ export function Navbar() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align={isRTL ? "start" : "end"} className="w-56">
-                    <div className="px-2 py-1.5 text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <div className={`px-2 py-1.5 text-sm font-medium text-gray-900 dark:text-gray-100 ${isRTL ? 'text-right' : 'text-left'}`}>
                       {typedUser.firstName ? `${typedUser.firstName} ${typedUser.lastName || ''}`.trim() : typedUser.id}
                     </div>
-                    <div className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
+                    <div className={`px-2 py-1 text-xs text-gray-500 dark:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
                       {typedUser.email}
                     </div>
                     <DropdownMenuSeparator />

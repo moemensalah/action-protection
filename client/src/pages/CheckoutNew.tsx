@@ -116,8 +116,7 @@ export default function CheckoutNew() {
         body: JSON.stringify(data),
       });
     },
-    onSuccess: async (response: Response) => {
-      const newAddress = await response.json();
+    onSuccess: (newAddress) => {
       queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
       setSelectedAddressId(newAddress.id.toString());
       setShowAddressDialog(false);
@@ -154,24 +153,16 @@ export default function CheckoutNew() {
         userId: (user as any)?.id || null,
       };
 
-      const response = await fetch("/api/orders", {
+      const result = await apiRequest("/api/orders", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(orderData),
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        const orderNum = result.orderNumber || `AP-${Date.now()}`;
-        localStorage.setItem('lastOrderNumber', orderNum);
-        clearCart();
-        setLocation(`/order-complete?order=${orderNum}`);
-        return;
-      } else {
-        throw new Error("Failed to place order");
-      }
+      const orderNum = result.orderNumber || `AP-${Date.now()}`;
+      localStorage.setItem('lastOrderNumber', orderNum);
+      clearCart();
+      setLocation(`/order-complete?order=${orderNum}`);
+      return;
     } catch (error) {
       console.error("Error placing order:", error);
       // For demo purposes, still show success

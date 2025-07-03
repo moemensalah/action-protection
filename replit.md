@@ -32,7 +32,7 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 
 ## Recent Changes
 
-### 2025-07-03: Complete CMS System Implementation + Hero Section File Upload Enhancement + Website User Authentication Fix
+### 2025-07-03: Complete CMS System Implementation + Hero Section File Upload Enhancement + Website User Authentication Fix + Critical E-commerce Bug Resolution
 - ✓ Implemented comprehensive CMS system with database schema for hero sections, experience sections, and customer reviews
 - ✓ Created HeroSectionManager component for editing hero section images and typing words through admin panel
 - ✓ Built ExperienceSectionManager component for managing "Experience True Luxury" video/text content
@@ -74,6 +74,13 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Fixed logout functionality to properly destroy sessions and clear cookies for complete logout
 - ✓ Verified complete website user authentication flow - registration, login, session persistence, and logout all working correctly
 - ✓ Maintained security separation between website users and admin users with proper access control
+- ✓ FIXED CRITICAL E-COMMERCE BUGS: Resolved order creation 401 errors and address management issues
+- ✓ Fixed order creation authentication by replacing fetch() with apiRequest() for proper session cookie handling
+- ✓ Fixed address creation mutation to properly handle direct JSON response from apiRequest()
+- ✓ Verified complete checkout flow works end-to-end: registration → login → address creation → order placement
+- ✓ Confirmed address list updates immediately after new address creation with proper cache invalidation
+- ✓ Tested complete e-commerce functionality with successful order creation (OrderID 8, OrderNumber AP-1751577874929-5qz1q1x6v)
+- ✓ Verified address management works correctly with immediate UI updates and proper database persistence
 
 ### 2025-06-28: Complete Order Management System + User Authentication + Address Management
 - ✓ Implemented comprehensive user registration and login system with local authentication

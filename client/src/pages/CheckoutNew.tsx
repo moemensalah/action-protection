@@ -903,7 +903,13 @@ export default function CheckoutNew() {
                     onClick={(e) => {
                       e.preventDefault();
                       console.log("Button clicked - starting form validation");
-                      form.handleSubmit(onSubmit)(e);
+                      console.log("Form errors:", form.formState.errors);
+                      console.log("Form values:", form.getValues());
+                      console.log("Form is valid:", form.formState.isValid);
+                      form.handleSubmit(onSubmit, (errors) => {
+                        console.log("Form validation failed:", errors);
+                        alert("Form validation failed. Check console for details.");
+                      })(e);
                     }}
                     disabled={isSubmitting}
                     className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"

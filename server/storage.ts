@@ -165,6 +165,8 @@ export interface IStorage {
   getOrderByNumber(orderNumber: string): Promise<Order | undefined>;
 
   // Website Users Management
+  getWebsiteUserByEmail(email: string): Promise<WebsiteUser | undefined>;
+  createWebsiteUser(userData: Omit<WebsiteUser, 'id' | 'createdAt' | 'updatedAt'>): Promise<WebsiteUser>;
   getAllWebsiteUsersWithStats(): Promise<any[]>;
   getWebsiteUsersStats(): Promise<any>;
   getWebsiteUserOrders(userId: number): Promise<Order[]>;
@@ -1012,6 +1014,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Website Users Management
+  async getWebsiteUserByEmail(email: string): Promise<WebsiteUser | undefined> {
+    const [user] = await db.select().from(websiteUsers).where(eq(websiteUsers.email, email));
+    return user;
+  }
+
+  async createWebsiteUser(userData: Omit<WebsiteUser, 'id' | 'createdAt' | 'updatedAt'>): Promise<WebsiteUser> {
+    // Hash password before storing
+    const hashedPassword = await bcrypt.hash(userData.password, 12);
+    
+    const [user] = await db
+      .insert(websiteUsers)
+      .values({
+        ...userData,
+        password: hashedPassword,
+      })
+      .returning();
+    
+    return user;
+  }
+
   async getAllWebsiteUsersWithStats(): Promise<any[]> {
     const result = await db
       .select({

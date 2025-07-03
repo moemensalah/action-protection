@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import bcrypt from "bcryptjs";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -96,7 +97,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Local authentication routes
+  // Website user authentication (separate from admin system)
   app.post('/api/auth/local/login', async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -105,35 +106,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Email and password are required" });
       }
 
-      // Find user by email
-      const user = await storage.getUserByEmail(email);
+      // Find website user by email (NOT admin user)
+      const user = await storage.getWebsiteUserByEmail(email);
 
-      if (!user || !user.isActive) {
+      if (!user) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // Validate password
-      const isValidPassword = await storage.validatePassword(user, password);
-      if (!isValidPassword) {
+      // Validate password (need to implement this for website users)
+      const isValid = await bcrypt.compare(password, user.password);
+      if (!isValid) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // Store user in session (simplified session management)
-      (req.session as any).localUser = {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        firstName: user.firstName,
-        lastName: user.lastName
-      };
+      // Store website user session (no admin access)
+      (req.session as any).userId = user.id;
 
       res.json({
         user: {
           id: user.id,
-          username: user.username,
           email: user.email,
-          role: user.role,
           firstName: user.firstName,
           lastName: user.lastName
         },
@@ -845,42 +837,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Local authentication routes
+  // Website user registration (separate from admin system)
   app.post('/api/auth/local/register', async (req, res) => {
     try {
       const { firstName, lastName, email, password } = req.body;
       
-      // Check if user already exists
-      const existingUser = await storage.getUserByEmail(email);
+      // Check if website user already exists
+      const existingUser = await storage.getWebsiteUserByEmail(email);
       if (existingUser) {
         return res.status(400).json({ message: "User already exists" });
       }
 
-      // Create new user
-      const newUser = await storage.createLocalUser({
-        username: email, // Use email as username
-        firstName,
-        lastName,
+      // Create new website user (NOT admin user)
+      const newUser = await storage.createWebsiteUser({
         email,
         password,
+        firstName,
+        lastName,
+        isActive: true,
+        phone: null,
+        dateOfBirth: null,
+        gender: null,
+        emailVerified: false,
+        lastLogin: null,
       });
 
-      // Automatically log in the user after registration
-      (req.session as any).localUser = {
-        id: newUser.id,
-        username: newUser.username,
-        email: newUser.email,
-        role: newUser.role,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName
-      };
+      // Store website user session (no admin access)
+      (req.session as any).userId = newUser.id;
 
       res.json({
         user: {
           id: newUser.id,
-          username: newUser.username,
           email: newUser.email,
-          role: newUser.role,
           firstName: newUser.firstName,
           lastName: newUser.lastName
         },

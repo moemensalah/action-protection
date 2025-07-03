@@ -5,25 +5,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Plus, Trash2, Save } from "lucide-react";
+import { Upload, Plus, Trash2, Save, Image, X } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import type { HeroSection, InsertHeroSection } from "@shared/schema";
 
 interface TypingWord {
   en: string;
   ar: string;
-}
-
-interface HeroSection {
-  id: number;
-  backgroundImage: string;
-  logoImage: string;
-  typingWords: TypingWord[];
-  mainTitleEn: string;
-  mainTitleAr: string;
-  subtitleEn: string;
-  subtitleAr: string;
-  isActive: boolean;
 }
 
 export function HeroSectionManager() {
@@ -31,7 +20,7 @@ export function HeroSectionManager() {
   const queryClient = useQueryClient();
   
   const [formData, setFormData] = useState<Partial<HeroSection>>({
-    backgroundImage: "",
+    backgroundImages: [],
     logoImage: "",
     typingWords: [],
     mainTitleEn: "Action Protection",
@@ -42,6 +31,7 @@ export function HeroSectionManager() {
   });
 
   const [newWord, setNewWord] = useState<TypingWord>({ en: "", ar: "" });
+  const [newBackgroundImage, setNewBackgroundImage] = useState("");
 
   // Fetch hero section data
   const { data: heroSection, isLoading } = useQuery({
@@ -50,90 +40,81 @@ export function HeroSectionManager() {
 
   useEffect(() => {
     if (heroSection) {
-      setFormData(heroSection);
+      setFormData({
+        ...heroSection,
+        typingWords: Array.isArray(heroSection.typingWords) ? heroSection.typingWords : [],
+        backgroundImages: Array.isArray(heroSection.backgroundImages) ? heroSection.backgroundImages : []
+      });
     }
   }, [heroSection]);
 
-  // Update hero section mutation
+  // Update mutation
   const updateMutation = useMutation({
     mutationFn: async (data: Partial<HeroSection>) => {
-      return await apiRequest("/api/admin/hero-section", {
+      await apiRequest("/api/admin/hero-section", {
         method: "PUT",
         body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" }
       });
     },
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Hero section updated successfully",
+        description: "Hero section updated successfully!",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/hero-section"] });
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to update hero section",
+        description: "Failed to update hero section. Please try again.",
         variant: "destructive",
       });
+      console.error("Hero section update error:", error);
     },
   });
 
-  // Image upload mutation
-  const uploadMutation = useMutation({
-    mutationFn: async (file: File) => {
-      const formData = new FormData();
-      formData.append("image", file);
-      
-      const response = await fetch("/api/upload/image", {
-        method: "POST",
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
-      
-      return await response.json();
-    },
-    onSuccess: (data, file, context: any) => {
-      const fieldName = context as 'backgroundImage' | 'logoImage';
-      setFormData(prev => ({ ...prev, [fieldName]: data.url }));
-      toast({
-        title: "Success",
-        description: "Image uploaded successfully",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to upload image",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, fieldName: 'backgroundImage' | 'logoImage') => {
-    const file = event.target.files?.[0];
-    if (file) {
-      uploadMutation.mutate(file, { context: fieldName } as any);
-    }
+  const handleInputChange = (field: keyof HeroSection, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleAddTypingWord = () => {
     if (newWord.en.trim() && newWord.ar.trim()) {
+      const currentWords = Array.isArray(formData.typingWords) ? formData.typingWords : [];
       setFormData(prev => ({
         ...prev,
-        typingWords: [...(prev.typingWords || []), newWord]
+        typingWords: [...currentWords, newWord]
       }));
       setNewWord({ en: "", ar: "" });
     }
   };
 
   const handleRemoveTypingWord = (index: number) => {
+    const currentWords = Array.isArray(formData.typingWords) ? formData.typingWords : [];
     setFormData(prev => ({
       ...prev,
-      typingWords: prev.typingWords?.filter((_, i) => i !== index) || []
+      typingWords: currentWords.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleAddBackgroundImage = () => {
+    if (newBackgroundImage.trim()) {
+      const currentImages = Array.isArray(formData.backgroundImages) ? formData.backgroundImages : [];
+      setFormData(prev => ({
+        ...prev,
+        backgroundImages: [...currentImages, newBackgroundImage]
+      }));
+      setNewBackgroundImage("");
+    }
+  };
+
+  const handleRemoveBackgroundImage = (index: number) => {
+    const currentImages = Array.isArray(formData.backgroundImages) ? formData.backgroundImages : [];
+    setFormData(prev => ({
+      ...prev,
+      backgroundImages: currentImages.filter((_, i) => i !== index)
     }));
   };
 
@@ -144,6 +125,9 @@ export function HeroSectionManager() {
   if (isLoading) {
     return <div className="p-6">Loading hero section...</div>;
   }
+
+  const currentTypingWords = Array.isArray(formData.typingWords) ? formData.typingWords : [];
+  const currentBackgroundImages = Array.isArray(formData.backgroundImages) ? formData.backgroundImages : [];
 
   return (
     <div className="p-6 space-y-6">
@@ -159,109 +143,141 @@ export function HeroSectionManager() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Images Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Images</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Background Image */}
+      {/* Background Images Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Background Images</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 gap-4">
             <div>
-              <Label>Background Image</Label>
-              <div className="mt-2 space-y-2">
+              <Label>Add New Background Image URL</Label>
+              <div className="flex gap-2">
                 <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e, 'backgroundImage')}
-                  disabled={uploadMutation.isPending}
+                  value={newBackgroundImage}
+                  onChange={(e) => setNewBackgroundImage(e.target.value)}
+                  placeholder="/assets/g-class-cinematic-bg.png"
+                  className="flex-1"
                 />
-                {formData.backgroundImage && (
-                  <div className="relative">
-                    <img 
-                      src={formData.backgroundImage} 
-                      alt="Background Preview" 
-                      className="w-full h-32 object-cover rounded border"
-                    />
-                  </div>
-                )}
+                <Button 
+                  onClick={handleAddBackgroundImage}
+                  disabled={!newBackgroundImage.trim()}
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Image
+                </Button>
               </div>
             </div>
+          </div>
+          
+          {/* Display Current Background Images */}
+          <div className="space-y-2">
+            <Label>Current Background Images ({currentBackgroundImages.length})</Label>
+            {currentBackgroundImages.length === 0 ? (
+              <p className="text-muted-foreground">No background images added yet.</p>
+            ) : (
+              <div className="grid grid-cols-1 gap-3">
+                {currentBackgroundImages.map((imageUrl: string, index: number) => (
+                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Image className="h-5 w-5 text-muted-foreground" />
+                      <span className="text-sm font-medium">Image {index + 1}</span>
+                      <code className="text-xs bg-muted px-2 py-1 rounded">{imageUrl}</code>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleRemoveBackgroundImage(index)}
+                      className="flex items-center gap-1"
+                    >
+                      <X className="h-3 w-3" />
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
-            {/* Logo Image */}
+      {/* Logo Image Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Logo Image</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <Label>Logo Image URL</Label>
+            <Input
+              value={formData.logoImage || ""}
+              onChange={(e) => handleInputChange("logoImage", e.target.value)}
+              placeholder="/assets/action-protection-logo-dark.png"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Main Titles Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Main Titles</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Logo Image</Label>
-              <div className="mt-2 space-y-2">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e, 'logoImage')}
-                  disabled={uploadMutation.isPending}
-                />
-                {formData.logoImage && (
-                  <div className="relative">
-                    <img 
-                      src={formData.logoImage} 
-                      alt="Logo Preview" 
-                      className="w-full h-32 object-contain rounded border bg-gray-100"
-                    />
-                  </div>
-                )}
-              </div>
+              <Label>English Title</Label>
+              <Input
+                value={formData.mainTitleEn || ""}
+                onChange={(e) => handleInputChange("mainTitleEn", e.target.value)}
+                placeholder="Action Protection"
+              />
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Text Content */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Text Content</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Main Title (English)</Label>
-                <Input
-                  value={formData.mainTitleEn || ""}
-                  onChange={(e) => setFormData(prev => ({ ...prev, mainTitleEn: e.target.value }))}
-                  placeholder="Action Protection"
-                />
-              </div>
-              <div>
-                <Label>Main Title (Arabic)</Label>
-                <Input
-                  value={formData.mainTitleAr || ""}
-                  onChange={(e) => setFormData(prev => ({ ...prev, mainTitleAr: e.target.value }))}
-                  placeholder="أكشن بروتكشن"
-                  dir="rtl"
-                />
-              </div>
+            <div>
+              <Label>Arabic Title</Label>
+              <Input
+                value={formData.mainTitleAr || ""}
+                onChange={(e) => handleInputChange("mainTitleAr", e.target.value)}
+                placeholder="أكشن بروتكشن"
+                dir="rtl"
+              />
             </div>
+          </div>
+        </CardContent>
+      </Card>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Subtitle (English)</Label>
-                <Textarea
-                  value={formData.subtitleEn || ""}
-                  onChange={(e) => setFormData(prev => ({ ...prev, subtitleEn: e.target.value }))}
-                  placeholder="Premium Vehicle Protection Services"
-                />
-              </div>
-              <div>
-                <Label>Subtitle (Arabic)</Label>
-                <Textarea
-                  value={formData.subtitleAr || ""}
-                  onChange={(e) => setFormData(prev => ({ ...prev, subtitleAr: e.target.value }))}
-                  placeholder="خدمات حماية المركبات المتميزة"
-                  dir="rtl"
-                />
-              </div>
+      {/* Subtitles Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Subtitles</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>English Subtitle</Label>
+              <Textarea
+                value={formData.subtitleEn || ""}
+                onChange={(e) => handleInputChange("subtitleEn", e.target.value)}
+                placeholder="Premium Vehicle Protection Services"
+                rows={3}
+              />
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <div>
+              <Label>Arabic Subtitle</Label>
+              <Textarea
+                value={formData.subtitleAr || ""}
+                onChange={(e) => handleInputChange("subtitleAr", e.target.value)}
+                placeholder="خدمات حماية المركبات المتميزة"
+                rows={3}
+                dir="rtl"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Typing Words Section */}
+      {/* Typing Words Animation Section */}
       <Card>
         <CardHeader>
           <CardTitle>Typing Words Animation</CardTitle>
@@ -273,7 +289,7 @@ export function HeroSectionManager() {
               <Input
                 value={newWord.en}
                 onChange={(e) => setNewWord(prev => ({ ...prev, en: e.target.value }))}
-                placeholder="PROTECTION"
+                placeholder="YOUR CAR PROTECTION GUARANTEED"
               />
             </div>
             <div>
@@ -281,7 +297,7 @@ export function HeroSectionManager() {
               <Input
                 value={newWord.ar}
                 onChange={(e) => setNewWord(prev => ({ ...prev, ar: e.target.value }))}
-                placeholder="الحماية"
+                placeholder="حماية سيارتك مضمونة"
                 dir="rtl"
               />
             </div>
@@ -293,29 +309,33 @@ export function HeroSectionManager() {
             className="flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
-            Add Word
+            Add Typing Word
           </Button>
-
-          {/* Current Words */}
+          
+          {/* Display Current Typing Words */}
           <div className="space-y-2">
-            <Label>Current Typing Words:</Label>
-            {formData.typingWords?.map((word, index) => (
-              <div key={index} className="flex items-center justify-between p-3 border rounded">
-                <div className="flex gap-4">
-                  <span className="font-medium">{word.en}</span>
-                  <span className="text-gray-600" dir="rtl">{word.ar}</span>
-                </div>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleRemoveTypingWord(index)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+            <Label>Current Typing Words ({currentTypingWords.length})</Label>
+            {currentTypingWords.length === 0 ? (
+              <p className="text-muted-foreground">No typing words added yet.</p>
+            ) : (
+              <div className="space-y-2">
+                {currentTypingWords.map((word: TypingWord, index: number) => (
+                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="grid grid-cols-2 gap-4 flex-1">
+                      <span className="text-sm"><strong>EN:</strong> {word.en}</span>
+                      <span className="text-sm text-right" dir="rtl"><strong>AR:</strong> {word.ar}</span>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleRemoveTypingWord(index)}
+                      className="ml-2"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
               </div>
-            ))}
-            {(!formData.typingWords || formData.typingWords.length === 0) && (
-              <p className="text-gray-500 text-sm">No typing words added yet.</p>
             )}
           </div>
         </CardContent>

@@ -253,7 +253,7 @@ export const orderItems = pgTable("order_items", {
 // Hero Section table
 export const heroSection = pgTable("hero_section", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-  backgroundImage: text("background_image"), // Hero background image URL
+  backgroundImages: jsonb("background_images").default([]), // Array of background image URLs
   logoImage: text("logo_image"), // Logo image URL
   typingWords: jsonb("typing_words").default([]), // Array of typing words [{"en": "word", "ar": "كلمة"}, ...]
   mainTitleEn: varchar("main_title_en", { length: 255 }).notNull().default("Action Protection"),

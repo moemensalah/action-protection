@@ -1,7 +1,7 @@
 import { db } from "./db";
 import { 
   users, categories, products, aboutUs, contactUs, footerContent, 
-  widgetSettings, privacyPolicy, termsOfService, smtpSettings, experienceSection 
+  widgetSettings, privacyPolicy, termsOfService, smtpSettings, experienceSection, heroSection 
 } from "@shared/schema";
 import bcrypt from "bcryptjs";
 
@@ -632,6 +632,28 @@ For questions about these Terms of Service, contact us at legal@latelounge.sa`,
 
 **معلومات الاتصال**
 للأسئلة حول شروط الخدمة هذه، اتصلوا بنا على legal@latelounge.sa`,
+      isActive: true
+    }).onConflictDoNothing();
+
+    // Seed Hero Section
+    console.log("🏠 Seeding hero section...");
+    await db.insert(heroSection).values({
+      backgroundImages: [
+        "/assets/u4193187385_A_cinematic_ultra-wide_image_of_a_Mercedes_G-Clas_bdbff7bf-0bb8-443b-949a-b8b3bf2f8c26_2_1751110194189.png",
+        "/assets/u4193187385_A_cinematic_image_of_a_Jeep_wrangler_positioned_o_dd6a5ed1-f17d-462c-b8eb-9a13c67fe5ed_0_1751052438080.png",
+        "/assets/u4193187385_A_cinematic_image_of_a_Jeep_wrangler_positioned_o_dd6a5ed1-f17d-462c-b8eb-9a13c67fe5ed_2_1751052429094.png",
+        "/assets/u4193187385_A_cinematic_image_of_a_NISSAN_PATROL_2025_positio_bcb3da0a-fe74-4b9e-b956-5095f10069c4_2_1751052669937.png"
+      ],
+      logoImage: "/assets/logo-dark_1751110773844.png",
+      typingWords: [
+        {"en": "YOUR CAR PROTECTION GUARANTEED", "ar": "حماية سيارتك مضمونة"},
+        {"en": "GIVE US THE KEY AND LEAVE THE REST TO US", "ar": "سلمنا المفتاح وسيب الباقي علينا"},
+        {"en": "STRONGEST CAR PROTECTION CENTER IN KUWAIT", "ar": "أقوى مركز لحماية سيارتك في الكويت"}
+      ],
+      mainTitleEn: "Action Protection",
+      mainTitleAr: "أكشن بروتكشن",
+      subtitleEn: "Premium Vehicle Protection Services",
+      subtitleAr: "خدمات حماية المركبات المتميزة",
       isActive: true
     }).onConflictDoNothing();
 

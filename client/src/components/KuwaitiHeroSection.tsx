@@ -3,6 +3,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Shield, Car } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export function KuwaitiHeroSection() {
   const { t, isRTL } = useLanguage();
@@ -13,16 +14,36 @@ export function KuwaitiHeroSection() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
-  const words = isRTL 
-    ? ["حماية سيارتك مضمونة", "سلمنا المفتاح وسيب الباقي علينا", "أقوى مركز لحماية سيارتك في الكويت"]
-    : ["YOUR CAR PROTECTION GUARANTEED", "GIVE US THE KEY AND LEAVE THE REST TO US", "STRONGEST CAR PROTECTION CENTER IN KUWAIT"];
+  // Fetch hero section data from CMS
+  const { data: heroSection } = useQuery({
+    queryKey: ["/api/hero-section"],
+  });
 
-  const backgrounds = [
-    "/assets/g-class-cinematic-bg.png",
-    "/assets/jeep-wrangler-bg-1.png", 
-    "/assets/jeep-wrangler-bg-2.png",
-    "/assets/nissan-patrol-bg.png"
-  ];
+  // Use CMS data or fallback to defaults
+  const words = (() => {
+    if (heroSection?.typingWords && Array.isArray(heroSection.typingWords) && heroSection.typingWords.length > 0) {
+      return heroSection.typingWords.map((word: any) => isRTL ? word.ar : word.en);
+    }
+    return isRTL 
+      ? ["حماية سيارتك مضمونة", "سلمنا المفتاح وسيب الباقي علينا", "أقوى مركز لحماية سيارتك في الكويت"]
+      : ["YOUR CAR PROTECTION GUARANTEED", "GIVE US THE KEY AND LEAVE THE REST TO US", "STRONGEST CAR PROTECTION CENTER IN KUWAIT"];
+  })();
+
+  const backgrounds = (() => {
+    if (heroSection?.backgroundImages && Array.isArray(heroSection.backgroundImages) && heroSection.backgroundImages.length > 0) {
+      return heroSection.backgroundImages;
+    }
+    return [
+      "/assets/g-class-cinematic-bg.png",
+      "/assets/jeep-wrangler-bg-1.png", 
+      "/assets/jeep-wrangler-bg-2.png",
+      "/assets/nissan-patrol-bg.png"
+    ];
+  })();
+
+  const logoImage = heroSection?.logoImage || "/assets/action-protection-logo-dark.png";
+  const mainTitle = isRTL ? heroSection?.mainTitleAr : heroSection?.mainTitleEn;
+  const subtitle = isRTL ? heroSection?.subtitleAr : heroSection?.subtitleEn;
 
   // Background rotation effect
   useEffect(() => {
@@ -125,8 +146,8 @@ export function KuwaitiHeroSection() {
               <div className="inline-block relative">
                 <div className="animate-float">
                   <img 
-                    src="/assets/action-protection-logo-dark.png"
-                    alt={isRTL ? "أكشن بروتكشن" : "Action Protection"}
+                    src={logoImage}
+                    alt={mainTitle || (isRTL ? "أكشن بروتكشن" : "Action Protection")}
                     className="h-16 lg:h-24 object-contain filter drop-shadow-2xl transform transition-all duration-1000 hover:scale-110"
                   />
                 </div>

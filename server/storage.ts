@@ -1,5 +1,6 @@
 import {
   users,
+  websiteUsers,
   categories,
   products,
   aboutUs,
@@ -18,6 +19,8 @@ import {
   reviewSettings,
   type User,
   type UpsertUser,
+  type WebsiteUser,
+  type InsertWebsiteUser,
   type Category,
   type Product,
   type AboutUs,
@@ -55,7 +58,7 @@ import {
 } from "@shared/schema";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
-import { eq, lt, gt, desc, asc, and, isNotNull } from "drizzle-orm";
+import { eq, lt, gt, desc, asc, and, isNotNull, sql, gte } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -160,6 +163,20 @@ export interface IStorage {
   createOrderItem(orderItemData: InsertOrderItem): Promise<OrderItem>;
   getUserOrders(userId: string): Promise<Order[]>;
   getOrderByNumber(orderNumber: string): Promise<Order | undefined>;
+
+  // Website Users Management
+  getAllWebsiteUsersWithStats(): Promise<any[]>;
+  getWebsiteUsersStats(): Promise<any>;
+  getWebsiteUserOrders(userId: number): Promise<Order[]>;
+  updateWebsiteUser(userId: number, updates: Partial<WebsiteUser>): Promise<WebsiteUser>;
+  deleteWebsiteUser(userId: number): Promise<void>;
+
+  // Order Management (Admin)
+  getAllOrdersWithDetails(): Promise<any[]>;
+  getOrdersStats(): Promise<any>;
+  getOrderDetails(orderId: number): Promise<any>;
+  updateOrder(orderId: number, updates: Partial<Order>): Promise<Order>;
+  deleteOrder(orderId: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -992,6 +1009,213 @@ export class DatabaseStorage implements IStorage {
         // Use OR conditions for each product ID
         ...reviewableProductIds.map(id => eq(products.id, id))
       ));
+  }
+
+  // Website Users Management
+  async getAllWebsiteUsersWithStats(): Promise<any[]> {
+    const result = await db
+      .select({
+        id: websiteUsers.id,
+        firstName: websiteUsers.firstName,
+        lastName: websiteUsers.lastName,
+        email: websiteUsers.email,
+        phone: websiteUsers.phone,
+        isActive: websiteUsers.isActive,
+        createdAt: websiteUsers.createdAt,
+        updatedAt: websiteUsers.updatedAt,
+        totalOrders: sql<number>`COUNT(${orders.id})`.as('totalOrders'),
+        totalSpent: sql<string>`COALESCE(SUM(${orders.totalAmount}), 0)`.as('totalSpent'),
+      })
+      .from(websiteUsers)
+      .leftJoin(orders, eq(websiteUsers.id, orders.websiteUserId))
+      .groupBy(websiteUsers.id)
+      .orderBy(websiteUsers.createdAt);
+
+    return result;
+  }
+
+  async getWebsiteUsersStats(): Promise<any> {
+    const totalUsers = await db.select({ count: sql<number>`COUNT(*)` }).from(websiteUsers);
+    const activeUsers = await db.select({ count: sql<number>`COUNT(*)` }).from(websiteUsers).where(eq(websiteUsers.isActive, true));
+    
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const newUsersThisMonth = await db.select({ count: sql<number>`COUNT(*)` }).from(websiteUsers).where(gte(websiteUsers.createdAt, thirtyDaysAgo));
+    
+    const totalRevenue = await db.select({ 
+      total: sql<string>`COALESCE(SUM(${orders.totalAmount}), 0)` 
+    }).from(orders);
+
+    return {
+      totalUsers: totalUsers[0]?.count || 0,
+      activeUsers: activeUsers[0]?.count || 0,
+      newUsersThisMonth: newUsersThisMonth[0]?.count || 0,
+      totalRevenue: totalRevenue[0]?.total || '0',
+    };
+  }
+
+  async getWebsiteUserOrders(userId: number): Promise<Order[]> {
+    const userOrders = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.websiteUserId, userId))
+      .orderBy(desc(orders.createdAt));
+
+    return userOrders;
+  }
+
+  async updateWebsiteUser(userId: number, updates: Partial<WebsiteUser>): Promise<WebsiteUser> {
+    const [updatedUser] = await db
+      .update(websiteUsers)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(websiteUsers.id, userId))
+      .returning();
+
+    return updatedUser;
+  }
+
+  async deleteWebsiteUser(userId: number): Promise<void> {
+    await db.delete(websiteUsers).where(eq(websiteUsers.id, userId));
+  }
+
+  // Order Management (Admin)
+  async getAllOrdersWithDetails(): Promise<any[]> {
+    const result = await db
+      .select({
+        id: orders.id,
+        orderNumber: orders.orderNumber,
+        createdAt: orders.createdAt,
+        updatedAt: orders.updatedAt,
+        status: orders.status,
+        customerName: orders.customerName,
+        customerPhone: orders.customerPhone,
+        customerEmail: orders.customerEmail,
+        deliveryAddress: orders.deliveryAddress,
+        paymentMethod: orders.paymentMethod,
+        paymentStatus: orders.paymentStatus,
+        total: orders.totalAmount,
+        notes: orders.notes,
+        websiteUserId: orders.websiteUserId,
+        websiteUser: {
+          id: websiteUsers.id,
+          firstName: websiteUsers.firstName,
+          lastName: websiteUsers.lastName,
+          email: websiteUsers.email,
+          phone: websiteUsers.phone,
+        },
+      })
+      .from(orders)
+      .leftJoin(websiteUsers, eq(orders.websiteUserId, websiteUsers.id))
+      .orderBy(desc(orders.createdAt));
+
+    // Add order items for each order
+    const ordersWithItems = await Promise.all(
+      result.map(async (order) => {
+        const items = await db
+          .select({
+            id: orderItems.id,
+            productId: orderItems.productId,
+            productName: orderItems.productName,
+            productPrice: orderItems.productPrice,
+            quantity: orderItems.quantity,
+            subtotal: orderItems.subtotal,
+          })
+          .from(orderItems)
+          .where(eq(orderItems.orderId, order.id));
+
+        return {
+          ...order,
+          items,
+        };
+      })
+    );
+
+    return ordersWithItems;
+  }
+
+  async getOrdersStats(): Promise<any> {
+    const totalOrders = await db.select({ count: sql<number>`COUNT(*)` }).from(orders);
+    const pendingOrders = await db.select({ count: sql<number>`COUNT(*)` }).from(orders).where(eq(orders.status, 'pending'));
+    const completedOrders = await db.select({ count: sql<number>`COUNT(*)` }).from(orders).where(eq(orders.status, 'delivered'));
+    const totalRevenue = await db.select({ 
+      total: sql<string>`COALESCE(SUM(${orders.totalAmount}), 0)` 
+    }).from(orders);
+
+    return {
+      totalOrders: totalOrders[0]?.count || 0,
+      pendingOrders: pendingOrders[0]?.count || 0,
+      completedOrders: completedOrders[0]?.count || 0,
+      totalRevenue: totalRevenue[0]?.total || '0',
+    };
+  }
+
+  async getOrderDetails(orderId: number): Promise<any> {
+    const [order] = await db
+      .select({
+        id: orders.id,
+        orderNumber: orders.orderNumber,
+        createdAt: orders.createdAt,
+        updatedAt: orders.updatedAt,
+        status: orders.status,
+        customerName: orders.customerName,
+        customerPhone: orders.customerPhone,
+        customerEmail: orders.customerEmail,
+        deliveryAddress: orders.deliveryAddress,
+        paymentMethod: orders.paymentMethod,
+        paymentStatus: orders.paymentStatus,
+        total: orders.totalAmount,
+        notes: orders.notes,
+        websiteUserId: orders.websiteUserId,
+        websiteUser: {
+          id: websiteUsers.id,
+          firstName: websiteUsers.firstName,
+          lastName: websiteUsers.lastName,
+          email: websiteUsers.email,
+          phone: websiteUsers.phone,
+        },
+      })
+      .from(orders)
+      .leftJoin(websiteUsers, eq(orders.websiteUserId, websiteUsers.id))
+      .where(eq(orders.id, orderId));
+
+    if (!order) {
+      return null;
+    }
+
+    const items = await db
+      .select({
+        id: orderItems.id,
+        productId: orderItems.productId,
+        productName: orderItems.productName,
+        productPrice: orderItems.productPrice,
+        quantity: orderItems.quantity,
+        subtotal: orderItems.subtotal,
+      })
+      .from(orderItems)
+      .where(eq(orderItems.orderId, orderId));
+
+    return {
+      ...order,
+      items,
+    };
+  }
+
+  async updateOrder(orderId: number, updates: Partial<Order>): Promise<Order> {
+    const [updatedOrder] = await db
+      .update(orders)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(orders.id, orderId))
+      .returning();
+
+    return updatedOrder;
+  }
+
+  async deleteOrder(orderId: number): Promise<void> {
+    // Delete order items first
+    await db.delete(orderItems).where(eq(orderItems.orderId, orderId));
+    // Delete the order
+    await db.delete(orders).where(eq(orders.id, orderId));
   }
 }
 

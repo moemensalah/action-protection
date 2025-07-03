@@ -15,6 +15,8 @@ import { AdminLogin } from "@/components/admin/AdminLogin";
 import { HeroSectionManager } from "@/components/admin/HeroSectionManager";
 import { ExperienceSectionManager } from "@/components/admin/ExperienceSectionManager";
 import { ReviewsManager } from "@/components/admin/ReviewsManager";
+import WebsiteUsersManagement from "@/components/admin/WebsiteUsersManagement";
+import OrderManagement from "@/components/admin/OrderManagement";
 
 export default function AdminPanel() {
   const { t, isRTL } = useLanguage();
@@ -98,10 +100,28 @@ export default function AdminPanel() {
       roles: ["administrator"]
     },
     {
-      id: "users",
+      id: "website-users",
       icon: Users,
-      nameEn: "Users",
-      nameAr: "المستخدمين",
+      nameEn: "Website Users",
+      nameAr: "مستخدمو الموقع", 
+      descEn: "Manage website users and accounts",
+      descAr: "إدارة مستخدمي الموقع والحسابات",
+      roles: ["administrator", "moderator"]
+    },
+    {
+      id: "website-orders",
+      icon: Package,
+      nameEn: "Website Orders",
+      nameAr: "طلبات الموقع",
+      descEn: "Manage customer orders and details",
+      descAr: "إدارة طلبات العملاء والتفاصيل",
+      roles: ["administrator", "moderator"]
+    },
+    {
+      id: "users",
+      icon: Shield,
+      nameEn: "Admin Users",
+      nameAr: "المستخدمين الإداريين",
       descEn: "Manage admin users",
       descAr: "إدارة المستخدمين الإداريين",
       roles: ["administrator"]
@@ -327,6 +347,14 @@ export default function AdminPanel() {
                   <SmtpSettings />
                 </TabsContent>
               )}
+
+              <TabsContent value="website-users" className="space-y-6">
+                <WebsiteUsersManagement />
+              </TabsContent>
+
+              <TabsContent value="website-orders" className="space-y-6">
+                <OrderManagement />
+              </TabsContent>
 
               {user?.role === "administrator" && (
                 <TabsContent value="users" className="space-y-6">

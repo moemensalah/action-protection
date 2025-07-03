@@ -945,7 +945,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Order management routes
   app.post('/api/orders', async (req, res) => {
     try {
-      const { firstName, lastName, email, phone, address, city, area, notes, items, total, userId } = req.body;
+      const { firstName, lastName, email, phone, address, city, area, notes, items, totalAmount, userId } = req.body;
       
       // Generate order number
       const orderNumber = `AP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -958,7 +958,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         customerPhone: phone,
         customerEmail: email,
         deliveryAddress: `${address}, ${area}, ${city}`,
-        totalAmount: total.toString(),
+        totalAmount: totalAmount.toString(),
         status: 'pending' as const,
         paymentMethod: 'cash' as const,
         paymentStatus: 'pending' as const,
@@ -1257,6 +1257,135 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching reviewable products:", error);
       res.status(500).json({ message: "Failed to fetch reviewable products" });
+    }
+  });
+
+  // ===== WEBSITE USERS MANAGEMENT =====
+  
+  // Get all website users with statistics
+  app.get("/api/admin/website-users", requireLocalAdmin, async (req, res) => {
+    try {
+      const users = await storage.getAllWebsiteUsersWithStats();
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching website users:", error);
+      res.status(500).json({ message: "Failed to fetch website users" });
+    }
+  });
+
+  // Get website users statistics
+  app.get("/api/admin/website-users/stats", requireLocalAdmin, async (req, res) => {
+    try {
+      const stats = await storage.getWebsiteUsersStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching website users stats:", error);
+      res.status(500).json({ message: "Failed to fetch statistics" });
+    }
+  });
+
+  // Get specific website user orders
+  app.get("/api/admin/website-users/:id/orders", requireLocalAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const orders = await storage.getWebsiteUserOrders(userId);
+      res.json(orders);
+    } catch (error) {
+      console.error("Error fetching user orders:", error);
+      res.status(500).json({ message: "Failed to fetch user orders" });
+    }
+  });
+
+  // Update website user
+  app.put("/api/admin/website-users/:id", requireLocalAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const updates = req.body;
+      
+      const updatedUser = await storage.updateWebsiteUser(userId, updates);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating website user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  // Delete website user
+  app.delete("/api/admin/website-users/:id", requireLocalAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      await storage.deleteWebsiteUser(userId);
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting website user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
+  // ===== ORDER MANAGEMENT =====
+  
+  // Get all orders with details
+  app.get("/api/admin/orders", requireLocalAdmin, async (req, res) => {
+    try {
+      const orders = await storage.getAllOrdersWithDetails();
+      res.json(orders);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      res.status(500).json({ message: "Failed to fetch orders" });
+    }
+  });
+
+  // Get orders statistics
+  app.get("/api/admin/orders/stats", requireLocalAdmin, async (req, res) => {
+    try {
+      const stats = await storage.getOrdersStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching orders stats:", error);
+      res.status(500).json({ message: "Failed to fetch statistics" });
+    }
+  });
+
+  // Get specific order details
+  app.get("/api/admin/orders/:id", requireLocalAdmin, async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.id);
+      const order = await storage.getOrderDetails(orderId);
+      
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      
+      res.json(order);
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+      res.status(500).json({ message: "Failed to fetch order details" });
+    }
+  });
+
+  // Update order
+  app.put("/api/admin/orders/:id", requireLocalAdmin, async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.id);
+      const updates = req.body;
+      
+      const updatedOrder = await storage.updateOrder(orderId, updates);
+      res.json(updatedOrder);
+    } catch (error) {
+      console.error("Error updating order:", error);
+      res.status(500).json({ message: "Failed to update order" });
+    }
+  });
+
+  // Delete order
+  app.delete("/api/admin/orders/:id", requireLocalAdmin, async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.id);
+      await storage.deleteOrder(orderId);
+      res.json({ message: "Order deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      res.status(500).json({ message: "Failed to delete order" });
     }
   });
 

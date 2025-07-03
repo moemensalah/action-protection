@@ -43,6 +43,23 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Website Users table (independent from admin/moderator users)
+export const websiteUsers = pgTable("website_users", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  email: varchar("email", { length: 255 }).unique().notNull(),
+  password: varchar("password", { length: 255 }).notNull(), // Hashed password
+  firstName: varchar("first_name", { length: 100 }).notNull(),
+  lastName: varchar("last_name", { length: 100 }).notNull(),
+  phone: varchar("phone", { length: 20 }),
+  dateOfBirth: timestamp("date_of_birth"),
+  gender: varchar("gender", { enum: ["male", "female"] }),
+  isActive: boolean("is_active").default(true),
+  emailVerified: boolean("email_verified").default(false),
+  lastLogin: timestamp("last_login"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // User Addresses table
 export const userAddresses = pgTable("user_addresses", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
@@ -223,7 +240,7 @@ export const cartItems = pgTable("cart_items", {
 // Orders table
 export const orders = pgTable("orders", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-  userId: varchar("user_id").notNull(),
+  websiteUserId: integer("website_user_id").references(() => websiteUsers.id),
   orderNumber: varchar("order_number", { length: 50 }).notNull().unique(),
   customerName: varchar("customer_name", { length: 255 }).notNull(),
   customerPhone: varchar("customer_phone", { length: 20 }).notNull(),
@@ -336,6 +353,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   addresses: many(userAddresses),
   customerAddresses: many(customerAddresses),
   cartItems: many(cartItems),
+}));
+
+export const websiteUsersRelations = relations(websiteUsers, ({ many }) => ({
   orders: many(orders),
 }));
 
@@ -365,9 +385,9 @@ export const cartItemsRelations = relations(cartItems, ({ one }) => ({
 }));
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({
-  user: one(users, {
-    fields: [orders.userId],
-    references: [users.id],
+  websiteUser: one(websiteUsers, {
+    fields: [orders.websiteUserId],
+    references: [websiteUsers.id],
   }),
   items: many(orderItems),
 }));
@@ -399,6 +419,12 @@ export const customerReviewsRelations = relations(customerReviews, ({ one }) => 
 }));
 
 // Insert schemas
+export const insertWebsiteUserSchema = createInsertSchema(websiteUsers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertCategorySchema = createInsertSchema(categories).omit({
   id: true,
   createdAt: true,
@@ -526,6 +552,8 @@ export const createUserSchema = insertUserSchema.extend({
 export type User = typeof users.$inferSelect;
 export type UpsertUser = z.infer<typeof upsertUserSchema>;
 export type CreateUser = z.infer<typeof createUserSchema>;
+export type WebsiteUser = typeof websiteUsers.$inferSelect;
+export type InsertWebsiteUser = z.infer<typeof insertWebsiteUserSchema>;
 export type Category = typeof categories.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type AboutUs = typeof aboutUs.$inferSelect;

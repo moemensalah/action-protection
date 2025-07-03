@@ -120,7 +120,9 @@ export const translations = {
     "common.text": "Text",
     "common.settings": "Settings",
     "common.loading": "Loading...",
+    "common.remove": "Remove",
     "common.saving": "Saving...",
+    "common.uploading": "Uploading...",
     
     // Hero Section CMS
     "heroSection.title": "Hero Section Management",
@@ -182,9 +184,26 @@ export const translations = {
     "reviews.approveSuccess": "Review approved successfully",
     "reviews.rejectSuccess": "Review rejected successfully",
     "reviews.updateError": "Failed to update review",
+    "reviews.management": "Reviews Management",
+    "reviews.settingsTitle": "Review Settings",
+    "reviews.settingsDescription": "Configure how reviews work on your website",
     "reviews.visibilityUpdateSuccess": "Review visibility updated successfully",
     "reviews.deleteSuccess": "Review deleted successfully",
     "reviews.settingsUpdateSuccess": "Review settings updated successfully",
+    
+    // Hero Section
+    "hero.title": "Hero Section Management",
+    "hero.updateSuccess": "Hero section updated successfully",
+    "hero.updateError": "Failed to update hero section",
+    "hero.backgroundImages": "Background Images",
+    "hero.uploadImage": "Upload Image",
+    "hero.typingWords": "Typing Words",
+    "hero.addWord": "Add Word",
+    "hero.englishWord": "English Word",
+    "hero.arabicWord": "Arabic Word",
+    "hero.save": "Save Changes",
+    "hero.currentTypingWords": "Current Typing Words",
+    "hero.noTypingWords": "No typing words added yet.",
   },
   ar: {
     // Navigation
@@ -307,7 +326,9 @@ export const translations = {
     "common.text": "نص",
     "common.settings": "الإعدادات",
     "common.loading": "جاري التحميل...",
+    "common.remove": "حذف",
     "common.saving": "جاري الحفظ...",
+    "common.uploading": "جاري الرفع...",
     
     // Hero Section CMS
     "heroSection.title": "إدارة القسم الرئيسي",
@@ -369,9 +390,26 @@ export const translations = {
     "reviews.approveSuccess": "تم اعتماد التقييم بنجاح",
     "reviews.rejectSuccess": "تم رفض التقييم بنجاح",
     "reviews.updateError": "فشل في تحديث التقييم",
+    "reviews.management": "إدارة التقييمات",
+    "reviews.settingsTitle": "إعدادات التقييمات",
+    "reviews.settingsDescription": "قم بتكوين كيفية عمل التقييمات على موقعك الإلكتروني",
     "reviews.visibilityUpdateSuccess": "تم تحديث ظهور التقييم بنجاح",
     "reviews.deleteSuccess": "تم حذف التقييم بنجاح",
     "reviews.settingsUpdateSuccess": "تم تحديث إعدادات التقييمات بنجاح",
+    
+    // Hero Section
+    "hero.title": "إدارة القسم الرئيسي",
+    "hero.updateSuccess": "تم تحديث القسم الرئيسي بنجاح",
+    "hero.updateError": "فشل في تحديث القسم الرئيسي",
+    "hero.backgroundImages": "صور الخلفية",
+    "hero.uploadImage": "رفع صورة",
+    "hero.typingWords": "الكلمات المكتوبة",
+    "hero.addWord": "إضافة كلمة",
+    "hero.englishWord": "الكلمة الإنجليزية",
+    "hero.arabicWord": "الكلمة العربية",
+    "hero.save": "حفظ التغييرات",
+    "hero.currentTypingWords": "الكلمات المكتوبة الحالية",
+    "hero.noTypingWords": "لم يتم إضافة كلمات مكتوبة بعد.",
   },
 };
 

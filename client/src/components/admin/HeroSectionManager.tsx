@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Upload, Plus, Trash2, Save, Image, X } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { useLanguage } from "@/hooks/useLanguage";
 import type { HeroSection, InsertHeroSection } from "@shared/schema";
 
 interface TypingWord {
@@ -18,6 +19,7 @@ interface TypingWord {
 export function HeroSectionManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { language, isRTL, t } = useLanguage();
   
   const [formData, setFormData] = useState<Partial<HeroSection>>({
     backgroundImages: [],
@@ -53,19 +55,20 @@ export function HeroSectionManager() {
       await apiRequest("/api/admin/hero-section", {
         method: "PUT",
         body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
       });
     },
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Hero section updated successfully!",
+        title: t("common.success"),
+        description: t("hero.updateSuccess"),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/hero-section"] });
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: "Failed to update hero section. Please try again.",
+        title: t("common.error"),
+        description: t("hero.updateError"),
         variant: "destructive",
       });
       console.error("Hero section update error:", error);
@@ -174,29 +177,29 @@ export function HeroSectionManager() {
   const currentBackgroundImages = Array.isArray(formData.backgroundImages) ? formData.backgroundImages : [];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Hero Section Management</h2>
+    <div className={`p-6 space-y-6 ${isRTL ? 'rtl' : 'ltr'}`}>
+      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <h2 className="text-2xl font-bold">{t("hero.title")}</h2>
         <Button 
           onClick={handleSave} 
           disabled={updateMutation.isPending}
-          className="flex items-center gap-2"
+          className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
         >
           <Save className="h-4 w-4" />
-          {updateMutation.isPending ? "Saving..." : "Save Changes"}
+          {updateMutation.isPending ? t("common.saving") : t("hero.save")}
         </Button>
       </div>
 
       {/* Background Images Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Background Images</CardTitle>
+          <CardTitle className={isRTL ? 'text-right' : 'text-left'}>{t("hero.backgroundImages")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <Label>Upload Background Images</Label>
-              <div className="flex gap-2">
+              <Label className={isRTL ? 'text-right' : 'text-left'}>{t("hero.uploadImage")}</Label>
+              <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Input
                   type="file"
                   accept="image/*"
@@ -207,11 +210,11 @@ export function HeroSectionManager() {
                 />
                 <Button 
                   disabled={uploadingImage}
-                  className="flex items-center gap-2"
+                  className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
                   variant="outline"
                 >
                   <Upload className="h-4 w-4" />
-                  {uploadingImage ? "Uploading..." : "Select Images"}
+                  {uploadingImage ? t("common.uploading") : t("hero.uploadImage")}
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground mt-1">
@@ -244,14 +247,14 @@ export function HeroSectionManager() {
                         size="sm"
                         variant="destructive"
                         onClick={() => handleRemoveBackgroundImage(index)}
-                        className="flex items-center gap-1"
+                        className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}
                       >
                         <X className="h-3 w-3" />
-                        Remove
+                        {t("common.remove")}
                       </Button>
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/75 text-white text-xs p-2">
-                      Image {index + 1}
+                    <div className={`absolute bottom-0 left-0 right-0 bg-black/75 text-white text-xs p-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {t("common.image")} {index + 1}
                     </div>
                   </div>
                 ))}
@@ -268,12 +271,12 @@ export function HeroSectionManager() {
       {/* Typing Words Animation Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Typing Words Animation</CardTitle>
+          <CardTitle className={isRTL ? 'text-right' : 'text-left'}>{t("hero.typingWords")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className={`grid grid-cols-2 gap-4 ${isRTL ? 'direction-rtl' : ''}`}>
             <div>
-              <Label>English Word</Label>
+              <Label className={isRTL ? 'text-right' : 'text-left'}>{t("hero.englishWord")}</Label>
               <Input
                 value={newWord.en}
                 onChange={(e) => setNewWord(prev => ({ ...prev, en: e.target.value }))}
@@ -281,12 +284,13 @@ export function HeroSectionManager() {
               />
             </div>
             <div>
-              <Label>Arabic Word</Label>
+              <Label className={isRTL ? 'text-right' : 'text-left'}>{t("hero.arabicWord")}</Label>
               <Input
                 value={newWord.ar}
                 onChange={(e) => setNewWord(prev => ({ ...prev, ar: e.target.value }))}
                 placeholder="حماية سيارتك مضمونة"
                 dir="rtl"
+                className={isRTL ? 'text-right' : ''}
               />
             </div>
           </div>
@@ -294,30 +298,30 @@ export function HeroSectionManager() {
           <Button 
             onClick={handleAddTypingWord}
             disabled={!newWord.en.trim() || !newWord.ar.trim()}
-            className="flex items-center gap-2"
+            className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
           >
             <Plus className="h-4 w-4" />
-            Add Typing Word
+            {t("hero.addWord")}
           </Button>
           
           {/* Display Current Typing Words */}
           <div className="space-y-2">
-            <Label>Current Typing Words ({currentTypingWords.length})</Label>
+            <Label className={isRTL ? 'text-right' : 'text-left'}>{t("hero.currentTypingWords")} ({currentTypingWords.length})</Label>
             {currentTypingWords.length === 0 ? (
-              <p className="text-muted-foreground">No typing words added yet.</p>
+              <p className={`text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>{t("hero.noTypingWords")}</p>
             ) : (
               <div className="space-y-2">
                 {currentTypingWords.map((word: TypingWord, index: number) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="grid grid-cols-2 gap-4 flex-1">
-                      <span className="text-sm"><strong>EN:</strong> {word.en}</span>
+                  <div key={index} className={`flex items-center justify-between p-3 border rounded-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className={`grid grid-cols-2 gap-4 flex-1 ${isRTL ? 'direction-rtl' : ''}`}>
+                      <span className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}><strong>EN:</strong> {word.en}</span>
                       <span className="text-sm text-right" dir="rtl"><strong>AR:</strong> {word.ar}</span>
                     </div>
                     <Button
                       size="sm"
                       variant="destructive"
                       onClick={() => handleRemoveTypingWord(index)}
-                      className="ml-2"
+                      className={isRTL ? 'mr-2' : 'ml-2'}
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>

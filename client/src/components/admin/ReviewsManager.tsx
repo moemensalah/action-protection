@@ -189,32 +189,32 @@ export function ReviewsManager() {
   };
 
   if (isLoading) {
-    return <div className="p-6">Loading reviews...</div>;
+    return <div className={`p-6 ${isRTL ? 'text-right' : 'text-left'}`}>{t("common.loading")}</div>;
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Reviews Management</h2>
+    <div className="p-6 space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <h2 className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>{t("reviews.management")}</h2>
         <div className="flex gap-2">
           <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button variant="outline" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Settings className="h-4 w-4" />
-                Settings
+                {t("common.settings")}
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent dir={isRTL ? 'rtl' : 'ltr'}>
               <DialogHeader>
-                <DialogTitle>Review Settings</DialogTitle>
-                <DialogDescription>
-                  Configure how reviews work on your website
+                <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>{t("reviews.settingsTitle")}</DialogTitle>
+                <DialogDescription className={isRTL ? 'text-right' : 'text-left'}>
+                  {t("reviews.settingsDescription")}
                 </DialogDescription>
               </DialogHeader>
               {settings && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label>Enable Reviews</Label>
+                  <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Label className={isRTL ? 'text-right' : 'text-left'}>{t("reviews.enableReviews")}</Label>
                     <Switch
                       checked={settings.enableReviews}
                       onCheckedChange={(checked) =>
@@ -222,8 +222,8 @@ export function ReviewsManager() {
                       }
                     />
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Label>Auto-approve Reviews</Label>
+                  <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Label className={isRTL ? 'text-right' : 'text-left'}>{t("reviews.autoApproveReviews")}</Label>
                     <Switch
                       checked={settings.autoApproveReviews}
                       onCheckedChange={(checked) =>
@@ -231,8 +231,8 @@ export function ReviewsManager() {
                       }
                     />
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Label>Require Order to Review</Label>
+                  <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Label className={isRTL ? 'text-right' : 'text-left'}>{t("reviews.requireOrderToReview")}</Label>
                     <Switch
                       checked={settings.requireOrderToReview}
                       onCheckedChange={(checked) =>
@@ -240,8 +240,8 @@ export function ReviewsManager() {
                       }
                     />
                   </div>
-                  <div className="flex items-center justify-between">
-                    <Label>Show Reviews on Website</Label>
+                  <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Label className={isRTL ? 'text-right' : 'text-left'}>{t("reviews.showReviewsOnWebsite")}</Label>
                     <Switch
                       checked={settings.showReviewsOnWebsite}
                       onCheckedChange={(checked) =>

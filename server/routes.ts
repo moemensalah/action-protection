@@ -151,6 +151,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // SEPARATE ADMIN LOGIN ROUTE - Different from website user login
+  app.post('/api/auth/admin/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password required" });
+      }
+
+      // Find ADMIN user by email (NOT website user)
+      const adminUser = await storage.getUserByUsername(email);
+
+      if (!adminUser || adminUser.role !== "administrator") {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      // Validate password
+      if (!adminUser.password) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      const isValid = await bcrypt.compare(password, adminUser.password);
+      if (!isValid) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      // Store ADMIN user session (separate from website users)
+      (req.session as any).adminUserId = adminUser.id;
+
+      res.json({
+        user: {
+          id: adminUser.id,
+          email: adminUser.email,
+          firstName: adminUser.firstName,
+          lastName: adminUser.lastName,
+          role: adminUser.role
+        },
+        message: "Admin login successful"
+      });
+    } catch (error) {
+      console.error("Admin login error:", error);
+      res.status(500).json({ message: "Admin login failed" });
+    }
+  });
+
+  app.post('/api/auth/admin/logout', (req, res) => {
+    (req.session as any).adminUserId = null;
+    res.json({ message: "Admin logout successful" });
+  });
+
+  // Admin session check route - separate from website users
+  app.get('/api/auth/admin/user', async (req, res) => {
+    try {
+      const adminUserId = (req.session as any).adminUserId;
+      if (!adminUserId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const adminUser = await storage.getUser(adminUserId);
+      if (!adminUser || adminUser.role !== "administrator") {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      res.json({
+        id: adminUser.id,
+        email: adminUser.email,
+        firstName: adminUser.firstName,
+        lastName: adminUser.lastName,
+        role: adminUser.role
+      });
+    } catch (error) {
+      console.error("Admin session check error:", error);
+      res.status(500).json({ message: "Failed to fetch admin user" });
+    }
+  });
+
   app.get('/api/auth/local/user', async (req: any, res) => {
     try {
       const userId = (req.session as any).userId;
@@ -189,11 +264,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  const requireLocalAdmin = (req: any, res: any, next: any) => {
-    if (req.session.localUser && req.session.localUser.role === "administrator") {
-      req.localUser = req.session.localUser;
+  const requireLocalAdmin = async (req: any, res: any, next: any) => {
+    try {
+      const adminUserId = (req.session as any).adminUserId;
+      if (!adminUserId) {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+
+      const adminUser = await storage.getUser(adminUserId);
+      if (!adminUser || adminUser.role !== "administrator") {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+
+      req.localUser = adminUser;
       next();
-    } else {
+    } catch (error) {
+      console.error("Admin auth error:", error);
       res.status(403).json({ message: "Administrator access required" });
     }
   };

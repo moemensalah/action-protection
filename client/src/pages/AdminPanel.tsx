@@ -137,7 +137,7 @@ export default function AdminPanel() {
     // Check server session instead of localStorage
     const checkSession = async () => {
       try {
-        const response = await fetch('/api/auth/local/user', {
+        const response = await fetch('/api/auth/admin/user', {
           credentials: 'include'
         });
         
@@ -167,7 +167,7 @@ export default function AdminPanel() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/local/logout', {
+      await fetch('/api/auth/admin/logout', {
         method: 'POST',
         credentials: 'include'
       });

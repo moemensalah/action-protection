@@ -25,7 +25,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/auth/local/login", {
+      const response = await fetch("/api/auth/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

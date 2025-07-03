@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Save, Play, Upload } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface ExperienceSection {
   id: number;
@@ -27,6 +28,7 @@ interface ExperienceSection {
 export function ExperienceSectionManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t, isRTL } = useLanguage();
   
   const [formData, setFormData] = useState<Partial<ExperienceSection>>({
     titleEn: "EXPERIENCE TRUE LUXURY",
@@ -56,22 +58,23 @@ export function ExperienceSectionManager() {
   // Update experience section mutation
   const updateMutation = useMutation({
     mutationFn: async (data: Partial<ExperienceSection>) => {
-      return await apiRequest(`/api/admin/experience-section`, {
+      const response = await apiRequest(`/api/admin/experience-section`, {
         method: "PUT",
-        body: data,
+        body: JSON.stringify(data),
       });
+      return response.json();
     },
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Experience section updated successfully",
+        title: t("common.success"),
+        description: t("experienceSection.saveSuccess"),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/experience-section"] });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to update experience section",
+        title: t("common.error"),
+        description: t("experienceSection.saveError"),
         variant: "destructive",
       });
     },
@@ -87,15 +90,17 @@ export function ExperienceSectionManager() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Experience Section Management</h2>
+      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <h2 className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>
+          {t("experienceSection.title")}
+        </h2>
         <Button 
           onClick={handleSave} 
           disabled={updateMutation.isPending}
-          className="flex items-center gap-2"
+          className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
         >
           <Save className="h-4 w-4" />
-          {updateMutation.isPending ? "Saving..." : "Save Changes"}
+          {updateMutation.isPending ? t("common.saving") : t("heroSection.saveChanges")}
         </Button>
       </div>
 
@@ -103,47 +108,61 @@ export function ExperienceSectionManager() {
         {/* Header Content */}
         <Card>
           <CardHeader>
-            <CardTitle>Section Header</CardTitle>
+            <CardTitle className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              {t("experienceSection.sectionTitle")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Title (English)</Label>
+                <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                  {t("experienceSection.englishTitle")}
+                </Label>
                 <Input
                   value={formData.titleEn || ""}
                   onChange={(e) => setFormData(prev => ({ ...prev, titleEn: e.target.value }))}
                   placeholder="EXPERIENCE TRUE LUXURY"
+                  className={`${isRTL ? 'text-right' : 'text-left'}`}
                 />
               </div>
               <div>
-                <Label>Title (Arabic)</Label>
+                <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                  {t("experienceSection.arabicTitle")}
+                </Label>
                 <Input
                   value={formData.titleAr || ""}
                   onChange={(e) => setFormData(prev => ({ ...prev, titleAr: e.target.value }))}
                   placeholder="اختبر الفخامة الحقيقية"
                   dir="rtl"
+                  className={`${isRTL ? 'text-right' : 'text-left'}`}
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Description (English)</Label>
+                <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                  {t("experienceSection.englishDescription")}
+                </Label>
                 <Textarea
                   value={formData.descriptionEn || ""}
                   onChange={(e) => setFormData(prev => ({ ...prev, descriptionEn: e.target.value }))}
                   placeholder="Discover premium vehicle protection services that exceed expectations"
                   rows={4}
+                  className={`${isRTL ? 'text-right' : 'text-left'}`}
                 />
               </div>
               <div>
-                <Label>Description (Arabic)</Label>
+                <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                  {t("experienceSection.arabicDescription")}
+                </Label>
                 <Textarea
                   value={formData.descriptionAr || ""}
                   onChange={(e) => setFormData(prev => ({ ...prev, descriptionAr: e.target.value }))}
                   placeholder="اكتشف خدمات حماية المركبات المتميزة التي تتجاوز التوقعات"
                   dir="rtl"
                   rows={4}
+                  className={`${isRTL ? 'text-right' : 'text-left'}`}
                 />
               </div>
             </div>
@@ -153,15 +172,20 @@ export function ExperienceSectionManager() {
         {/* Video Configuration */}
         <Card>
           <CardHeader>
-            <CardTitle>Video Configuration</CardTitle>
+            <CardTitle className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              {t("experienceSection.videos")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>First Video URL</Label>
+              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                {t("experienceSection.video1")}
+              </Label>
               <Input
                 value={formData.video1Url || ""}
                 onChange={(e) => setFormData(prev => ({ ...prev, video1Url: e.target.value }))}
                 placeholder="/assets/video1.mp4"
+                className={`${isRTL ? 'text-right' : 'text-left'}`}
               />
               {formData.video1Url && (
                 <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-md">
@@ -170,16 +194,22 @@ export function ExperienceSectionManager() {
                     className="w-full h-32 object-cover rounded"
                     controls
                   />
+                  <p className={`text-sm text-gray-600 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {t("experienceSection.previewVideo")}
+                  </p>
                 </div>
               )}
             </div>
 
             <div>
-              <Label>Second Video URL</Label>
+              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                {t("experienceSection.video2")}
+              </Label>
               <Input
                 value={formData.video2Url || ""}
                 onChange={(e) => setFormData(prev => ({ ...prev, video2Url: e.target.value }))}
                 placeholder="/assets/video2.mp4"
+                className={`${isRTL ? 'text-right' : 'text-left'}`}
               />
               {formData.video2Url && (
                 <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-md">
@@ -188,6 +218,9 @@ export function ExperienceSectionManager() {
                     className="w-full h-32 object-cover rounded"
                     controls
                   />
+                  <p className={`text-sm text-gray-600 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {t("experienceSection.previewVideo")}
+                  </p>
                 </div>
               )}
             </div>
@@ -197,24 +230,32 @@ export function ExperienceSectionManager() {
         {/* Text Messages for Video 1 */}
         <Card>
           <CardHeader>
-            <CardTitle>First Video Text Messages</CardTitle>
+            <CardTitle className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              {t("experienceSection.text1")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Text 1 (English)</Label>
+              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                {t("experienceSection.englishText")}
+              </Label>
               <Input
                 value={formData.text1En || ""}
                 onChange={(e) => setFormData(prev => ({ ...prev, text1En: e.target.value }))}
                 placeholder="YOUR CAR IS SPECIAL WITH US"
+                className={`${isRTL ? 'text-right' : 'text-left'}`}
               />
             </div>
             <div>
-              <Label>Text 1 (Arabic)</Label>
+              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                {t("experienceSection.arabicText")}
+              </Label>
               <Input
                 value={formData.text1Ar || ""}
                 onChange={(e) => setFormData(prev => ({ ...prev, text1Ar: e.target.value }))}
                 placeholder="سيارتك متميزة معانا"
                 dir="rtl"
+                className={`${isRTL ? 'text-right' : 'text-left'}`}
               />
             </div>
           </CardContent>
@@ -223,24 +264,32 @@ export function ExperienceSectionManager() {
         {/* Text Messages for Video 2 */}
         <Card>
           <CardHeader>
-            <CardTitle>Second Video Text Messages</CardTitle>
+            <CardTitle className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              {t("experienceSection.text2")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Text 2 (English)</Label>
+              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                {t("experienceSection.englishText")}
+              </Label>
               <Input
                 value={formData.text2En || ""}
                 onChange={(e) => setFormData(prev => ({ ...prev, text2En: e.target.value }))}
                 placeholder="SUPERIOR PROTECTION FOR LUXURY CARS"
+                className={`${isRTL ? 'text-right' : 'text-left'}`}
               />
             </div>
             <div>
-              <Label>Text 2 (Arabic)</Label>
+              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                {t("experienceSection.arabicText")}
+              </Label>
               <Input
                 value={formData.text2Ar || ""}
                 onChange={(e) => setFormData(prev => ({ ...prev, text2Ar: e.target.value }))}
                 placeholder="حماية فائقة للسيارات الفاخرة"
                 dir="rtl"
+                className={`${isRTL ? 'text-right' : 'text-left'}`}
               />
             </div>
           </CardContent>

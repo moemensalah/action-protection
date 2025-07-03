@@ -279,6 +279,344 @@ fi
 - [ ] Mobile browsers
 - [ ] Different screen sizes
 
+## CMS Development Critical Issues & Solutions
+
+### 18. Content-Type Header Issues in API Requests
+**Problem**: API requests fail with empty request body despite sending JSON data
+**Root Cause**: Frontend not setting proper Content-Type header for JSON requests
+**Symptoms**: 
+- Server logs show `Content-Type: text/plain;charset=UTF-8`
+- Request body appears as empty object `{}`
+- Save operations fail silently
+
+**Solution**: 
+```typescript
+// Fix apiRequest function to automatically set Content-Type
+export async function apiRequest(url: string, options?: {
+  method?: string;
+  body?: string;
+  headers?: Record<string, string>;
+}): Promise<Response> {
+  const defaultHeaders: Record<string, string> = {};
+  
+  // CRITICAL: Set Content-Type when body is present
+  if (options?.body) {
+    defaultHeaders["Content-Type"] = "application/json";
+  }
+
+  const res = await fetch(url, {
+    method: options?.method || "GET",
+    headers: { ...defaultHeaders, ...options?.headers },
+    body: options?.body,
+    credentials: "include",
+  });
+  
+  return res;
+}
+```
+
+### 19. Database Timestamp Field Conflicts
+**Problem**: Database updates fail with "value.toISOString is not a function" error
+**Root Cause**: Frontend sending timestamp fields as strings that database can't parse
+**Symptoms**:
+- Save operations fail after frontend validation passes
+- Error occurs in Drizzle ORM timestamp mapping
+- Backend receives createdAt/updatedAt as strings instead of Date objects
+
+**Solution**:
+```typescript
+// Clean timestamp fields before database operations
+async updateHeroSection(heroData: Partial<InsertHeroSection>): Promise<HeroSection> {
+  const existingHero = await this.getHeroSection();
+  
+  if (existingHero) {
+    // CRITICAL: Remove timestamp fields from input data
+    const cleanData = { ...heroData };
+    delete cleanData.createdAt;
+    delete cleanData.updatedAt;
+    
+    const [updatedHero] = await db
+      .update(heroSection)
+      .set({ ...cleanData, updatedAt: new Date() })
+      .where(eq(heroSection.id, existingHero.id))
+      .returning();
+    return updatedHero;
+  }
+}
+```
+
+### 20. CMS Component RTL/LTR Issues
+**Problem**: CMS admin panels don't adapt properly to RTL layout switching
+**Symptoms**:
+- Form inputs maintain LTR alignment in Arabic mode
+- Button layouts don't reverse properly
+- Text areas show incorrect text direction
+- Modal positioning ignores RTL requirements
+
+**RTL Implementation Checklist for CMS Components**:
+
+```typescript
+// Required imports and setup
+const { language, isRTL } = useLanguage();
+
+// Form field alignment
+<Input
+  value={formData.titleAr || ""}
+  onChange={(e) => handleInputChange("titleAr", e.target.value)}
+  className={`${isRTL ? 'text-right' : 'text-left'}`}
+  dir={isRTL ? 'rtl' : 'ltr'}
+  placeholder="عنوان باللغة العربية"
+/>
+
+// Button layout reversal
+<div className={`flex gap-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+  <Button>Save</Button>
+  <Button variant="outline">Cancel</Button>
+</div>
+
+// Grid layouts for bilingual content
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div>
+    <Label>English Content</Label>
+    <Textarea dir="ltr" className="text-left" />
+  </div>
+  <div>
+    <Label>Arabic Content</Label>
+    <Textarea dir="rtl" className="text-right" />
+  </div>
+</div>
+
+// Modal and dialog positioning
+<DialogHeader className={isRTL ? 'text-right' : 'text-left'}>
+  <DialogTitle>{isRTL ? 'تحرير المحتوى' : 'Edit Content'}</DialogTitle>
+</DialogHeader>
+```
+
+### 21. Translation Key Coverage for CMS
+**Problem**: CMS components have hardcoded text that doesn't translate
+**Required Translation Pattern**:
+
+```typescript
+// Add to translations.ts for every CMS component
+en: {
+  // Hero Section
+  "heroSection.title": "Hero Section Management",
+  "heroSection.backgroundImages": "Background Images",
+  "heroSection.typingWords": "Typing Words Animation",
+  "heroSection.addWord": "Add Typing Word",
+  "heroSection.saveChanges": "Save Changes",
+  "heroSection.removeImage": "Remove Image",
+  "heroSection.uploadImages": "Upload Images",
+  
+  // Experience Section  
+  "experienceSection.title": "Experience Section Management",
+  "experienceSection.videos": "Videos",
+  "experienceSection.textMessages": "Text Messages",
+  
+  // Reviews Management
+  "reviews.title": "Customer Reviews Management",
+  "reviews.pending": "Pending Reviews",
+  "reviews.approved": "Approved Reviews",
+  "reviews.rejected": "Rejected Reviews",
+  "reviews.approve": "Approve",
+  "reviews.reject": "Reject",
+  "reviews.adminNotes": "Admin Notes",
+},
+ar: {
+  // Hero Section
+  "heroSection.title": "إدارة القسم الرئيسي",
+  "heroSection.backgroundImages": "صور الخلفية",
+  "heroSection.typingWords": "الكلمات المتحركة",
+  "heroSection.addWord": "إضافة كلمة متحركة",
+  "heroSection.saveChanges": "حفظ التغييرات",
+  "heroSection.removeImage": "إزالة الصورة",
+  "heroSection.uploadImages": "رفع الصور",
+  
+  // Experience Section
+  "experienceSection.title": "إدارة قسم التجربة",
+  "experienceSection.videos": "الفيديوهات",
+  "experienceSection.textMessages": "الرسائل النصية",
+  
+  // Reviews Management
+  "reviews.title": "إدارة تقييمات العملاء",
+  "reviews.pending": "التقييمات المعلقة",
+  "reviews.approved": "التقييمات المعتمدة", 
+  "reviews.rejected": "التقييمات المرفوضة",
+  "reviews.approve": "اعتماد",
+  "reviews.reject": "رفض",
+  "reviews.adminNotes": "ملاحظات المدير",
+}
+
+// Usage in components
+const { t } = useLanguage();
+
+<CardTitle>{t("heroSection.title")}</CardTitle>
+<Label>{t("heroSection.backgroundImages")}</Label>
+<Button>{t("heroSection.saveChanges")}</Button>
+```
+
+### 22. File Upload UI/UX Best Practices
+**Problem**: File upload interfaces lack proper visual feedback and preview
+**Solution**: Implement thumbnail previews with hover interactions
+
+```typescript
+// Image thumbnail grid layout
+<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+  {images.map((imageUrl: string, index: number) => (
+    <div key={index} className="relative group border rounded-lg overflow-hidden">
+      <div className="aspect-video bg-muted">
+        <img 
+          src={imageUrl} 
+          alt={`Image ${index + 1}`}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='60'%3E%3Crect width='100' height='60' fill='%23f3f4f6'/%3E%3Ctext x='50' y='35' text-anchor='middle' fill='%23666' font-size='12'%3EImage not found%3C/text%3E%3C/svg%3E";
+          }}
+        />
+      </div>
+      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+        <Button
+          size="sm"
+          variant="destructive"
+          onClick={() => handleRemoveImage(index)}
+          className="flex items-center gap-1"
+        >
+          <X className="h-3 w-3" />
+          {t("heroSection.removeImage")}
+        </Button>
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 bg-black/75 text-white text-xs p-2">
+        {t("common.image")} {index + 1}
+      </div>
+    </div>
+  ))}
+</div>
+```
+
+### 23. Admin Panel State Management Issues
+**Problem**: CMS forms don't sync properly with backend data or lose state
+**Symptoms**:
+- Form fields show old data after successful saves
+- State gets out of sync between tabs
+- Cache invalidation doesn't trigger UI updates
+
+**Solution**: Proper state synchronization pattern
+
+```typescript
+// Correct data fetching and state management
+const [formData, setFormData] = useState<Partial<HeroSection>>({});
+
+// Sync form data with fetched data
+useEffect(() => {
+  if (heroSection && Object.keys(heroSection).length > 0) {
+    setFormData(heroSection);
+  }
+}, [heroSection]);
+
+// Mutation with proper cache invalidation
+const updateMutation = useMutation({
+  mutationFn: async (data: Partial<HeroSection>) => {
+    const response = await apiRequest('/api/admin/hero-section', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+  onSuccess: (updatedData) => {
+    // Update local state immediately
+    setFormData(updatedData);
+    
+    // Invalidate queries to trigger refetch
+    queryClient.invalidateQueries({ queryKey: ['/api/hero-section'] });
+    
+    // Show success message
+    toast({
+      title: t("common.success"),
+      description: t("heroSection.saveSuccess"),
+    });
+  },
+  onError: (error) => {
+    console.error("Save error:", error);
+    toast({
+      title: t("common.error"),
+      description: t("heroSection.saveError"),
+      variant: "destructive",
+    });
+  },
+});
+```
+
+### 24. CMS Validation & Error Handling
+**Problem**: CMS forms fail silently or show confusing error messages
+**Required Error Handling Pattern**:
+
+```typescript
+// Comprehensive validation schema
+const heroSectionSchema = z.object({
+  backgroundImages: z.array(z.string().url()).min(1, "At least one background image required"),
+  typingWords: z.array(z.object({
+    en: z.string().min(1, "English text required"),
+    ar: z.string().min(1, "Arabic text required")
+  })).min(1, "At least one typing word required"),
+});
+
+// Form validation with proper error display
+const form = useForm<Partial<HeroSection>>({
+  resolver: zodResolver(heroSectionSchema),
+  defaultValues: formData,
+});
+
+// Error logging for debugging
+useEffect(() => {
+  if (form.formState.errors && Object.keys(form.formState.errors).length > 0) {
+    console.log("Form validation errors:", form.formState.errors);
+  }
+}, [form.formState.errors]);
+
+// User-friendly error messages
+<FormField
+  control={form.control}
+  name="typingWords"
+  render={({ field, fieldState }) => (
+    <FormItem>
+      <FormLabel>{t("heroSection.typingWords")}</FormLabel>
+      <FormControl>
+        {/* Field component */}
+      </FormControl>
+      {fieldState.error && (
+        <FormMessage>{fieldState.error.message}</FormMessage>
+      )}
+    </FormItem>
+  )}
+/>
+```
+
+### 25. Remove Unused CMS Fields
+**Problem**: CMS interfaces show fields that aren't used on the actual website
+**Solution**: Audit actual component usage before adding admin fields
+
+```typescript
+// Check if fields are actually used in frontend component
+const KuwaitiHeroSection = () => {
+  const logoImage = heroSection?.logoImage; // USED
+  const typingWords = heroSection?.typingWords; // USED  
+  const backgroundImages = heroSection?.backgroundImages; // USED
+  
+  // These are NOT used in actual display:
+  const mainTitle = heroSection?.mainTitleEn; // UNUSED - only in alt text
+  const subtitle = heroSection?.subtitleEn; // UNUSED - only in alt text
+  
+  // Remove unused fields from admin interface to avoid confusion
+}
+```
+
+**Field Audit Checklist for Each CMS Component**:
+- [ ] Check actual component rendering code
+- [ ] Identify which database fields are displayed to users
+- [ ] Remove admin interface fields that aren't used
+- [ ] Focus admin UI on fields that actually impact website
+- [ ] Document which fields are for admin-only vs public display
+
 ## Emergency Debugging Steps
 
 ### When Things Break

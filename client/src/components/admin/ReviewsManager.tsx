@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Check, X, Star, Eye, EyeOff, Trash2, Settings } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { useLanguage } from "@/hooks/useLanguage";
 import {
   Dialog,
   DialogContent,
@@ -52,6 +53,7 @@ interface ReviewSettings {
 export function ReviewsManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t, isRTL } = useLanguage();
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedReview, setSelectedReview] = useState<CustomerReview | null>(null);
   const [adminNotes, setAdminNotes] = useState("");
@@ -85,11 +87,11 @@ export function ReviewsManager() {
   const approveMutation = useMutation({
     mutationFn: (reviewId: number) => apiRequest(`/api/admin/reviews/${reviewId}/approve`, { method: "PUT" }),
     onSuccess: () => {
-      toast({ title: "Success", description: "Review approved successfully" });
+      toast({ title: t("common.success"), description: t("reviews.approveSuccess") });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/reviews"] });
     },
     onError: () => {
-      toast({ title: "Error", description: "Failed to approve review", variant: "destructive" });
+      toast({ title: t("common.error"), description: t("reviews.updateError"), variant: "destructive" });
     },
   });
 
@@ -102,13 +104,13 @@ export function ReviewsManager() {
         headers: { "Content-Type": "application/json" }
       }),
     onSuccess: () => {
-      toast({ title: "Success", description: "Review rejected" });
+      toast({ title: t("common.success"), description: t("reviews.rejectSuccess") });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/reviews"] });
       setSelectedReview(null);
       setAdminNotes("");
     },
     onError: () => {
-      toast({ title: "Error", description: "Failed to reject review", variant: "destructive" });
+      toast({ title: t("common.error"), description: t("reviews.updateError"), variant: "destructive" });
     },
   });
 
@@ -121,11 +123,11 @@ export function ReviewsManager() {
         headers: { "Content-Type": "application/json" }
       }),
     onSuccess: () => {
-      toast({ title: "Success", description: "Review visibility updated" });
+      toast({ title: t("common.success"), description: t("reviews.visibilityUpdateSuccess") });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/reviews"] });
     },
     onError: () => {
-      toast({ title: "Error", description: "Failed to update visibility", variant: "destructive" });
+      toast({ title: t("common.error"), description: t("reviews.updateError"), variant: "destructive" });
     },
   });
 
@@ -133,11 +135,11 @@ export function ReviewsManager() {
   const deleteMutation = useMutation({
     mutationFn: (reviewId: number) => apiRequest(`/api/admin/reviews/${reviewId}`, { method: "DELETE" }),
     onSuccess: () => {
-      toast({ title: "Success", description: "Review deleted successfully" });
+      toast({ title: t("common.success"), description: t("reviews.deleteSuccess") });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/reviews"] });
     },
     onError: () => {
-      toast({ title: "Error", description: "Failed to delete review", variant: "destructive" });
+      toast({ title: t("common.error"), description: t("reviews.updateError"), variant: "destructive" });
     },
   });
 
@@ -150,22 +152,22 @@ export function ReviewsManager() {
         headers: { "Content-Type": "application/json" }
       }),
     onSuccess: () => {
-      toast({ title: "Success", description: "Review settings updated successfully" });
+      toast({ title: t("common.success"), description: t("reviews.settingsUpdateSuccess") });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/review-settings"] });
     },
     onError: () => {
-      toast({ title: "Error", description: "Failed to update settings", variant: "destructive" });
+      toast({ title: t("common.error"), description: t("reviews.updateError"), variant: "destructive" });
     },
   });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge variant="secondary">Pending</Badge>;
+        return <Badge variant="secondary">{t("reviews.pending")}</Badge>;
       case 'approved':
-        return <Badge variant="default" className="bg-green-500">Approved</Badge>;
+        return <Badge variant="default" className="bg-green-500">{t("reviews.approved")}</Badge>;
       case 'rejected':
-        return <Badge variant="destructive">Rejected</Badge>;
+        return <Badge variant="destructive">{t("reviews.rejected")}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }

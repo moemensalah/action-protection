@@ -1,7 +1,7 @@
 import { db } from "./db";
 import { 
   users, categories, products, aboutUs, contactUs, footerContent, 
-  widgetSettings, privacyPolicy, termsOfService, smtpSettings 
+  widgetSettings, privacyPolicy, termsOfService, smtpSettings, experienceSection 
 } from "@shared/schema";
 import bcrypt from "bcryptjs";
 
@@ -632,6 +632,19 @@ For questions about these Terms of Service, contact us at legal@latelounge.sa`,
 
 **معلومات الاتصال**
 للأسئلة حول شروط الخدمة هذه، اتصلوا بنا على legal@latelounge.sa`,
+      isActive: true
+    }).onConflictDoNothing();
+
+    // Seed Experience Section
+    console.log("🎬 Seeding experience section...");
+    await db.insert(experienceSection).values({
+      id: 1,
+      titleEn: "EXPERIENCE TRUE LUXURY",
+      titleAr: "اختبر الفخامة الحقيقية",
+      descriptionEn: "Discover premium vehicle protection services that exceed expectations with our state-of-the-art facilities and expert technicians.",
+      descriptionAr: "اكتشف خدمات حماية المركبات المتميزة التي تتجاوز التوقعات مع مرافقنا الحديثة والفنيين الخبراء.",
+      videoUrl: "/assets/social_u4193187385_A_cinematic_image_of_a_Mercedes_G-Class_positione_22e6c30d-a357-49c5-bf82-4a9fe0b50e8d_0_1751049968234.mp4",
+      backgroundImage: "/assets/u4193187385_A_cinematic_ultra-wide_image_of_a_Mercedes_G-Clas_bdbff7bf-0bb8-443b-949a-b8b3bf2f8c26_2_1751110194189.png",
       isActive: true
     }).onConflictDoNothing();
 

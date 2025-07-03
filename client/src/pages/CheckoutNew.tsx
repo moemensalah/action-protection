@@ -187,26 +187,51 @@ export default function CheckoutNew() {
     console.log("Selected address ID:", selectedAddressId);
     console.log("Show new address form:", showNewAddressForm);
     
-    // If using existing address, bypass form validation
-    if (user && selectedAddressId && !showNewAddressForm) {
-      const selectedAddress = addresses?.find(addr => addr.id === selectedAddressId);
-      if (selectedAddress) {
-        await processOrder({
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phone: selectedAddress.phone,
-          address: selectedAddress.address,
-          city: selectedAddress.city,
-          area: selectedAddress.area,
-          notes: selectedAddress.notes || ""
-        });
-        return;
+    try {
+      // If using existing address, bypass form validation
+      if (user && selectedAddressId && !showNewAddressForm) {
+        console.log("Processing with existing address...");
+        console.log("Available addresses:", addresses);
+        console.log("Looking for address ID:", selectedAddressId);
+        
+        const selectedAddress = addresses?.find(addr => addr.id === parseInt(selectedAddressId));
+        console.log("Found selected address:", selectedAddress);
+        
+        if (selectedAddress) {
+          console.log("Processing order with selected address data...");
+          await processOrder({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phone: selectedAddress.phone,
+            address: selectedAddress.address,
+            city: selectedAddress.city,
+            area: selectedAddress.area,
+            notes: selectedAddress.notes || ""
+          });
+          return;
+        } else {
+          console.error("Selected address not found in addresses list!");
+          toast({
+            title: "Error",
+            description: "Selected address not found. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
       }
+      
+      // If creating new address, trigger form validation
+      console.log("Triggering form validation for new address...");
+      form.handleSubmit(onSubmit)();
+    } catch (error) {
+      console.error("Error in handleOrderSubmission:", error);
+      toast({
+        title: "Error",
+        description: "An error occurred while processing your order. Please try again.",
+        variant: "destructive",
+      });
     }
-    
-    // If creating new address, trigger form validation
-    form.handleSubmit(onSubmit)();
   };
 
   const onSubmit = async (data: CheckoutForm) => {
@@ -228,7 +253,7 @@ export default function CheckoutNew() {
       
       if (user && selectedAddressId && !showNewAddressForm) {
         // User selected an existing address
-        const selectedAddress = addresses?.find(addr => addr.id === selectedAddressId);
+        const selectedAddress = addresses?.find(addr => addr.id === parseInt(selectedAddressId));
         if (selectedAddress) {
           orderData = {
             firstName: selectedAddress.firstName,

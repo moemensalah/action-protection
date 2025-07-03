@@ -192,6 +192,7 @@ export default function CheckoutNew() {
             area: selectedAddress.area,
             notes: data.notes || "",
             paymentMethod: paymentMethod,
+            selectedAddressId: selectedAddressId, // Include this to let server know it's existing address
             items: state.items,
             totalAmount: state.total,
             userId: (user as any)?.id || null,
@@ -204,6 +205,7 @@ export default function CheckoutNew() {
         orderData = {
           ...data,
           paymentMethod: paymentMethod,
+          selectedAddressId: null, // Explicitly mark as new address
           items: state.items,
           totalAmount: state.total,
           userId: (user as any)?.id || null,

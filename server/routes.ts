@@ -1046,7 +1046,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Order management routes
   app.post('/api/orders', async (req, res) => {
     try {
-      const { firstName, lastName, email, phone, address, city, area, notes, items, totalAmount, userId } = req.body;
+      const { firstName, lastName, email, phone, address, city, area, notes, items, totalAmount, userId, paymentMethod } = req.body;
       
       console.log("Order request body:", req.body);
       
@@ -1061,14 +1061,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate order number
       const orderNumber = `AP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
-      // Get the correct user ID
+      // Get the correct user ID - allow both authenticated and guest orders
       const finalUserId = userId || (req.session as any).userId;
       
-      if (!finalUserId) {
-        return res.status(400).json({ message: "User authentication required" });
+      // If user is authenticated and creating a new address during checkout
+      if (finalUserId && (!userId || userId === finalUserId)) {
+        // Check if this is a new address by looking at the request pattern
+        // If no selectedAddressId was sent, this is likely a new address
+        const isNewAddress = !req.body.selectedAddressId;
+        
+        if (isNewAddress) {
+          try {
+            await storage.createUserAddress({
+              userId: finalUserId.toString(),
+              title: `${firstName} ${lastName}`,
+              firstName,
+              lastName,
+              phone,
+              address,
+              city,
+              area,
+              isDefault: false
+            });
+            console.log("New address saved during checkout");
+          } catch (addressError) {
+            console.log("Address creation failed (non-critical):", addressError);
+            // Continue with order creation even if address save fails
+          }
+        }
       }
 
-      const parsedUserId = parseInt(finalUserId);
+      const parsedUserId = finalUserId ? parseInt(finalUserId) : null;
+
+      // For guest orders, we need to skip creating them for now
+      if (!parsedUserId) {
+        return res.status(400).json({ message: "User authentication required for orders" });
+      }
 
       // Create order
       const orderData = {
@@ -1080,7 +1108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         deliveryAddress: `${address}, ${area}, ${city}`,
         totalAmount: (calculatedTotal || 0).toString(),
         status: 'pending' as const,
-        paymentMethod: 'cash' as const,
+        paymentMethod: paymentMethod || 'cod' as const,
         paymentStatus: 'pending' as const,
         notes: notes || null,
       };

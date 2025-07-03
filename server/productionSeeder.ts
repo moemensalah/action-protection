@@ -638,13 +638,16 @@ For questions about these Terms of Service, contact us at legal@latelounge.sa`,
     // Seed Experience Section
     console.log("🎬 Seeding experience section...");
     await db.insert(experienceSection).values({
-      id: 1,
       titleEn: "EXPERIENCE TRUE LUXURY",
       titleAr: "اختبر الفخامة الحقيقية",
       descriptionEn: "Discover premium vehicle protection services that exceed expectations with our state-of-the-art facilities and expert technicians.",
       descriptionAr: "اكتشف خدمات حماية المركبات المتميزة التي تتجاوز التوقعات مع مرافقنا الحديثة والفنيين الخبراء.",
-      videoUrl: "/assets/social_u4193187385_A_cinematic_image_of_a_Mercedes_G-Class_positione_22e6c30d-a357-49c5-bf82-4a9fe0b50e8d_0_1751049968234.mp4",
-      backgroundImage: "/assets/u4193187385_A_cinematic_ultra-wide_image_of_a_Mercedes_G-Clas_bdbff7bf-0bb8-443b-949a-b8b3bf2f8c26_2_1751110194189.png",
+      video1Url: "/assets/social_u4193187385_A_cinematic_image_of_a_ROLLS_ROYC_positioned_on_t_ee453847-f0d0-485f-8be3-ebc7036dc483_3_1751053253358.mp4",
+      video2Url: "/assets/social_u4193187385_A_cinematic_image_of_a_Mercedes_G-Class_positione_22e6c30d-a357-49c5-bf82-4a9fe0b50e8d_0_1751049968234.mp4",
+      text1En: "YOUR CAR IS SPECIAL WITH US",
+      text1Ar: "سيارتك متميزة معانا",
+      text2En: "SUPERIOR PROTECTION FOR LUXURY CARS",
+      text2Ar: "حماية فائقة للسيارات الفاخرة",
       isActive: true
     }).onConflictDoNothing();
 

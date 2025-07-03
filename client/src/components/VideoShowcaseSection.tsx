@@ -1,19 +1,31 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export function VideoShowcaseSection() {
   const { isRTL } = useLanguage();
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [showText, setShowText] = useState(false);
 
+  // Fetch experience section data
+  const { data: experienceSection } = useQuery({
+    queryKey: ["/api/experience-section"],
+  });
+
   const videos = [
-    "/assets/rolls-royce-video.mp4",
-    "/assets/g-class-video.mp4"
+    experienceSection?.video1Url || "/assets/rolls-royce-video.mp4",
+    experienceSection?.video2Url || "/assets/g-class-video.mp4"
   ];
 
   const textMessages = [
-    { ar: "سيارتك متميزة معانا", en: "YOUR CAR IS SPECIAL WITH US" },
-    { ar: "حماية فائقة للسيارات الفاخرة", en: "SUPERIOR PROTECTION FOR LUXURY CARS" }
+    { 
+      ar: experienceSection?.text1Ar || "سيارتك متميزة معانا", 
+      en: experienceSection?.text1En || "YOUR CAR IS SPECIAL WITH US" 
+    },
+    { 
+      ar: experienceSection?.text2Ar || "حماية فائقة للسيارات الفاخرة", 
+      en: experienceSection?.text2En || "SUPERIOR PROTECTION FOR LUXURY CARS" 
+    }
   ];
 
   // Auto-rotate videos with text transitions
@@ -55,14 +67,17 @@ export function VideoShowcaseSection() {
           <h2 className={`text-4xl md:text-5xl font-bold text-white mb-6 ${
             isRTL ? 'font-arabic' : ''
           }`}>
-            {isRTL ? "تجربة الرفاهية الحقيقية" : "EXPERIENCE TRUE LUXURY"}
+            {isRTL 
+              ? (experienceSection?.titleAr || "تجربة الرفاهية الحقيقية")
+              : (experienceSection?.titleEn || "EXPERIENCE TRUE LUXURY")
+            }
           </h2>
           <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
             isRTL ? 'font-arabic' : ''
           }`}>
             {isRTL 
-              ? "اكتشف مستوى جديد من الحماية والأناقة مع خدماتنا المتخصصة للسيارات الفاخرة"
-              : "Discover a new level of protection and elegance with our specialized luxury vehicle services"
+              ? (experienceSection?.descriptionAr || "اكتشف مستوى جديد من الحماية والأناقة مع خدماتنا المتخصصة للسيارات الفاخرة")
+              : (experienceSection?.descriptionEn || "Discover a new level of protection and elegance with our specialized luxury vehicle services")
             }
           </p>
         </div>

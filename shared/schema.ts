@@ -272,8 +272,12 @@ export const experienceSection = pgTable("experience_section", {
   titleAr: varchar("title_ar", { length: 255 }).notNull().default("اختبر الفخامة الحقيقية"),
   descriptionEn: text("description_en").default("Discover premium vehicle protection services that exceed expectations"),
   descriptionAr: text("description_ar").default("اكتشف خدمات حماية المركبات المتميزة التي تتجاوز التوقعات"),
-  videoUrl: text("video_url"), // Video URL for the experience section
-  backgroundImage: text("background_image"), // Background image URL
+  video1Url: text("video1_url"), // First video URL
+  video2Url: text("video2_url"), // Second video URL
+  text1En: varchar("text1_en", { length: 255 }).default("YOUR CAR IS SPECIAL WITH US"), // First text message in English
+  text1Ar: varchar("text1_ar", { length: 255 }).default("سيارتك متميزة معانا"), // First text message in Arabic
+  text2En: varchar("text2_en", { length: 255 }).default("SUPERIOR PROTECTION FOR LUXURY CARS"), // Second text message in English
+  text2Ar: varchar("text2_ar", { length: 255 }).default("حماية فائقة للسيارات الفاخرة"), // Second text message in Arabic
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

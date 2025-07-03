@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Save, Play, Image } from "lucide-react";
+import { Save, Play, Upload } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -15,8 +15,12 @@ interface ExperienceSection {
   titleAr: string;
   descriptionEn: string;
   descriptionAr: string;
-  videoUrl: string;
-  backgroundImage: string;
+  video1Url?: string;
+  video2Url?: string;
+  text1En: string;
+  text1Ar: string;
+  text2En: string;
+  text2Ar: string;
   isActive: boolean;
 }
 
@@ -29,8 +33,12 @@ export function ExperienceSectionManager() {
     titleAr: "اختبر الفخامة الحقيقية",
     descriptionEn: "Discover premium vehicle protection services that exceed expectations",
     descriptionAr: "اكتشف خدمات حماية المركبات المتميزة التي تتجاوز التوقعات",
-    videoUrl: "",
-    backgroundImage: "",
+    video1Url: "",
+    video2Url: "",
+    text1En: "YOUR CAR IS SPECIAL WITH US",
+    text1Ar: "سيارتك متميزة معانا",
+    text2En: "SUPERIOR PROTECTION FOR LUXURY CARS",
+    text2Ar: "حماية فائقة للسيارات الفاخرة",
     isActive: true
   });
 
@@ -48,10 +56,9 @@ export function ExperienceSectionManager() {
   // Update experience section mutation
   const updateMutation = useMutation({
     mutationFn: async (data: Partial<ExperienceSection>) => {
-      return await apiRequest("/api/admin/experience-section", {
+      return await apiRequest(`/api/admin/experience-section`, {
         method: "PUT",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" }
+        body: data,
       });
     },
     onSuccess: () => {
@@ -61,63 +68,14 @@ export function ExperienceSectionManager() {
       });
       queryClient.invalidateQueries({ queryKey: ["/api/experience-section"] });
     },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update experience section",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // File upload mutation (for images and videos)
-  const uploadMutation = useMutation({
-    mutationFn: async ({ file, type }: { file: File, type: 'image' | 'video' }) => {
-      const formData = new FormData();
-      formData.append(type, file);
-      
-      const endpoint = type === 'image' ? '/api/upload/image' : '/api/upload/video';
-      const response = await fetch(endpoint, {
-        method: "POST",
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
-      
-      return await response.json();
-    },
-    onSuccess: (data, { type }) => {
-      const fieldName = type === 'image' ? 'backgroundImage' : 'videoUrl';
-      setFormData(prev => ({ ...prev, [fieldName]: data.url }));
-      toast({
-        title: "Success",
-        description: `${type === 'image' ? 'Image' : 'Video'} uploaded successfully`,
-      });
-    },
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to upload file",
+        description: "Failed to update experience section",
         variant: "destructive",
       });
     },
   });
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      uploadMutation.mutate({ file, type: 'image' });
-    }
-  };
-
-  const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      uploadMutation.mutate({ file, type: 'video' });
-    }
-  };
 
   const handleSave = () => {
     updateMutation.mutate(formData);
@@ -142,10 +100,10 @@ export function ExperienceSectionManager() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Text Content */}
+        {/* Header Content */}
         <Card>
           <CardHeader>
-            <CardTitle>Text Content</CardTitle>
+            <CardTitle>Section Header</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -192,132 +150,143 @@ export function ExperienceSectionManager() {
           </CardContent>
         </Card>
 
-        {/* Media Files */}
+        {/* Video Configuration */}
         <Card>
           <CardHeader>
-            <CardTitle>Media Files</CardTitle>
+            <CardTitle>Video Configuration</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Background Image */}
             <div>
-              <Label className="flex items-center gap-2">
-                <Image className="h-4 w-4" />
-                Background Image
-              </Label>
-              <div className="mt-2 space-y-2">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={uploadMutation.isPending}
-                />
-                {formData.backgroundImage && (
-                  <div className="relative">
-                    <img 
-                      src={formData.backgroundImage} 
-                      alt="Background Preview" 
-                      className="w-full h-32 object-cover rounded border"
-                    />
-                    <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
-                      Background
-                    </div>
-                  </div>
-                )}
-              </div>
+              <Label>First Video URL</Label>
+              <Input
+                value={formData.video1Url || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, video1Url: e.target.value }))}
+                placeholder="/assets/video1.mp4"
+              />
+              {formData.video1Url && (
+                <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-md">
+                  <video
+                    src={formData.video1Url}
+                    className="w-full h-32 object-cover rounded"
+                    controls
+                  />
+                </div>
+              )}
             </div>
 
-            {/* Video */}
             <div>
-              <Label className="flex items-center gap-2">
-                <Play className="h-4 w-4" />
-                Experience Video
-              </Label>
-              <div className="mt-2 space-y-2">
-                <Input
-                  type="file"
-                  accept="video/*"
-                  onChange={handleVideoUpload}
-                  disabled={uploadMutation.isPending}
-                />
-                <Input
-                  value={formData.videoUrl || ""}
-                  onChange={(e) => setFormData(prev => ({ ...prev, videoUrl: e.target.value }))}
-                  placeholder="Or enter video URL directly"
-                />
-                {formData.videoUrl && (
-                  <div className="relative">
-                    <video 
-                      src={formData.videoUrl} 
-                      className="w-full h-48 rounded border"
-                      controls
-                      preload="metadata"
-                    />
-                    <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
-                      Experience Video
-                    </div>
-                  </div>
-                )}
-              </div>
+              <Label>Second Video URL</Label>
+              <Input
+                value={formData.video2Url || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, video2Url: e.target.value }))}
+                placeholder="/assets/video2.mp4"
+              />
+              {formData.video2Url && (
+                <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-md">
+                  <video
+                    src={formData.video2Url}
+                    className="w-full h-32 object-cover rounded"
+                    controls
+                  />
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Text Messages for Video 1 */}
+        <Card>
+          <CardHeader>
+            <CardTitle>First Video Text Messages</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label>Text 1 (English)</Label>
+              <Input
+                value={formData.text1En || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, text1En: e.target.value }))}
+                placeholder="YOUR CAR IS SPECIAL WITH US"
+              />
+            </div>
+            <div>
+              <Label>Text 1 (Arabic)</Label>
+              <Input
+                value={formData.text1Ar || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, text1Ar: e.target.value }))}
+                placeholder="سيارتك متميزة معانا"
+                dir="rtl"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Text Messages for Video 2 */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Second Video Text Messages</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label>Text 2 (English)</Label>
+              <Input
+                value={formData.text2En || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, text2En: e.target.value }))}
+                placeholder="SUPERIOR PROTECTION FOR LUXURY CARS"
+              />
+            </div>
+            <div>
+              <Label>Text 2 (Arabic)</Label>
+              <Input
+                value={formData.text2Ar || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, text2Ar: e.target.value }))}
+                placeholder="حماية فائقة للسيارات الفاخرة"
+                dir="rtl"
+              />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Preview Section */}
-      {(formData.titleEn || formData.titleAr || formData.descriptionEn || formData.descriptionAr) && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Preview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="relative bg-gray-900 text-white p-8 rounded-lg overflow-hidden">
-              {/* Background Image */}
-              {formData.backgroundImage && (
-                <div 
-                  className="absolute inset-0 bg-cover bg-center opacity-30"
-                  style={{ backgroundImage: `url(${formData.backgroundImage})` }}
-                />
-              )}
+      <Card>
+        <CardHeader>
+          <CardTitle>Preview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="text-center">
+              <h3 className="text-2xl font-bold mb-2">{formData.titleEn}</h3>
+              <p className="text-gray-600 dark:text-gray-300">{formData.descriptionEn}</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="text-lg font-semibold mb-2">Video 1</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  Text: {formData.text1En}
+                </div>
+                {formData.video1Url && (
+                  <div className="text-xs text-green-600 dark:text-green-400">
+                    ✓ Video configured
+                  </div>
+                )}
+              </div>
               
-              <div className="relative z-10 text-center space-y-4">
-                <h2 className="text-4xl font-bold">
-                  {formData.titleEn}
-                </h2>
-                <p className="text-lg opacity-90 max-w-2xl mx-auto">
-                  {formData.descriptionEn}
-                </p>
-                
-                {formData.videoUrl && (
-                  <div className="flex justify-center mt-6">
-                    <div className="bg-black bg-opacity-50 p-2 rounded">
-                      <Play className="h-8 w-8" />
-                    </div>
+              <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="text-lg font-semibold mb-2">Video 2</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  Text: {formData.text2En}
+                </div>
+                {formData.video2Url && (
+                  <div className="text-xs text-green-600 dark:text-green-400">
+                    ✓ Video configured
                   </div>
                 )}
               </div>
             </div>
-
-            {/* Arabic Version */}
-            <div className="relative bg-gray-800 text-white p-8 rounded-lg overflow-hidden mt-4" dir="rtl">
-              {formData.backgroundImage && (
-                <div 
-                  className="absolute inset-0 bg-cover bg-center opacity-30"
-                  style={{ backgroundImage: `url(${formData.backgroundImage})` }}
-                />
-              )}
-              
-              <div className="relative z-10 text-center space-y-4">
-                <h2 className="text-4xl font-bold">
-                  {formData.titleAr}
-                </h2>
-                <p className="text-lg opacity-90 max-w-2xl mx-auto">
-                  {formData.descriptionAr}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

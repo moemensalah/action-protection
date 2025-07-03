@@ -17,6 +17,13 @@ interface WebsiteUserWithStats extends WebsiteUser {
   totalSpent: string;
 }
 
+// Helper function to format dates
+const formatDate = (date: string | Date | null) => {
+  if (!date) return "N/A";
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return dateObj.toLocaleDateString();
+};
+
 export default function WebsiteUsersManagement() {
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
@@ -91,9 +98,13 @@ export default function WebsiteUsersManagement() {
   const fetchUserOrders = async (userId: number) => {
     try {
       const response = await apiRequest(`/api/admin/website-users/${userId}/orders`);
-      setUserOrders(response);
+      // Ensure response is an array
+      const ordersData = Array.isArray(response) ? response : [];
+      setUserOrders(ordersData);
       setShowUserOrders(true);
     } catch (error) {
+      console.error("Error fetching user orders:", error);
+      setUserOrders([]);
       toast({
         title: t("orders.updateError"),
         variant: "destructive",
@@ -101,11 +112,11 @@ export default function WebsiteUsersManagement() {
     }
   };
 
-  const filteredUsers = users?.filter((user: WebsiteUserWithStats) => {
+  const filteredUsers = Array.isArray(users) ? users.filter((user: WebsiteUserWithStats) => {
     const matchesSearch = 
-      user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = 
       statusFilter === "all" ||
@@ -113,7 +124,7 @@ export default function WebsiteUsersManagement() {
       (statusFilter === "inactive" && !user.isActive);
     
     return matchesSearch && matchesStatus;
-  }) || [];
+  }) : [];
 
   const handleActivateUser = (user: WebsiteUserWithStats) => {
     updateUserMutation.mutate({
@@ -161,39 +172,41 @@ export default function WebsiteUsersManagement() {
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t("users.totalUsers")}</CardTitle>
+            <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <CardTitle className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.totalUsers")}</CardTitle>
               <UserCheck className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalUsers}</div>
+              <div className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>{(stats as any)?.totalUsers || 0}</div>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t("users.activeUsers")}</CardTitle>
+            <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <CardTitle className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.activeUsers")}</CardTitle>
               <UserCheck className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.activeUsers}</div>
+              <div className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>{(stats as any)?.activeUsers || 0}</div>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t("users.newUsers")}</CardTitle>
+            <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <CardTitle className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.newUsers")}</CardTitle>
               <Calendar className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.newUsersThisMonth}</div>
+              <div className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>{(stats as any)?.newUsersThisMonth || 0}</div>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t("orders.revenue")}</CardTitle>
+            <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <CardTitle className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("orders.revenue")}</CardTitle>
               <DollarSign className="h-4 w-4 text-yellow-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalRevenue} {isRTL ? "د.ك" : "KWD"}</div>
+              <div className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>
+                {(stats as any)?.totalRevenue || 0} {isRTL ? "د.ك" : "KWD"}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -233,34 +246,34 @@ export default function WebsiteUsersManagement() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className={`w-full ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                 <thead>
                   <tr className="border-b">
-                    <th className={`text-left p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.personalInfo")}</th>
-                    <th className={`text-left p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.accountInfo")}</th>
-                    <th className={`text-left p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.orderHistory")}</th>
-                    <th className={`text-left p-4 ${isRTL ? 'text-right' : 'text-left'}`}>{t("actions")}</th>
+                    <th className={`p-4 font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.personalInfo")}</th>
+                    <th className={`p-4 font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.accountInfo")}</th>
+                    <th className={`p-4 font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("users.orderHistory")}</th>
+                    <th className={`p-4 font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{t("actions")}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.map((user: WebsiteUserWithStats) => (
                     <tr key={user.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800">
-                      <td className="p-4">
+                      <td className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
                         <div className="space-y-1">
                           <div className="font-medium">{user.firstName} {user.lastName}</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                          <div className={`text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <Mail className="h-3 w-3" />
-                            {user.email}
+                            <span>{user.email}</span>
                           </div>
                           {user.phone && (
-                            <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                            <div className={`text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                               <Phone className="h-3 w-3" />
-                              {user.phone}
+                              <span>{user.phone}</span>
                             </div>
                           )}
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
                         <div className="space-y-1">
                           <Badge variant={user.isActive ? "default" : "secondary"}>
                             {user.isActive ? t("active") : t("inactive")}
@@ -275,19 +288,19 @@ export default function WebsiteUsersManagement() {
                           )}
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
                         <div className="space-y-1">
-                          <div className="flex items-center gap-1">
+                          <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <ShoppingCart className="h-3 w-3" />
                             <span className="text-sm">{user.totalOrders} {t("users.totalOrders")}</span>
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <DollarSign className="h-3 w-3" />
                             <span className="text-sm">{user.totalSpent} {isRTL ? "د.ك" : "KWD"}</span>
                           </div>
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className={`p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
                         <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                           <Button
                             size="sm"

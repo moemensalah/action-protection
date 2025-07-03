@@ -116,7 +116,10 @@ export function Navbar() {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
-                      onClick={() => window.location.href = '/api/logout'}
+                      onClick={async () => {
+                        await fetch("/api/auth/local/logout", { method: "POST" });
+                        window.location.href = '/';
+                      }}
                       className="flex items-center gap-2 text-red-600 dark:text-red-400"
                     >
                       <LogOut className="h-4 w-4" />
@@ -209,9 +212,10 @@ export function Navbar() {
                         {isRTL ? "عناويني" : "My Addresses"}
                       </Link>
                       <button
-                        onClick={() => {
+                        onClick={async () => {
                           setIsMenuOpen(false);
-                          window.location.href = '/api/logout';
+                          await fetch("/api/auth/local/logout", { method: "POST" });
+                          window.location.href = '/';
                         }}
                         className="flex items-center gap-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium transition-colors text-left"
                       >

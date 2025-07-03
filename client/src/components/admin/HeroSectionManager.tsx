@@ -263,63 +263,7 @@ export function HeroSectionManager() {
 
 
 
-      {/* Main Titles Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Main Titles</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>English Title</Label>
-              <Input
-                value={formData.mainTitleEn || ""}
-                onChange={(e) => handleInputChange("mainTitleEn", e.target.value)}
-                placeholder="Action Protection"
-              />
-            </div>
-            <div>
-              <Label>Arabic Title</Label>
-              <Input
-                value={formData.mainTitleAr || ""}
-                onChange={(e) => handleInputChange("mainTitleAr", e.target.value)}
-                placeholder="أكشن بروتكشن"
-                dir="rtl"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Subtitles Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Subtitles</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>English Subtitle</Label>
-              <Textarea
-                value={formData.subtitleEn || ""}
-                onChange={(e) => handleInputChange("subtitleEn", e.target.value)}
-                placeholder="Premium Vehicle Protection Services"
-                rows={3}
-              />
-            </div>
-            <div>
-              <Label>Arabic Subtitle</Label>
-              <Textarea
-                value={formData.subtitleAr || ""}
-                onChange={(e) => handleInputChange("subtitleAr", e.target.value)}
-                placeholder="خدمات حماية المركبات المتميزة"
-                rows={3}
-                dir="rtl"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Typing Words Animation Section */}
       <Card>

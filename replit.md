@@ -62,6 +62,12 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Populated hero section with current website content as defaults including all animated typing words
 - ✓ Updated default background images to use correct asset paths for proper display on website
 - ✓ Hero Section CMS now supports multiple file uploads with /api/upload/image endpoint integration
+- ✓ FIXED CRITICAL HERO SECTION SAVE BUG: Resolved Content-Type header issue preventing saves from working
+- ✓ Updated apiRequest function to automatically set application/json Content-Type for JSON requests
+- ✓ Fixed timestamp field conflicts in database updates that were causing save failures
+- ✓ Enhanced Hero Section admin interface with image thumbnail previews instead of text file paths
+- ✓ Removed unused Main Title and Subtitle fields from admin panel (not displayed on website)
+- ✓ Hero Section admin now shows only relevant fields: Background Images (with thumbnails) and Typing Words
 
 ### 2025-06-28: Complete Order Management System + User Authentication + Address Management
 - ✓ Implemented comprehensive user registration and login system with local authentication

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,13 +10,17 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCart } from "@/hooks/useCart";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useLocation } from "wouter";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/hooks/useAuth";
-import { Minus, Plus, Trash2, ShoppingBag, User, MapPin, CreditCard, Check, ArrowRight, ArrowLeft, LogIn, UserPlus } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, User, MapPin, CreditCard, Check, ArrowRight, ArrowLeft, LogIn, UserPlus, Home, Building, Star } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import type { UserAddress } from "@shared/schema";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -35,12 +40,22 @@ export default function CheckoutNew() {
   const { t, isRTL } = useLanguage();
   const [, setLocation] = useLocation();
   const { user, isLoading: authLoading } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  
+  // Address management state
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [showNewAddressForm, setShowNewAddressForm] = useState(false);
+  const [showAddressDialog, setShowAddressDialog] = useState(false);
+  
+  // Payment method state
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'visa' | 'mastercard' | 'knet'>('cod');
 
   const form = useForm<CheckoutForm>({
     resolver: zodResolver(checkoutSchema),
@@ -54,6 +69,72 @@ export default function CheckoutNew() {
       area: "",
       notes: "",
     }
+  });
+
+  // Address schema for new address creation
+  const addressSchema = z.object({
+    title: z.string().min(1, "Address title is required"),
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+    phone: z.string().min(8, "Valid phone number is required"),
+    address: z.string().min(10, "Full address is required"),
+    city: z.string().min(2, "City is required"),
+    area: z.string().min(2, "Area is required"),
+    isDefault: z.boolean().optional(),
+  });
+
+  type AddressForm = z.infer<typeof addressSchema>;
+
+  const addressForm = useForm<AddressForm>({
+    resolver: zodResolver(addressSchema),
+    defaultValues: {
+      title: "",
+      firstName: (user as any)?.firstName || "",
+      lastName: (user as any)?.lastName || "",
+      phone: "",
+      address: "",
+      city: "",
+      area: "",
+      isDefault: false,
+    }
+  });
+
+  // Query to fetch user addresses
+  const { data: addresses = [], isLoading: addressesLoading } = useQuery({
+    queryKey: ["/api/addresses"],
+    enabled: !!user,
+  });
+
+  // Type-safe address array
+  const addressList = Array.isArray(addresses) ? addresses : [];
+
+  // Mutation to create new address
+  const createAddressMutation = useMutation({
+    mutationFn: async (data: AddressForm) => {
+      return await apiRequest("/api/addresses", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: async (response: Response) => {
+      const newAddress = await response.json();
+      queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
+      setSelectedAddressId(newAddress.id.toString());
+      setShowAddressDialog(false);
+      setShowNewAddressForm(false);
+      addressForm.reset();
+      toast({
+        title: isRTL ? "تم إنشاء العنوان" : "Address Created",
+        description: isRTL ? "تم إنشاء العنوان بنجاح" : "Address created successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: isRTL ? "خطأ" : "Error",
+        description: isRTL ? "فشل في إنشاء العنوان" : "Failed to create address",
+        variant: "destructive",
+      });
+    },
   });
 
   // Redirect if cart is empty
@@ -370,120 +451,249 @@ export default function CheckoutNew() {
               )}
               
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="firstName">{t("firstName")}</Label>
-                    <Input
-                      id="firstName"
-                      {...form.register("firstName")}
-                      className={form.formState.errors.firstName ? "border-red-500" : ""}
-                    />
-                    {form.formState.errors.firstName && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {form.formState.errors.firstName.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <Label htmlFor="lastName">{t("lastName")}</Label>
-                    <Input
-                      id="lastName"
-                      {...form.register("lastName")}
-                      className={form.formState.errors.lastName ? "border-red-500" : ""}
-                    />
-                    {form.formState.errors.lastName && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {form.formState.errors.lastName.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                {/* Address Section for Logged-in Users */}
+                {user && (
+                  <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        <Label className="text-base font-medium">
+                          {isRTL ? "عنوان التسليم" : "Delivery Address"}
+                        </Label>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowAddressDialog(true)}
+                        className="flex items-center gap-2"
+                      >
+                        <MapPin className="h-4 w-4" />
+                        {isRTL ? "إدارة العناوين" : "Manage Addresses"}
+                      </Button>
+                    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="email">{t("email")}</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      {...form.register("email")}
-                      className={form.formState.errors.email ? "border-red-500" : ""}
-                    />
-                    {form.formState.errors.email && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {form.formState.errors.email.message}
-                      </p>
+                    {addressesLoading ? (
+                      <div className="text-center py-4">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+                        <p className="text-sm text-gray-500 mt-2">
+                          {isRTL ? "جار تحميل العناوين..." : "Loading addresses..."}
+                        </p>
+                      </div>
+                    ) : addressList.length > 0 ? (
+                      <div className="space-y-3">
+                        <div className="grid gap-3">
+                          {addressList.map((addr: any) => (
+                            <label key={addr.id} className="cursor-pointer">
+                              <div className={`border rounded-lg p-3 transition-colors ${
+                                selectedAddressId === addr.id.toString()
+                                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                              }`}>
+                                <div className="flex items-start gap-3">
+                                  <input
+                                    type="radio"
+                                    name="selectedAddress"
+                                    value={addr.id.toString()}
+                                    checked={selectedAddressId === addr.id.toString()}
+                                    onChange={() => setSelectedAddressId(addr.id.toString())}
+                                    className="mt-1"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <span className="font-medium text-sm">
+                                        {addr.title}
+                                      </span>
+                                      {addr.isDefault && (
+                                        <Badge variant="secondary" className="text-xs">
+                                          <Star className="h-3 w-3 mr-1" />
+                                          {isRTL ? "افتراضي" : "Default"}
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                      {addr.firstName} {addr.lastName}
+                                    </p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                      {addr.address}
+                                    </p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                      {addr.area}, {addr.city}
+                                    </p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                      {addr.phone}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                        
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowNewAddressForm(true)}
+                          className="w-full flex items-center gap-2"
+                        >
+                          <MapPin className="h-4 w-4" />
+                          {isRTL ? "إضافة عنوان جديد" : "Add New Address"}
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="text-center py-6">
+                        <MapPin className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                          {isRTL ? "لا توجد عناوين محفوظة" : "No saved addresses"}
+                        </p>
+                        <Button
+                          type="button"
+                          onClick={() => setShowNewAddressForm(true)}
+                          className="flex items-center gap-2"
+                        >
+                          <MapPin className="h-4 w-4" />
+                          {isRTL ? "إضافة عنوان جديد" : "Add New Address"}
+                        </Button>
+                      </div>
                     )}
                   </div>
-                  <div>
-                    <Label htmlFor="phone">{t("phoneNumber")}</Label>
-                    <Input
-                      id="phone"
-                      {...form.register("phone")}
-                      placeholder="+965 XXXX XXXX"
-                      className={form.formState.errors.phone ? "border-red-500" : ""}
-                    />
-                    {form.formState.errors.phone && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {form.formState.errors.phone.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                )}
 
-                <div>
-                  <Label htmlFor="address">{t("deliveryAddress")}</Label>
-                  <Textarea
-                    id="address"
-                    {...form.register("address")}
-                    placeholder={isRTL ? "العنوان الكامل مع تفاصيل الموقع" : "Full address with location details"}
-                    className={form.formState.errors.address ? "border-red-500" : ""}
-                  />
-                  {form.formState.errors.address && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {form.formState.errors.address.message}
-                    </p>
-                  )}
-                </div>
+                {/* Manual Address Input for Guests or when creating new address */}
+                {(!user || showNewAddressForm) && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-base font-medium">
+                        {isRTL ? "معلومات العنوان" : "Address Information"}
+                      </Label>
+                      {user && showNewAddressForm && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowNewAddressForm(false)}
+                        >
+                          {isRTL ? "إلغاء" : "Cancel"}
+                        </Button>
+                      )}
+                    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="city">{t("city")}</Label>
-                    <Input
-                      id="city"
-                      {...form.register("city")}
-                      placeholder={isRTL ? "الكويت" : "Kuwait"}
-                      className={form.formState.errors.city ? "border-red-500" : ""}
-                    />
-                    {form.formState.errors.city && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {form.formState.errors.city.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <Label htmlFor="area">{t("area")}</Label>
-                    <Input
-                      id="area"
-                      {...form.register("area")}
-                      placeholder={isRTL ? "المنطقة" : "Area"}
-                      className={form.formState.errors.area ? "border-red-500" : ""}
-                    />
-                    {form.formState.errors.area && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {form.formState.errors.area.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="firstName">{t("firstName")}</Label>
+                        <Input
+                          id="firstName"
+                          {...form.register("firstName")}
+                          className={form.formState.errors.firstName ? "border-red-500" : ""}
+                        />
+                        {form.formState.errors.firstName && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {form.formState.errors.firstName.message}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <Label htmlFor="lastName">{t("lastName")}</Label>
+                        <Input
+                          id="lastName"
+                          {...form.register("lastName")}
+                          className={form.formState.errors.lastName ? "border-red-500" : ""}
+                        />
+                        {form.formState.errors.lastName && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {form.formState.errors.lastName.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
 
-                <div>
-                  <Label htmlFor="notes">{isRTL ? "ملاحظات إضافية (اختياري)" : "Additional Notes (Optional)"}</Label>
-                  <Textarea
-                    id="notes"
-                    {...form.register("notes")}
-                    placeholder={isRTL ? "أي تعليمات خاصة للتسليم" : "Any special delivery instructions"}
-                  />
-                </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="email">{t("email")}</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          {...form.register("email")}
+                          className={form.formState.errors.email ? "border-red-500" : ""}
+                        />
+                        {form.formState.errors.email && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {form.formState.errors.email.message}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">{t("phoneNumber")}</Label>
+                        <Input
+                          id="phone"
+                          {...form.register("phone")}
+                          placeholder="+965 XXXX XXXX"
+                          className={form.formState.errors.phone ? "border-red-500" : ""}
+                        />
+                        {form.formState.errors.phone && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {form.formState.errors.phone.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="address">{t("deliveryAddress")}</Label>
+                      <Textarea
+                        id="address"
+                        {...form.register("address")}
+                        placeholder={isRTL ? "العنوان الكامل مع تفاصيل الموقع" : "Full address with location details"}
+                        className={form.formState.errors.address ? "border-red-500" : ""}
+                      />
+                      {form.formState.errors.address && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {form.formState.errors.address.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="city">{t("city")}</Label>
+                        <Input
+                          id="city"
+                          {...form.register("city")}
+                          placeholder={isRTL ? "الكويت" : "Kuwait"}
+                          className={form.formState.errors.city ? "border-red-500" : ""}
+                        />
+                        {form.formState.errors.city && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {form.formState.errors.city.message}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <Label htmlFor="area">{t("area")}</Label>
+                        <Input
+                          id="area"
+                          {...form.register("area")}
+                          placeholder={isRTL ? "المنطقة" : "Area"}
+                          className={form.formState.errors.area ? "border-red-500" : ""}
+                        />
+                        {form.formState.errors.area && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {form.formState.errors.area.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="notes">{isRTL ? "ملاحظات إضافية (اختياري)" : "Additional Notes (Optional)"}</Label>
+                      <Textarea
+                        id="notes"
+                        {...form.register("notes")}
+                        placeholder={isRTL ? "أي تعليمات خاصة للتسليم" : "Any special delivery instructions"}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex justify-between mt-6">
                   <Button 
@@ -496,6 +706,7 @@ export default function CheckoutNew() {
                   <Button 
                     onClick={() => setCurrentStep(3)}
                     className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
+                    disabled={user && !selectedAddressId && !showNewAddressForm}
                   >
                     {isRTL ? "متابعة إلى الدفع" : "Continue to Payment"}
                     <ArrowRight className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180" />
@@ -537,11 +748,79 @@ export default function CheckoutNew() {
                 </div>
 
                 {/* Payment Method */}
-                <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                  <h3 className="font-medium mb-2">{t("paymentMethod")}</h3>
-                  <p className="text-sm text-amber-800 dark:text-amber-200">
-                    {isRTL ? "الدفع عند التسليم - نقداً أو بالكارت" : "Cash on Delivery - Cash or Card"}
-                  </p>
+                <div className="space-y-4">
+                  <h3 className="font-medium">{t("paymentMethod")}</h3>
+                  <div className="grid gap-3">
+                    {/* Cash on Delivery */}
+                    <label className="cursor-pointer">
+                      <div className={`border rounded-lg p-4 transition-colors ${
+                        paymentMethod === 'cod'
+                          ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      }`}>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="cod"
+                            checked={paymentMethod === 'cod'}
+                            onChange={() => setPaymentMethod('cod')}
+                            className="text-green-600"
+                          />
+                          <div className="flex-1">
+                            <p className="font-medium text-green-800 dark:text-green-200">
+                              {isRTL ? "الدفع عند التسليم" : "Cash on Delivery"}
+                            </p>
+                            <p className="text-sm text-green-700 dark:text-green-300">
+                              {isRTL ? "ادفع نقداً أو بالكارت عند استلام الطلب" : "Pay with cash or card upon delivery"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </label>
+
+                    {/* Credit/Debit Cards (Disabled) */}
+                    <div className="opacity-50">
+                      <div className="border rounded-lg p-4 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            disabled
+                            className="text-gray-400"
+                          />
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-600 dark:text-gray-400">
+                              {isRTL ? "فيزا / ماستركارد" : "Visa / MasterCard"}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-500">
+                              {isRTL ? "غير متاح حالياً" : "Currently unavailable"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* KNET (Disabled) */}
+                    <div className="opacity-50">
+                      <div className="border rounded-lg p-4 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            disabled
+                            className="text-gray-400"
+                          />
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-600 dark:text-gray-400">
+                              {isRTL ? "كي نت" : "KNET"}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-500">
+                              {isRTL ? "غير متاح حالياً" : "Currently unavailable"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex justify-between mt-6">

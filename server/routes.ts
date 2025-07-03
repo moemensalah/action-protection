@@ -1095,6 +1095,169 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // CMS Routes for Hero Section
+  app.get('/api/hero-section', async (req, res) => {
+    try {
+      const heroSection = await storage.getHeroSection();
+      res.json(heroSection);
+    } catch (error) {
+      console.error("Error fetching hero section:", error);
+      res.status(500).json({ message: "Failed to fetch hero section" });
+    }
+  });
+
+  app.put('/api/admin/hero-section', requireAdmin, async (req, res) => {
+    try {
+      const updatedHeroSection = await storage.updateHeroSection(req.body);
+      res.json(updatedHeroSection);
+    } catch (error) {
+      console.error("Error updating hero section:", error);
+      res.status(500).json({ message: "Failed to update hero section" });
+    }
+  });
+
+  // CMS Routes for Experience Section
+  app.get('/api/experience-section', async (req, res) => {
+    try {
+      const experienceSection = await storage.getExperienceSection();
+      res.json(experienceSection);
+    } catch (error) {
+      console.error("Error fetching experience section:", error);
+      res.status(500).json({ message: "Failed to fetch experience section" });
+    }
+  });
+
+  app.put('/api/admin/experience-section', requireAdmin, async (req, res) => {
+    try {
+      const updatedExperienceSection = await storage.updateExperienceSection(req.body);
+      res.json(updatedExperienceSection);
+    } catch (error) {
+      console.error("Error updating experience section:", error);
+      res.status(500).json({ message: "Failed to update experience section" });
+    }
+  });
+
+  // Customer Reviews Routes
+  app.get('/api/reviews', async (req, res) => {
+    try {
+      const reviews = await storage.getApprovedReviews();
+      res.json(reviews);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      res.status(500).json({ message: "Failed to fetch reviews" });
+    }
+  });
+
+  app.post('/api/reviews', async (req, res) => {
+    try {
+      if (!(req.session as any).userId) {
+        return res.status(401).json({ message: "Please log in to write a review" });
+      }
+
+      const userId = (req.session as any).userId;
+      const review = await storage.createCustomerReview({ ...req.body, userId });
+      res.json(review);
+    } catch (error) {
+      console.error("Error creating review:", error);
+      res.status(500).json({ message: "Failed to create review" });
+    }
+  });
+
+  // Admin Reviews Management
+  app.get('/api/admin/reviews', requireAdmin, async (req, res) => {
+    try {
+      const { status } = req.query;
+      const reviews = await storage.getAllReviews(status as string);
+      res.json(reviews);
+    } catch (error) {
+      console.error("Error fetching admin reviews:", error);
+      res.status(500).json({ message: "Failed to fetch reviews" });
+    }
+  });
+
+  app.put('/api/admin/reviews/:id/approve', requireAdmin, async (req, res) => {
+    try {
+      const reviewId = parseInt(req.params.id);
+      const updatedReview = await storage.approveReview(reviewId);
+      res.json(updatedReview);
+    } catch (error) {
+      console.error("Error approving review:", error);
+      res.status(500).json({ message: "Failed to approve review" });
+    }
+  });
+
+  app.put('/api/admin/reviews/:id/reject', requireAdmin, async (req, res) => {
+    try {
+      const reviewId = parseInt(req.params.id);
+      const { adminNotes } = req.body;
+      const updatedReview = await storage.rejectReview(reviewId, adminNotes);
+      res.json(updatedReview);
+    } catch (error) {
+      console.error("Error rejecting review:", error);
+      res.status(500).json({ message: "Failed to reject review" });
+    }
+  });
+
+  app.put('/api/admin/reviews/:id/toggle-visibility', requireAdmin, async (req, res) => {
+    try {
+      const reviewId = parseInt(req.params.id);
+      const { isShowOnWebsite } = req.body;
+      const updatedReview = await storage.toggleReviewVisibility(reviewId, isShowOnWebsite);
+      res.json(updatedReview);
+    } catch (error) {
+      console.error("Error toggling review visibility:", error);
+      res.status(500).json({ message: "Failed to toggle review visibility" });
+    }
+  });
+
+  app.delete('/api/admin/reviews/:id', requireAdmin, async (req, res) => {
+    try {
+      const reviewId = parseInt(req.params.id);
+      await storage.deleteReview(reviewId);
+      res.json({ message: "Review deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      res.status(500).json({ message: "Failed to delete review" });
+    }
+  });
+
+  // Review Settings Routes
+  app.get('/api/admin/review-settings', requireAdmin, async (req, res) => {
+    try {
+      const settings = await storage.getReviewSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error("Error fetching review settings:", error);
+      res.status(500).json({ message: "Failed to fetch review settings" });
+    }
+  });
+
+  app.put('/api/admin/review-settings', requireAdmin, async (req, res) => {
+    try {
+      const updatedSettings = await storage.updateReviewSettings(req.body);
+      res.json(updatedSettings);
+    } catch (error) {
+      console.error("Error updating review settings:", error);
+      res.status(500).json({ message: "Failed to update review settings" });
+    }
+  });
+
+  // User's eligible products for reviews
+  app.get('/api/user/reviewable-products', async (req, res) => {
+    try {
+      if (!(req.session as any).userId) {
+        return res.status(401).json({ message: "Please log in to view reviewable products" });
+      }
+
+      const userId = (req.session as any).userId;
+      const products = await storage.getUserReviewableProducts(userId);
+      res.json(products);
+    } catch (error) {
+      console.error("Error fetching reviewable products:", error);
+      res.status(500).json({ message: "Failed to fetch reviewable products" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

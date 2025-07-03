@@ -18,6 +18,7 @@ import Register from "@/pages/Register";
 import MyOrders from "@/pages/MyOrders";
 import MyAddresses from "@/pages/MyAddresses";
 import OrderComplete from "@/pages/OrderComplete";
+import WriteReview from "@/pages/WriteReview";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
 import AdminPanel from "@/pages/AdminPanel";
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/my-orders" component={MyOrders} />
       <Route path="/my-addresses" component={MyAddresses} />
       <Route path="/order-complete" component={OrderComplete} />
+      <Route path="/write-review" component={WriteReview} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/terms-of-service" component={TermsOfService} />
       <Route path="/admin" component={AdminPanel} />

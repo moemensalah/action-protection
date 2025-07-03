@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Shield, Users, FolderOpen, Package, FileText, Settings, LogOut, Menu, X, Mail } from "lucide-react";
+import { Shield, Users, FolderOpen, Package, FileText, Settings, LogOut, Menu, X, Mail, Monitor, Video, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +12,9 @@ import { UsersManagement } from "@/components/admin/UsersManagement";
 import { GhostProductsManagement } from "@/components/admin/GhostProductsManagement";
 import SmtpSettings from "@/components/admin/SmtpSettings";
 import { AdminLogin } from "@/components/admin/AdminLogin";
+import { HeroSectionManager } from "@/components/admin/HeroSectionManager";
+import { ExperienceSectionManager } from "@/components/admin/ExperienceSectionManager";
+import { ReviewsManager } from "@/components/admin/ReviewsManager";
 
 export default function AdminPanel() {
   const { t, isRTL } = useLanguage();
@@ -57,6 +60,33 @@ export default function AdminPanel() {
       descEn: "Manage pages and content",
       descAr: "إدارة الصفحات والمحتوى",
       roles: ["administrator"]
+    },
+    {
+      id: "hero-section",
+      icon: Monitor,
+      nameEn: "Hero Section",
+      nameAr: "القسم الرئيسي",
+      descEn: "Manage hero section content",
+      descAr: "إدارة محتوى القسم الرئيسي",
+      roles: ["administrator"]
+    },
+    {
+      id: "experience-section",
+      icon: Video,
+      nameEn: "Experience Section",
+      nameAr: "قسم التجربة",
+      descEn: "Manage experience section",
+      descAr: "إدارة قسم التجربة",
+      roles: ["administrator"]
+    },
+    {
+      id: "reviews",
+      icon: MessageSquare,
+      nameEn: "Customer Reviews",
+      nameAr: "تقييمات العملاء",
+      descEn: "Manage customer reviews",
+      descAr: "إدارة تقييمات العملاء",
+      roles: ["administrator", "moderator"]
     },
     {
       id: "smtp-settings",
@@ -275,6 +305,22 @@ export default function AdminPanel() {
                   </Card>
                 </TabsContent>
               )}
+
+              {user?.role === "administrator" && (
+                <TabsContent value="hero-section" className="space-y-6">
+                  <HeroSectionManager />
+                </TabsContent>
+              )}
+
+              {user?.role === "administrator" && (
+                <TabsContent value="experience-section" className="space-y-6">
+                  <ExperienceSectionManager />
+                </TabsContent>
+              )}
+
+              <TabsContent value="reviews" className="space-y-6">
+                <ReviewsManager />
+              </TabsContent>
 
               {user?.role === "administrator" && (
                 <TabsContent value="smtp-settings" className="space-y-6">

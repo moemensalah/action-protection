@@ -12,6 +12,10 @@ import {
   userAddresses,
   orders,
   orderItems,
+  heroSection,
+  experienceSection,
+  customerReviews,
+  reviewSettings,
   type User,
   type UpsertUser,
   type Category,
@@ -27,6 +31,10 @@ import {
   type InsertUserAddress,
   type Order,
   type OrderItem,
+  type HeroSection,
+  type ExperienceSection,
+  type CustomerReview,
+  type ReviewSettings,
   type InsertCategory,
   type InsertProduct,
   type InsertAboutUs,
@@ -40,6 +48,10 @@ import {
   type InsertOrderItem,
   type InsertUser,
   type CreateUser,
+  type InsertHeroSection,
+  type InsertExperienceSection,
+  type InsertCustomerReview,
+  type InsertReviewSettings,
 } from "@shared/schema";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
@@ -118,6 +130,30 @@ export interface IStorage {
   // SMTP Settings
   getSmtpSettings(): Promise<SmtpSettings | undefined>;
   createOrUpdateSmtpSettings(settingsData: InsertSmtpSettings): Promise<SmtpSettings>;
+  
+  // Hero Section CMS
+  getHeroSection(): Promise<HeroSection | undefined>;
+  updateHeroSection(heroData: Partial<InsertHeroSection>): Promise<HeroSection>;
+
+  // Experience Section CMS
+  getExperienceSection(): Promise<ExperienceSection | undefined>;
+  updateExperienceSection(experienceData: Partial<InsertExperienceSection>): Promise<ExperienceSection>;
+
+  // Customer Reviews Management
+  getApprovedReviews(): Promise<CustomerReview[]>;
+  getAllReviews(status?: string): Promise<CustomerReview[]>;
+  createCustomerReview(reviewData: InsertCustomerReview): Promise<CustomerReview>;
+  approveReview(reviewId: number): Promise<CustomerReview>;
+  rejectReview(reviewId: number, adminNotes?: string): Promise<CustomerReview>;
+  toggleReviewVisibility(reviewId: number, isShowOnWebsite: boolean): Promise<CustomerReview>;
+  deleteReview(reviewId: number): Promise<void>;
+
+  // Review Settings
+  getReviewSettings(): Promise<ReviewSettings | undefined>;
+  updateReviewSettings(settingsData: Partial<InsertReviewSettings>): Promise<ReviewSettings>;
+
+  // User Review Management
+  getUserReviewableProducts(userId: string): Promise<Product[]>;
   
   // Order Management
   createOrder(orderData: InsertOrder): Promise<Order>;
@@ -743,6 +779,200 @@ export class DatabaseStorage implements IStorage {
       .where(eq(orderItems.orderId, order.id));
 
     return { ...order, items };
+  }
+
+  // Hero Section CMS Methods
+  async getHeroSection(): Promise<HeroSection | undefined> {
+    const [heroSectionData] = await db.select().from(heroSection).limit(1);
+    return heroSectionData;
+  }
+
+  async updateHeroSection(heroData: Partial<InsertHeroSection>): Promise<HeroSection> {
+    const existingHero = await this.getHeroSection();
+    
+    if (existingHero) {
+      const [updatedHero] = await db
+        .update(heroSection)
+        .set({ ...heroData, updatedAt: new Date() })
+        .where(eq(heroSection.id, existingHero.id))
+        .returning();
+      return updatedHero;
+    } else {
+      const [newHero] = await db
+        .insert(heroSection)
+        .values(heroData)
+        .returning();
+      return newHero;
+    }
+  }
+
+  // Experience Section CMS Methods
+  async getExperienceSection(): Promise<ExperienceSection | undefined> {
+    const [experienceSectionData] = await db.select().from(experienceSection).limit(1);
+    return experienceSectionData;
+  }
+
+  async updateExperienceSection(experienceData: Partial<InsertExperienceSection>): Promise<ExperienceSection> {
+    const existingExperience = await this.getExperienceSection();
+    
+    if (existingExperience) {
+      const [updatedExperience] = await db
+        .update(experienceSection)
+        .set({ ...experienceData, updatedAt: new Date() })
+        .where(eq(experienceSection.id, existingExperience.id))
+        .returning();
+      return updatedExperience;
+    } else {
+      const [newExperience] = await db
+        .insert(experienceSection)
+        .values(experienceData)
+        .returning();
+      return newExperience;
+    }
+  }
+
+  // Customer Reviews Methods
+  async getApprovedReviews(): Promise<CustomerReview[]> {
+    return await db
+      .select()
+      .from(customerReviews)
+      .where(and(
+        eq(customerReviews.status, 'approved'),
+        eq(customerReviews.isShowOnWebsite, true)
+      ))
+      .orderBy(desc(customerReviews.createdAt));
+  }
+
+  async getAllReviews(status?: string): Promise<CustomerReview[]> {
+    const query = db.select().from(customerReviews);
+    
+    if (status) {
+      return await query.where(eq(customerReviews.status, status)).orderBy(desc(customerReviews.createdAt));
+    }
+    
+    return await query.orderBy(desc(customerReviews.createdAt));
+  }
+
+  async createCustomerReview(reviewData: InsertCustomerReview): Promise<CustomerReview> {
+    const [review] = await db
+      .insert(customerReviews)
+      .values(reviewData)
+      .returning();
+    return review;
+  }
+
+  async approveReview(reviewId: number): Promise<CustomerReview> {
+    const [review] = await db
+      .update(customerReviews)
+      .set({ 
+        status: 'approved', 
+        isShowOnWebsite: true, 
+        updatedAt: new Date() 
+      })
+      .where(eq(customerReviews.id, reviewId))
+      .returning();
+    return review;
+  }
+
+  async rejectReview(reviewId: number, adminNotes?: string): Promise<CustomerReview> {
+    const [review] = await db
+      .update(customerReviews)
+      .set({ 
+        status: 'rejected', 
+        isShowOnWebsite: false,
+        adminNotes,
+        updatedAt: new Date() 
+      })
+      .where(eq(customerReviews.id, reviewId))
+      .returning();
+    return review;
+  }
+
+  async toggleReviewVisibility(reviewId: number, isShowOnWebsite: boolean): Promise<CustomerReview> {
+    const [review] = await db
+      .update(customerReviews)
+      .set({ isShowOnWebsite, updatedAt: new Date() })
+      .where(eq(customerReviews.id, reviewId))
+      .returning();
+    return review;
+  }
+
+  async deleteReview(reviewId: number): Promise<void> {
+    await db.delete(customerReviews).where(eq(customerReviews.id, reviewId));
+  }
+
+  // Review Settings Methods
+  async getReviewSettings(): Promise<ReviewSettings | undefined> {
+    const [settings] = await db.select().from(reviewSettings).limit(1);
+    return settings;
+  }
+
+  async updateReviewSettings(settingsData: Partial<InsertReviewSettings>): Promise<ReviewSettings> {
+    const existingSettings = await this.getReviewSettings();
+    
+    if (existingSettings) {
+      const [updatedSettings] = await db
+        .update(reviewSettings)
+        .set({ ...settingsData, updatedAt: new Date() })
+        .where(eq(reviewSettings.id, existingSettings.id))
+        .returning();
+      return updatedSettings;
+    } else {
+      const [newSettings] = await db
+        .insert(reviewSettings)
+        .values(settingsData)
+        .returning();
+      return newSettings;
+    }
+  }
+
+  // User Review Management
+  async getUserReviewableProducts(userId: string): Promise<Product[]> {
+    // Get products from user's completed orders that haven't been reviewed yet
+    const userOrderItems = await db
+      .select({
+        productId: orderItems.productId,
+        orderId: orderItems.orderId
+      })
+      .from(orderItems)
+      .innerJoin(orders, eq(orders.id, orderItems.orderId))
+      .where(and(
+        eq(orders.userId, userId),
+        eq(orders.status, 'delivered')
+      ));
+
+    if (userOrderItems.length === 0) {
+      return [];
+    }
+
+    // Get unique product IDs
+    const productIds = [...new Set(userOrderItems.map(item => item.productId))];
+    
+    // Get products that haven't been reviewed by this user yet
+    const reviewedProductIds = await db
+      .select({ productId: customerReviews.productId })
+      .from(customerReviews)
+      .where(eq(customerReviews.userId, userId));
+    
+    const reviewedIds = reviewedProductIds
+      .filter(item => item.productId !== null)
+      .map(item => item.productId);
+
+    const reviewableProductIds = productIds.filter(id => !reviewedIds.includes(id));
+
+    if (reviewableProductIds.length === 0) {
+      return [];
+    }
+
+    // Get the actual products
+    return await db
+      .select()
+      .from(products)
+      .where(and(
+        eq(products.isActive, true),
+        // Use OR conditions for each product ID
+        ...reviewableProductIds.map(id => eq(products.id, id))
+      ));
   }
 }
 

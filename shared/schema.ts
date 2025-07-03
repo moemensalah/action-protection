@@ -250,6 +250,68 @@ export const orderItems = pgTable("order_items", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Hero Section table
+export const heroSection = pgTable("hero_section", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  backgroundImage: text("background_image"), // Hero background image URL
+  logoImage: text("logo_image"), // Logo image URL
+  typingWords: jsonb("typing_words").default([]), // Array of typing words [{"en": "word", "ar": "كلمة"}, ...]
+  mainTitleEn: varchar("main_title_en", { length: 255 }).notNull().default("Action Protection"),
+  mainTitleAr: varchar("main_title_ar", { length: 255 }).notNull().default("أكشن بروتكشن"),
+  subtitleEn: text("subtitle_en").default("Premium Vehicle Protection Services"),
+  subtitleAr: text("subtitle_ar").default("خدمات حماية المركبات المتميزة"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Experience Section table
+export const experienceSection = pgTable("experience_section", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  titleEn: varchar("title_en", { length: 255 }).notNull().default("EXPERIENCE TRUE LUXURY"),
+  titleAr: varchar("title_ar", { length: 255 }).notNull().default("اختبر الفخامة الحقيقية"),
+  descriptionEn: text("description_en").default("Discover premium vehicle protection services that exceed expectations"),
+  descriptionAr: text("description_ar").default("اكتشف خدمات حماية المركبات المتميزة التي تتجاوز التوقعات"),
+  videoUrl: text("video_url"), // Video URL for the experience section
+  backgroundImage: text("background_image"), // Background image URL
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Customer Reviews table
+export const customerReviews = pgTable("customer_reviews", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  userId: varchar("user_id").notNull(), // User who wrote the review
+  productId: integer("product_id"), // Product being reviewed (optional - can be general review)
+  orderId: integer("order_id"), // Order associated with the review (optional)
+  rating: integer("rating").notNull(), // 1-5 star rating
+  titleEn: varchar("title_en", { length: 255 }),
+  titleAr: varchar("title_ar", { length: 255 }),
+  reviewEn: text("review_en").notNull(),
+  reviewAr: text("review_ar").notNull(),
+  customerName: varchar("customer_name", { length: 255 }).notNull(),
+  customerImage: text("customer_image"), // Customer profile image URL
+  status: varchar("status", { enum: ["pending", "approved", "rejected"] }).default("pending"),
+  isShowOnWebsite: boolean("is_show_on_website").default(false), // Admin can control visibility
+  adminNotes: text("admin_notes"), // Admin notes for approval/rejection
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Review Management Settings table
+export const reviewSettings = pgTable("review_settings", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  enableReviews: boolean("enable_reviews").default(true),
+  autoApproveReviews: boolean("auto_approve_reviews").default(false),
+  requireOrderToReview: boolean("require_order_to_review").default(true),
+  showReviewsOnWebsite: boolean("show_reviews_on_website").default(true),
+  maxReviewsPerUser: integer("max_reviews_per_user").default(5),
+  reviewCooldownDays: integer("review_cooldown_days").default(30),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 
 
 // Relations
@@ -314,6 +376,21 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   product: one(products, {
     fields: [orderItems.productId],
     references: [products.id],
+  }),
+}));
+
+export const customerReviewsRelations = relations(customerReviews, ({ one }) => ({
+  user: one(users, {
+    fields: [customerReviews.userId],
+    references: [users.id],
+  }),
+  product: one(products, {
+    fields: [customerReviews.productId],
+    references: [products.id],
+  }),
+  order: one(orders, {
+    fields: [customerReviews.orderId],
+    references: [orders.id],
   }),
 }));
 
@@ -401,6 +478,30 @@ export const insertOrderItemSchema = createInsertSchema(orderItems).omit({
   createdAt: true,
 });
 
+export const insertHeroSectionSchema = createInsertSchema(heroSection).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertExperienceSectionSchema = createInsertSchema(experienceSection).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertCustomerReviewSchema = createInsertSchema(customerReviews).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertReviewSettingsSchema = createInsertSchema(reviewSettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const upsertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
 });
@@ -440,6 +541,14 @@ export type Order = typeof orders.$inferSelect;
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
 export type OrderItem = typeof orderItems.$inferSelect;
 export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
+export type HeroSection = typeof heroSection.$inferSelect;
+export type InsertHeroSection = z.infer<typeof insertHeroSectionSchema>;
+export type ExperienceSection = typeof experienceSection.$inferSelect;
+export type InsertExperienceSection = z.infer<typeof insertExperienceSectionSchema>;
+export type CustomerReview = typeof customerReviews.$inferSelect;
+export type InsertCustomerReview = z.infer<typeof insertCustomerReviewSchema>;
+export type ReviewSettings = typeof reviewSettings.$inferSelect;
+export type InsertReviewSettings = z.infer<typeof insertReviewSettingsSchema>;
 
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
 export type InsertProduct = z.infer<typeof insertProductSchema>;

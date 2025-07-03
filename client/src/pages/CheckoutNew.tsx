@@ -116,7 +116,7 @@ export default function CheckoutNew() {
         body: JSON.stringify(data),
       });
     },
-    onSuccess: (newAddress) => {
+    onSuccess: (newAddress: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
       setSelectedAddressId(newAddress.id.toString());
       setShowAddressDialog(false);
@@ -175,7 +175,7 @@ export default function CheckoutNew() {
   // Debug form value changes
   useEffect(() => {
     const subscription = form.watch((value, { name, type }) => {
-      console.log("Form field changed:", { name, type, value: value?.[name as any] });
+      console.log("Form field changed:", { name, type, value: name ? (value as any)?.[name] : undefined });
     });
     return () => subscription.unsubscribe();
   }, [form]);
@@ -194,15 +194,15 @@ export default function CheckoutNew() {
         console.log("Available addresses:", addresses);
         console.log("Looking for address ID:", selectedAddressId);
         
-        const selectedAddress = addresses?.find(addr => addr.id === parseInt(selectedAddressId));
+        const selectedAddress = (addresses as any[])?.find((addr: any) => addr.id === parseInt(selectedAddressId));
         console.log("Found selected address:", selectedAddress);
         
         if (selectedAddress) {
           console.log("Processing order with selected address data...");
           await processOrder({
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
+            firstName: (user as any)?.firstName,
+            lastName: (user as any)?.lastName,
+            email: (user as any)?.email,
             phone: selectedAddress.phone,
             address: selectedAddress.address,
             city: selectedAddress.city,
@@ -253,7 +253,7 @@ export default function CheckoutNew() {
       
       if (user && selectedAddressId && !showNewAddressForm) {
         // User selected an existing address
-        const selectedAddress = addresses?.find(addr => addr.id === parseInt(selectedAddressId));
+        const selectedAddress = (addresses as any[])?.find((addr: any) => addr.id === parseInt(selectedAddressId));
         if (selectedAddress) {
           orderData = {
             firstName: selectedAddress.firstName,

@@ -52,9 +52,9 @@ export default function WebsiteUsersManagement() {
 
   // Filter and paginate users
   const filteredUsers = useMemo(() => {
-    if (!users) return [];
+    if (!users || !Array.isArray(users)) return [];
     
-    return users.filter((user: WebsiteUserWithStats) => {
+    return (users as WebsiteUserWithStats[]).filter((user: WebsiteUserWithStats) => {
       const matchesSearch = 
         user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||

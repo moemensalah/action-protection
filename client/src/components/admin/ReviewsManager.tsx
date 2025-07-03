@@ -73,8 +73,9 @@ export function ReviewsManager() {
     queryKey: ["/api/admin/review-settings"],
   });
 
-  // Ensure settings has default values
-  const settings = settingsData || {
+  // Ensure settings has default values with proper typing
+  const defaultSettings: ReviewSettings = {
+    id: 1,
     enableReviews: true,
     autoApproveReviews: false,
     requireOrderToReview: true,
@@ -82,6 +83,8 @@ export function ReviewsManager() {
     maxReviewsPerUser: 5,
     reviewCooldownDays: 7
   };
+  
+  const settings = settingsData ? (settingsData as ReviewSettings) : defaultSettings;
 
   // Approve review mutation
   const approveMutation = useMutation({
@@ -211,8 +214,7 @@ export function ReviewsManager() {
                   {t("reviews.settingsDescription")}
                 </DialogDescription>
               </DialogHeader>
-              {settings && (
-                <div className="space-y-4">
+              <div className="space-y-4">
                   <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Label className={isRTL ? 'text-right' : 'text-left'}>{t("reviews.enableReviews")}</Label>
                     <Switch
@@ -223,7 +225,7 @@ export function ReviewsManager() {
                     />
                   </div>
                   <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <Label className={isRTL ? 'text-right' : 'text-left'}>{t("reviews.autoApproveReviews")}</Label>
+                    <Label className={isRTL ? 'text-right' : 'text-left'}>Auto Approve Reviews</Label>
                     <Switch
                       checked={settings.autoApproveReviews}
                       onCheckedChange={(checked) =>
@@ -232,7 +234,7 @@ export function ReviewsManager() {
                     />
                   </div>
                   <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <Label className={isRTL ? 'text-right' : 'text-left'}>{t("reviews.requireOrderToReview")}</Label>
+                    <Label className={isRTL ? 'text-right' : 'text-left'}>Require Order to Review</Label>
                     <Switch
                       checked={settings.requireOrderToReview}
                       onCheckedChange={(checked) =>
@@ -241,7 +243,7 @@ export function ReviewsManager() {
                     />
                   </div>
                   <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <Label className={isRTL ? 'text-right' : 'text-left'}>{t("reviews.showReviewsOnWebsite")}</Label>
+                    <Label className={isRTL ? 'text-right' : 'text-left'}>Show Reviews on Website</Label>
                     <Switch
                       checked={settings.showReviewsOnWebsite}
                       onCheckedChange={(checked) =>
@@ -250,7 +252,6 @@ export function ReviewsManager() {
                     />
                   </div>
                 </div>
-              )}
             </DialogContent>
           </Dialog>
         </div>

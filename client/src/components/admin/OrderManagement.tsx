@@ -19,6 +19,13 @@ interface OrderWithDetails extends Order {
   items: OrderItem[];
 }
 
+interface OrderStats {
+  totalOrders: number;
+  pendingOrders: number;
+  completedOrders: number;
+  totalRevenue: string;
+}
+
 export default function OrderManagement() {
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
@@ -41,20 +48,20 @@ export default function OrderManagement() {
   });
 
   // Get order statistics
-  const { data: stats = {} } = useQuery({
+  const { data: stats, isLoading: isStatsLoading } = useQuery<OrderStats>({
     queryKey: ["/api/admin/orders/stats"],
   });
 
   // Fetch website users for filtering
-  const { data: websiteUsers = [] } = useQuery({
+  const { data: websiteUsers = [] } = useQuery<WebsiteUser[]>({
     queryKey: ["/api/admin/website-users"],
   });
 
   // Filter and paginate orders
   const filteredOrders = useMemo(() => {
-    if (!orders) return [];
+    if (!orders || !Array.isArray(orders)) return [];
     
-    return orders.filter((order: OrderWithDetails) => {
+    return (orders as OrderWithDetails[]).filter((order: OrderWithDetails) => {
       const matchesSearch = 
         order.orderNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.websiteUser?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -216,7 +223,7 @@ export default function OrderManagement() {
                   {isRTL ? "إجمالي الطلبات" : "Total Orders"}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {stats.totalOrders || 0}
+                  {stats?.totalOrders || 0}
                 </p>
               </div>
               <Package className="w-8 h-8 text-blue-600" />
@@ -232,7 +239,7 @@ export default function OrderManagement() {
                   {isRTL ? "الطلبات المعلقة" : "Pending Orders"}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {stats.pendingOrders || 0}
+                  {stats?.pendingOrders || 0}
                 </p>
               </div>
               <Clock className="w-8 h-8 text-yellow-600" />
@@ -248,7 +255,7 @@ export default function OrderManagement() {
                   {isRTL ? "الطلبات المكتملة" : "Completed Orders"}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {stats.completedOrders || 0}
+                  {stats?.completedOrders || 0}
                 </p>
               </div>
               <CheckCircle className="w-8 h-8 text-green-600" />
@@ -264,7 +271,7 @@ export default function OrderManagement() {
                   {isRTL ? "إجمالي الإيرادات" : "Total Revenue"}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {isRTL ? `${stats.totalRevenue || 0} ${t("kwd")}` : `${t("kwd")} ${stats.totalRevenue || 0}`}
+                  {isRTL ? `${stats?.totalRevenue || 0} ${t("kwd")}` : `${t("kwd")} ${stats?.totalRevenue || 0}`}
                 </p>
               </div>
               <DollarSign className="w-8 h-8 text-amber-600" />

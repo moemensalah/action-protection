@@ -140,19 +140,19 @@ export function HeroSectionManager() {
       if (uploadedUrls.length > 0) {
         setFormData(prev => ({
           ...prev,
-          backgroundImages: [...(prev.backgroundImages || []), ...uploadedUrls]
+          backgroundImages: [...(Array.isArray(prev.backgroundImages) ? prev.backgroundImages : []), ...uploadedUrls]
         }));
         
         toast({
-          title: "Success",
-          description: `${uploadedUrls.length} image(s) uploaded successfully`,
+          title: isRTL ? "نجح" : "Success",
+          description: isRTL ? `تم رفع ${uploadedUrls.length} صورة بنجاح` : `${uploadedUrls.length} image(s) uploaded successfully`,
         });
       }
     } catch (error) {
       console.error('Upload error:', error);
       toast({
-        title: "Error",
-        description: "Failed to upload images",
+        title: isRTL ? "خطأ" : "Error",
+        description: isRTL ? "فشل في رفع الصور" : "Failed to upload images",
         variant: "destructive",
       });
     } finally {
@@ -170,7 +170,14 @@ export function HeroSectionManager() {
   };
 
   if (isLoading) {
-    return <div className="p-6">Loading hero section...</div>;
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="flex items-center space-x-2">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 dark:border-gray-100"></div>
+          <span>{isRTL ? "جاري تحميل قسم البطل..." : "Loading hero section..."}</span>
+        </div>
+      </div>
+    );
   }
 
   const currentTypingWords = Array.isArray(formData.typingWords) ? formData.typingWords : [];

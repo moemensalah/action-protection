@@ -21,7 +21,6 @@ export function HeroSectionManager() {
   
   const [formData, setFormData] = useState<Partial<HeroSection>>({
     backgroundImages: [],
-    logoImage: "",
     typingWords: [],
     mainTitleEn: "Action Protection",
     mainTitleAr: "أكشن بروتكشن",
@@ -31,10 +30,10 @@ export function HeroSectionManager() {
   });
 
   const [newWord, setNewWord] = useState<TypingWord>({ en: "", ar: "" });
-  const [newBackgroundImage, setNewBackgroundImage] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Fetch hero section data
-  const { data: heroSection, isLoading } = useQuery({
+  const { data: heroSection, isLoading } = useQuery<HeroSection>({
     queryKey: ["/api/hero-section"],
   });
 
@@ -99,16 +98,7 @@ export function HeroSectionManager() {
     }));
   };
 
-  const handleAddBackgroundImage = () => {
-    if (newBackgroundImage.trim()) {
-      const currentImages = Array.isArray(formData.backgroundImages) ? formData.backgroundImages : [];
-      setFormData(prev => ({
-        ...prev,
-        backgroundImages: [...currentImages, newBackgroundImage]
-      }));
-      setNewBackgroundImage("");
-    }
-  };
+
 
   const handleRemoveBackgroundImage = (index: number) => {
     const currentImages = Array.isArray(formData.backgroundImages) ? formData.backgroundImages : [];
@@ -116,6 +106,57 @@ export function HeroSectionManager() {
       ...prev,
       backgroundImages: currentImages.filter((_, i) => i !== index)
     }));
+  };
+
+  // Handle file upload for background images
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingImage(true);
+    try {
+      const uploadedUrls: string[] = [];
+      
+      for (const file of Array.from(files)) {
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        const response = await fetch('/api/upload/image', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          uploadedUrls.push(result.url);
+        } else {
+          console.error('Upload failed:', response.statusText);
+        }
+      }
+      
+      if (uploadedUrls.length > 0) {
+        setFormData(prev => ({
+          ...prev,
+          backgroundImages: [...(prev.backgroundImages || []), ...uploadedUrls]
+        }));
+        
+        toast({
+          title: "Success",
+          description: `${uploadedUrls.length} image(s) uploaded successfully`,
+        });
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload images",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingImage(false);
+      // Reset file input
+      event.target.value = '';
+    }
   };
 
   const handleSave = () => {
@@ -151,23 +192,28 @@ export function HeroSectionManager() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <Label>Add New Background Image URL</Label>
+              <Label>Upload Background Images</Label>
               <div className="flex gap-2">
                 <Input
-                  value={newBackgroundImage}
-                  onChange={(e) => setNewBackgroundImage(e.target.value)}
-                  placeholder="/assets/g-class-cinematic-bg.png"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
                   className="flex-1"
+                  disabled={uploadingImage}
                 />
                 <Button 
-                  onClick={handleAddBackgroundImage}
-                  disabled={!newBackgroundImage.trim()}
+                  disabled={uploadingImage}
                   className="flex items-center gap-2"
+                  variant="outline"
                 >
-                  <Plus className="h-4 w-4" />
-                  Add Image
+                  <Upload className="h-4 w-4" />
+                  {uploadingImage ? "Uploading..." : "Select Images"}
                 </Button>
               </div>
+              <p className="text-sm text-muted-foreground mt-1">
+                Select multiple images to upload as background images. Supported formats: JPG, PNG, GIF
+              </p>
             </div>
           </div>
           
@@ -202,22 +248,7 @@ export function HeroSectionManager() {
         </CardContent>
       </Card>
 
-      {/* Logo Image Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Logo Image</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div>
-            <Label>Logo Image URL</Label>
-            <Input
-              value={formData.logoImage || ""}
-              onChange={(e) => handleInputChange("logoImage", e.target.value)}
-              placeholder="/assets/action-protection-logo-dark.png"
-            />
-          </div>
-        </CardContent>
-      </Card>
+
 
       {/* Main Titles Section */}
       <Card>

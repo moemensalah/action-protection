@@ -380,7 +380,7 @@ export default function OrderManagement() {
                   </div>
                 </div>
 
-                <div className={`flex items-center justify-between mt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={`flex items-center mt-4 ${isRTL ? 'justify-start' : 'justify-end'}`}>
                   <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Button
                       variant="outline"

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,19 +54,25 @@ export default function MyAddresses() {
     },
   });
 
+  const { data: addresses = [], isLoading } = useQuery({
+    queryKey: ["/api/addresses"],
+    enabled: !!user,
+  }) as { data: UserAddress[], isLoading: boolean };
+
   // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      setLocation("/login");
+    }
+  }, [authLoading, user, setLocation]);
+
   if (authLoading) {
     return <div>Loading...</div>;
   }
 
   if (!user) {
-    setLocation("/login");
     return null;
   }
-
-  const { data: addresses = [], isLoading } = useQuery({
-    queryKey: ["/api/addresses"],
-  }) as { data: UserAddress[], isLoading: boolean };
 
   const createAddressMutation = useMutation({
     mutationFn: async (data: AddressForm) => {

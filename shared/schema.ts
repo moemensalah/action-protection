@@ -240,7 +240,7 @@ export const cartItems = pgTable("cart_items", {
 // Orders table
 export const orders = pgTable("orders", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-  websiteUserId: integer("website_user_id").references(() => websiteUsers.id),
+  websiteUserId: integer("website_user_id").references(() => websiteUsers.id).notNull(),
   orderNumber: varchar("order_number", { length: 50 }).notNull().unique(),
   customerName: varchar("customer_name", { length: 255 }).notNull(),
   customerPhone: varchar("customer_phone", { length: 20 }).notNull(),

@@ -1048,18 +1048,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { firstName, lastName, email, phone, address, city, area, notes, items, totalAmount, userId } = req.body;
       
+      console.log("Order request body:", req.body);
+      
+      // Calculate total amount if not provided
+      let calculatedTotal = totalAmount;
+      if (!calculatedTotal && items && Array.isArray(items)) {
+        calculatedTotal = items.reduce((sum: number, item: any) => {
+          return sum + (parseFloat(item.product?.price || 0) * (item.quantity || 0));
+        }, 0);
+      }
+      
       // Generate order number
       const orderNumber = `AP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
+      // Get the correct user ID
+      const finalUserId = userId || (req.session as any).userId;
+      
+      if (!finalUserId) {
+        return res.status(400).json({ message: "User authentication required" });
+      }
+
+      const parsedUserId = parseInt(finalUserId);
+
       // Create order
       const orderData = {
-        userId: userId || (req.session as any).userId || 'guest',
+        websiteUserId: parsedUserId,
         orderNumber,
         customerName: `${firstName} ${lastName}`,
         customerPhone: phone,
         customerEmail: email,
         deliveryAddress: `${address}, ${area}, ${city}`,
-        totalAmount: totalAmount.toString(),
+        totalAmount: (calculatedTotal || 0).toString(),
         status: 'pending' as const,
         paymentMethod: 'cash' as const,
         paymentStatus: 'pending' as const,

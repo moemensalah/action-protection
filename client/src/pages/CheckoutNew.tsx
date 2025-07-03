@@ -150,7 +150,7 @@ export default function CheckoutNew() {
       const orderData = {
         ...data,
         items: state.items,
-        total: state.total,
+        totalAmount: state.total,
         userId: (user as any)?.id || null,
       };
 

@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useLocation } from "wouter";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
-import { Package, Clock, CheckCircle, Truck, X, Eye, ArrowLeft, LogOut } from "lucide-react";
+import { Package, Clock, CheckCircle, Truck, X, Eye, ArrowLeft, LogOut, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Filter } from "lucide-react";
 import { Link } from "wouter";
 
 interface Order {
@@ -39,11 +40,37 @@ export default function MyOrders() {
   const [, setLocation] = useLocation();
   const { user, isLoading: authLoading } = useAuth();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 5;
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["/api/my-orders"],
     enabled: !!user,
   }) as { data: Order[], isLoading: boolean };
+
+  // Sort orders by newest first and filter by status
+  const filteredAndSortedOrders = useMemo(() => {
+    let filtered = orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(order => order.status === statusFilter);
+    }
+    
+    return filtered;
+  }, [orders, statusFilter]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAndSortedOrders.length / ordersPerPage);
+  const startIndex = (currentPage - 1) * ordersPerPage;
+  const endIndex = startIndex + ordersPerPage;
+  const currentOrders = filteredAndSortedOrders.slice(startIndex, endIndex);
+
+  // Reset to first page when filter changes
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value);
+    setCurrentPage(1);
+  };
 
   // Redirect if not logged in - moved after all hooks
   if (!authLoading && !user) {
@@ -283,26 +310,63 @@ export default function MyOrders() {
             </div>
           </div>
 
-          {orders.length === 0 ? (
+          {/* Filter and Summary */}
+          <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-gray-500" />
+                <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder={isRTL ? "فلترة حسب الحالة" : "Filter by status"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{isRTL ? "جميع الطلبات" : "All Orders"}</SelectItem>
+                    <SelectItem value="pending">{isRTL ? "في الانتظار" : "Pending"}</SelectItem>
+                    <SelectItem value="confirmed">{isRTL ? "مؤكد" : "Confirmed"}</SelectItem>
+                    <SelectItem value="preparing">{isRTL ? "قيد التحضير" : "Preparing"}</SelectItem>
+                    <SelectItem value="ready">{isRTL ? "جاهز" : "Ready"}</SelectItem>
+                    <SelectItem value="delivered">{isRTL ? "تم التسليم" : "Delivered"}</SelectItem>
+                    <SelectItem value="cancelled">{isRTL ? "ملغي" : "Cancelled"}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                {isRTL ? 
+                  `${filteredAndSortedOrders.length} من ${orders.length} طلبات` : 
+                  `${filteredAndSortedOrders.length} of ${orders.length} orders`
+                }
+              </div>
+            </div>
+          </div>
+
+          {filteredAndSortedOrders.length === 0 ? (
             <Card>
               <CardContent className="text-center py-12">
                 <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  {isRTL ? "لا توجد طلبات" : "No Orders Yet"}
+                  {statusFilter === "all" ? 
+                    (isRTL ? "لا توجد طلبات" : "No Orders Yet") :
+                    (isRTL ? `لا توجد طلبات ${getStatusText(statusFilter)}` : `No ${getStatusText(statusFilter)} Orders`)
+                  }
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  {isRTL ? "لم تقم بأي طلبات حتى الآن. ابدأ التسوق الآن!" : "You haven't placed any orders yet. Start shopping now!"}
+                  {statusFilter === "all" ? 
+                    (isRTL ? "لم تقم بأي طلبات حتى الآن. ابدأ التسوق الآن!" : "You haven't placed any orders yet. Start shopping now!") :
+                    (isRTL ? "لا توجد طلبات بهذه الحالة. جرب فلتر مختلف." : "No orders with this status. Try a different filter.")
+                  }
                 </p>
-                <Link href="/menu">
-                  <Button className="bg-amber-600 hover:bg-amber-700">
-                    {isRTL ? "تصفح المنتجات" : "Browse Products"}
-                  </Button>
-                </Link>
+                {statusFilter === "all" && (
+                  <Link href="/menu">
+                    <Button className="bg-amber-600 hover:bg-amber-700">
+                      {isRTL ? "تصفح المنتجات" : "Browse Products"}
+                    </Button>
+                  </Link>
+                )}
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-4">
-              {orders.map((order: Order) => (
+              {currentOrders.map((order: Order) => (
                 <Card key={order.id} className="hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
@@ -344,6 +408,90 @@ export default function MyOrders() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {filteredAndSortedOrders.length > 0 && totalPages > 1 && (
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                {isRTL ? (
+                  `إظهار ${startIndex + 1}-${Math.min(endIndex, filteredAndSortedOrders.length)} من ${filteredAndSortedOrders.length} طلبات`
+                ) : (
+                  `Showing ${startIndex + 1}-${Math.min(endIndex, filteredAndSortedOrders.length)} of ${filteredAndSortedOrders.length} orders`
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage === 1}
+                  className="w-8 h-8 p-0"
+                >
+                  {isRTL ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="flex items-center gap-1"
+                >
+                  {isRTL ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                  <span className="hidden sm:inline">{isRTL ? "السابق" : "Previous"}</span>
+                </Button>
+
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(pageNum)}
+                        className="w-8 h-8 p-0"
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center gap-1"
+                >
+                  <span className="hidden sm:inline">{isRTL ? "التالي" : "Next"}</span>
+                  {isRTL ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className="w-8 h-8 p-0"
+                >
+                  {isRTL ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
+                </Button>
+              </div>
             </div>
           )}
         </div>

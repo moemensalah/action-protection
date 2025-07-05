@@ -186,15 +186,18 @@ export function HeroSectionManager() {
   return (
     <div className={`p-6 space-y-6 ${isRTL ? 'rtl' : 'ltr'}`}>
       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <h2 className="text-2xl font-bold">{t("hero.title")}</h2>
+        {/* In RTL: Button on left, title on right */}
         <Button 
           onClick={handleSave} 
           disabled={updateMutation.isPending}
           className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
         >
           <Save className="h-4 w-4" />
-          {updateMutation.isPending ? t("common.saving") : t("hero.save")}
+          {updateMutation.isPending ? (isRTL ? "جار الحفظ..." : "Saving...") : (isRTL ? "حفظ" : "Save")}
         </Button>
+        <h2 className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>
+          {isRTL ? "إدارة القسم الرئيسي" : "Hero Section Management"}
+        </h2>
       </div>
 
       {/* Background Images Section */}

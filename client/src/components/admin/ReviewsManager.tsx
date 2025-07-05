@@ -198,13 +198,13 @@ export function ReviewsManager() {
   return (
     <div className="p-6 space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <h2 className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>{t("reviews.management")}</h2>
-        <div className="flex gap-2">
+        {/* In RTL: Buttons on left, title on right */}
+        <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Settings className="h-4 w-4" />
-                {t("common.settings")}
+                {isRTL ? "الإعدادات" : "Settings"}
               </Button>
             </DialogTrigger>
             <DialogContent dir={isRTL ? 'rtl' : 'ltr'}>
@@ -255,6 +255,9 @@ export function ReviewsManager() {
             </DialogContent>
           </Dialog>
         </div>
+        <h2 className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>
+          {isRTL ? "إدارة التقييمات" : "Reviews Management"}
+        </h2>
       </div>
 
       {/* Filter */}

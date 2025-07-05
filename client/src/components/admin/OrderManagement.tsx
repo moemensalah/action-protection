@@ -377,9 +377,9 @@ export default function OrderManagement() {
                       </Badge>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                      {isRTL ? "المبلغ الإجمالي:" : "Total:"} 
+                      {isRTL ? "المبلغ الاجمالى:" : "Total:"} 
                       <span className={`font-semibold text-amber-600 dark:text-amber-400 ${isRTL ? 'mr-1' : 'ml-1'}`}>
-                        {isRTL ? `${order.totalAmount} ${t("kwd")}` : `${t("kwd")} ${order.totalAmount}`}
+                        {isRTL ? `${order.totalAmount || 0} د.ك` : `KWD ${order.totalAmount || 0}`}
                       </span>
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">

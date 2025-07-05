@@ -286,8 +286,8 @@ export default function AdminPanel() {
                 <Card>
                   <CardHeader>
                     <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
-                      <FolderOpen className="h-5 w-5" />
                       {isRTL ? "إدارة الفئات" : "Categories Management"}
+                      <FolderOpen className="h-5 w-5" />
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -300,8 +300,8 @@ export default function AdminPanel() {
                 <Card>
                   <CardHeader>
                     <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
-                      <Package className="h-5 w-5" />
                       {isRTL ? "إدارة المنتجات" : "Products Management"}
+                      <Package className="h-5 w-5" />
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -315,8 +315,8 @@ export default function AdminPanel() {
                   <Card>
                     <CardHeader>
                       <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
-                        <FileText className="h-5 w-5" />
                         {isRTL ? "إدارة المحتوى" : "Content Management"}
+                        <FileText className="h-5 w-5" />
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -361,8 +361,8 @@ export default function AdminPanel() {
                   <Card>
                     <CardHeader>
                       <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
-                        <Users className="h-5 w-5" />
                         {isRTL ? "إدارة المستخدمين" : "Users Management"}
+                        <Users className="h-5 w-5" />
                       </CardTitle>
                     </CardHeader>
                     <CardContent>

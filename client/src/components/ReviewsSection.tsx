@@ -131,12 +131,13 @@ export function ReviewsSection() {
                   
                   <div className="mb-3">
                     <div className={`flex items-center justify-between mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      <h4 className="font-bold text-base text-foreground truncate">
-                        {language === "ar" ? review.nameAr : review.nameEn}
-                      </h4>
+                      {/* In RTL: stars on left, name on right */}
                       <div className={`flex ${isRTL ? 'space-x-reverse space-x-1' : 'space-x-1'}`}>
                         {renderStars(review.rating)}
                       </div>
+                      <h4 className="font-bold text-base text-foreground truncate">
+                        {language === "ar" ? review.nameAr : review.nameEn}
+                      </h4>
                     </div>
                     
                     <div className="text-xs text-muted-foreground mb-2">

@@ -17,6 +17,7 @@ import type { Order, OrderItem, WebsiteUser } from "@shared/schema";
 interface OrderWithDetails extends Order {
   websiteUser: WebsiteUser;
   items: OrderItem[];
+  total: string; // API returns total as string instead of totalAmount
 }
 
 interface OrderStats {
@@ -45,7 +46,7 @@ export default function OrderManagement() {
   // Fetch orders with details
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["/api/admin/orders"],
-  });
+  }) as { data: OrderWithDetails[], isLoading: boolean };
 
   // Get order statistics
   const { data: stats, isLoading: isStatsLoading } = useQuery<OrderStats>({
@@ -379,7 +380,7 @@ export default function OrderManagement() {
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                       {isRTL ? "المبلغ الاجمالى:" : "Total:"} 
                       <span className={`font-semibold text-amber-600 dark:text-amber-400 ${isRTL ? 'mr-1' : 'ml-1'}`}>
-                        {isRTL ? `${Number(order.totalAmount) || 0} د.ك` : `KWD ${Number(order.totalAmount) || 0}`}
+                        {isRTL ? `${Number(order.total) || 0} د.ك` : `KWD ${Number(order.total) || 0}`}
                       </span>
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -533,7 +534,7 @@ export default function OrderManagement() {
                 <div>
                   <h4 className="font-semibold mb-2">{isRTL ? "معلومات الطلب" : "Order Information"}</h4>
                   <p><strong>{isRTL ? "الحالة:" : "Status:"}</strong> {getStatusText(selectedOrder.status || 'pending')}</p>
-                  <p><strong>{isRTL ? "المبلغ الإجمالي:" : "Total Amount:"}</strong> {isRTL ? `${Number(selectedOrder.totalAmount) || 0} د.ك` : `KWD ${Number(selectedOrder.totalAmount) || 0}`}</p>
+                  <p><strong>{isRTL ? "المبلغ الإجمالي:" : "Total Amount:"}</strong> {isRTL ? `${Number(selectedOrder.total) || 0} د.ك` : `KWD ${Number(selectedOrder.total) || 0}`}</p>
                   <p><strong>{isRTL ? "طريقة الدفع:" : "Payment Method:"}</strong> {selectedOrder.paymentMethod || 'N/A'}</p>
                   <p><strong>{isRTL ? "حالة الدفع:" : "Payment Status:"}</strong> {selectedOrder.paymentStatus || 'pending'}</p>
                 </div>

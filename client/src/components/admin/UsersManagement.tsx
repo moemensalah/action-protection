@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, Shield, UserPlus, Edit, Crown, Key, Trash2 } from "lucide-react";
+import { Users, Shield, UserPlus, Edit, Crown, Key, Trash2, Search, Filter, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,10 +56,57 @@ export function UsersManagement() {
     isActive: true
   });
 
+  // Filter and pagination state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState<"all" | "administrator" | "moderator">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
+
   // Fetch users from API
   const { data: users = [], isLoading, refetch } = useQuery<User[]>({
     queryKey: ['/api/admin/users'],
   });
+
+  // Filter and paginate users
+  const filteredUsers = useMemo(() => {
+    let filtered = users.filter((user: User) => {
+      // Search filter
+      const searchMatch = !searchTerm || 
+        user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      // Role filter
+      const roleMatch = roleFilter === "all" || user.role === roleFilter;
+
+      // Status filter
+      const statusMatch = statusFilter === "all" || 
+        (statusFilter === "active" && user.isActive) ||
+        (statusFilter === "inactive" && !user.isActive);
+
+      return searchMatch && roleMatch && statusMatch;
+    });
+
+    return filtered;
+  }, [users, searchTerm, roleFilter, statusFilter]);
+
+  // Reset page when filters change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [searchTerm, roleFilter, statusFilter]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const startIndex = (currentPage - 1) * usersPerPage;
+  const endIndex = startIndex + usersPerPage;
+  const currentUsers = filteredUsers.slice(startIndex, endIndex);
+
+  // Statistics
+  const adminCount = users.filter(user => user.role === "administrator").length;
+  const moderatorCount = users.filter(user => user.role === "moderator").length;
+  const activeCount = users.filter(user => user.isActive).length;
 
   // Create user mutation
   const createUserMutation = useMutation({
@@ -231,6 +278,73 @@ export function UsersManagement() {
 
   return (
     <div className="space-y-6">
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <Card>
+          <CardContent className="p-4">
+            <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {isRTL ? "إجمالي المستخدمين" : "Total Users"}
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.length}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className="p-2 bg-red-100 dark:bg-red-900 rounded-lg">
+                <Crown className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {isRTL ? "المديرين" : "Administrators"}
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{adminCount}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {isRTL ? "المشرفين" : "Moderators"}
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{moderatorCount}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                <Users className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {isRTL ? "المستخدمين النشطين" : "Active Users"}
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{activeCount}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Header */}
       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
         {/* In RTL: Title on right, button on left */}
@@ -417,6 +531,85 @@ export function UsersManagement() {
         </div>
       </div>
 
+      {/* Filters and Search */}
+      <Card>
+        <CardContent className="p-4">
+          <div className={`flex flex-col gap-4 ${isRTL ? 'text-right' : 'text-left'}`}>
+            {/* Search */}
+            <div className="relative">
+              <Search className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
+              <Input
+                placeholder={isRTL ? "البحث عن المستخدمين..." : "Search users..."}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={`${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}
+                dir={isRTL ? 'rtl' : 'ltr'}
+              />
+            </div>
+
+            {/* Filters */}
+            <div className={`flex flex-col sm:flex-row gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+              <div className="flex-1">
+                <Label className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                  {isRTL ? "تصفية حسب الدور:" : "Filter by Role:"}
+                </Label>
+                <Select value={roleFilter} onValueChange={(value: "all" | "administrator" | "moderator") => setRoleFilter(value)}>
+                  <SelectTrigger className={isRTL ? 'text-right [&>span]:text-right [&>svg]:order-first' : 'text-left'}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className={isRTL ? '[&_*]:text-right' : ''}>
+                    <SelectItem value="all">{isRTL ? "جميع الأدوار" : "All Roles"}</SelectItem>
+                    <SelectItem value="administrator">{isRTL ? "مدير" : "Administrator"}</SelectItem>
+                    <SelectItem value="moderator">{isRTL ? "مشرف" : "Moderator"}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex-1">
+                <Label className={`block mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                  {isRTL ? "تصفية حسب الحالة:" : "Filter by Status:"}
+                </Label>
+                <Select value={statusFilter} onValueChange={(value: "all" | "active" | "inactive") => setStatusFilter(value)}>
+                  <SelectTrigger className={isRTL ? 'text-right [&>span]:text-right [&>svg]:order-first' : 'text-left'}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className={isRTL ? '[&_*]:text-right' : ''}>
+                    <SelectItem value="all">{isRTL ? "جميع الحالات" : "All Status"}</SelectItem>
+                    <SelectItem value="active">{isRTL ? "نشط" : "Active"}</SelectItem>
+                    <SelectItem value="inactive">{isRTL ? "غير نشط" : "Inactive"}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-end">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setRoleFilter("all");
+                    setStatusFilter("all");
+                    setCurrentPage(1);
+                  }}
+                  className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+                >
+                  <Filter className="h-4 w-4" />
+                  {isRTL ? "إعادة تعيين" : "Reset"}
+                </Button>
+              </div>
+            </div>
+
+            {/* Results count */}
+            <div className={`text-sm text-gray-600 dark:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
+              {isRTL ? (
+                `إظهار ${filteredUsers.length} من أصل ${users.length} مستخدم`
+              ) : (
+                `Showing ${filteredUsers.length} of ${users.length} users`
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Role Information Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
@@ -474,7 +667,7 @@ export function UsersManagement() {
           <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
             <Users className="h-5 w-5" />
             {isRTL ? "قائمة المستخدمين" : "Users List"}
-            <Badge variant="secondary">{users.length}</Badge>
+            <Badge variant="secondary">{filteredUsers.length}</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -515,16 +708,16 @@ export function UsersManagement() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ) : users.length === 0 ? (
+                ) : filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
+                    <TableCell colSpan={7} className="text-center py-8">
                       <div className="text-gray-500">
-                        {isRTL ? "لا توجد مستخدمين" : "No users found"}
+                        {isRTL ? "لا توجد نتائج" : "No results found"}
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : (
-                  users.map((user: User) => (
+                  currentUsers.map((user: User) => (
                     <TableRow key={user.id}>
                       {isRTL ? (
                         <>
@@ -649,6 +842,90 @@ export function UsersManagement() {
               </TableBody>
             </Table>
           </div>
+
+          {/* Pagination */}
+          {filteredUsers.length > 0 && totalPages > 1 && (
+            <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-4 pb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                {isRTL ? (
+                  `إظهار ${startIndex + 1}-${Math.min(endIndex, filteredUsers.length)} من ${filteredUsers.length} مستخدم`
+                ) : (
+                  `Showing ${startIndex + 1}-${Math.min(endIndex, filteredUsers.length)} of ${filteredUsers.length} users`
+                )}
+              </div>
+
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage === 1}
+                  className="w-8 h-8 p-0"
+                >
+                  {isRTL ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="flex items-center gap-1"
+                >
+                  {isRTL ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                  <span className="hidden sm:inline">{isRTL ? "السابق" : "Previous"}</span>
+                </Button>
+
+                <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(pageNum)}
+                        className="w-8 h-8 p-0"
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center gap-1"
+                >
+                  <span className="hidden sm:inline">{isRTL ? "التالي" : "Next"}</span>
+                  {isRTL ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className="w-8 h-8 p-0"
+                >
+                  {isRTL ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

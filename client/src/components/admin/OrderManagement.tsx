@@ -202,16 +202,16 @@ export default function OrderManagement() {
   return (
     <div className="space-y-6 p-6">
       <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
-        {/* In RTL: Total orders on left, title on right */}
+        {/* In RTL: Title on right, total orders on left */}
+        <h1 className={`text-2xl font-bold text-gray-900 dark:text-white ${isRTL ? 'text-right' : 'text-left'}`}>
+          {isRTL ? "إدارة الطلبات" : "Order Management"}
+        </h1>
         <div className={`text-sm text-gray-600 dark:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
           {isRTL ? 
             `إجمالي الطلبات: ${filteredOrders.length}` : 
             `Total Orders: ${filteredOrders.length}`
           }
         </div>
-        <h1 className={`text-2xl font-bold text-gray-900 dark:text-white ${isRTL ? 'text-right' : 'text-left'}`}>
-          {isRTL ? "إدارة الطلبات" : "Order Management"}
-        </h1>
       </div>
 
       {/* Statistics Cards */}

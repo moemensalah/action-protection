@@ -187,16 +187,16 @@ export default function WebsiteUsersManagement() {
     <div className="space-y-6 p-6">
       {/* Header */}
       <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
-        {/* In RTL: Total users on left, title on right */}
+        {/* In RTL: Title on right, total users on left */}
+        <h1 className={`text-2xl font-bold text-gray-900 dark:text-white ${isRTL ? 'text-right' : 'text-left'}`}>
+          {isRTL ? "إدارة مستخدمي الموقع" : "Website Users Management"}
+        </h1>
         <div className={`text-sm text-gray-600 dark:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
           {isRTL ? 
             `إجمالي المستخدمين: ${filteredUsers.length}` : 
             `Total Users: ${filteredUsers.length}`
           }
         </div>
-        <h1 className={`text-2xl font-bold text-gray-900 dark:text-white ${isRTL ? 'text-right' : 'text-left'}`}>
-          {isRTL ? "إدارة مستخدمي الموقع" : "Website Users Management"}
-        </h1>
       </div>
 
       {/* Statistics Cards */}

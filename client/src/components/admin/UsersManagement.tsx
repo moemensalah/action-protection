@@ -981,24 +981,42 @@ export function UsersManagement() {
               }
             </p>
           </div>
-          <div className={`flex gap-2 ${isRTL ? 'justify-start flex-row-reverse' : 'justify-end'}`}>
-            <Button 
-              variant="outline" 
-              onClick={() => setDeleteConfirmOpen(false)}
-              disabled={deleteUserMutation.isPending}
-            >
-              {isRTL ? "إلغاء" : "Cancel"}
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={confirmDelete}
-              disabled={deleteUserMutation.isPending}
-            >
-              {deleteUserMutation.isPending 
-                ? (isRTL ? "جاري الحذف..." : "Deleting...")
-                : (isRTL ? "حذف" : "Delete")
-              }
-            </Button>
+          <div className={`flex gap-2 ${isRTL ? 'justify-start' : 'justify-end'}`}>
+            {isRTL ? (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setDeleteConfirmOpen(false)}
+                  disabled={deleteUserMutation.isPending}
+                >
+                  إلغاء
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={confirmDelete}
+                  disabled={deleteUserMutation.isPending}
+                >
+                  {deleteUserMutation.isPending ? "جاري الحذف..." : "حذف"}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setDeleteConfirmOpen(false)}
+                  disabled={deleteUserMutation.isPending}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={confirmDelete}
+                  disabled={deleteUserMutation.isPending}
+                >
+                  {deleteUserMutation.isPending ? "Deleting..." : "Delete"}
+                </Button>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>

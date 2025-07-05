@@ -359,7 +359,7 @@ export default function OrderManagement() {
                   {/* RTL: Order info on the right / LTR: Order info on the left */}
                   <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
                     <h3 className="font-semibold text-lg mb-2">
-                      {isRTL ? "طلب رقم" : "Order"} #{order.orderNumber}
+                      {isRTL ? `طلب رقم #${order.orderNumber}` : `Order #${order.orderNumber}`}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                       {order.websiteUser ? `${order.websiteUser.firstName} ${order.websiteUser.lastName}` : 'Unknown User'}

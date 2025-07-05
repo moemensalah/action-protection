@@ -93,7 +93,7 @@ export function UsersManagement() {
   const updateUserMutation = useMutation({
     mutationFn: async ({ id, userData }: { id: string; userData: UserForm }) => {
       // Remove password from update if it's empty (keep current password)
-      const updateData = { ...userData };
+      const updateData: any = { ...userData };
       if (!updateData.password) {
         delete updateData.password;
       }
@@ -233,15 +233,7 @@ export function UsersManagement() {
     <div className="space-y-6">
       {/* Header */}
       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <div className={isRTL ? 'text-right' : 'text-left'}>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {isRTL ? "إدارة المستخدمين" : "Users Management"}
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            {isRTL ? "إدارة المديرين والمشرفين والصلاحيات" : "Manage administrators, moderators, and permissions"}
-          </p>
-        </div>
-        
+        {/* In RTL: Title on right, button on left */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={resetForm} className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -414,6 +406,15 @@ export function UsersManagement() {
             </form>
           </DialogContent>
         </Dialog>
+        
+        <div className={isRTL ? 'text-right' : 'text-left'}>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {isRTL ? "إدارة المستخدمين" : "Users Management"}
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            {isRTL ? "إدارة المديرين والمشرفين والصلاحيات" : "Manage administrators, moderators, and permissions"}
+          </p>
+        </div>
       </div>
 
       {/* Role Information Cards */}

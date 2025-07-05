@@ -91,7 +91,10 @@ export function ExperienceSectionManager() {
   return (
     <div className="p-6 space-y-6">
       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-        {/* In RTL: Button on left, title on right */}
+        {/* In RTL: Title on right, button on left */}
+        <h2 className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>
+          {isRTL ? "إدارة قسم التجربة" : "Experience Section Management"}
+        </h2>
         <Button 
           onClick={handleSave} 
           disabled={updateMutation.isPending}
@@ -100,9 +103,6 @@ export function ExperienceSectionManager() {
           <Save className="h-4 w-4" />
           {updateMutation.isPending ? (isRTL ? "جار الحفظ..." : "Saving...") : (isRTL ? "حفظ" : "Save")}
         </Button>
-        <h2 className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>
-          {isRTL ? "إدارة قسم التجربة" : "Experience Section Management"}
-        </h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

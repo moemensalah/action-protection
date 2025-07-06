@@ -727,7 +727,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/admin/ai-settings", requireModerator, async (req, res) => {
     try {
+      console.log("AI settings request body:", req.body);
+      console.log("AI settings request body type:", typeof req.body);
+      
       const settingsData = req.body;
+      
+      // Validate the settings data
+      if (!settingsData || typeof settingsData !== 'object') {
+        return res.status(400).json({ message: "Invalid settings data" });
+      }
+      
       const updatedSettings = await storage.updateAiSettings(settingsData);
       res.json(updatedSettings);
     } catch (error) {

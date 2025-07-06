@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
@@ -24,22 +24,25 @@ export default function AiSettings() {
 
   const { data: aiSettings, isLoading } = useQuery({
     queryKey: ["/api/admin/ai-settings"],
-    onSuccess: (data: AiSettings) => {
-      if (data) {
-        setFormData({
-          midjourney_api_key: data.midjourney_api_key || "",
-          midjourney_api_url: data.midjourney_api_url || "https://api.midjourney.com/v1",
-          enabled: data.enabled || false,
-        });
-      }
-    },
   });
+
+  // Update form data when aiSettings is loaded
+  useEffect(() => {
+    if (aiSettings) {
+      setFormData({
+        midjourney_api_key: aiSettings.midjourney_api_key || "",
+        midjourney_api_url: aiSettings.midjourney_api_url || "https://api.midjourney.com/v1",
+        enabled: aiSettings.enabled || false,
+      });
+    }
+  }, [aiSettings]);
 
   const mutation = useMutation({
     mutationFn: async (data: InsertAiSettings) => {
       return await apiRequest("/api/admin/ai-settings", {
         method: "PUT",
-        body: data,
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
       });
     },
     onSuccess: () => {

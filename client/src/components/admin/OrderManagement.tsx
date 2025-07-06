@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
@@ -27,15 +27,27 @@ interface OrderStats {
   totalRevenue: string;
 }
 
-export default function OrderManagement() {
+interface OrderManagementProps {
+  initialUserFilter?: string;
+  onUserFilterChange?: (userFilter: string) => void;
+}
+
+export default function OrderManagement({ initialUserFilter = "all", onUserFilterChange }: OrderManagementProps) {
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [userFilter, setUserFilter] = useState<string>("all");
+  const [userFilter, setUserFilter] = useState<string>(initialUserFilter);
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
+
+  // Update user filter when initialUserFilter prop changes
+  useEffect(() => {
+    if (initialUserFilter && initialUserFilter !== "all") {
+      setUserFilter(initialUserFilter);
+    }
+  }, [initialUserFilter]);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [editingOrder, setEditingOrder] = useState<OrderWithDetails | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -331,6 +343,9 @@ export default function OrderManagement() {
           onValueChange={(value) => {
             setUserFilter(value);
             resetPageOnFilterChange();
+            if (onUserFilterChange) {
+              onUserFilterChange(value);
+            }
           }}
         >
           <SelectTrigger className="w-full sm:w-48">

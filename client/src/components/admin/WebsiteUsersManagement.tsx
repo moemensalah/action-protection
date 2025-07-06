@@ -24,7 +24,11 @@ const formatDate = (date: string | Date | null) => {
   return dateObj.toLocaleDateString();
 };
 
-export default function WebsiteUsersManagement() {
+interface WebsiteUsersManagementProps {
+  onNavigateToOrders?: (userId: number) => void;
+}
+
+export default function WebsiteUsersManagement({ onNavigateToOrders }: WebsiteUsersManagementProps) {
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -333,12 +337,13 @@ export default function WebsiteUsersManagement() {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        setSelectedUser(user);
-                        setShowUserDetails(true);
+                        if (onNavigateToOrders) {
+                          onNavigateToOrders(user.id);
+                        }
                       }}
                     >
                       <Eye className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                      {isRTL ? "عرض التفاصيل" : "View Details"}
+                      {isRTL ? "عرض الطلبات" : "Show Orders"}
                     </Button>
                     <Button
                       variant="outline"

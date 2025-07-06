@@ -23,6 +23,14 @@ export default function AdminPanel() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("categories");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [selectedOrdersUserFilter, setSelectedOrdersUserFilter] = useState<string>("");
+
+  // Function to navigate to orders tab with user filter
+  const navigateToOrdersWithUserFilter = (userId: number) => {
+    setSelectedOrdersUserFilter(userId.toString());
+    setActiveTab("website-orders");
+  };
+
   const [user, setUser] = useState<{
     id: string;
     username: string;
@@ -349,11 +357,11 @@ export default function AdminPanel() {
               )}
 
               <TabsContent value="website-users" className="space-y-6">
-                <WebsiteUsersManagement />
+                <WebsiteUsersManagement onNavigateToOrders={navigateToOrdersWithUserFilter} />
               </TabsContent>
 
               <TabsContent value="website-orders" className="space-y-6">
-                <OrderManagement />
+                <OrderManagement initialUserFilter={selectedOrdersUserFilter} onUserFilterChange={setSelectedOrdersUserFilter} />
               </TabsContent>
 
               {user?.role === "administrator" && (

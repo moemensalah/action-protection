@@ -499,7 +499,7 @@ export function ProductsManagement() {
               <div className="mt-4">
                 <AiImageGenerator
                   onImageSelect={(imageUrl) => setFormData(prev => ({ ...prev, image: imageUrl }))}
-                  disabled={mutation.isPending}
+                  disabled={editingProduct ? updateMutation.isPending : createMutation.isPending}
                 />
               </div>
               

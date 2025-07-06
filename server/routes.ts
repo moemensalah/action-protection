@@ -714,6 +714,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Settings Management Routes
+  app.get("/api/admin/ai-settings", requireModerator, async (req, res) => {
+    try {
+      const settings = await storage.getAiSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error("Error fetching AI settings:", error);
+      res.status(500).json({ message: "Failed to fetch AI settings" });
+    }
+  });
+
+  app.put("/api/admin/ai-settings", requireModerator, async (req, res) => {
+    try {
+      const settingsData = req.body;
+      const updatedSettings = await storage.updateAiSettings(settingsData);
+      res.json(updatedSettings);
+    } catch (error) {
+      console.error("Error updating AI settings:", error);
+      res.status(500).json({ message: "Failed to update AI settings" });
+    }
+  });
+
+  // AI Image Generation Route
+  app.post("/api/admin/generate-images", requireModerator, async (req, res) => {
+    try {
+      const { prompt } = req.body;
+      const images = await storage.generateImages(prompt);
+      res.json(images);
+    } catch (error) {
+      console.error("Error generating images:", error);
+      res.status(500).json({ message: "Failed to generate images" });
+    }
+  });
+
   // Admin Categories endpoint (includes all categories, sorted)
   app.get("/api/admin/categories", requireModerator, async (req, res) => {
     try {

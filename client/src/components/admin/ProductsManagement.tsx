@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { apiRequest } from "@/lib/queryClient";
 import { getImageUrl } from "@/lib/utils";
+import AiImageGenerator from "./AiImageGenerator";
 
 interface Product {
   id: number;
@@ -493,6 +494,14 @@ export function ProductsManagement() {
                 onChange={(url) => setFormData(prev => ({ ...prev, image: url }))}
                 isRTL={isRTL}
               />
+
+              {/* AI Image Generator */}
+              <div className="mt-4">
+                <AiImageGenerator
+                  onImageSelect={(imageUrl) => setFormData(prev => ({ ...prev, image: imageUrl }))}
+                  disabled={mutation.isPending}
+                />
+              </div>
               
               <div className={`flex flex-wrap gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>

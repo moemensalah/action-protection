@@ -351,6 +351,16 @@ export const reviewSettings = pgTable("review_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// AI Processing Settings table
+export const aiSettings = pgTable("ai_settings", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  midjourney_api_key: text("midjourney_api_key"),
+  midjourney_api_url: text("midjourney_api_url").default("https://api.midjourney.com/v1"),
+  enabled: boolean("enabled").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 
 
 // Relations
@@ -558,6 +568,12 @@ export const insertReviewSettingsSchema = createInsertSchema(reviewSettings).omi
   updatedAt: true,
 });
 
+export const insertAiSettingsSchema = createInsertSchema(aiSettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertUserPermissionSchema = createInsertSchema(userPermissions).omit({
   id: true,
   createdAt: true,
@@ -613,6 +629,8 @@ export type CustomerReview = typeof customerReviews.$inferSelect;
 export type InsertCustomerReview = z.infer<typeof insertCustomerReviewSchema>;
 export type ReviewSettings = typeof reviewSettings.$inferSelect;
 export type InsertReviewSettings = z.infer<typeof insertReviewSettingsSchema>;
+export type AiSettings = typeof aiSettings.$inferSelect;
+export type InsertAiSettings = z.infer<typeof insertAiSettingsSchema>;
 export type UserPermission = typeof userPermissions.$inferSelect;
 export type InsertUserPermission = z.infer<typeof insertUserPermissionSchema>;
 

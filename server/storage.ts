@@ -18,6 +18,7 @@ import {
   customerReviews,
   reviewSettings,
   userPermissions,
+  aiSettings,
   type User,
   type UpsertUser,
   type WebsiteUser,
@@ -58,6 +59,8 @@ import {
   type InsertReviewSettings,
   type UserPermission,
   type InsertUserPermission,
+  type AiSettings,
+  type InsertAiSettings,
 } from "@shared/schema";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
@@ -1295,6 +1298,50 @@ export class DatabaseStorage implements IStorage {
     }
 
     return [];
+  }
+
+  // AI Settings Management
+  async getAiSettings(): Promise<AiSettings | null> {
+    const [settings] = await db.select().from(aiSettings).limit(1);
+    return settings || null;
+  }
+
+  async updateAiSettings(settingsData: InsertAiSettings): Promise<AiSettings> {
+    const existingSettings = await this.getAiSettings();
+    
+    if (existingSettings) {
+      const [updated] = await db
+        .update(aiSettings)
+        .set({ ...settingsData, updatedAt: new Date() })
+        .where(eq(aiSettings.id, existingSettings.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(aiSettings)
+        .values(settingsData)
+        .returning();
+      return created;
+    }
+  }
+
+  async generateImages(prompt: string): Promise<{ images: string[] }> {
+    const settings = await this.getAiSettings();
+    
+    if (!settings || !settings.enabled || !settings.midjourney_api_key) {
+      throw new Error("AI settings not configured or disabled");
+    }
+
+    // Simulate AI image generation for now
+    // In a real implementation, you would call the Midjourney API
+    const mockImages = [
+      `/assets/generated-image-1-${Date.now()}.jpg`,
+      `/assets/generated-image-2-${Date.now()}.jpg`,
+      `/assets/generated-image-3-${Date.now()}.jpg`,
+      `/assets/generated-image-4-${Date.now()}.jpg`,
+    ];
+
+    return { images: mockImages };
   }
 }
 

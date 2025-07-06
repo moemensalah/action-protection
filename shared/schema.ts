@@ -28,6 +28,14 @@ export const sessions = pgTable(
 // User roles enum
 export const userRoles = ["administrator", "moderator"] as const;
 
+// Permission sections and actions
+export const permissionSections = [
+  "users", "website_users", "orders", "categories", "products", 
+  "content", "reviews", "smtp_settings", "hero_section", "experience_section"
+] as const;
+
+export const permissionActions = ["create", "read", "update", "delete"] as const;
+
 // Users table (required for authentication)
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().notNull(),
@@ -39,6 +47,16 @@ export const users = pgTable("users", {
   profileImageUrl: varchar("profile_image_url"),
   role: varchar("role", { enum: userRoles }).default("moderator"),
   isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// User Permissions table
+export const userPermissions = pgTable("user_permissions", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  section: varchar("section", { enum: permissionSections }).notNull(),
+  actions: jsonb("actions").$type<typeof permissionActions[number][]>().default([]),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -353,6 +371,14 @@ export const usersRelations = relations(users, ({ many }) => ({
   addresses: many(userAddresses),
   customerAddresses: many(customerAddresses),
   cartItems: many(cartItems),
+  permissions: many(userPermissions),
+}));
+
+export const userPermissionsRelations = relations(userPermissions, ({ one }) => ({
+  user: one(users, {
+    fields: [userPermissions.userId],
+    references: [users.id],
+  }),
 }));
 
 export const websiteUsersRelations = relations(websiteUsers, ({ many }) => ({
@@ -532,6 +558,12 @@ export const insertReviewSettingsSchema = createInsertSchema(reviewSettings).omi
   updatedAt: true,
 });
 
+export const insertUserPermissionSchema = createInsertSchema(userPermissions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const upsertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
 });
@@ -581,6 +613,8 @@ export type CustomerReview = typeof customerReviews.$inferSelect;
 export type InsertCustomerReview = z.infer<typeof insertCustomerReviewSchema>;
 export type ReviewSettings = typeof reviewSettings.$inferSelect;
 export type InsertReviewSettings = z.infer<typeof insertReviewSettingsSchema>;
+export type UserPermission = typeof userPermissions.$inferSelect;
+export type InsertUserPermission = z.infer<typeof insertUserPermissionSchema>;
 
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
 export type InsertProduct = z.infer<typeof insertProductSchema>;

@@ -17,6 +17,7 @@ import { ExperienceSectionManager } from "@/components/admin/ExperienceSectionMa
 import { ReviewsManager } from "@/components/admin/ReviewsManager";
 import WebsiteUsersManagement from "@/components/admin/WebsiteUsersManagement";
 import OrderManagement from "@/components/admin/OrderManagement";
+import PermissionsManagement from "@/components/admin/PermissionsManagement";
 
 export default function AdminPanel() {
   const { t, isRTL } = useLanguage();
@@ -126,8 +127,17 @@ export default function AdminPanel() {
       roles: ["administrator", "moderator"]
     },
     {
-      id: "users",
+      id: "permissions",
       icon: Shield,
+      nameEn: "Permissions",
+      nameAr: "الصلاحيات",
+      descEn: "Manage user permissions and access control",
+      descAr: "إدارة صلاحيات المستخدمين والتحكم في الوصول",
+      roles: ["administrator"]
+    },
+    {
+      id: "users",
+      icon: Users,
       nameEn: "Admin Users",
       nameAr: "المستخدمين الإداريين",
       descEn: "Manage admin users",
@@ -363,6 +373,12 @@ export default function AdminPanel() {
               <TabsContent value="website-orders" className="space-y-6">
                 <OrderManagement initialUserFilter={selectedOrdersUserFilter} onUserFilterChange={setSelectedOrdersUserFilter} />
               </TabsContent>
+
+              {user?.role === "administrator" && (
+                <TabsContent value="permissions" className="space-y-6">
+                  <PermissionsManagement />
+                </TabsContent>
+              )}
 
               {user?.role === "administrator" && (
                 <TabsContent value="users" className="space-y-6">

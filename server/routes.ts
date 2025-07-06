@@ -679,6 +679,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User Permissions Management Routes
+  app.get("/api/admin/users/with-permissions", requireLocalAdmin, async (req, res) => {
+    try {
+      const users = await storage.getUsersWithPermissions();
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching users with permissions:", error);
+      res.status(500).json({ message: "Failed to fetch users with permissions" });
+    }
+  });
+
+  app.put("/api/admin/users/:id/permissions", requireLocalAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { permissions } = req.body;
+      
+      const updatedPermissions = await storage.updateUserPermissions(id, permissions);
+      res.json(updatedPermissions);
+    } catch (error) {
+      console.error("Error updating user permissions:", error);
+      res.status(500).json({ message: "Failed to update user permissions" });
+    }
+  });
+
+  app.get("/api/admin/users/:id/permissions", requireLocalAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const permissions = await storage.getUserPermissions(id);
+      res.json(permissions);
+    } catch (error) {
+      console.error("Error fetching user permissions:", error);
+      res.status(500).json({ message: "Failed to fetch user permissions" });
+    }
+  });
+
   // Admin Categories endpoint (includes all categories, sorted)
   app.get("/api/admin/categories", requireModerator, async (req, res) => {
     try {

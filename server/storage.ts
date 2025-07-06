@@ -17,6 +17,7 @@ import {
   experienceSection,
   customerReviews,
   reviewSettings,
+  userPermissions,
   type User,
   type UpsertUser,
   type WebsiteUser,
@@ -55,6 +56,8 @@ import {
   type InsertExperienceSection,
   type InsertCustomerReview,
   type InsertReviewSettings,
+  type UserPermission,
+  type InsertUserPermission,
 } from "@shared/schema";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
@@ -1238,6 +1241,60 @@ export class DatabaseStorage implements IStorage {
     await db.delete(orderItems).where(eq(orderItems.orderId, orderId));
     // Delete the order
     await db.delete(orders).where(eq(orders.id, orderId));
+  }
+
+  // User Permissions Management
+  async getUsersWithPermissions(): Promise<(User & { permissions: UserPermission[] })[]> {
+    const usersData = await db
+      .select()
+      .from(users)
+      .leftJoin(userPermissions, eq(users.id, userPermissions.userId));
+
+    // Group permissions by user
+    const userMap = new Map<string, User & { permissions: UserPermission[] }>();
+    
+    usersData.forEach(({ users: user, user_permissions: permission }) => {
+      if (!userMap.has(user.id)) {
+        const { password, ...safeUser } = user;
+        userMap.set(user.id, { ...safeUser, permissions: [] });
+      }
+      
+      if (permission) {
+        userMap.get(user.id)!.permissions.push(permission);
+      }
+    });
+
+    return Array.from(userMap.values());
+  }
+
+  async getUserPermissions(userId: string): Promise<UserPermission[]> {
+    return await db
+      .select()
+      .from(userPermissions)
+      .where(eq(userPermissions.userId, userId));
+  }
+
+  async updateUserPermissions(userId: string, permissions: Record<string, string[]>): Promise<UserPermission[]> {
+    // First, delete existing permissions for the user
+    await db.delete(userPermissions).where(eq(userPermissions.userId, userId));
+
+    // Insert new permissions
+    const permissionData: InsertUserPermission[] = Object.entries(permissions)
+      .filter(([, actions]) => actions.length > 0)
+      .map(([section, actions]) => ({
+        userId,
+        section: section as any,
+        actions: actions as any,
+      }));
+
+    if (permissionData.length > 0) {
+      return await db
+        .insert(userPermissions)
+        .values(permissionData)
+        .returning();
+    }
+
+    return [];
   }
 }
 

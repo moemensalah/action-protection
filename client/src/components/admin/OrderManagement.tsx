@@ -38,6 +38,8 @@ export default function OrderManagement() {
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [editingOrder, setEditingOrder] = useState<OrderWithDetails | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState<OrderWithDetails | null>(null);
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -127,6 +129,8 @@ export default function OrderManagement() {
         title: isRTL ? "تم حذف الطلب بنجاح" : "Order deleted successfully",
         variant: "default",
       });
+      setDeleteConfirmOpen(false);
+      setOrderToDelete(null);
     },
     onError: () => {
       toast({
@@ -144,8 +148,13 @@ export default function OrderManagement() {
   };
 
   const handleDeleteOrder = (order: OrderWithDetails) => {
-    if (confirm(isRTL ? "هل أنت متأكد من حذف هذا الطلب؟" : "Are you sure you want to delete this order?")) {
-      deleteOrderMutation.mutate(order.id);
+    setOrderToDelete(order);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (orderToDelete) {
+      deleteOrderMutation.mutate(orderToDelete.id);
     }
   };
 
@@ -631,6 +640,78 @@ export default function OrderManagement() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="max-w-md" dir={isRTL ? 'rtl' : 'ltr'}>
+          <DialogHeader className={isRTL ? 'text-right' : 'text-left'}>
+            <DialogTitle className={`flex items-center gap-2 text-red-600 dark:text-red-400 ${isRTL ? 'text-right' : 'text-left'}`}>
+              {isRTL ? (
+                <>
+                  <Trash2 className="h-5 w-5 order-1" />
+                  <span className="order-2">تأكيد الحذف</span>
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-5 w-5" />
+                  <span>Confirm Delete</span>
+                </>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          <div className={`py-4 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
+              {isRTL 
+                ? `هل أنت متأكد من حذف الطلب "${orderToDelete?.orderNumber}"؟`
+                : `Are you sure you want to delete order "${orderToDelete?.orderNumber}"?`
+              }
+            </p>
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {isRTL 
+                ? "هذا الإجراء لا يمكن التراجع عنه."
+                : "This action cannot be undone."
+              }
+            </p>
+          </div>
+          <div className={`flex gap-2 ${isRTL ? 'justify-start' : 'justify-end'}`}>
+            {isRTL ? (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setDeleteConfirmOpen(false)}
+                  disabled={deleteOrderMutation.isPending}
+                >
+                  إلغاء
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={confirmDelete}
+                  disabled={deleteOrderMutation.isPending}
+                >
+                  {deleteOrderMutation.isPending ? "جاري الحذف..." : "حذف"}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setDeleteConfirmOpen(false)}
+                  disabled={deleteOrderMutation.isPending}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={confirmDelete}
+                  disabled={deleteOrderMutation.isPending}
+                >
+                  {deleteOrderMutation.isPending ? "Deleting..." : "Delete"}
+                </Button>
+              </>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

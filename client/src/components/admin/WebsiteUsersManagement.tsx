@@ -35,6 +35,8 @@ export default function WebsiteUsersManagement() {
   const [userOrders, setUserOrders] = useState<Order[]>([]);
   const [showUserDetails, setShowUserDetails] = useState(false);
   const [showUserOrders, setShowUserOrders] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<WebsiteUserWithStats | null>(null);
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -118,6 +120,8 @@ export default function WebsiteUsersManagement() {
         title: isRTL ? "تم حذف المستخدم بنجاح" : "User deleted successfully",
         variant: "default",
       });
+      setDeleteConfirmOpen(false);
+      setUserToDelete(null);
     },
     onError: () => {
       toast({
@@ -158,8 +162,13 @@ export default function WebsiteUsersManagement() {
   };
 
   const handleDeleteUser = (user: WebsiteUserWithStats) => {
-    if (confirm(isRTL ? "هل أنت متأكد من حذف هذا المستخدم؟" : "Are you sure you want to delete this user?")) {
-      deleteUserMutation.mutate(user.id);
+    setUserToDelete(user);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (userToDelete) {
+      deleteUserMutation.mutate(userToDelete.id);
     }
   };
 
@@ -539,6 +548,78 @@ export default function WebsiteUsersManagement() {
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="max-w-md" dir={isRTL ? 'rtl' : 'ltr'}>
+          <DialogHeader className={isRTL ? 'text-right' : 'text-left'}>
+            <DialogTitle className={`flex items-center gap-2 text-red-600 dark:text-red-400 ${isRTL ? 'text-right' : 'text-left'}`}>
+              {isRTL ? (
+                <>
+                  <Trash2 className="h-5 w-5 order-1" />
+                  <span className="order-2">تأكيد الحذف</span>
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-5 w-5" />
+                  <span>Confirm Delete</span>
+                </>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          <div className={`py-4 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
+              {isRTL 
+                ? `هل أنت متأكد من حذف المستخدم "${userToDelete?.firstName} ${userToDelete?.lastName}"؟`
+                : `Are you sure you want to delete user "${userToDelete?.firstName} ${userToDelete?.lastName}"?`
+              }
+            </p>
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {isRTL 
+                ? "هذا الإجراء لا يمكن التراجع عنه."
+                : "This action cannot be undone."
+              }
+            </p>
+          </div>
+          <div className={`flex gap-2 ${isRTL ? 'justify-start' : 'justify-end'}`}>
+            {isRTL ? (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setDeleteConfirmOpen(false)}
+                  disabled={deleteUserMutation.isPending}
+                >
+                  إلغاء
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={confirmDelete}
+                  disabled={deleteUserMutation.isPending}
+                >
+                  {deleteUserMutation.isPending ? "جاري الحذف..." : "حذف"}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setDeleteConfirmOpen(false)}
+                  disabled={deleteUserMutation.isPending}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={confirmDelete}
+                  disabled={deleteUserMutation.isPending}
+                >
+                  {deleteUserMutation.isPending ? "Deleting..." : "Delete"}
+                </Button>
+              </>
             )}
           </div>
         </DialogContent>

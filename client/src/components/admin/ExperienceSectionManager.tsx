@@ -9,6 +9,7 @@ import { Save, Play, Upload } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useLanguage } from "@/hooks/useLanguage";
+import { AdminLoading } from "@/components/ui/admin-loading";
 
 interface ExperienceSection {
   id: number;
@@ -85,7 +86,7 @@ export function ExperienceSectionManager() {
   };
 
   if (isLoading) {
-    return <div className="p-6">Loading experience section...</div>;
+    return <AdminLoading />;
   }
 
   return (

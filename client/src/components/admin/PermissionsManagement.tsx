@@ -11,6 +11,7 @@ import { Shield, Users, Save, RotateCcw, CheckCircle, AlertCircle } from "lucide
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { User, UserPermission, InsertUserPermission } from "@shared/schema";
+import { AdminLoading } from "@/components/ui/admin-loading";
 
 interface UserWithPermissions extends User {
   permissions: UserPermission[];
@@ -205,14 +206,7 @@ export default function PermissionsManagement() {
   const isAdministrator = selectedUserData?.role === "administrator";
 
   if (isLoadingUsers) {
-    return (
-      <div className="space-y-4">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
-        </div>
-      </div>
-    );
+    return <AdminLoading />;
   }
 
   return (

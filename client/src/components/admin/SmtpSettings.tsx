@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { apiRequest } from "@/lib/queryClient";
+import { AdminLoading } from "@/components/ui/admin-loading";
 import { Mail, Server, Shield, Eye, EyeOff } from "lucide-react";
 
 interface SmtpSettingsForm {
@@ -123,11 +124,7 @@ export default function SmtpSettings() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <AdminLoading />;
   }
 
   return (

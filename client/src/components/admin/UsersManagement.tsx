@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { apiRequest } from "@/lib/queryClient";
+import { AdminLoading } from "@/components/ui/admin-loading";
 
 interface User {
   id: string;
@@ -702,10 +703,7 @@ export function UsersManagement() {
                 {isLoading ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8">
-                      <div className="flex items-center justify-center gap-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-amber-600"></div>
-                        <span className="text-gray-500">{isRTL ? "جاري التحميل..." : "Loading..."}</span>
-                      </div>
+                      <AdminLoading />
                     </TableCell>
                   </TableRow>
                 ) : filteredUsers.length === 0 ? (

@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { HeroSection, InsertHeroSection } from "@shared/schema";
+import { AdminLoading } from "@/components/ui/admin-loading";
 
 interface TypingWord {
   en: string;
@@ -170,14 +171,7 @@ export function HeroSectionManager() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="flex items-center space-x-2">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 dark:border-gray-100"></div>
-          <span>{isRTL ? "جاري تحميل قسم البطل..." : "Loading hero section..."}</span>
-        </div>
-      </div>
-    );
+    return <AdminLoading />;
   }
 
   const currentTypingWords = Array.isArray(formData.typingWords) ? formData.typingWords : [];

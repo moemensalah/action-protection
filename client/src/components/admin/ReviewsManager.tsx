@@ -12,6 +12,7 @@ import { Check, X, Star, Eye, EyeOff, Trash2, Settings } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useLanguage } from "@/hooks/useLanguage";
+import { AdminLoading } from "@/components/ui/admin-loading";
 import {
   Dialog,
   DialogContent,
@@ -192,7 +193,7 @@ export function ReviewsManager() {
   };
 
   if (isLoading) {
-    return <div className={`p-6 ${isRTL ? 'text-right' : 'text-left'}`}>{t("common.loading")}</div>;
+    return <AdminLoading />;
   }
 
   return (

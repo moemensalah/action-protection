@@ -17,6 +17,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { apiRequest } from "@/lib/queryClient";
 import { getImageUrl } from "@/lib/utils";
 import AiImageGenerator from "./AiImageGenerator";
+import { AdminLoading } from "@/components/ui/admin-loading";
 
 interface Product {
   id: number;
@@ -361,9 +362,7 @@ export function ProductsManagement() {
   };
 
   if (isLoading) {
-    return <div className="flex justify-center p-8">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
-    </div>;
+    return <AdminLoading />;
   }
 
   return (

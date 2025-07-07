@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { apiRequest } from "@/lib/queryClient";
 import { getImageUrl } from "@/lib/utils";
+import { AdminLoading } from "@/components/ui/admin-loading";
 
 interface Category {
   id: number;
@@ -265,9 +266,7 @@ export function CategoriesManagement() {
   }, [formData.nameEn, editingCategory]);
 
   if (isLoading) {
-    return <div className="flex justify-center p-8">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
-    </div>;
+    return <AdminLoading />;
   }
 
   return (

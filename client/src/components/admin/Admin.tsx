@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { useAuth } from "@/hooks/useAuth";
+import { AdminLoading } from "@/components/ui/admin-loading";
 
 export function Admin() {
   const { user, isLoading, isAuthenticated } = useAuth();
@@ -30,10 +31,7 @@ export function Admin() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 dark:border-gray-100"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
-        </div>
+        <AdminLoading />
       </div>
     );
   }

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Action Protection Test</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            font-family: Arial, sans-serif; 
+            background: white; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        h1 { 
+            color: green; 
+            font-size: 32px; 
+        }
+        .success { 
+            background: #e3f2fd; 
+            padding: 15px; 
+            border-radius: 5px; 
+            color: blue; 
+            margin: 20px 0; 
+        }
+        .info { 
+            color: gray; 
+            font-size: 14px; 
+        }
+        button { 
+            background: orange; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 10px 0; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Action Protection - Static Test</h1>
+        <div class="success">
+            Static HTML is working perfectly!
+        </div>
+        <p class="info">
+            Server: Express.js running on port 5000<br>
+            Time: <span id="time"></span><br>
+            Status: All systems operational
+        </p>
+        <button onclick="window.location.reload()">Reload Page</button>
+        <button onclick="window.location.href='/'">Back to App</button>
+    </div>
+    
+    <script>
+        document.getElementById('time').textContent = new Date().toLocaleString();
+        console.log('Static HTML page loaded successfully');
+    </script>
+</body>
+</html>

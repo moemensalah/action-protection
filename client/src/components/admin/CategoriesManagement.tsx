@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { FileUpload } from "@/components/ui/file-upload";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -364,15 +365,15 @@ export function CategoriesManagement() {
                 isRTL={isRTL}
               />
               
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
+              <div className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
+                <Checkbox
                   id="isActive"
                   checked={formData.isActive}
-                  onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
-                  className="rounded border-gray-300"
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: !!checked }))}
                 />
-                <Label htmlFor="isActive">{isRTL ? "نشط" : "Active"}</Label>
+                <Label htmlFor="isActive" className="cursor-pointer">
+                  {isRTL ? "نشط" : "Active"}
+                </Label>
               </div>
               
               <div className="flex justify-end gap-2 pt-4">

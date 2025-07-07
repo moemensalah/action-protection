@@ -434,10 +434,10 @@ export default function OrderManagement({ initialUserFilter = "all", onUserFilte
                 <tbody>
                   ${order.items?.map(item => `
                     <tr>
-                      <td>${isRTL ? (item.productNameAr || item.productNameEn) : item.productNameEn}</td>
-                      <td>${item.quantity}</td>
-                      <td>${item.productPrice} ${isRTL ? 'د.ك' : 'KWD'}</td>
-                      <td>${(parseFloat(item.productPrice) * item.quantity).toFixed(3)} ${isRTL ? 'د.ك' : 'KWD'}</td>
+                      <td>${item.productName || 'Unknown Product'}</td>
+                      <td>${item.quantity || 1}</td>
+                      <td>${item.productPrice || '0.000'} ${isRTL ? 'د.ك' : 'KWD'}</td>
+                      <td>${((parseFloat(item.productPrice || '0') * (item.quantity || 1)).toFixed(3))} ${isRTL ? 'د.ك' : 'KWD'}</td>
                     </tr>
                   `).join('') || ''}
                 </tbody>
@@ -446,7 +446,7 @@ export default function OrderManagement({ initialUserFilter = "all", onUserFilte
             
             <div class="total-section">
               <div>${isRTL ? 'المبلغ الإجمالي' : 'Total Amount'}</div>
-              <div class="total-amount">${order.totalAmount} ${isRTL ? 'د.ك' : 'KWD'}</div>
+              <div class="total-amount">${order.totalAmount || '0.000'} ${isRTL ? 'د.ك' : 'KWD'}</div>
             </div>
           </div>
           

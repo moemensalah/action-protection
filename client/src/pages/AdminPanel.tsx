@@ -24,7 +24,7 @@ export default function AdminPanel() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("categories");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [selectedOrdersUserFilter, setSelectedOrdersUserFilter] = useState<string>("");
+  const [selectedOrdersUserFilter, setSelectedOrdersUserFilter] = useState<string>("all");
 
   // Function to navigate to orders tab with user filter
   const navigateToOrdersWithUserFilter = (userId: number) => {

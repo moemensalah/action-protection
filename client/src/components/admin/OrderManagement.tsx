@@ -9,7 +9,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Trash2, Edit, Eye, Package, DollarSign, Clock, CheckCircle, XCircle, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Filter } from "lucide-react";
+import { Trash2, Edit, Eye, Package, DollarSign, Clock, CheckCircle, XCircle, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Filter, Download } from "lucide-react";
+import jsPDF from 'jspdf';
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { Order, OrderItem, WebsiteUser } from "@shared/schema";
@@ -40,13 +41,15 @@ export default function OrderManagement({ initialUserFilter = "all", onUserFilte
   
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [userFilter, setUserFilter] = useState<string>(initialUserFilter);
+  const [userFilter, setUserFilter] = useState<string>("all");
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
 
   // Update user filter when initialUserFilter prop changes
   useEffect(() => {
     if (initialUserFilter && initialUserFilter !== "all") {
       setUserFilter(initialUserFilter);
+    } else {
+      setUserFilter("all"); // Ensure default is always "all"
     }
   }, [initialUserFilter]);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
@@ -178,6 +181,142 @@ export default function OrderManagement({ initialUserFilter = "all", onUserFilte
     });
   };
 
+  // PDF Generation Function with Arabic/English support
+  const generateOrderPDF = (order: OrderWithDetails) => {
+    const pdf = new jsPDF();
+    
+    // Set font for Arabic support
+    pdf.setFont("helvetica");
+    
+    let yPosition = 30;
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 20;
+    
+    // Company Header
+    pdf.setFontSize(20);
+    pdf.setTextColor(255, 140, 0); // Orange color
+    const companyName = isRTL ? "أكشن بروتكشن" : "Action Protection";
+    pdf.text(companyName, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
+    
+    yPosition += 20;
+    
+    // Order Title
+    pdf.setFontSize(16);
+    pdf.setTextColor(0, 0, 0);
+    const orderTitle = isRTL ? "تفاصيل الطلب" : "Order Details";
+    pdf.text(orderTitle, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
+    
+    yPosition += 20;
+    
+    // Order Information
+    pdf.setFontSize(12);
+    const orderInfoLines = [
+      isRTL ? `رقم الطلب: ${order.orderNumber}` : `Order Number: ${order.orderNumber}`,
+      isRTL ? `التاريخ: ${new Date(order.createdAt).toLocaleDateString('ar-EG')}` : `Date: ${new Date(order.createdAt).toLocaleDateString('en-US')}`,
+      isRTL ? `الحالة: ${getStatusText(order.status)}` : `Status: ${getStatusText(order.status)}`,
+      isRTL ? `طريقة الدفع: ${order.paymentMethod}` : `Payment Method: ${order.paymentMethod}`,
+      isRTL ? `المبلغ الإجمالي: ${order.totalAmount} د.ك` : `Total Amount: ${order.totalAmount} KWD`
+    ];
+    
+    orderInfoLines.forEach(line => {
+      pdf.text(line, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
+      yPosition += 10;
+    });
+    
+    yPosition += 10;
+    
+    // Customer Information
+    pdf.setFontSize(14);
+    const customerTitle = isRTL ? "معلومات العميل" : "Customer Information";
+    pdf.text(customerTitle, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
+    yPosition += 15;
+    
+    pdf.setFontSize(12);
+    const customerInfo = [
+      isRTL ? `الاسم: ${order.websiteUser.firstName} ${order.websiteUser.lastName}` : `Name: ${order.websiteUser.firstName} ${order.websiteUser.lastName}`,
+      isRTL ? `البريد الإلكتروني: ${order.websiteUser.email}` : `Email: ${order.websiteUser.email}`,
+      isRTL ? `الهاتف: ${order.websiteUser.phone || 'غير محدد'}` : `Phone: ${order.websiteUser.phone || 'Not specified'}`
+    ];
+    
+    customerInfo.forEach(line => {
+      pdf.text(line, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
+      yPosition += 10;
+    });
+    
+    yPosition += 10;
+    
+    // Delivery Address
+    if (order.deliveryAddress) {
+      pdf.setFontSize(14);
+      const addressTitle = isRTL ? "عنوان التوصيل" : "Delivery Address";
+      pdf.text(addressTitle, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
+      yPosition += 15;
+      
+      pdf.setFontSize(12);
+      const addressLines = [
+        isRTL ? `العنوان: ${order.deliveryAddress}` : `Address: ${order.deliveryAddress}`,
+        isRTL ? `المنطقة: ${order.deliveryGovernorate || 'غير محدد'}` : `Area: ${order.deliveryGovernorate || 'Not specified'}`,
+        isRTL ? `تعليمات خاصة: ${order.deliveryInstructions || 'لا توجد'}` : `Special Instructions: ${order.deliveryInstructions || 'None'}`
+      ];
+      
+      addressLines.forEach(line => {
+        pdf.text(line, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
+        yPosition += 10;
+      });
+      
+      yPosition += 10;
+    }
+    
+    // Order Items
+    pdf.setFontSize(14);
+    const itemsTitle = isRTL ? "عناصر الطلب" : "Order Items";
+    pdf.text(itemsTitle, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
+    yPosition += 15;
+    
+    pdf.setFontSize(12);
+    if (order.items && order.items.length > 0) {
+      order.items.forEach((item, index) => {
+        if (yPosition > 250) { // Start new page if needed
+          pdf.addPage();
+          yPosition = 30;
+        }
+        
+        const itemText = isRTL ? 
+          `${index + 1}. ${item.productNameAr || item.productNameEn} - الكمية: ${item.quantity} - السعر: ${item.productPrice} د.ك` :
+          `${index + 1}. ${item.productNameEn} - Qty: ${item.quantity} - Price: ${item.productPrice} KWD`;
+        
+        pdf.text(itemText, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
+        yPosition += 10;
+      });
+    }
+    
+    // Footer
+    yPosition += 20;
+    pdf.setFontSize(10);
+    pdf.setTextColor(128, 128, 128);
+    const footer = isRTL ? "شكراً لاختياركم أكشن بروتكشن" : "Thank you for choosing Action Protection";
+    pdf.text(footer, pageWidth / 2, yPosition, { align: 'center' });
+    
+    // Save PDF
+    const fileName = `order-${order.orderNumber}-${isRTL ? 'ar' : 'en'}.pdf`;
+    pdf.save(fileName);
+  };
+  
+  const getStatusText = (status: string) => {
+    const statusMap: Record<string, { en: string; ar: string }> = {
+      pending: { en: "Pending", ar: "في الانتظار" },
+      confirmed: { en: "Confirmed", ar: "مؤكد" },
+      preparing: { en: "Preparing", ar: "قيد التحضير" },
+      ready: { en: "Ready", ar: "جاهز" },
+      delivered: { en: "Delivered", ar: "تم التوصيل" },
+      cancelled: { en: "Cancelled", ar: "ملغي" }
+    };
+    
+    return isRTL ? statusMap[status]?.ar || status : statusMap[status]?.en || status;
+  };
+  
+  // Remove duplicate getStatusText function - using the one above
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending": return "bg-yellow-100 text-yellow-800";
@@ -188,18 +327,6 @@ export default function OrderManagement({ initialUserFilter = "all", onUserFilte
       case "cancelled": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
-  };
-
-  const getStatusText = (status: string) => {
-    const statusMap: Record<string, { en: string; ar: string }> = {
-      pending: { en: "Pending", ar: "في الانتظار" },
-      confirmed: { en: "Confirmed", ar: "مؤكد" },
-      preparing: { en: "Preparing", ar: "قيد التحضير" },
-      ready: { en: "Ready", ar: "جاهز" },
-      delivered: { en: "Delivered", ar: "تم التسليم" },
-      cancelled: { en: "Cancelled", ar: "ملغي" }
-    };
-    return isRTL ? statusMap[status]?.ar || status : statusMap[status]?.en || status;
   };
 
   if (isLoading) {
@@ -410,6 +537,15 @@ export default function OrderManagement({ initialUserFilter = "all", onUserFilte
                     >
                       <Eye className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                       {isRTL ? "عرض التفاصيل" : "View Details"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => generateOrderPDF(order)}
+                      className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:text-orange-400 dark:hover:text-orange-300 dark:hover:bg-orange-900/20"
+                    >
+                      <Download className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      {isRTL ? "تحميل PDF" : "Download PDF"}
                     </Button>
                     <Button
                       variant="outline"

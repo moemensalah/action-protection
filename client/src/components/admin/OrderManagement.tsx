@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Trash2, Edit, Eye, Package, DollarSign, Clock, CheckCircle, XCircle, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Filter, Download } from "lucide-react";
-import jsPDF from 'jspdf';
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { Order, OrderItem, WebsiteUser } from "@shared/schema";
@@ -181,125 +180,314 @@ export default function OrderManagement({ initialUserFilter = "all", onUserFilte
     });
   };
 
-  // PDF Generation Function with Arabic/English support
-  const generateOrderPDF = (order: OrderWithDetails) => {
-    const pdf = new jsPDF();
-    
-    // Set font for Arabic support
-    pdf.setFont("helvetica");
-    
-    let yPosition = 30;
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const margin = 20;
-    
-    // Company Header
-    pdf.setFontSize(20);
-    pdf.setTextColor(255, 140, 0); // Orange color
-    const companyName = isRTL ? "أكشن بروتكشن" : "Action Protection";
-    pdf.text(companyName, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
-    
-    yPosition += 20;
-    
-    // Order Title
-    pdf.setFontSize(16);
-    pdf.setTextColor(0, 0, 0);
-    const orderTitle = isRTL ? "تفاصيل الطلب" : "Order Details";
-    pdf.text(orderTitle, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
-    
-    yPosition += 20;
-    
-    // Order Information
-    pdf.setFontSize(12);
-    const orderInfoLines = [
-      isRTL ? `رقم الطلب: ${order.orderNumber}` : `Order Number: ${order.orderNumber}`,
-      isRTL ? `التاريخ: ${new Date(order.createdAt).toLocaleDateString('ar-EG')}` : `Date: ${new Date(order.createdAt).toLocaleDateString('en-US')}`,
-      isRTL ? `الحالة: ${getStatusText(order.status)}` : `Status: ${getStatusText(order.status)}`,
-      isRTL ? `طريقة الدفع: ${order.paymentMethod}` : `Payment Method: ${order.paymentMethod}`,
-      isRTL ? `المبلغ الإجمالي: ${order.totalAmount} د.ك` : `Total Amount: ${order.totalAmount} KWD`
-    ];
-    
-    orderInfoLines.forEach(line => {
-      pdf.text(line, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
-      yPosition += 10;
-    });
-    
-    yPosition += 10;
-    
-    // Customer Information
-    pdf.setFontSize(14);
-    const customerTitle = isRTL ? "معلومات العميل" : "Customer Information";
-    pdf.text(customerTitle, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
-    yPosition += 15;
-    
-    pdf.setFontSize(12);
-    const customerInfo = [
-      isRTL ? `الاسم: ${order.websiteUser.firstName} ${order.websiteUser.lastName}` : `Name: ${order.websiteUser.firstName} ${order.websiteUser.lastName}`,
-      isRTL ? `البريد الإلكتروني: ${order.websiteUser.email}` : `Email: ${order.websiteUser.email}`,
-      isRTL ? `الهاتف: ${order.websiteUser.phone || 'غير محدد'}` : `Phone: ${order.websiteUser.phone || 'Not specified'}`
-    ];
-    
-    customerInfo.forEach(line => {
-      pdf.text(line, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
-      yPosition += 10;
-    });
-    
-    yPosition += 10;
-    
-    // Delivery Address
-    if (order.deliveryAddress) {
-      pdf.setFontSize(14);
-      const addressTitle = isRTL ? "عنوان التوصيل" : "Delivery Address";
-      pdf.text(addressTitle, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
-      yPosition += 15;
+  // Professional PDF Generation with Arabic/English support using HTML-to-PDF
+  const generateOrderPDF = async (order: OrderWithDetails) => {
+    try {
+      // Create a styled HTML document for the PDF
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html dir="${isRTL ? 'rtl' : 'ltr'}" lang="${isRTL ? 'ar' : 'en'}">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Order ${order.orderNumber}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');
+            
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            
+            body {
+              font-family: ${isRTL ? "'Noto Sans Arabic', Arial, sans-serif" : "'Inter', Arial, sans-serif"};
+              line-height: 1.6;
+              color: #1f2937;
+              background: #ffffff;
+              padding: 40px;
+              direction: ${isRTL ? 'rtl' : 'ltr'};
+            }
+            
+            .header {
+              text-align: center;
+              margin-bottom: 40px;
+              border-bottom: 3px solid #f97316;
+              padding-bottom: 20px;
+            }
+            
+            .company-name {
+              font-size: 32px;
+              font-weight: 700;
+              color: #f97316;
+              margin-bottom: 8px;
+            }
+            
+            .invoice-title {
+              font-size: 24px;
+              font-weight: 600;
+              color: #374151;
+              margin-bottom: 16px;
+            }
+            
+            .order-number {
+              font-size: 18px;
+              color: #6b7280;
+              background: #f3f4f6;
+              padding: 8px 16px;
+              border-radius: 8px;
+              display: inline-block;
+            }
+            
+            .content-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 30px;
+              margin-bottom: 30px;
+            }
+            
+            .section {
+              background: #f9fafb;
+              padding: 24px;
+              border-radius: 12px;
+              border: 1px solid #e5e7eb;
+            }
+            
+            .section-title {
+              font-size: 18px;
+              font-weight: 600;
+              color: #111827;
+              margin-bottom: 16px;
+              border-bottom: 2px solid #f97316;
+              padding-bottom: 8px;
+            }
+            
+            .info-row {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 8px;
+              padding: 4px 0;
+            }
+            
+            .info-label {
+              font-weight: 500;
+              color: #374151;
+            }
+            
+            .info-value {
+              color: #1f2937;
+              font-weight: 400;
+            }
+            
+            .status-badge {
+              display: inline-block;
+              padding: 4px 12px;
+              border-radius: 20px;
+              font-size: 12px;
+              font-weight: 500;
+              text-transform: uppercase;
+            }
+            
+            .status-pending { background: #fef3c7; color: #92400e; }
+            .status-confirmed { background: #dbeafe; color: #1e40af; }
+            .status-preparing { background: #fed7aa; color: #c2410c; }
+            .status-ready { background: #e9d5ff; color: #7c3aed; }
+            .status-delivered { background: #d1fae5; color: #065f46; }
+            .status-cancelled { background: #fee2e2; color: #dc2626; }
+            
+            .items-section {
+              grid-column: 1 / -1;
+              margin-top: 20px;
+            }
+            
+            .items-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 16px;
+              background: white;
+              border-radius: 8px;
+              overflow: hidden;
+              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+            
+            .items-table th {
+              background: #f97316;
+              color: white;
+              padding: 12px;
+              text-align: ${isRTL ? 'right' : 'left'};
+              font-weight: 600;
+            }
+            
+            .items-table td {
+              padding: 12px;
+              border-bottom: 1px solid #e5e7eb;
+              text-align: ${isRTL ? 'right' : 'left'};
+            }
+            
+            .items-table tr:last-child td {
+              border-bottom: none;
+            }
+            
+            .items-table tr:nth-child(even) {
+              background: #f9fafb;
+            }
+            
+            .total-section {
+              grid-column: 1 / -1;
+              background: #1f2937;
+              color: white;
+              padding: 24px;
+              border-radius: 12px;
+              text-align: center;
+              margin-top: 20px;
+            }
+            
+            .total-amount {
+              font-size: 28px;
+              font-weight: 700;
+              color: #f97316;
+            }
+            
+            .footer {
+              text-align: center;
+              margin-top: 40px;
+              padding-top: 20px;
+              border-top: 2px solid #e5e7eb;
+              color: #6b7280;
+              font-size: 14px;
+            }
+            
+            @media print {
+              body { padding: 20px; }
+              .content-grid { grid-template-columns: 1fr; gap: 20px; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="company-name">${isRTL ? 'أكشن بروتكشن' : 'Action Protection'}</div>
+            <div class="invoice-title">${isRTL ? 'فاتورة الطلب' : 'Order Invoice'}</div>
+            <div class="order-number">${isRTL ? 'رقم الطلب:' : 'Order #'} ${order.orderNumber}</div>
+          </div>
+          
+          <div class="content-grid">
+            <div class="section">
+              <div class="section-title">${isRTL ? 'معلومات الطلب' : 'Order Information'}</div>
+              <div class="info-row">
+                <span class="info-label">${isRTL ? 'التاريخ:' : 'Date:'}</span>
+                <span class="info-value">${new Date(order.createdAt).toLocaleDateString(isRTL ? 'ar-EG' : 'en-US')}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">${isRTL ? 'الحالة:' : 'Status:'}</span>
+                <span class="status-badge status-${order.status}">${getStatusText(order.status)}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">${isRTL ? 'طريقة الدفع:' : 'Payment Method:'}</span>
+                <span class="info-value">${order.paymentMethod}</span>
+              </div>
+            </div>
+            
+            <div class="section">
+              <div class="section-title">${isRTL ? 'معلومات العميل' : 'Customer Information'}</div>
+              <div class="info-row">
+                <span class="info-label">${isRTL ? 'الاسم:' : 'Name:'}</span>
+                <span class="info-value">${order.websiteUser.firstName} ${order.websiteUser.lastName}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">${isRTL ? 'البريد الإلكتروني:' : 'Email:'}</span>
+                <span class="info-value">${order.websiteUser.email}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">${isRTL ? 'الهاتف:' : 'Phone:'}</span>
+                <span class="info-value">${order.websiteUser.phone || (isRTL ? 'غير محدد' : 'Not specified')}</span>
+              </div>
+            </div>
+            
+            ${order.deliveryAddress ? `
+            <div class="section">
+              <div class="section-title">${isRTL ? 'عنوان التوصيل' : 'Delivery Address'}</div>
+              <div class="info-row">
+                <span class="info-label">${isRTL ? 'العنوان:' : 'Address:'}</span>
+                <span class="info-value">${order.deliveryAddress}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">${isRTL ? 'المنطقة:' : 'Area:'}</span>
+                <span class="info-value">${order.deliveryGovernorate || (isRTL ? 'غير محدد' : 'Not specified')}</span>
+              </div>
+              ${order.deliveryInstructions ? `
+              <div class="info-row">
+                <span class="info-label">${isRTL ? 'تعليمات خاصة:' : 'Special Instructions:'}</span>
+                <span class="info-value">${order.deliveryInstructions}</span>
+              </div>
+              ` : ''}
+            </div>
+            ` : ''}
+            
+            <div class="items-section section">
+              <div class="section-title">${isRTL ? 'عناصر الطلب' : 'Order Items'}</div>
+              <table class="items-table">
+                <thead>
+                  <tr>
+                    <th>${isRTL ? 'المنتج' : 'Product'}</th>
+                    <th>${isRTL ? 'الكمية' : 'Quantity'}</th>
+                    <th>${isRTL ? 'السعر' : 'Price'}</th>
+                    <th>${isRTL ? 'المجموع' : 'Total'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${order.items?.map(item => `
+                    <tr>
+                      <td>${isRTL ? (item.productNameAr || item.productNameEn) : item.productNameEn}</td>
+                      <td>${item.quantity}</td>
+                      <td>${item.productPrice} ${isRTL ? 'د.ك' : 'KWD'}</td>
+                      <td>${(parseFloat(item.productPrice) * item.quantity).toFixed(3)} ${isRTL ? 'د.ك' : 'KWD'}</td>
+                    </tr>
+                  `).join('') || ''}
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="total-section">
+              <div>${isRTL ? 'المبلغ الإجمالي' : 'Total Amount'}</div>
+              <div class="total-amount">${order.totalAmount} ${isRTL ? 'د.ك' : 'KWD'}</div>
+            </div>
+          </div>
+          
+          <div class="footer">
+            <p>${isRTL ? 'شكراً لاختياركم أكشن بروتكشن لخدمات حماية السيارات' : 'Thank you for choosing Action Protection for your vehicle protection needs'}</p>
+            <p>${isRTL ? 'الكويت | +965 2245 0123' : 'Kuwait | +965 2245 0123'}</p>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Create a new window for printing
+      const printWindow = window.open('', '_blank', 'width=800,height=600');
+      if (printWindow) {
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+        
+        // Wait for content to load, then print
+        printWindow.onload = () => {
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+          }, 500);
+        };
+      }
       
-      pdf.setFontSize(12);
-      const addressLines = [
-        isRTL ? `العنوان: ${order.deliveryAddress}` : `Address: ${order.deliveryAddress}`,
-        isRTL ? `المنطقة: ${order.deliveryGovernorate || 'غير محدد'}` : `Area: ${order.deliveryGovernorate || 'Not specified'}`,
-        isRTL ? `تعليمات خاصة: ${order.deliveryInstructions || 'لا توجد'}` : `Special Instructions: ${order.deliveryInstructions || 'None'}`
-      ];
-      
-      addressLines.forEach(line => {
-        pdf.text(line, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
-        yPosition += 10;
+      // Show success toast
+      toast({
+        title: isRTL ? "تم إنشاء ملف PDF بنجاح" : "PDF generated successfully",
+        description: isRTL ? "تم فتح نافذة الطباعة" : "Print window opened",
+        variant: "default",
       });
       
-      yPosition += 10;
-    }
-    
-    // Order Items
-    pdf.setFontSize(14);
-    const itemsTitle = isRTL ? "عناصر الطلب" : "Order Items";
-    pdf.text(itemsTitle, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
-    yPosition += 15;
-    
-    pdf.setFontSize(12);
-    if (order.items && order.items.length > 0) {
-      order.items.forEach((item, index) => {
-        if (yPosition > 250) { // Start new page if needed
-          pdf.addPage();
-          yPosition = 30;
-        }
-        
-        const itemText = isRTL ? 
-          `${index + 1}. ${item.productNameAr || item.productNameEn} - الكمية: ${item.quantity} - السعر: ${item.productPrice} د.ك` :
-          `${index + 1}. ${item.productNameEn} - Qty: ${item.quantity} - Price: ${item.productPrice} KWD`;
-        
-        pdf.text(itemText, isRTL ? pageWidth - margin : margin, yPosition, { align: isRTL ? 'right' : 'left' });
-        yPosition += 10;
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      toast({
+        title: isRTL ? "خطأ في إنشاء ملف PDF" : "PDF generation error",
+        description: isRTL ? "حدث خطأ أثناء إنشاء الملف" : "An error occurred while generating the PDF",
+        variant: "destructive",
       });
     }
-    
-    // Footer
-    yPosition += 20;
-    pdf.setFontSize(10);
-    pdf.setTextColor(128, 128, 128);
-    const footer = isRTL ? "شكراً لاختياركم أكشن بروتكشن" : "Thank you for choosing Action Protection";
-    pdf.text(footer, pageWidth / 2, yPosition, { align: 'center' });
-    
-    // Save PDF
-    const fileName = `order-${order.orderNumber}-${isRTL ? 'ar' : 'en'}.pdf`;
-    pdf.save(fileName);
   };
   
   const getStatusText = (status: string) => {

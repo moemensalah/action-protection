@@ -65,6 +65,10 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Hero Section translations: "Select multiple images" → "اختر صور متعددة", "Current Background Images" → "الصور الحالية للخلفية", "No background images added yet" → "لم يتم إضافة صور خلفية بعد"
 - ✓ Reviews Section translations: "Filter by Status" → "تصفية حسب الحالة", "All Reviews" → "جميع التقييمات", "Pending/Approved/Rejected" → "في الانتظار/مقبولة/مرفوضة"
 - ✓ Translated Reviews settings: "Auto Approve Reviews" → "الموافقة التلقائية على التقييمات", "Require Order to Review" → "يتطلب طلبًا للتقييم", "Show Reviews on Website" → "عرض التقييمات على الموقع"
+- ✓ FIXED FILE INPUT BUTTON TRANSLATION: Replaced default HTML file input with custom styled component
+- ✓ Added bilingual file input styling with proper RTL support for "Choose Files" → "اختر الملفات"
+- ✓ Created custom file-input-wrapper CSS classes with dashed border styling and hover effects
+- ✓ File input now displays "اختر الملفات" in Arabic and "Choose Files" in English with proper direction support
 
 ### 2025-07-05: Complete RTL Layout Fixes for Admin Panel Headers + Customer Reviews Section RTL Enhancement
 - ✓ Fixed RTL layout in customer reviews section on home page - customer names now appear on right, rating stars on left for proper Arabic text flow

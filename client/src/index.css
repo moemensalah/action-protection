@@ -285,6 +285,50 @@
   .theme-transition {
     transition: all 0.3s ease-in-out;
   }
+  
+  /* Custom file input styling for bilingual support */
+  .file-input-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+  
+  .file-input-wrapper input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  .file-input-button {
+    display: inline-block;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 2px dashed hsl(var(--border));
+    border-radius: 0.5rem;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .file-input-button:hover {
+    border-color: hsl(var(--primary));
+    background: hsl(var(--muted));
+  }
+  
+  .file-input-button.rtl {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  .file-input-button.ltr {
+    direction: ltr;
+    text-align: left;
+  }
 }
   
   /* Custom scrollbar */

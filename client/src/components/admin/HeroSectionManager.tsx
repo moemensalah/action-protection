@@ -203,26 +203,32 @@ export function HeroSectionManager() {
           <div className="grid grid-cols-1 gap-4">
             <div>
               <Label className={isRTL ? 'text-right' : 'text-left'}>{t("hero.uploadImage")}</Label>
-              <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <Input
+              <div className="file-input-wrapper">
+                <input
                   type="file"
                   accept="image/*"
                   multiple
                   onChange={handleImageUpload}
-                  className="flex-1"
                   disabled={uploadingImage}
+                  id="hero-image-upload"
                 />
-                <Button 
-                  disabled={uploadingImage}
-                  className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
-                  variant="outline"
+                <label 
+                  htmlFor="hero-image-upload" 
+                  className={`file-input-button ${isRTL ? 'rtl' : 'ltr'} ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <Upload className="h-4 w-4" />
-                  {uploadingImage ? t("common.uploading") : t("hero.uploadImage")}
-                </Button>
+                  <div className={`flex items-center gap-2 justify-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Upload className="h-4 w-4" />
+                    <span>
+                      {uploadingImage 
+                        ? (isRTL ? "جار الرفع..." : "Uploading...") 
+                        : (isRTL ? "اختر الملفات" : "Choose Files")
+                      }
+                    </span>
+                  </div>
+                </label>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">
-{isRTL ? "اختر صور متعددة لرفعها كخلفيات. الصيغ المدعومة: JPG، PNG، GIF" : "Select multiple images to upload as background images. Supported formats: JPG, PNG, GIF"}
+              <p className={`text-sm text-muted-foreground mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                {isRTL ? "اختر صور متعددة لرفعها كخلفيات. الصيغ المدعومة: JPG، PNG، GIF" : "Select multiple images to upload as background images. Supported formats: JPG, PNG, GIF"}
               </p>
             </div>
           </div>

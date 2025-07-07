@@ -437,16 +437,35 @@ export default function OrderManagement({ initialUserFilter = "all", onUserFilte
                       <td>${item.productName || 'Unknown Product'}</td>
                       <td>${item.quantity || 1}</td>
                       <td>${item.productPrice || '0.000'} ${isRTL ? 'د.ك' : 'KWD'}</td>
-                      <td>${((parseFloat(item.productPrice || '0') * (item.quantity || 1)).toFixed(3))} ${isRTL ? 'د.ك' : 'KWD'}</td>
+                      <td>${(parseFloat(item.productPrice || '0') * (item.quantity || 1)).toFixed(3)} ${isRTL ? 'د.ك' : 'KWD'}</td>
                     </tr>
                   `).join('') || ''}
                 </tbody>
               </table>
             </div>
             
-            <div class="total-section">
-              <div>${isRTL ? 'المبلغ الإجمالي' : 'Total Amount'}</div>
-              <div class="total-amount">${order.totalAmount || '0.000'} ${isRTL ? 'د.ك' : 'KWD'}</div>
+            <div class="section">
+              <div class="section-title">${isRTL ? 'ملخص الفاتورة' : 'Invoice Summary'}</div>
+              <div class="info-row">
+                <span class="info-label">${isRTL ? 'المجموع الفرعي:' : 'Subtotal:'}</span>
+                <span class="info-value">${
+                  order.items && order.items.length > 0 
+                    ? order.items.reduce((total, item) => total + (parseFloat(item.productPrice || '0') * (item.quantity || 1)), 0).toFixed(3)
+                    : (order.totalAmount || '0.000')
+                } ${isRTL ? 'د.ك' : 'KWD'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">${isRTL ? 'الضريبة:' : 'Tax:'}</span>
+                <span class="info-value">0.000 ${isRTL ? 'د.ك' : 'KWD'}</span>
+              </div>
+              <div class="info-row" style="border-top: 2px solid #f97316; padding-top: 8px; margin-top: 8px;">
+                <span class="info-label" style="font-weight: 700; font-size: 16px;">${isRTL ? 'المجموع النهائي:' : 'Final Total:'}</span>
+                <span class="info-value" style="font-weight: 700; font-size: 16px; color: #f97316;">${
+                  order.items && order.items.length > 0 
+                    ? order.items.reduce((total, item) => total + (parseFloat(item.productPrice || '0') * (item.quantity || 1)), 0).toFixed(3)
+                    : (order.totalAmount || '0.000')
+                } ${isRTL ? 'د.ك' : 'KWD'}</span>
+              </div>
             </div>
           </div>
           

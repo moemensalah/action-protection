@@ -108,6 +108,16 @@ export default function CheckoutNew() {
   // Type-safe address array
   const addressList = Array.isArray(addresses) ? addresses : [];
 
+  // Auto-select default address when addresses load
+  useEffect(() => {
+    if (addressList.length > 0 && !selectedAddressId) {
+      const defaultAddress = addressList.find((addr: any) => addr.isDefault);
+      if (defaultAddress) {
+        setSelectedAddressId(defaultAddress.id.toString());
+      }
+    }
+  }, [addressList, selectedAddressId]);
+
   // Mutation to create new address
   const createAddressMutation = useMutation({
     mutationFn: async (data: AddressForm) => {
@@ -165,7 +175,17 @@ export default function CheckoutNew() {
 
   // Check if user can proceed to payment
   const canProceedToPayment = () => {
-    if (!user) return true; // Guest users can always proceed if form is filled
+    if (!user) return isNewAddressFormValid(); // Guest users must have valid form
+    return selectedAddressId || isNewAddressFormValid();
+  };
+
+  // Check if user can proceed from step 2 to step 3 (address validation)
+  const canProceedFromCustomerInfo = () => {
+    if (!user) {
+      // Guest users must have valid form data
+      return isNewAddressFormValid();
+    }
+    // Logged in users must have either selected address or valid new address form
     return selectedAddressId || isNewAddressFormValid();
   };
 
@@ -852,9 +872,21 @@ export default function CheckoutNew() {
                     {isRTL ? "العودة إلى مراجعة الطلب" : "Back to Order Review"}
                   </Button>
                   <Button 
-                    onClick={() => setCurrentStep(3)}
+                    onClick={() => {
+                      if (!canProceedFromCustomerInfo()) {
+                        toast({
+                          title: isRTL ? "خطأ" : "Error",
+                          description: isRTL 
+                            ? "يرجى اختيار عنوان أو إكمال معلومات العنوان الجديد" 
+                            : "Please select an address or complete the new address information",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      setCurrentStep(3);
+                    }}
                     className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
-                    disabled={!canProceedToPayment()}
+                    disabled={!canProceedFromCustomerInfo()}
                   >
                     {isRTL ? "متابعة إلى الدفع" : "Continue to Payment"}
                     <ArrowRight className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180" />

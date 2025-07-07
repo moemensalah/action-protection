@@ -94,7 +94,7 @@ class EmailService {
           <body>
             <div class="container">
               <div class="header">
-                <img src="https://actionprotection.com/assets/logo-white.png" alt="Action Protection" style="max-width: 200px; height: auto; margin-bottom: 10px;">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMjAwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8dGV4dCB4PSIxMDAiIHk9IjQwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSI+QWN0aW9uIFByb3RlY3Rpb248L3RleHQ+Cjwvc3ZnPgo=" alt="Action Protection" style="max-width: 200px; height: auto; margin-bottom: 10px;">
                 <h2>New Order Received</h2>
               </div>
               
@@ -161,7 +161,7 @@ class EmailService {
           <body>
             <div class="container">
               <div class="header">
-                <img src="https://actionprotection.com/assets/logo-white.png" alt="Action Protection" style="max-width: 200px; height: auto; margin-bottom: 10px;">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMjAwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8dGV4dCB4PSIxMDAiIHk9IjQwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSI+QWN0aW9uIFByb3RlY3Rpb248L3RleHQ+Cjwvc3ZnPgo=" alt="Action Protection" style="max-width: 200px; height: auto; margin-bottom: 10px;">
                 <h2>Order Confirmation</h2>
               </div>
               
@@ -249,7 +249,7 @@ class EmailService {
         <body>
           <div class="container">
             <div class="header">
-              <img src="https://actionprotection.com/assets/logo-white.png" alt="Action Protection" style="max-width: 200px; height: auto; margin-bottom: 10px;">
+              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMjAwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8dGV4dCB4PSIxMDAiIHk9IjQwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSI+QWN0aW9uIFByb3RlY3Rpb248L3RleHQ+Cjwvc3ZnPgo=" alt="Action Protection" style="max-width: 200px; height: auto; margin-bottom: 10px;">
               <h2>Order Status Update</h2>
             </div>
             

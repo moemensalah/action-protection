@@ -58,7 +58,7 @@ class EmailService {
       throw new Error('Email service not configured or disabled');
     }
 
-    return nodemailer.createTransporter(config);
+    return nodemailer.createTransport(config);
   }
 
   private generateOrderEmailTemplate(orderData: OrderEmailData, isAdmin: boolean = false): { subject: string; html: string } {

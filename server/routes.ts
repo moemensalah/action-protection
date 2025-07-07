@@ -503,27 +503,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/smtp-settings/test", requireAdmin, async (req, res) => {
     try {
-      const nodemailer = require('nodemailer');
+      const { emailService } = await import('./emailService');
       const settings = req.body;
 
-      const transporter = nodemailer.createTransporter({
-        host: settings.host,
-        port: settings.port,
-        secure: settings.port === 465,
-        auth: {
-          user: settings.username,
-          pass: settings.password,
-        },
-      });
+      // Create a temporary test email
+      const testEmailData = {
+        orderNumber: 'TEST-EMAIL',
+        customerName: 'Test Customer',
+        customerEmail: settings.fromEmail,
+        customerPhone: '+965 1234 5678',
+        deliveryAddress: 'Test Address, Kuwait',
+        items: [{
+          productName: 'Test Service',
+          quantity: 1,
+          price: '50.00',
+          subtotal: '50.00'
+        }],
+        totalAmount: '50.00',
+        status: 'pending',
+        paymentMethod: 'cod',
+        createdAt: new Date().toLocaleString(),
+      };
 
-      await transporter.sendMail({
-        from: `"${settings.fromName}" <${settings.fromEmail}>`,
-        to: settings.fromEmail,
-        subject: 'Test Email from LateLounge',
-        text: 'This is a test email to verify SMTP configuration.',
-        html: '<p>This is a test email to verify SMTP configuration.</p>',
-      });
-
+      await emailService.sendOrderConfirmationEmails(testEmailData);
       res.json({ message: "Test email sent successfully" });
     } catch (error) {
       console.error("Error sending test email:", error);
@@ -549,9 +551,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json({ message: "Message received successfully" });
       }
 
-      const nodemailer = require('nodemailer');
+      const nodemailer = await import('nodemailer');
       
-      const transporter = nodemailer.createTransporter({
+      const transporter = nodemailer.default.createTransport({
         host: smtpSettings.host,
         port: smtpSettings.port,
         secure: smtpSettings.port === 465,
@@ -1176,13 +1178,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "User authentication required for orders" });
       }
 
+      // Get user email if not provided
+      let customerEmail = email;
+      if (!customerEmail && parsedUserId) {
+        const user = await storage.getUser(parsedUserId.toString());
+        customerEmail = user?.email || null;
+      }
+
       // Create order
       const orderData = {
         websiteUserId: parsedUserId,
         orderNumber,
         customerName: `${firstName} ${lastName}`,
         customerPhone: phone,
-        customerEmail: email,
+        customerEmail: customerEmail,
         deliveryAddress: `${address}, ${area}, ${city}`,
         totalAmount: (calculatedTotal || 0).toString(),
         status: 'pending' as const,
@@ -1219,7 +1228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const emailData = {
             orderNumber,
             customerName: `${firstName} ${lastName}`,
-            customerEmail: email,
+            customerEmail: customerEmail || '',
             customerPhone: phone,
             deliveryAddress: `${address}, ${area}, ${city}`,
             items: items.map(item => ({

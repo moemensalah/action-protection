@@ -258,7 +258,7 @@ export default function CheckoutNew() {
           orderData = {
             firstName: selectedAddress.firstName,
             lastName: selectedAddress.lastName,
-            email: selectedAddress.email,
+            email: (user as any)?.email || null, // Use user email, not address email
             phone: selectedAddress.phone,
             address: selectedAddress.address,
             city: selectedAddress.city,
@@ -277,6 +277,7 @@ export default function CheckoutNew() {
         // User is creating a new address or is a guest
         orderData = {
           ...data,
+          email: data.email || (user as any)?.email || null, // Ensure email is included
           paymentMethod: paymentMethod,
           selectedAddressId: null, // Explicitly mark as new address
           items: state.items,

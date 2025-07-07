@@ -1180,9 +1180,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Get user email if not provided
       let customerEmail = email;
+      
       if (!customerEmail && parsedUserId) {
-        const user = await storage.getUser(parsedUserId.toString());
-        customerEmail = user?.email || null;
+        try {
+          const user = await storage.getWebsiteUserById(parsedUserId);
+          customerEmail = user?.email || null;
+        } catch (error) {
+          console.error("Error fetching user email:", error);
+        }
       }
 
       // Create order

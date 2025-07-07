@@ -40,7 +40,15 @@ class EmailService {
       return {
         host: smtpSettings.host,
         port: smtpSettings.port,
-        secure: smtpSettings.secure,
+        secure: smtpSettings.port === 465, // Only use SSL for port 465
+        requireTLS: smtpSettings.port === 587, // Use STARTTLS for port 587
+        tls: {
+          // Allow self-signed certificates and insecure connections for testing
+          rejectUnauthorized: false,
+          // Add additional TLS options for compatibility
+          minVersion: 'TLSv1',
+          maxVersion: 'TLSv1.3',
+        },
         auth: {
           user: smtpSettings.username,
           pass: smtpSettings.password,
@@ -303,7 +311,7 @@ class EmailService {
         try {
           const adminEmail = this.generateOrderEmailTemplate(orderData, true);
           await transporter.sendMail({
-            from: `"Action Protection" <${smtpSettings.username}>`,
+            from: `"${smtpSettings.fromName}" <${smtpSettings.fromEmail}>`,
             to: smtpSettings.adminEmail,
             subject: adminEmail.subject,
             html: adminEmail.html,
@@ -320,7 +328,7 @@ class EmailService {
         try {
           const customerEmail = this.generateOrderEmailTemplate(orderData, false);
           await transporter.sendMail({
-            from: `"Action Protection" <${smtpSettings.username}>`,
+            from: `"${smtpSettings.fromName}" <${smtpSettings.fromEmail}>`,
             to: orderData.customerEmail,
             subject: customerEmail.subject,
             html: customerEmail.html,
@@ -356,7 +364,7 @@ class EmailService {
       const statusEmail = this.generateStatusUpdateTemplate(orderData, newStatus);
       
       await transporter.sendMail({
-        from: `"Action Protection" <${smtpSettings.username}>`,
+        from: `"${smtpSettings.fromName}" <${smtpSettings.fromEmail}>`,
         to: orderData.customerEmail,
         subject: statusEmail.subject,
         html: statusEmail.html,

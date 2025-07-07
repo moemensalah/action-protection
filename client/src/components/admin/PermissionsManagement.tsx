@@ -32,7 +32,7 @@ const permissionSections: PermissionSection[] = [
     nameEn: "Admin Users",
     nameAr: "إدارة المستخدمين",
     descriptionEn: "Manage admin and moderator accounts",
-    descriptionAr: "إدارة حسابات المديرين والمشرفين",
+    descriptionAr: "إدارة حسابات الإدارة",
     actions: ["create", "read", "update", "delete"]
   },
   {
@@ -40,7 +40,7 @@ const permissionSections: PermissionSection[] = [
     nameEn: "Website Users",
     nameAr: "مستخدمي الموقع",
     descriptionEn: "Manage website customer accounts",
-    descriptionAr: "إدارة حسابات عملاء الموقع",
+    descriptionAr: "إدارة حسابات العملاء",
     actions: ["read", "update", "delete"]
   },
   {
@@ -48,7 +48,7 @@ const permissionSections: PermissionSection[] = [
     nameEn: "Orders Management",
     nameAr: "إدارة الطلبات",
     descriptionEn: "View and manage customer orders",
-    descriptionAr: "عرض وإدارة طلبات العملاء",
+    descriptionAr: "إدارة الطلبات",
     actions: ["read", "update", "delete"]
   },
   {
@@ -56,7 +56,7 @@ const permissionSections: PermissionSection[] = [
     nameEn: "Categories",
     nameAr: "الفئات",
     descriptionEn: "Manage product categories",
-    descriptionAr: "إدارة فئات المنتجات",
+    descriptionAr: "إدارة الفئات",
     actions: ["create", "read", "update", "delete"]
   },
   {
@@ -64,7 +64,7 @@ const permissionSections: PermissionSection[] = [
     nameEn: "Products",
     nameAr: "المنتجات",
     descriptionEn: "Manage products and services",
-    descriptionAr: "إدارة المنتجات والخدمات",
+    descriptionAr: "إدارة المنتجات",
     actions: ["create", "read", "update", "delete"]
   },
   {
@@ -72,7 +72,7 @@ const permissionSections: PermissionSection[] = [
     nameEn: "Content Management",
     nameAr: "إدارة المحتوى",
     descriptionEn: "Manage website content and pages",
-    descriptionAr: "إدارة محتوى الموقع والصفحات",
+    descriptionAr: "إدارة محتوى الموقع",
     actions: ["read", "update"]
   },
   {
@@ -80,7 +80,7 @@ const permissionSections: PermissionSection[] = [
     nameEn: "Reviews",
     nameAr: "المراجعات",
     descriptionEn: "Manage customer reviews and ratings",
-    descriptionAr: "إدارة مراجعات وتقييمات العملاء",
+    descriptionAr: "إدارة المراجعات",
     actions: ["read", "update", "delete"]
   },
   {
@@ -88,7 +88,7 @@ const permissionSections: PermissionSection[] = [
     nameEn: "SMTP Settings",
     nameAr: "إعدادات البريد",
     descriptionEn: "Configure email settings",
-    descriptionAr: "تكوين إعدادات البريد الإلكتروني",
+    descriptionAr: "إعدادات البريد",
     actions: ["read", "update"]
   },
   {
@@ -96,7 +96,7 @@ const permissionSections: PermissionSection[] = [
     nameEn: "Hero Section",
     nameAr: "القسم الرئيسي",
     descriptionEn: "Manage homepage hero section",
-    descriptionAr: "إدارة القسم الرئيسي للصفحة الرئيسية",
+    descriptionAr: "إدارة القسم الرئيسي",
     actions: ["read", "update"]
   },
   {
@@ -104,7 +104,7 @@ const permissionSections: PermissionSection[] = [
     nameEn: "Experience Section",
     nameAr: "قسم التجربة",
     descriptionEn: "Manage experience showcase section",
-    descriptionAr: "إدارة قسم عرض التجربة",
+    descriptionAr: "إدارة قسم التجربة",
     actions: ["read", "update"]
   }
 ];
@@ -321,11 +321,11 @@ export default function PermissionsManagement() {
               {permissionSections.map((section) => (
                 <div key={section.id} className="border rounded-lg p-4">
                   <div className={`flex items-center justify-between mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <div className={isRTL ? 'text-right' : 'text-left'}>
-                      <h3 className="font-semibold text-lg">
+                    <div className={`${isRTL ? 'text-right' : 'text-left'} max-w-full`}>
+                      <h3 className="font-semibold text-lg truncate">
                         {isRTL ? section.nameAr : section.nameEn}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
                         {isRTL ? section.descriptionAr : section.descriptionEn}
                       </p>
                     </div>

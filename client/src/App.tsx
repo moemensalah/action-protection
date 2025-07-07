@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navbar } from "@/components/Navbar";
 import { TawkWidget } from "@/components/TawkWidget";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Home from "@/pages/Home";
 import Menu from "@/pages/Menu";
 import About from "@/pages/About";
@@ -51,22 +52,24 @@ function App() {
   const isAdminPanel = location === "/admin";
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <LanguageProvider>
-          <CartProvider>
-            <TooltipProvider>
-              <div className="min-h-screen bg-background theme-transition">
-                <Navbar />
-                <Router />
-                {!isAdminPanel && <TawkWidget />}
-                <Toaster />
-              </div>
-            </TooltipProvider>
-          </CartProvider>
-        </LanguageProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <LanguageProvider>
+            <CartProvider>
+              <TooltipProvider>
+                <div className="min-h-screen bg-background theme-transition">
+                  <Navbar />
+                  <Router />
+                  {!isAdminPanel && <TawkWidget />}
+                  <Toaster />
+                </div>
+              </TooltipProvider>
+            </CartProvider>
+          </LanguageProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

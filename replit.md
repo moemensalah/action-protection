@@ -69,6 +69,9 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Added bilingual file input styling with proper RTL support for "Choose Files" → "اختر الملفات"
 - ✓ Created custom file-input-wrapper CSS classes with dashed border styling and hover effects
 - ✓ File input now displays "اختر الملفات" in Arabic and "Choose Files" in English with proper direction support
+- ✓ SHORTENED PERMISSIONS MENU DESCRIPTION: Updated admin panel permissions section description to be concise
+- ✓ Changed "Manage user permissions and access control" to "Manage users permissions" in English
+- ✓ Changed Arabic description to "إدارة صلاحيات المستخدمين" for proper translation and length
 
 ### 2025-07-05: Complete RTL Layout Fixes for Admin Panel Headers + Customer Reviews Section RTL Enhancement
 - ✓ Fixed RTL layout in customer reviews section on home page - customer names now appear on right, rating stars on left for proper Arabic text flow

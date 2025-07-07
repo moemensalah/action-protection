@@ -131,8 +131,8 @@ export default function AdminPanel() {
       icon: Shield,
       nameEn: "Permissions",
       nameAr: "الصلاحيات",
-      descEn: "Manage user permissions and access control",
-      descAr: "إدارة صلاحيات المستخدمين والتحكم في الوصول",
+      descEn: "Manage users permissions",
+      descAr: "إدارة صلاحيات المستخدمين",
       roles: ["administrator"]
     },
     {

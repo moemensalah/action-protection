@@ -365,7 +365,7 @@ export function CategoriesManagement() {
                 isRTL={isRTL}
               />
               
-              <div className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Checkbox
                   id="isActive"
                   checked={formData.isActive}

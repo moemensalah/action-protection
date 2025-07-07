@@ -226,7 +226,9 @@ export function ReviewsManager() {
                     />
                   </div>
                   <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <Label className={isRTL ? 'text-right' : 'text-left'}>Auto Approve Reviews</Label>
+                    <Label className={isRTL ? 'text-right' : 'text-left'}>
+                      {isRTL ? "الموافقة التلقائية على التقييمات" : "Auto Approve Reviews"}
+                    </Label>
                     <Switch
                       checked={settings.autoApproveReviews}
                       onCheckedChange={(checked) =>
@@ -235,7 +237,9 @@ export function ReviewsManager() {
                     />
                   </div>
                   <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <Label className={isRTL ? 'text-right' : 'text-left'}>Require Order to Review</Label>
+                    <Label className={isRTL ? 'text-right' : 'text-left'}>
+                      {isRTL ? "يتطلب طلبًا للتقييم" : "Require Order to Review"}
+                    </Label>
                     <Switch
                       checked={settings.requireOrderToReview}
                       onCheckedChange={(checked) =>
@@ -244,7 +248,9 @@ export function ReviewsManager() {
                     />
                   </div>
                   <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <Label className={isRTL ? 'text-right' : 'text-left'}>Show Reviews on Website</Label>
+                    <Label className={isRTL ? 'text-right' : 'text-left'}>
+                      {isRTL ? "عرض التقييمات على الموقع" : "Show Reviews on Website"}
+                    </Label>
                     <Switch
                       checked={settings.showReviewsOnWebsite}
                       onCheckedChange={(checked) =>
@@ -263,16 +269,18 @@ export function ReviewsManager() {
 
       {/* Filter */}
       <div className="flex gap-4 items-center">
-        <Label>Filter by Status:</Label>
+        <Label className={isRTL ? 'text-right' : 'text-left'}>
+          {isRTL ? "تصفية حسب الحالة:" : "Filter by Status:"}
+        </Label>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-40">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Reviews</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="approved">Approved</SelectItem>
-            <SelectItem value="rejected">Rejected</SelectItem>
+            <SelectItem value="all">{isRTL ? "جميع التقييمات" : "All Reviews"}</SelectItem>
+            <SelectItem value="pending">{isRTL ? "في الانتظار" : "Pending"}</SelectItem>
+            <SelectItem value="approved">{isRTL ? "مقبولة" : "Approved"}</SelectItem>
+            <SelectItem value="rejected">{isRTL ? "مرفوضة" : "Rejected"}</SelectItem>
           </SelectContent>
         </Select>
       </div>

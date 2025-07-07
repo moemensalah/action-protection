@@ -61,6 +61,10 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Added complete Arabic translations to Experience Section Preview including all text content and status messages
 - ✓ Translated Preview section: "Preview" → "معاينة", "Video 1/2" → "الفيديو 1/2", "Text:" → "النص:", "Video configured" → "تم تكوين الفيديو"
 - ✓ Fixed AdminLoading import error in AiSettings component for proper loading state display
+- ✓ TRANSLATED ALL REMAINING UNTRANSLATED TEXT IN ADMIN PANELS: Fixed Hero Section and Reviews section hardcoded English text
+- ✓ Hero Section translations: "Select multiple images" → "اختر صور متعددة", "Current Background Images" → "الصور الحالية للخلفية", "No background images added yet" → "لم يتم إضافة صور خلفية بعد"
+- ✓ Reviews Section translations: "Filter by Status" → "تصفية حسب الحالة", "All Reviews" → "جميع التقييمات", "Pending/Approved/Rejected" → "في الانتظار/مقبولة/مرفوضة"
+- ✓ Translated Reviews settings: "Auto Approve Reviews" → "الموافقة التلقائية على التقييمات", "Require Order to Review" → "يتطلب طلبًا للتقييم", "Show Reviews on Website" → "عرض التقييمات على الموقع"
 
 ### 2025-07-05: Complete RTL Layout Fixes for Admin Panel Headers + Customer Reviews Section RTL Enhancement
 - ✓ Fixed RTL layout in customer reviews section on home page - customer names now appear on right, rating stars on left for proper Arabic text flow

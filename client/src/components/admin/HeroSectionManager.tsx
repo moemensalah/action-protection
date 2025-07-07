@@ -222,16 +222,20 @@ export function HeroSectionManager() {
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground mt-1">
-                Select multiple images to upload as background images. Supported formats: JPG, PNG, GIF
+{isRTL ? "اختر صور متعددة لرفعها كخلفيات. الصيغ المدعومة: JPG، PNG، GIF" : "Select multiple images to upload as background images. Supported formats: JPG, PNG, GIF"}
               </p>
             </div>
           </div>
           
           {/* Display Current Background Images */}
           <div className="space-y-2">
-            <Label>Current Background Images ({currentBackgroundImages.length})</Label>
+            <Label className={isRTL ? 'text-right' : 'text-left'}>
+              {isRTL ? `الصور الحالية للخلفية (${currentBackgroundImages.length})` : `Current Background Images (${currentBackgroundImages.length})`}
+            </Label>
             {currentBackgroundImages.length === 0 ? (
-              <p className="text-muted-foreground">No background images added yet.</p>
+              <p className={`text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                {isRTL ? "لم يتم إضافة صور خلفية بعد." : "No background images added yet."}
+              </p>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {currentBackgroundImages.map((imageUrl: string, index: number) => (

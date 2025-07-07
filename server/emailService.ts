@@ -94,7 +94,7 @@ class EmailService {
           <body>
             <div class="container">
               <div class="header">
-                <h1>🚗 Action Protection</h1>
+                <img src="https://actionprotection.com/assets/logo-white.png" alt="Action Protection" style="max-width: 200px; height: auto; margin-bottom: 10px;">
                 <h2>New Order Received</h2>
               </div>
               
@@ -161,7 +161,7 @@ class EmailService {
           <body>
             <div class="container">
               <div class="header">
-                <h1>🚗 Action Protection</h1>
+                <img src="https://actionprotection.com/assets/logo-white.png" alt="Action Protection" style="max-width: 200px; height: auto; margin-bottom: 10px;">
                 <h2>Order Confirmation</h2>
               </div>
               
@@ -249,7 +249,7 @@ class EmailService {
         <body>
           <div class="container">
             <div class="header">
-              <h1>🚗 Action Protection</h1>
+              <img src="https://actionprotection.com/assets/logo-white.png" alt="Action Protection" style="max-width: 200px; height: auto; margin-bottom: 10px;">
               <h2>Order Status Update</h2>
             </div>
             

@@ -290,7 +290,7 @@ export function ReviewsManager() {
         {reviews.length === 0 ? (
           <Card>
             <CardContent className="p-6 text-center text-gray-500">
-              No reviews found for the selected filter.
+              {isRTL ? "لا توجد تقييمات للفلتر المحدد." : "No reviews found for the selected filter."}
             </CardContent>
           </Card>
         ) : (

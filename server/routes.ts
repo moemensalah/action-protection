@@ -1641,6 +1641,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add a simple debug endpoint that bypasses all middleware
+  app.get('/debug', (req, res) => {
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Debug - Action Protection</title>
+        <meta http-equiv="refresh" content="2">
+      </head>
+      <body style="font-family: Arial; padding: 20px; background: #f0f0f0;">
+        <h1 style="color: green;">🚗 Action Protection - Debug Mode</h1>
+        <p style="color: blue; font-size: 18px;">Server is running correctly!</p>
+        <p>Time: ${new Date().toLocaleString()}</p>
+        <p>Request from: ${req.ip}</p>
+        <p>User Agent: ${req.get('User-Agent')}</p>
+        <hr>
+        <p style="color: orange;">This page auto-refreshes every 2 seconds to prove the server is alive.</p>
+        <a href="/" style="background: blue; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">Go to Main App</a>
+      </body>
+      </html>
+    `);
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

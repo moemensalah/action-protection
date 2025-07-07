@@ -172,6 +172,8 @@ export const smtpSettings = pgTable("smtp_settings", {
   secure: boolean("secure").default(true), // Use SSL/TLS
   fromName: varchar("from_name", { length: 255 }).notNull(),
   fromEmail: varchar("from_email", { length: 255 }).notNull(),
+  adminEmail: varchar("admin_email", { length: 255 }), // Admin email to receive order notifications
+  enabled: boolean("enabled").default(true), // Whether email sending is enabled
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

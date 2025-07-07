@@ -18,6 +18,8 @@ interface SmtpSettingsForm {
   password: string;
   fromEmail: string;
   fromName: string;
+  adminEmail: string;
+  enabled: boolean;
   isActive: boolean;
 }
 
@@ -34,6 +36,8 @@ export default function SmtpSettings() {
     password: "",
     fromEmail: "",
     fromName: "",
+    adminEmail: "",
+    enabled: true,
     isActive: true,
   });
 
@@ -52,6 +56,8 @@ export default function SmtpSettings() {
         password: smtpSettings.password || "",
         fromEmail: smtpSettings.fromEmail || "",
         fromName: smtpSettings.fromName || "",
+        adminEmail: smtpSettings.adminEmail || "",
+        enabled: smtpSettings.enabled ?? true,
         isActive: smtpSettings.isActive ?? true,
       });
     }
@@ -243,21 +249,53 @@ export default function SmtpSettings() {
                   id="fromName"
                   value={formData.fromName}
                   onChange={(e) => handleInputChange('fromName', e.target.value)}
-                  placeholder={isRTL ? "ليت لاونج" : "LateLounge"}
+                  placeholder={isRTL ? "Action Protection" : "Action Protection"}
                   required
                 />
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="adminEmail">
+                  {isRTL ? "البريد الإلكتروني للإدارة" : "Admin Email"}
+                </Label>
+                <Input
+                  id="adminEmail"
+                  type="email"
+                  value={formData.adminEmail}
+                  onChange={(e) => handleInputChange('adminEmail', e.target.value)}
+                  placeholder="admin@actionprotection.com"
+                />
+                <p className="text-sm text-muted-foreground">
+                  {isRTL 
+                    ? "البريد الإلكتروني الذي سيتلقى إشعارات الطلبات الجديدة" 
+                    : "Email address to receive new order notifications"
+                  }
+                </p>
+              </div>
             </div>
 
-            <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <Switch
-                id="isActive"
-                checked={formData.isActive}
-                onCheckedChange={(checked) => handleInputChange('isActive', checked)}
-              />
-              <Label htmlFor="isActive">
-                {isRTL ? "تفعيل إرسال البريد الإلكتروني" : "Enable Email Sending"}
-              </Label>
+            <div className="space-y-4">
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Switch
+                  id="enabled"
+                  checked={formData.enabled}
+                  onCheckedChange={(checked) => handleInputChange('enabled', checked)}
+                />
+                <Label htmlFor="enabled">
+                  {isRTL ? "تفعيل الإشعارات بالبريد الإلكتروني" : "Enable Email Notifications"}
+                </Label>
+              </div>
+              
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Switch
+                  id="isActive"
+                  checked={formData.isActive}
+                  onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+                />
+                <Label htmlFor="isActive">
+                  {isRTL ? "تفعيل إعدادات SMTP" : "Enable SMTP Settings"}
+                </Label>
+              </div>
             </div>
 
             <div className="flex gap-4 pt-4">

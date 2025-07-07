@@ -1211,6 +1211,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      // Send email notifications (async, don't wait for completion)
+      (async () => {
+        try {
+          const { emailService } = await import('./emailService');
+          
+          const emailData = {
+            orderNumber,
+            customerName: `${firstName} ${lastName}`,
+            customerEmail: email,
+            customerPhone: phone,
+            deliveryAddress: `${address}, ${area}, ${city}`,
+            items: items.map(item => ({
+              productName: item.product.nameEn,
+              quantity: item.quantity,
+              price: item.product.price,
+              subtotal: (parseFloat(item.product.price) * item.quantity).toString(),
+            })),
+            totalAmount: (calculatedTotal || 0).toString(),
+            status: 'pending',
+            paymentMethod: paymentMethod || 'cod',
+            createdAt: new Date().toLocaleString(),
+          };
+
+          await emailService.sendOrderConfirmationEmails(emailData);
+        } catch (error) {
+          console.error('Error sending order emails:', error);
+        }
+      })();
+
       console.log("Order creation completed successfully");
       res.json({ orderNumber, orderId: newOrder.id });
     } catch (error: any) {
@@ -1632,7 +1661,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const orderId = parseInt(req.params.id);
       const updates = req.body;
       
+      // Get original order for comparison
+      const originalOrder = await storage.getOrderDetails(orderId);
+      if (!originalOrder) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
       const updatedOrder = await storage.updateOrder(orderId, updates);
+      
+      // Send status update email if status changed
+      if (updates.status && updates.status !== originalOrder.status) {
+        (async () => {
+          try {
+            const { emailService } = await import('./emailService');
+            
+            const emailData = {
+              orderNumber: originalOrder.orderNumber,
+              customerName: originalOrder.customerName,
+              customerEmail: originalOrder.customerEmail,
+              customerPhone: originalOrder.customerPhone,
+              deliveryAddress: originalOrder.deliveryAddress,
+              items: originalOrder.items?.map(item => ({
+                productName: item.productName,
+                quantity: item.quantity,
+                price: item.productPrice,
+                subtotal: item.subtotal,
+              })) || [],
+              totalAmount: originalOrder.totalAmount,
+              status: updates.status,
+              paymentMethod: originalOrder.paymentMethod,
+              createdAt: new Date(originalOrder.createdAt).toLocaleString(),
+            };
+
+            await emailService.sendStatusUpdateEmail(emailData, updates.status);
+          } catch (error) {
+            console.error('Error sending status update email:', error);
+          }
+        })();
+      }
+      
       res.json(updatedOrder);
     } catch (error) {
       console.error("Error updating order:", error);

@@ -172,6 +172,7 @@ export interface IStorage {
 
   // Website Users Management
   getWebsiteUserByEmail(email: string): Promise<WebsiteUser | undefined>;
+  getWebsiteUserById(id: number): Promise<WebsiteUser | undefined>;
   createWebsiteUser(userData: Omit<WebsiteUser, 'id' | 'createdAt' | 'updatedAt'>): Promise<WebsiteUser>;
   getAllWebsiteUsersWithStats(): Promise<any[]>;
   getWebsiteUsersStats(): Promise<any>;
@@ -1023,6 +1024,11 @@ export class DatabaseStorage implements IStorage {
   // Website Users Management
   async getWebsiteUserByEmail(email: string): Promise<WebsiteUser | undefined> {
     const [user] = await db.select().from(websiteUsers).where(eq(websiteUsers.email, email));
+    return user;
+  }
+
+  async getWebsiteUserById(id: number): Promise<WebsiteUser | undefined> {
+    const [user] = await db.select().from(websiteUsers).where(eq(websiteUsers.id, id));
     return user;
   }
 

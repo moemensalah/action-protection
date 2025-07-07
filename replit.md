@@ -32,8 +32,8 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 
 ## Recent Changes
 
-### 2025-07-07: AI Processing Settings Implementation + Complete Permissions System + Admin Panel Enhancement + Standardized Loading States
-- ✓ Implemented comprehensive AI processing settings in Content Settings section with Midjourney API integration
+### 2025-07-07: AI Processing Settings Implementation + Complete Permissions System + Admin Panel Enhancement + Standardized Loading States + Experience Section RTL Fixes
+- ✓ Implemented comprehensive AI processing settings with Midjourney API integration as standalone component
 - ✓ Created AI settings database table with API key storage, URL configuration, and enable/disable functionality
 - ✓ Added AI Settings component with secure API key input, URL configuration, and bilingual interface
 - ✓ Built AI Image Generator component with Orca assistant branding for product image generation
@@ -41,7 +41,7 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Created AI image generation workflow: prompt input → 4 generated images → user selection → automatic download and save
 - ✓ Added AI settings management API endpoints with proper moderator access control
 - ✓ Implemented mock AI image generation system with placeholder for real Midjourney API integration
-- ✓ Added AI settings tab to Content Settings with proper RTL support and Arabic translations
+- ✓ REMOVED AI Settings from Content Settings section per user request - now exists as standalone component only
 - ✓ Created permissions system database schema with user permissions table for granular access control
 - ✓ Built PermissionsManagement component with user selection and permission matrix interface
 - ✓ Added permissions API endpoints for CRUD operations with administrator-only access
@@ -57,6 +57,10 @@ Comprehensive bilingual car protection company website featuring Arabic/English 
 - ✓ Eliminated unprofessional mixed loading states that included gray shimmer blocks, different colored spinners, and loading text
 - ✓ Implemented consistent 8px orange (amber-600) spinner across all admin sections for professional user experience
 - ✓ Fixed "mutation is not defined" error in ProductsManagement AI Image Generator by using correct mutation references
+- ✓ FIXED EXPERIENCE SECTION RTL LAYOUT: All labels now properly align to the right in Arabic mode with block display
+- ✓ Added complete Arabic translations to Experience Section Preview including all text content and status messages
+- ✓ Translated Preview section: "Preview" → "معاينة", "Video 1/2" → "الفيديو 1/2", "Text:" → "النص:", "Video configured" → "تم تكوين الفيديو"
+- ✓ Fixed AdminLoading import error in AiSettings component for proper loading state display
 
 ### 2025-07-05: Complete RTL Layout Fixes for Admin Panel Headers + Customer Reviews Section RTL Enhancement
 - ✓ Fixed RTL layout in customer reviews section on home page - customer names now appear on right, rating stars on left for proper Arabic text flow

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { FileText, Save, Globe, Phone, Mail, MapPin, Clock, MessageSquare } from "lucide-react";
-import AiSettings from "./AiSettings";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -425,14 +425,13 @@ export function ContentManagement() {
         </p>
       </div>
       <Tabs defaultValue="about" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="about">{isRTL ? "من نحن" : "About Us"}</TabsTrigger>
           <TabsTrigger value="contact">{isRTL ? "اتصل بنا" : "Contact"}</TabsTrigger>
           <TabsTrigger value="footer">{isRTL ? "التذييل" : "Footer"}</TabsTrigger>
           <TabsTrigger value="terms">{isRTL ? "الشروط" : "Terms"}</TabsTrigger>
           <TabsTrigger value="privacy">{isRTL ? "الخصوصية" : "Privacy"}</TabsTrigger>
           <TabsTrigger value="chat">{isRTL ? "الدردشة" : "Chat"}</TabsTrigger>
-          <TabsTrigger value="ai">{isRTL ? "الذكاء الاصطناعي" : "AI Settings"}</TabsTrigger>
         </TabsList>
 
         {/* About Us */}
@@ -1165,10 +1164,7 @@ export function ContentManagement() {
           </Card>
         </TabsContent>
 
-        {/* AI Settings */}
-        <TabsContent value="ai">
-          <AiSettings />
-        </TabsContent>
+
       </Tabs>
     </div>
   );

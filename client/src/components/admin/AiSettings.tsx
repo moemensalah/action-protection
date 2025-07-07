@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Settings, Key, Globe, Wand2 } from "lucide-react";
+import { AdminLoading } from "@/components/ui/admin-loading";
 import type { AiSettings, InsertAiSettings } from "@shared/schema";
 
 export default function AiSettings() {

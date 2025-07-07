@@ -1598,6 +1598,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get pending orders count
+  app.get("/api/admin/orders/pending-count", requireLocalAdmin, async (req, res) => {
+    try {
+      const pendingCount = await storage.getPendingOrdersCount();
+      res.json(pendingCount);
+    } catch (error) {
+      console.error("Error fetching pending orders count:", error);
+      res.status(500).json({ message: "Failed to fetch pending orders count" });
+    }
+  });
+
   // Get specific order details
   app.get("/api/admin/orders/:id", requireLocalAdmin, async (req, res) => {
     try {

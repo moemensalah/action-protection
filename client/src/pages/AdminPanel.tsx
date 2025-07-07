@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/hooks/useLanguage";
+import { usePendingOrders } from "@/hooks/usePendingOrders";
 import { CategoriesManagement } from "@/components/admin/CategoriesManagement";
 import { ProductsManagement } from "@/components/admin/ProductsManagement";
 import { ContentManagement } from "@/components/admin/ContentManagement";
@@ -25,6 +26,7 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState("categories");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedOrdersUserFilter, setSelectedOrdersUserFilter] = useState<string>("all");
+  const { hasPendingOrders } = usePendingOrders();
 
   // Function to navigate to orders tab with user filter
   const navigateToOrdersWithUserFilter = (userId: number) => {
@@ -280,9 +282,15 @@ export default function AdminPanel() {
                   } ${isRTL ? 'text-right' : 'text-left'}`}
                 >
                   <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <section.icon className={`h-5 w-5 ${
-                      isActive ? 'text-amber-600 dark:text-amber-400' : 'text-gray-500 dark:text-gray-400'
-                    }`} />
+                    <div className="relative">
+                      <section.icon className={`h-5 w-5 ${
+                        isActive ? 'text-amber-600 dark:text-amber-400' : 'text-gray-500 dark:text-gray-400'
+                      }`} />
+                      {/* Red dot indicator for pending orders */}
+                      {section.id === "website-orders" && hasPendingOrders && (
+                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                      )}
+                    </div>
                     <div className="flex-1">
                       <div className={`font-medium ${
                         isActive ? 'text-amber-700 dark:text-amber-300' : 'text-gray-900 dark:text-white'

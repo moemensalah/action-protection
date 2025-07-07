@@ -183,6 +183,7 @@ export interface IStorage {
   getAllOrdersWithDetails(): Promise<any[]>;
   getOrdersStats(): Promise<any>;
   getOrderDetails(orderId: number): Promise<any>;
+  getPendingOrdersCount(): Promise<number>;
   updateOrder(orderId: number, updates: Partial<Order>): Promise<Order>;
   deleteOrder(orderId: number): Promise<void>;
 }
@@ -1176,6 +1177,15 @@ export class DatabaseStorage implements IStorage {
       completedOrders: completedOrders[0]?.count || 0,
       totalRevenue: totalRevenue[0]?.total || '0',
     };
+  }
+
+  async getPendingOrdersCount(): Promise<number> {
+    const pendingOrders = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(orders)
+      .where(eq(orders.status, 'pending'));
+    
+    return pendingOrders[0]?.count || 0;
   }
 
   async getOrderDetails(orderId: number): Promise<any> {

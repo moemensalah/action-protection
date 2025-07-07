@@ -117,7 +117,7 @@ export function ExperienceSectionManager() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                <Label className={`block ${isRTL ? 'text-right' : 'text-left'}`}>
                   {t("experienceSection.englishTitle")}
                 </Label>
                 <Input
@@ -128,7 +128,7 @@ export function ExperienceSectionManager() {
                 />
               </div>
               <div>
-                <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                <Label className={`block ${isRTL ? 'text-right' : 'text-left'}`}>
                   {t("experienceSection.arabicTitle")}
                 </Label>
                 <Input
@@ -143,7 +143,7 @@ export function ExperienceSectionManager() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                <Label className={`block ${isRTL ? 'text-right' : 'text-left'}`}>
                   {t("experienceSection.englishDescription")}
                 </Label>
                 <Textarea
@@ -155,7 +155,7 @@ export function ExperienceSectionManager() {
                 />
               </div>
               <div>
-                <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                <Label className={`block ${isRTL ? 'text-right' : 'text-left'}`}>
                   {t("experienceSection.arabicDescription")}
                 </Label>
                 <Textarea
@@ -180,7 +180,7 @@ export function ExperienceSectionManager() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              <Label className={`block ${isRTL ? 'text-right' : 'text-left'}`}>
                 {t("experienceSection.video1")}
               </Label>
               <Input
@@ -204,7 +204,7 @@ export function ExperienceSectionManager() {
             </div>
 
             <div>
-              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              <Label className={`block ${isRTL ? 'text-right' : 'text-left'}`}>
                 {t("experienceSection.video2")}
               </Label>
               <Input
@@ -238,7 +238,7 @@ export function ExperienceSectionManager() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              <Label className={`block ${isRTL ? 'text-right' : 'text-left'}`}>
                 {t("experienceSection.englishText")}
               </Label>
               <Input
@@ -249,7 +249,7 @@ export function ExperienceSectionManager() {
               />
             </div>
             <div>
-              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              <Label className={`block ${isRTL ? 'text-right' : 'text-left'}`}>
                 {t("experienceSection.arabicText")}
               </Label>
               <Input
@@ -272,7 +272,7 @@ export function ExperienceSectionManager() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              <Label className={`block ${isRTL ? 'text-right' : 'text-left'}`}>
                 {t("experienceSection.englishText")}
               </Label>
               <Input
@@ -283,7 +283,7 @@ export function ExperienceSectionManager() {
               />
             </div>
             <div>
-              <Label className={`${isRTL ? 'text-right' : 'text-left'}`}>
+              <Label className={`block ${isRTL ? 'text-right' : 'text-left'}`}>
                 {t("experienceSection.arabicText")}
               </Label>
               <Input
@@ -301,36 +301,48 @@ export function ExperienceSectionManager() {
       {/* Preview Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Preview</CardTitle>
+          <CardTitle className={`${isRTL ? 'text-right' : 'text-left'}`}>
+            {isRTL ? "معاينة" : "Preview"}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold mb-2">{formData.titleEn}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{formData.descriptionEn}</p>
+            <div className={`text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+              <h3 className="text-2xl font-bold mb-2">
+                {isRTL ? formData.titleAr : formData.titleEn}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                {isRTL ? formData.descriptionAr : formData.descriptionEn}
+              </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div className="text-lg font-semibold mb-2">Video 1</div>
+              <div className={`text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg ${isRTL ? 'text-right' : 'text-left'}`}>
+                <div className="text-lg font-semibold mb-2">
+                  {isRTL ? "الفيديو 1" : "Video 1"}
+                </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  Text: {formData.text1En}
+                  {isRTL ? "النص: " : "Text: "}
+                  {isRTL ? formData.text1Ar : formData.text1En}
                 </div>
                 {formData.video1Url && (
                   <div className="text-xs text-green-600 dark:text-green-400">
-                    ✓ Video configured
+                    {isRTL ? "✓ تم تكوين الفيديو" : "✓ Video configured"}
                   </div>
                 )}
               </div>
               
-              <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div className="text-lg font-semibold mb-2">Video 2</div>
+              <div className={`text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg ${isRTL ? 'text-right' : 'text-left'}`}>
+                <div className="text-lg font-semibold mb-2">
+                  {isRTL ? "الفيديو 2" : "Video 2"}
+                </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  Text: {formData.text2En}
+                  {isRTL ? "النص: " : "Text: "}
+                  {isRTL ? formData.text2Ar : formData.text2En}
                 </div>
                 {formData.video2Url && (
                   <div className="text-xs text-green-600 dark:text-green-400">
-                    ✓ Video configured
+                    {isRTL ? "✓ تم تكوين الفيديو" : "✓ Video configured"}
                   </div>
                 )}
               </div>

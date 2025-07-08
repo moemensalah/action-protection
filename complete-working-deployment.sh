@@ -16,6 +16,7 @@ PROJECT_NAME="actionprotection"
 APP_USER="appuser"
 NODE_VERSION="20"
 APP_PORT="3000"
+DATABASE_PORT="5432"  # PostgreSQL port (can be changed to any available port)
 
 # Domain Configuration
 DOMAIN="your-domain.com"
@@ -27,7 +28,7 @@ GIT_REPO_URL="https://github.com/your-username/actionprotection.git"
 DB_USER="appuser"
 DB_PASSWORD="SECURE_PASSWORD_HERE"  # CHANGE THIS
 DB_NAME="actionprotection_db"
-DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}"
+DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@localhost:${DATABASE_PORT}/${DB_NAME}"
 DROP_EXISTING_DATABASE="true"
 
 # Authentication Configuration
@@ -46,7 +47,8 @@ echo "🚀 Starting Action Protection Production Deployment..."
 echo "📋 Project: ${PROJECT_NAME}"
 echo "📁 User: ${APP_USER}"
 echo "🌐 Domain: ${DOMAIN}"
-echo "🔌 Port: ${APP_PORT}"
+echo "🔌 App Port: ${APP_PORT}"
+echo "🗄️ Database Port: ${DATABASE_PORT}"
 echo ""
 
 # System Setup
@@ -89,6 +91,36 @@ chmod -R 755 /home/${APP_USER}
 echo "🗄️ Setting up PostgreSQL database..."
 systemctl start postgresql
 systemctl enable postgresql
+
+# Configure PostgreSQL port if not default
+if [ "${DATABASE_PORT}" != "5432" ]; then
+    echo "🔧 Configuring PostgreSQL to use port ${DATABASE_PORT}..."
+    
+    # Update PostgreSQL configuration
+    PG_VERSION=$(sudo -u postgres psql -t -c "SELECT version();" | grep -oP '\d+\.\d+' | head -1)
+    PG_CONFIG="/etc/postgresql/${PG_VERSION}/main/postgresql.conf"
+    
+    if [ -f "$PG_CONFIG" ]; then
+        # Backup original config
+        cp "$PG_CONFIG" "${PG_CONFIG}.backup"
+        
+        # Update port in configuration
+        sed -i "s/#port = 5432/port = ${DATABASE_PORT}/" "$PG_CONFIG"
+        sed -i "s/port = 5432/port = ${DATABASE_PORT}/" "$PG_CONFIG"
+        
+        # Restart PostgreSQL to apply port change
+        systemctl restart postgresql
+        sleep 5
+        
+        echo "✅ PostgreSQL configured to use port ${DATABASE_PORT}"
+    else
+        echo "⚠️ PostgreSQL config file not found, using default port 5432"
+        DATABASE_PORT="5432"
+        DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@localhost:${DATABASE_PORT}/${DB_NAME}"
+    fi
+else
+    echo "✅ Using default PostgreSQL port ${DATABASE_PORT}"
+fi
 
 # Configure PostgreSQL
 sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';" 2>/dev/null || true
@@ -442,7 +474,8 @@ echo "🎉 Action Protection deployment completed!"
 echo ""
 echo "📋 Deployment Summary:"
 echo "   🌐 Domain: ${DOMAIN}"
-echo "   🔌 Port: ${APP_PORT}"
+echo "   🔌 App Port: ${APP_PORT}"
+echo "   🗄️ Database Port: ${DATABASE_PORT}"
 echo "   👤 Admin: ${ADMIN_USERNAME} / ${ADMIN_PASSWORD}"
 echo "   📧 Email: ${ADMIN_EMAIL}"
 echo "   🗄️ Database: ${DB_NAME}"

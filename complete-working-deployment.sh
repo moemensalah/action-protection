@@ -12,17 +12,17 @@
 set -e
 
 # Configuration Variables - UPDATE THESE BEFORE DEPLOYMENT
-PROJECT_NAME="actionprotection"
-APP_USER="appuser"
+PROJECT_NAME="action-protection"
+APP_USER="actionprotection"
 NODE_VERSION="20"
-APP_PORT="3000"
-DATABASE_PORT="5432"  # PostgreSQL port (can be changed to any available port)
+APP_PORT="4000"
+DATABASE_PORT="5800"  # PostgreSQL port (can be changed to any available port)
 
 # Domain Configuration
-DOMAIN="your-domain.com"
-DOMAIN_WWW="www.your-domain.com"
+DOMAIN="demox.actionprotectionkw.com"
+DOMAIN_WWW="www.demox.actionprotectionkw.com"
 DOMAIN_NAME="${DOMAIN},${DOMAIN_WWW},localhost:${APP_PORT},127.0.0.1:${APP_PORT}"
-GIT_REPO_URL="https://github.com/your-username/actionprotection.git"
+GIT_REPO_URL="https://github.com/moemensalah/action-protection.git"
 
 # Database Configuration
 DB_USER="appuser"
@@ -33,7 +33,7 @@ DROP_EXISTING_DATABASE="true"
 
 # Authentication Configuration
 SESSION_SECRET="actionprotection-production-session-secret-$(date +%s)"
-REPL_ID="actionprotection"
+REPL_ID="krw1cv"
 ISSUER_URL="https://replit.com/oidc"
 
 # Admin User Configuration

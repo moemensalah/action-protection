@@ -113,7 +113,9 @@ fi
 
 # Database migration
 echo "🗄️ Running database migrations..."
-sudo -u ${APP_USER} npm run db:push
+# Export DATABASE_URL for the migration command
+export DATABASE_URL="${DATABASE_URL}"
+sudo -u ${APP_USER} env DATABASE_URL="${DATABASE_URL}" npm run db:push
 
 # Create admin user directly via PostgreSQL (checking actual schema)
 echo "👤 Creating admin user with correct database schema..."

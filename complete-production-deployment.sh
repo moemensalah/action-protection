@@ -448,11 +448,13 @@ sudo -u $APP_USER bash -c "
     export PATH=\$PATH:./node_modules/.bin
     echo 'Installing all dependencies (including dev dependencies for build)...'
     npm install
-    echo 'Verifying build tools are available...'
-    which vite || echo 'vite not in PATH, using direct path'
-    echo 'Building application with explicit paths...'
-    ./node_modules/.bin/vite build
-    ./node_modules/.bin/esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+    echo 'Verifying build tools installation...'
+    ls -la node_modules/.bin/ | grep -E '(vite|esbuild)' || echo 'Build tools not found in node_modules/.bin'
+    echo 'Checking if vite and esbuild are installed...'
+    npm ls vite esbuild || echo 'Build tools not listed in dependencies'
+    echo 'Building application with npx (ensuring tools are downloaded)...'
+    npx vite build --force
+    npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
     echo 'Verifying build outputs...'
     ls -la dist/
     if [ ! -f 'dist/index.js' ]; then

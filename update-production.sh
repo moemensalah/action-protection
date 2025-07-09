@@ -55,7 +55,9 @@ sudo -u $APP_USER npm install
 echo "5. Building application..."
 sudo -u $APP_USER bash -c "
     export PATH=\$PATH:./node_modules/.bin
-    npm run build
+    echo 'Building with npx...'
+    npx vite build --force
+    npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 "
 
 # Verify build was successful
@@ -69,8 +71,13 @@ if [ ! -f "dist/index.js" ]; then
     "
     
     if [ ! -f "dist/index.js" ]; then
-        echo "❌ Rebuild failed - cannot continue"
-        exit 1
+        echo "❌ Rebuild failed - attempting emergency fix..."
+        npx vite build --force
+        npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+        if [ ! -f "dist/index.js" ]; then
+            echo "❌ Emergency rebuild failed - cannot continue"
+            exit 1
+        fi
     fi
 fi
 

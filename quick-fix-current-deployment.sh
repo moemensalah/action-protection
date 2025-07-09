@@ -28,9 +28,11 @@ sudo -u $APP_USER npm install
 echo "2. Building application..."
 sudo -u $APP_USER bash -c "
     export PATH=\$PATH:./node_modules/.bin
-    echo 'Building with direct paths...'
-    ./node_modules/.bin/vite build
-    ./node_modules/.bin/esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+    echo 'Checking for build tools...'
+    ls -la node_modules/.bin/ | grep -E '(vite|esbuild)' || echo 'Build tools not found, using npx'
+    echo 'Building with npx to ensure tools are available...'
+    npx vite build --force
+    npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 "
 
 if [ -f "dist/index.js" ] && [ -f "dist/public/index.html" ]; then

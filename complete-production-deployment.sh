@@ -588,7 +588,7 @@ server {
     }
     
     location /assets/ {
-        alias $PROJECT_DIR/client/dist/assets/;
+        alias $PROJECT_DIR/dist/public/assets/;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }

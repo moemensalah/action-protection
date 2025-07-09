@@ -49,22 +49,26 @@ fi
 
 # Install dependencies
 echo "4. Installing dependencies..."
-sudo -u $APP_USER npm install --production
+sudo -u $APP_USER npm install
 
 # Build application
 echo "5. Building application..."
 sudo -u $APP_USER npm run build
 
+# Remove dev dependencies after build
+echo "6. Removing dev dependencies..."
+sudo -u $APP_USER npm prune --production
+
 # Database migrations (if needed)
-echo "6. Running database migrations..."
+echo "7. Running database migrations..."
 sudo -u $APP_USER npm run db:push 2>/dev/null || echo "No migrations needed"
 
 # Start application
-echo "7. Starting application..."
+echo "8. Starting application..."
 sudo -u $APP_USER pm2 start action-protection
 
 # Test deployment
-echo "8. Testing deployment..."
+echo "9. Testing deployment..."
 sleep 10
 
 # Test API endpoints

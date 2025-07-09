@@ -166,24 +166,37 @@ sudo certbot --nginx -d demox.actionprotectionkw.com
    # Just run the deployment script again - it will handle existing directories
    ```
 
-2. **502 Bad Gateway**
+2. **"vite not found" Build Error**
+   ```bash
+   # Quick fix for existing deployment
+   ./quick-fix-current-deployment.sh
+   
+   # Or manually:
+   cd /home/actionprotection/action-protection
+   sudo -u actionprotection npm install
+   sudo -u actionprotection npm run build
+   sudo -u actionprotection npm prune --production
+   sudo -u actionprotection pm2 restart action-protection
+   ```
+
+3. **502 Bad Gateway**
    ```bash
    sudo -u actionprotection pm2 logs action-protection
    sudo systemctl status nginx
    ```
 
-3. **Database Connection Issues**
+4. **Database Connection Issues**
    ```bash
    sudo systemctl status postgresql
    psql "postgresql://actionprotection:ajHQGHgwqhg3ggagdg@localhost:5432/actionprotection_db" -c "SELECT 1;"
    ```
 
-4. **Permission Issues**
+5. **Permission Issues**
    ```bash
    sudo chown -R actionprotection:actionprotection /home/actionprotection/action-protection
    ```
 
-5. **Port Issues**
+6. **Port Issues**
    ```bash
    sudo netstat -tulpn | grep :4000
    sudo lsof -i :4000

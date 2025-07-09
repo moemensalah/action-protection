@@ -445,8 +445,12 @@ echo "6. Installing dependencies and building..."
 cd $PROJECT_DIR
 sudo -u $APP_USER bash -c "
     export NODE_ENV=production
-    npm install --production
+    echo 'Installing all dependencies (including dev dependencies for build)...'
+    npm install
+    echo 'Building application...'
     npm run build
+    echo 'Removing dev dependencies after build...'
+    npm prune --production
 "
 
 # 7. Create environment configuration

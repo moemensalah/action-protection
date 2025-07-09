@@ -1,0 +1,29 @@
+echo $DATABASE_URL | grep -E "(neon|supabase|aws|azure|gcp)"
+# List all databases in local PostgreSQL
+sudo -u postgres psql -c "\l"
+DATABASE_URL: postgresql://actionprotection:ajHQGHgwqhg3ggagdg@localhost:5432/ac                                                                                                                                                                                                                                             tionprotection_db
+                                               List of databases
+        Name         |      Owner       | Encoding | Collate |  Ctype  |           Access privileges
+---------------------+------------------+----------+---------+---------+---------------------------------------
+ actionprotection_db | actionprotection | UTF8     | C.UTF-8 | C.UTF-8 | =Tc/actionprotection                 +
+                     |                  |          |         |         | actionprotection=CTc/actionprotection
+ latelounge          | appuser          | UTF8     | C.UTF-8 | C.UTF-8 | =Tc/appuser                          +
+                     |                  |          |         |         | appuser=CTc/appuser
+ latelounge_db       | postgres         | UTF8     | C.UTF-8 | C.UTF-8 | =Tc/postgres                         +
+                     |                  |          |         |         | postgres=CTc/postgres                +
+                     |                  |          |         |         | appuser=CTc/postgres
+ postgres            | postgres         | UTF8     | C.UTF-8 | C.UTF-8 |
+ template0           | postgres         | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres                          +
+                     |                  |          |         |         | postgres=CTc/postgres
+ template1           | postgres         | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres                          +
+                     |                  |          |         |         | postgres=CTc/postgres
+(6 rows)
+
+~
+~
+~
+~
+~
+~
+~
+~

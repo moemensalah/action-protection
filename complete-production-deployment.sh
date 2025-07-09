@@ -445,10 +445,20 @@ echo "6. Installing dependencies and building..."
 cd $PROJECT_DIR
 sudo -u $APP_USER bash -c "
     export NODE_ENV=production
+    export PATH=\$PATH:./node_modules/.bin
     echo 'Installing all dependencies (including dev dependencies for build)...'
     npm install
-    echo 'Building application...'
-    npm run build
+    echo 'Verifying build tools are available...'
+    which vite || echo 'vite not in PATH, using direct path'
+    echo 'Building application with explicit paths...'
+    ./node_modules/.bin/vite build
+    ./node_modules/.bin/esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+    echo 'Verifying build outputs...'
+    ls -la dist/
+    if [ ! -f 'dist/index.js' ]; then
+        echo '❌ Build failed - dist/index.js not found'
+        exit 1
+    fi
     echo 'Removing dev dependencies after build...'
     npm prune --production
 "
@@ -492,6 +502,25 @@ EOF
 # 9. Create logs directory and start application
 echo "9. Starting application with PM2..."
 sudo -u $APP_USER mkdir -p $PROJECT_DIR/logs
+
+# Verify build was successful before starting PM2
+if [ ! -f "$PROJECT_DIR/dist/index.js" ]; then
+    echo "❌ Build failed - dist/index.js not found"
+    echo "Attempting to rebuild..."
+    sudo -u $APP_USER bash -c "
+        cd $PROJECT_DIR
+        export PATH=\$PATH:./node_modules/.bin
+        npm install
+        npm run build
+    "
+    
+    if [ ! -f "$PROJECT_DIR/dist/index.js" ]; then
+        echo "❌ Rebuild failed - cannot start PM2"
+        echo "Please check the build logs above"
+        exit 1
+    fi
+fi
+
 sudo -u $APP_USER bash -c "
     cd $PROJECT_DIR
     pm2 delete action-protection 2>/dev/null || true

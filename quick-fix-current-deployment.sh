@@ -26,7 +26,12 @@ echo "1. Installing all dependencies (including dev dependencies needed for buil
 sudo -u $APP_USER npm install
 
 echo "2. Building application..."
-sudo -u $APP_USER npm run build
+sudo -u $APP_USER bash -c "
+    export PATH=\$PATH:./node_modules/.bin
+    echo 'Building with direct paths...'
+    ./node_modules/.bin/vite build
+    ./node_modules/.bin/esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+"
 
 if [ -f "dist/index.js" ] && [ -f "dist/public/index.html" ]; then
     echo "✅ Build successful!"

@@ -164,7 +164,8 @@ tar -czf app_backup.tar.gz -C /home/actionprotection action-protection --exclude
    # Or manually:
    cd /home/actionprotection/action-protection
    sudo -u actionprotection npm install
-   sudo -u actionprotection npm run build
+   sudo -u actionprotection ./node_modules/.bin/vite build
+   sudo -u actionprotection ./node_modules/.bin/esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
    sudo -u actionprotection npm prune --production
    sudo -u actionprotection pm2 restart action-protection
    ```

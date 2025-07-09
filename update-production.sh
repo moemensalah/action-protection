@@ -53,7 +53,26 @@ sudo -u $APP_USER npm install
 
 # Build application
 echo "5. Building application..."
-sudo -u $APP_USER npm run build
+sudo -u $APP_USER bash -c "
+    export PATH=\$PATH:./node_modules/.bin
+    npm run build
+"
+
+# Verify build was successful
+if [ ! -f "dist/index.js" ]; then
+    echo "❌ Build failed - dist/index.js not found"
+    echo "Attempting to rebuild with explicit PATH..."
+    sudo -u $APP_USER bash -c "
+        export PATH=\$PATH:./node_modules/.bin
+        npm install
+        npm run build
+    "
+    
+    if [ ! -f "dist/index.js" ]; then
+        echo "❌ Rebuild failed - cannot continue"
+        exit 1
+    fi
+fi
 
 # Remove dev dependencies after build
 echo "6. Removing dev dependencies..."

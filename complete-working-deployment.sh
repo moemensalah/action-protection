@@ -25,8 +25,8 @@ DOMAIN_NAME="${DOMAIN},${DOMAIN_WWW},localhost:${APP_PORT},127.0.0.1:${APP_PORT}
 GIT_REPO_URL="https://github.com/moemensalah/action-protection.git"
 
 # Database Configuration
-DB_USER="appuser"
-DB_PASSWORD="SECURE_PASSWORD_HERE"  # CHANGE THIS
+DB_USER="actionprotection"
+DB_PASSWORD="ajHQGHgwqhg3ggagdg"  # CHANGE THIS
 DB_NAME="actionprotection_db"
 DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@localhost:${DATABASE_PORT}/${DB_NAME}"
 DROP_EXISTING_DATABASE="true"
@@ -178,11 +178,55 @@ else
         
         # Copy current directory contents as fallback
         echo "📦 Copying current source files..."
-        sudo cp -r . /tmp/deployment-staging/ 2>/dev/null || true
-        sudo chown -R ${APP_USER}:${APP_USER} /tmp/deployment-staging/ 2>/dev/null || true
+        
+        # Get the current directory (where the script is running from)
+        CURRENT_DIR=$(pwd)
+        echo "Current directory: $CURRENT_DIR"
+        
+        # Create staging directory with proper permissions
+        sudo mkdir -p /tmp/deployment-staging
+        sudo chown -R ${APP_USER}:${APP_USER} /tmp/deployment-staging
+        
+        # Copy files excluding problematic directories
+        echo "Copying files from $CURRENT_DIR to staging..."
+        sudo cp -r "$CURRENT_DIR"/* /tmp/deployment-staging/ 2>/dev/null || {
+            echo "Direct copy failed, trying alternative approach..."
+            # Copy essential files individually
+            for file in package.json package-lock.json tsconfig.json vite.config.ts drizzle.config.ts tailwind.config.ts postcss.config.js components.json; do
+                if [ -f "$CURRENT_DIR/$file" ]; then
+                    sudo cp "$CURRENT_DIR/$file" /tmp/deployment-staging/ 2>/dev/null || true
+                    echo "Copied: $file"
+                fi
+            done
+            
+            # Copy directories
+            for dir in client server shared public uploads; do
+                if [ -d "$CURRENT_DIR/$dir" ]; then
+                    sudo cp -r "$CURRENT_DIR/$dir" /tmp/deployment-staging/ 2>/dev/null || true
+                    echo "Copied directory: $dir"
+                fi
+            done
+        }
+        
+        # Ensure proper ownership
+        sudo chown -R ${APP_USER}:${APP_USER} /tmp/deployment-staging
+        
+        # Move to final destination
+        echo "Moving files to final destination..."
         sudo -u ${APP_USER} cp -r /tmp/deployment-staging/* /home/${APP_USER}/${PROJECT_NAME}/ 2>/dev/null || true
-        sudo rm -rf /tmp/deployment-staging/ 2>/dev/null || true
-        echo "✅ Source files copied successfully"
+        sudo -u ${APP_USER} cp -r /tmp/deployment-staging/.* /home/${APP_USER}/${PROJECT_NAME}/ 2>/dev/null || true
+        
+        # Clean up staging
+        sudo rm -rf /tmp/deployment-staging
+        
+        # Verify essential files
+        if [ -f "/home/${APP_USER}/${PROJECT_NAME}/package.json" ]; then
+            echo "✅ Source files copied successfully"
+        else
+            echo "❌ Critical files missing, trying direct copy..."
+            sudo cp -r "$CURRENT_DIR"/* /home/${APP_USER}/${PROJECT_NAME}/ 2>/dev/null || true
+            sudo cp -r "$CURRENT_DIR"/.* /home/${APP_USER}/${PROJECT_NAME}/ 2>/dev/null || true
+        fi
     fi
 fi
 

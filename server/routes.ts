@@ -161,7 +161,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Find ADMIN user by email (NOT website user)
-      const adminUser = await storage.getUserByUsername(email);
+      const adminUser = await storage.getUserByEmail(email);
 
       if (!adminUser || adminUser.role !== "administrator") {
         return res.status(401).json({ message: "Invalid credentials" });

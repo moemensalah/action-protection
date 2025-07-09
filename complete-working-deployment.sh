@@ -526,7 +526,7 @@ sudo -u ${APP_USER} mkdir -p logs
 echo "⚙️ Creating PM2 configuration..."
 if [ "$PRODUCTION_MODE" = true ]; then
     # Production mode config
-    sudo -u ${APP_USER} tee ecosystem.config.js << PM2_CONFIG_EOF
+    sudo -u ${APP_USER} tee ecosystem.config.cjs << PM2_CONFIG_EOF
 module.exports = {
   apps: [{
     name: '${PROJECT_NAME}',
@@ -556,7 +556,7 @@ module.exports = {
 PM2_CONFIG_EOF
 else
     # Development mode config - fallback to npm start
-    sudo -u ${APP_USER} tee ecosystem.config.js << PM2_CONFIG_EOF
+    sudo -u ${APP_USER} tee ecosystem.config.cjs << PM2_CONFIG_EOF
 module.exports = {
   apps: [{
     name: '${PROJECT_NAME}',
@@ -589,7 +589,7 @@ fi
 
 # Start application with PM2
 echo "🚀 Starting application with PM2..."
-sudo -u ${APP_USER} pm2 start ecosystem.config.js --env production
+sudo -u ${APP_USER} pm2 start ecosystem.config.cjs --env production
 sudo -u ${APP_USER} pm2 save
 
 # Setup PM2 startup

@@ -183,50 +183,110 @@ else
         CURRENT_DIR=$(pwd)
         echo "Current directory: $CURRENT_DIR"
         
-        # Create staging directory with proper permissions
-        sudo mkdir -p /tmp/deployment-staging
-        sudo chown -R ${APP_USER}:${APP_USER} /tmp/deployment-staging
+        # Verify source files exist
+        if [ ! -f "$CURRENT_DIR/package.json" ]; then
+            echo "❌ package.json not found in source directory: $CURRENT_DIR"
+            echo "Available files:"
+            ls -la "$CURRENT_DIR"
+            exit 1
+        fi
         
-        # Copy files excluding problematic directories
-        echo "Copying files from $CURRENT_DIR to staging..."
-        sudo cp -r "$CURRENT_DIR"/* /tmp/deployment-staging/ 2>/dev/null || {
-            echo "Direct copy failed, trying alternative approach..."
-            # Copy essential files individually
-            for file in package.json package-lock.json tsconfig.json vite.config.ts drizzle.config.ts tailwind.config.ts postcss.config.js components.json; do
-                if [ -f "$CURRENT_DIR/$file" ]; then
-                    sudo cp "$CURRENT_DIR/$file" /tmp/deployment-staging/ 2>/dev/null || true
-                    echo "Copied: $file"
-                fi
-            done
+        # Use tar for reliable file copying with proper permissions
+        echo "Using tar to copy files preserving permissions..."
+        cd "$CURRENT_DIR"
+        
+        # Create tar archive excluding problematic directories
+        tar --exclude='node_modules' \
+            --exclude='.git' \
+            --exclude='dist' \
+            --exclude='logs' \
+            --exclude='*.log' \
+            -cf - . | sudo -u ${APP_USER} tar -xf - -C /home/${APP_USER}/${PROJECT_NAME}
+        
+        if [ $? -eq 0 ]; then
+            echo "✅ Files copied successfully using tar"
+        else
+            echo "❌ Tar copy failed, trying rsync method..."
             
-            # Copy directories
-            for dir in client server shared public uploads; do
-                if [ -d "$CURRENT_DIR/$dir" ]; then
-                    sudo cp -r "$CURRENT_DIR/$dir" /tmp/deployment-staging/ 2>/dev/null || true
-                    echo "Copied directory: $dir"
+            # Try rsync as alternative
+            if command -v rsync >/dev/null 2>&1; then
+                sudo rsync -av --exclude='node_modules' --exclude='.git' --exclude='dist' --exclude='logs' \
+                    --chown=${APP_USER}:${APP_USER} "$CURRENT_DIR/" /home/${APP_USER}/${PROJECT_NAME}/
+                
+                if [ $? -eq 0 ]; then
+                    echo "✅ Files copied successfully using rsync"
+                else
+                    echo "❌ Rsync failed, trying manual copy..."
+                    
+                    # Manual copy as last resort
+                    echo "Copying files manually..."
+                    
+                    # Copy root files
+                    for file in package.json package-lock.json tsconfig.json vite.config.ts drizzle.config.ts tailwind.config.ts postcss.config.js components.json .gitignore; do
+                        if [ -f "$CURRENT_DIR/$file" ]; then
+                            sudo cp "$CURRENT_DIR/$file" /home/${APP_USER}/${PROJECT_NAME}/
+                            echo "Copied: $file"
+                        fi
+                    done
+                    
+                    # Copy directories
+                    for dir in client server shared public uploads; do
+                        if [ -d "$CURRENT_DIR/$dir" ]; then
+                            sudo cp -r "$CURRENT_DIR/$dir" /home/${APP_USER}/${PROJECT_NAME}/
+                            echo "Copied directory: $dir"
+                        fi
+                    done
                 fi
-            done
-        }
+            else
+                echo "❌ rsync not available, using basic copy..."
+                sudo cp -r "$CURRENT_DIR"/* /home/${APP_USER}/${PROJECT_NAME}/ 2>/dev/null || true
+                sudo cp -r "$CURRENT_DIR"/.* /home/${APP_USER}/${PROJECT_NAME}/ 2>/dev/null || true
+            fi
+        fi
         
         # Ensure proper ownership
-        sudo chown -R ${APP_USER}:${APP_USER} /tmp/deployment-staging
+        sudo chown -R ${APP_USER}:${APP_USER} /home/${APP_USER}/${PROJECT_NAME}
         
-        # Move to final destination
-        echo "Moving files to final destination..."
-        sudo -u ${APP_USER} cp -r /tmp/deployment-staging/* /home/${APP_USER}/${PROJECT_NAME}/ 2>/dev/null || true
-        sudo -u ${APP_USER} cp -r /tmp/deployment-staging/.* /home/${APP_USER}/${PROJECT_NAME}/ 2>/dev/null || true
+        # Verify critical files were copied
+        echo "🔍 Verifying copied files..."
+        VERIFICATION_FAILED=false
         
-        # Clean up staging
-        sudo rm -rf /tmp/deployment-staging
-        
-        # Verify essential files
         if [ -f "/home/${APP_USER}/${PROJECT_NAME}/package.json" ]; then
-            echo "✅ Source files copied successfully"
+            echo "✅ package.json verified"
         else
-            echo "❌ Critical files missing, trying direct copy..."
-            sudo cp -r "$CURRENT_DIR"/* /home/${APP_USER}/${PROJECT_NAME}/ 2>/dev/null || true
-            sudo cp -r "$CURRENT_DIR"/.* /home/${APP_USER}/${PROJECT_NAME}/ 2>/dev/null || true
+            echo "❌ package.json missing"
+            VERIFICATION_FAILED=true
         fi
+        
+        if [ -d "/home/${APP_USER}/${PROJECT_NAME}/client" ]; then
+            echo "✅ client directory verified"
+        else
+            echo "❌ client directory missing"
+            VERIFICATION_FAILED=true
+        fi
+        
+        if [ -d "/home/${APP_USER}/${PROJECT_NAME}/server" ]; then
+            echo "✅ server directory verified"
+        else
+            echo "❌ server directory missing"
+            VERIFICATION_FAILED=true
+        fi
+        
+        if [ -d "/home/${APP_USER}/${PROJECT_NAME}/shared" ]; then
+            echo "✅ shared directory verified"
+        else
+            echo "❌ shared directory missing"
+            VERIFICATION_FAILED=true
+        fi
+        
+        if [ "$VERIFICATION_FAILED" = true ]; then
+            echo "❌ File copy verification failed"
+            echo "Contents of target directory:"
+            ls -la /home/${APP_USER}/${PROJECT_NAME}
+            exit 1
+        fi
+        
+        echo "✅ All critical files verified successfully"
     fi
 fi
 

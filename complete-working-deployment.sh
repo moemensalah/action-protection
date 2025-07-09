@@ -195,15 +195,27 @@ else
                 "$CURRENT_DIR/${PROJECT_NAME}"
                 "$CURRENT_DIR/../${PROJECT_NAME}"
                 "/tmp/${PROJECT_NAME}"
+                "/root/${PROJECT_NAME}"
+                "/home/root/${PROJECT_NAME}"
             )
             
             FOUND_SOURCE=false
             for dir in "${POSSIBLE_DIRS[@]}"; do
-                if [ -f "$dir/package.json" ]; then
-                    echo "✅ Found source files in: $dir"
-                    CURRENT_DIR="$dir"
-                    FOUND_SOURCE=true
-                    break
+                echo "Checking directory: $dir"
+                if [ -d "$dir" ]; then
+                    echo "  Directory exists, checking for package.json..."
+                    if [ -f "$dir/package.json" ]; then
+                        echo "✅ Found source files in: $dir"
+                        CURRENT_DIR="$dir"
+                        FOUND_SOURCE=true
+                        break
+                    else
+                        echo "  No package.json found in $dir"
+                        echo "  Contents:"
+                        ls -la "$dir" 2>/dev/null || echo "  Cannot list contents"
+                    fi
+                else
+                    echo "  Directory does not exist: $dir"
                 fi
             done
             

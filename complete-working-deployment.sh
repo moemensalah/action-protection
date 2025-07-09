@@ -183,13 +183,41 @@ else
         CURRENT_DIR=$(pwd)
         echo "Current directory: $CURRENT_DIR"
         
-        # Verify source files exist
+        # Check if we're in the correct directory or need to find source files
         if [ ! -f "$CURRENT_DIR/package.json" ]; then
-            echo "❌ package.json not found in source directory: $CURRENT_DIR"
+            echo "⚠️ package.json not found in current directory: $CURRENT_DIR"
             echo "Available files:"
             ls -la "$CURRENT_DIR"
-            exit 1
+            
+            # Look for source files in common locations
+            POSSIBLE_DIRS=(
+                "/home/${APP_USER}/${PROJECT_NAME}"
+                "$CURRENT_DIR/${PROJECT_NAME}"
+                "$CURRENT_DIR/../${PROJECT_NAME}"
+                "/tmp/${PROJECT_NAME}"
+            )
+            
+            FOUND_SOURCE=false
+            for dir in "${POSSIBLE_DIRS[@]}"; do
+                if [ -f "$dir/package.json" ]; then
+                    echo "✅ Found source files in: $dir"
+                    CURRENT_DIR="$dir"
+                    FOUND_SOURCE=true
+                    break
+                fi
+            done
+            
+            if [ "$FOUND_SOURCE" = false ]; then
+                echo "❌ Cannot find source files with package.json in any expected location"
+                echo "Searched directories:"
+                for dir in "${POSSIBLE_DIRS[@]}"; do
+                    echo "  - $dir"
+                done
+                exit 1
+            fi
         fi
+        
+        echo "✅ Using source directory: $CURRENT_DIR"
         
         # Use tar for reliable file copying with proper permissions
         echo "Using tar to copy files preserving permissions..."

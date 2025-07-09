@@ -1,0 +1,120 @@
+. Checking PostgreSQL status...
+✅ PostgreSQL is running
+
+2. Testing database connection...
+✅ Database connection successful
+
+3. Checking users table structure...
+ exists
+--------
+ t
+(1 row)
+
+                                          Table "public.users"
+      Column       |            Type             | Collation | Nullable |            Default
+-------------------+-----------------------------+-----------+----------+--------------------------------
+ id                | character varying           |           | not null |
+ username          | character varying(50)       |           |          |
+ email             | character varying           |           |          |
+ password          | character varying(255)      |           |          |
+ first_name        | character varying           |           |          |
+ last_name         | character varying           |           |          |
+ profile_image_url | character varying           |           |          |
+ role              | character varying           |           |          | 'moderator'::character varying
+ is_active         | boolean                     |           |          | true
+ created_at        | timestamp without time zone |           |          | now()
+ updated_at        | timestamp without time zone |           |          | now()
+Indexes:
+    "users_pkey" PRIMARY KEY, btree (id)
+    "users_email_unique" UNIQUE CONSTRAINT, btree (email)
+    "users_username_unique" UNIQUE CONSTRAINT, btree (username)
+Referenced by:
+    TABLE "user_permissions" CONSTRAINT "user_permissions_user_id_users_id_fk" FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+
+
+4. Checking existing admin users...
+     id     |           email            |     role      | is_active |         created_at         | password_status
+------------+----------------------------+---------------+-----------+----------------------------+-----------------
+ admin_user | admin@actionprotection.com | administrator | t         | 2025-07-09 16:13:18.524756 | PRESENT
+(1 row)
+
+
+5. Checking for schema issues...
+ column_name |     data_type     | is_nullable
+-------------+-------------------+-------------
+ is_active   | boolean           | YES
+ email       | character varying | YES
+ password    | character varying | YES
+ role        | character varying | YES
+(4 rows)
+
+
+6. Testing bcrypt hash generation...
+Node.js is available
+✅ Bcrypt hash generated successfully
+Password: admin123456
+Hash: $2b$10$.1dpeY0Oo7M94gcuZ9GDTul0DVGwUFid6K81Cav2qZBdbGusjsITq
+Verification: true
+
+7. Checking application status...
+PM2 processes:
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 1  │ action-protection  │ fork     │ 2    │ online    │ 0%       │ 52.8mb   │
+│ 0  │ latelounge         │ fork     │ 52   │ online    │ 0%       │ 58.3mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+
+Recent PM2 logs:
+[TAILING] Tailing last 10 lines for [all] processes (change the value with --lines option)
+/root/.pm2/pm2.log last 10 lines:
+PM2        | 2025-07-09T14:34:47: PM2 log: Stopping app:latelounge id:0
+PM2        | 2025-07-09T14:34:47: PM2 log: App [latelounge:0] exited with code [0] via signal [SIGINT]
+PM2        | 2025-07-09T14:34:47: PM2 log: pid=383907 msg=process killed
+PM2        | 2025-07-09T14:34:47: PM2 log: App [latelounge:0] starting in -fork mode-
+PM2        | 2025-07-09T14:34:47: PM2 log: App [latelounge:0] online
+PM2        | 2025-07-09T14:34:47: PM2 log: Stopping app:action-protection id:1
+PM2        | 2025-07-09T14:34:47: PM2 log: App [action-protection:1] exited with code [0] via signal [SIGINT]
+PM2        | 2025-07-09T14:34:47: PM2 log: pid=383915 msg=process killed
+PM2        | 2025-07-09T14:34:47: PM2 log: App [action-protection:1] starting in -fork mode-
+PM2        | 2025-07-09T14:34:47: PM2 log: App [action-protection:1] online
+
+/home/appuser/latelounge/logs/err-0.log last 10 lines:
+0|lateloun | 2025-06-25T15:52:37:   table: 'products',
+0|lateloun | 2025-06-25T15:52:37:   column: undefined,
+0|lateloun | 2025-06-25T15:52:37:   dataType: undefined,
+0|lateloun | 2025-06-25T15:52:37:   constraint: 'products_category_id_categories_id_fk',
+0|lateloun | 2025-06-25T15:52:37:   file: 'ri_triggers.c',
+0|lateloun | 2025-06-25T15:52:37:   line: '2528',
+0|lateloun | 2025-06-25T15:52:37:   routine: 'ri_ReportViolation'
+0|lateloun | 2025-06-25T15:52:37: }
+0|lateloun | 2025-07-08T09:46:05: Killed
+0|lateloun | 2025-07-08T09:46:08: Killed
+
+/root/.pm2/logs/action-protection-out.log last 10 lines:
+/root/.pm2/logs/action-protection-error.log last 10 lines:
+1|action-p |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:642:12)
+1|action-p |     at #cachedDefaultResolve (node:internal/modules/esm/loader:591:25)
+1|action-p |     at ModuleLoader.resolve (node:internal/modules/esm/loader:574:38)
+1|action-p |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
+1|action-p |     at ModuleLoader.import (node:internal/modules/esm/loader:539:34)
+1|action-p |     at defaultImportModuleDynamicallyForScript (node:internal/modules/esm/utils:234:31)
+1|action-p |     at importModuleDynamicallyCallback (node:internal/modules/esm/utils:256:12) {
+1|action-p |   code: 'ERR_MODULE_NOT_FOUND',
+1|action-p |   url: 'file:///home/actionprotection/action-protection/action-protection'
+1|action-p | }
+
+/home/appuser/latelounge/logs/out-0.log last 10 lines:
+0|lateloun | 2025-07-09T16:13:40: 4:13:40 PM [express] POST /api/upload/image 200 in 36ms :: {"url":"http://demo2.late-lounge.com/uplo…
+0|lateloun | 2025-07-09T16:13:42: 4:13:42 PM [express] PUT /api/admin/categories/13 200 in 22ms :: {"id":13,"nameEn":"Pizza","nameAr":…
+0|lateloun | 2025-07-09T16:13:42: 4:13:42 PM [express] GET /api/admin/categories 200 in 8ms :: [{"id":10,"nameEn":"Hot Drinks","nameAr…
+0|lateloun | 2025-07-09T16:13:42: 4:13:42 PM [express] GET /api/categories 200 in 9ms :: {"categories":[{"id":10,"nameEn":"Hot Drinks"…
+0|lateloun | 2025-07-09T16:13:42: 4:13:42 PM [express] GET /api/admin/categories 304 in 7ms :: [{"id":10,"nameEn":"Hot Drinks","nameAr…
+0|lateloun | 2025-07-09T16:13:51: 4:13:51 PM [express] GET /api/footer 304 in 7ms :: {"id":1,"companyNameEn":"LateLounge","companyName…
+0|lateloun | 2025-07-09T16:13:51: 4:13:51 PM [express] GET /api/products 304 in 14ms :: {"products":[],"pagination":{"page":1,"limit":…
+0|lateloun | 2025-07-09T16:13:51: 4:13:51 PM [express] GET /api/widgets/tawk_chat 304 in 32ms :: {"id":1,"name":"tawk_chat","titleEn":…
+0|lateloun | 2025-07-09T16:13:51: 4:13:51 PM [express] GET /api/contact 304 in 42ms :: {"id":1,"phone":"+966 11 555 123413335","whatsa…
+0|lateloun | 2025-07-09T16:13:51: 4:13:51 PM [express] GET /api/categories 304 in 43ms :: {"categories":[{"id":10,"nameEn":"Hot Drinks…
+
+^C
+root@VM-9b346604-051d-4ac8-b4ca-5de25abab063:/home/acti

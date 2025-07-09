@@ -4,9 +4,9 @@
 echo "🔍 Checking Action Protection Deployment Status"
 echo "==============================================="
 
-# Configuration
+# Configuration - Update for your actual setup
 PROJECT_NAME="actionprotection"
-APP_USER="appuser"
+APP_USER="actionprotection"  # Updated to match your server
 APP_PORT="3000"
 DATABASE_PORT="5432"
 DB_NAME="actionprotection_db"

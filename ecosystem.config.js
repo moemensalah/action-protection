@@ -1,6 +1,6 @@
 export default {
   apps: [{
-    name: 'latelounge',
+    name: 'actionprotection',
     script: 'npm',
     args: 'start',
     instances: 1,

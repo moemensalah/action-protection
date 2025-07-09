@@ -530,6 +530,117 @@ echo "✅ Admin user created: ${ADMIN_EMAIL}"
 echo "⚡ Installing PM2 process manager..."
 npm install -g pm2
 
+# Install and configure nginx
+echo "🌐 Installing and configuring nginx..."
+apt update
+apt install -y nginx
+
+# Create nginx configuration for Action Protection
+cat > /etc/nginx/sites-available/action-protection << 'NGINX_CONFIG'
+server {
+    listen 80;
+    server_name demox.actionprotectionkw.com www.demox.actionprotectionkw.com;
+    
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        text/javascript
+        application/json
+        application/javascript
+        application/xml+rss
+        application/atom+xml
+        image/svg+xml;
+    
+    # Static files
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri @app;
+    }
+    
+    # API routes
+    location /api/ {
+        proxy_pass http://localhost:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 86400;
+    }
+    
+    # WebSocket support
+    location /ws {
+        proxy_pass http://localhost:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    # Main application
+    location / {
+        proxy_pass http://localhost:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 86400;
+    }
+    
+    # Fallback for static files
+    location @app {
+        proxy_pass http://localhost:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+NGINX_CONFIG
+
+# Enable the site
+ln -sf /etc/nginx/sites-available/action-protection /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+
+# Test nginx configuration
+echo "🔧 Testing nginx configuration..."
+nginx -t
+
+if [ $? -eq 0 ]; then
+    echo "✅ nginx configuration valid"
+    systemctl restart nginx
+    systemctl enable nginx
+    echo "✅ nginx started and enabled"
+else
+    echo "❌ nginx configuration invalid"
+    exit 1
+fi
+
 # Clean up existing processes
 echo "🧹 Cleaning up existing processes..."
 sudo lsof -ti:${APP_PORT} | xargs sudo kill -9 2>/dev/null || echo "No processes on port ${APP_PORT}"
@@ -641,59 +752,21 @@ if [ "$CONNECTIVITY_TEST" = false ]; then
     sudo -u ${APP_USER} pm2 logs --lines 20
 fi
 
-# Setup Nginx
-echo "🌐 Configuring Nginx..."
-tee /etc/nginx/sites-available/${PROJECT_NAME} << NGINX_EOF
-server {
-    listen 80;
-    server_name ${DOMAIN} www.${DOMAIN};
-    
-    root /home/${APP_USER}/${PROJECT_NAME}/dist/public;
-    index index.html;
-    
-    # Serve static files
-    location /assets/ {
-        alias /home/${APP_USER}/${PROJECT_NAME}/dist/public/assets/;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-    
-    location /uploads/ {
-        alias /home/${APP_USER}/${PROJECT_NAME}/uploads/;
-        expires 1y;
-        add_header Cache-Control "public";
-    }
-    
-    # API routes
-    location /api/ {
-        proxy_pass http://localhost:${APP_PORT};
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-        proxy_cache_bypass \$http_upgrade;
-    }
-    
-    # Frontend routes (SPA)
-    location / {
-        try_files \$uri \$uri/ /index.html;
-    }
-}
-NGINX_EOF
-
-# Enable Nginx site
-ln -sf /etc/nginx/sites-available/${PROJECT_NAME} /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default 2>/dev/null || true
-
-# Test and reload Nginx
-if nginx -t; then
-    systemctl reload nginx
-    echo "✅ Nginx configured successfully"
+# Check nginx status and restart if needed
+echo "🔍 Verifying nginx status..."
+if systemctl is-active --quiet nginx; then
+    echo "✅ nginx is running"
+    systemctl restart nginx
+    echo "✅ nginx restarted"
 else
-    echo "❌ Nginx configuration test failed"
+    echo "❌ nginx is not running, attempting to start..."
+    systemctl start nginx
+    if systemctl is-active --quiet nginx; then
+        echo "✅ nginx started successfully"
+    else
+        echo "❌ Failed to start nginx"
+        systemctl status nginx
+    fi
 fi
 
 # Final verification

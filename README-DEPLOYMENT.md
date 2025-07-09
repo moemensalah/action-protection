@@ -155,10 +155,29 @@ tar -czf app_backup.tar.gz -C /home/actionprotection action-protection --exclude
 ## Troubleshooting
 
 ### Common Issues
-1. **Build fails**: Run `npm install` locally first
-2. **Database connection**: Check PostgreSQL service status
-3. **Permission errors**: Ensure proper file ownership
-4. **Port conflicts**: Verify port 4000 is available
+
+1. **"vite not found" Build Error**
+   ```bash
+   # On production server - Quick fix
+   ./quick-fix-current-deployment.sh
+   
+   # Or manually:
+   cd /home/actionprotection/action-protection
+   sudo -u actionprotection npm install
+   sudo -u actionprotection npm run build
+   sudo -u actionprotection npm prune --production
+   sudo -u actionprotection pm2 restart action-protection
+   ```
+
+2. **PM2 Error: Script not found dist/index.js**
+   - This happens when the build failed
+   - Use the "vite not found" fix above
+   - The build process creates the dist/index.js file
+
+3. **Build fails**: Run `npm install` locally first
+4. **Database connection**: Check PostgreSQL service status
+5. **Permission errors**: Ensure proper file ownership
+6. **Port conflicts**: Verify port 4000 is available
 
 ### Log Locations
 - **Application**: `/home/actionprotection/action-protection/logs/`

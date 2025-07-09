@@ -101,6 +101,12 @@ sudo ./complete-production-deployment.sh
 
 ### Management Commands
 ```bash
+# Diagnose deployment issues
+./diagnose-deployment.sh
+
+# Quick fix for build issues
+./quick-fix-current-deployment.sh
+
 # Check application status
 sudo -u actionprotection pm2 list
 

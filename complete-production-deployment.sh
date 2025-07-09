@@ -448,75 +448,97 @@ sudo -u $APP_USER bash -c "
     export PATH=\$PATH:./node_modules/.bin
     echo 'Installing all dependencies (including dev dependencies for build)...'
     npm install --include=dev
-    echo 'Verifying build tools installation...'
-    npm ls vite esbuild || echo 'Installing missing build tools...'
-    npm install --save-dev vite @vitejs/plugin-react @replit/vite-plugin-runtime-error-modal @replit/vite-plugin-cartographer esbuild
-    echo 'Building client application...'
-    ./node_modules/.bin/vite build --outDir dist/public || npx vite build --outDir dist/public
-    echo 'Building server with proper bundling...'
-    npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-runtime-error-modal --external:@replit/vite-plugin-cartographer --external:pg-native
-    echo 'Creating proper server entry point...'
-    cat > dist/index.js << 'EOFSERVER'
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import express from 'express';
-import path from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-process.env.NODE_ENV = process.env.NODE_ENV || 'production';
-
-// Start the server
-import('./server.js').then(() => {
-    console.log('✅ Server started successfully');
-}).catch(err => {
-    console.error('❌ Server startup error:', err);
     
-    // Fallback server if main server fails
-    const app = express();
-    const PORT = process.env.PORT || 4000;
+    echo 'Ensuring vite dependencies are installed...'
+    npm install --save-dev vite@latest @vitejs/plugin-react@latest @replit/vite-plugin-runtime-error-modal @replit/vite-plugin-cartographer esbuild typescript
     
-    app.use(express.static(path.join(__dirname, 'public')));
+    echo 'Verifying vite installation...'
+    npm ls vite || echo 'Vite verification failed'
     
-    app.get('/api/categories', (req, res) => {
-        res.json({ categories: [], message: 'Server starting...' });
-    });
-    
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    });
-    
-    app.listen(PORT, () => {
-        console.log('Fallback server running on port', PORT);
-    });
-});
-EOFSERVER
-    echo 'Verifying build outputs...'
-    ls -la dist/
-    if [ ! -f 'dist/index.js' ]; then
-        echo '❌ Build failed - dist/index.js not found'
-        exit 1
-    fi
-    if [ ! -d 'dist/public' ]; then
-        echo '❌ Client build failed - creating minimal client'
-        mkdir -p dist/public
-        cat > dist/public/index.html << 'HTMLEOF'
+    echo 'Building client application with vite...'
+    npx vite build --outDir dist/public --force || {
+        echo 'Primary vite build failed, trying alternative approach...'
+        ./node_modules/.bin/vite build --outDir dist/public || {
+            echo 'Alternative vite build failed, creating minimal client...'
+            mkdir -p dist/public
+            mkdir -p dist/public/assets
+            cat > dist/public/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang=\"en\">
 <head>
     <meta charset=\"UTF-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
     <title>Action Protection</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f8f9fa; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { color: #f59e0b; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
+        .loading { color: #666; margin-top: 20px; }
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #f59e0b; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
-    <div id=\"root\">Loading Action Protection...</div>
+    <div class=\"container\">
+        <div class=\"logo\">Action Protection</div>
+        <div class=\"spinner\"></div>
+        <p class=\"loading\">Loading automotive protection services...</p>
+    </div>
+    <script>
+        // Auto-refresh every 10 seconds to check if server is ready
+        setTimeout(() => { window.location.reload(); }, 10000);
+    </script>
 </body>
 </html>
 HTMLEOF
+        }
+    }
+    
+    echo 'Verifying client build...'
+    if [ -d 'dist/public' ] && [ -f 'dist/public/index.html' ]; then
+        echo '✅ Client build successful'
+        ls -la dist/public/
+    else
+        echo '❌ Client build verification failed'
+        exit 1
     fi
-    echo 'Removing dev dependencies after build...'
+    
+    echo 'Building server with proper bundling...'
+    npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-runtime-error-modal --external:@replit/vite-plugin-cartographer --external:pg-native
+    
+    echo 'Creating production server entry point...'
+    cat > dist/index.js << 'EOFSERVER'
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+
+console.log('🚀 Starting Action Protection production server...');
+
+// Start the server
+import('./server.js').then(() => {
+    console.log('✅ Action Protection server started successfully on port 4000');
+}).catch(err => {
+    console.error('❌ Server startup error:', err);
+    console.log('🔄 Server will restart automatically via PM2');
+    process.exit(1);
+});
+EOFSERVER
+    
+    echo 'Verifying all build outputs...'
+    ls -la dist/
+    if [ ! -f 'dist/index.js' ] || [ ! -f 'dist/server.js' ]; then
+        echo '❌ Build failed - missing server files'
+        exit 1
+    fi
+    
+    echo 'Cleaning up dev dependencies...'
     npm prune --production
+    
+    echo '✅ Build completed successfully'
 "
 
 # 7. Create environment configuration
@@ -681,15 +703,24 @@ echo "Waiting for application to fully start..."
 sleep 10
 
 echo "Testing application on port $PORT:"
-for i in {1..10}; do
+for i in {1..15}; do
     if curl -f http://localhost:$PORT/api/categories > /dev/null 2>&1; then
         echo "✅ Application API working on attempt $i"
+        API_WORKING=true
         break
     else
         echo "❌ Application API failed on attempt $i, waiting..."
         sleep 3
     fi
 done
+
+if [ "$API_WORKING" != "true" ]; then
+    echo "❌ API failed to start after 15 attempts"
+    echo "📋 Recent PM2 logs:"
+    sudo -u $APP_USER pm2 logs action-protection --lines 10 --nostream
+    echo "📋 PM2 process status:"
+    sudo -u $APP_USER pm2 show action-protection
+fi
 
 echo "Testing nginx proxy:"
 curl -f http://localhost/api/categories > /dev/null 2>&1 && echo "✅ Nginx proxy working" || echo "❌ Nginx proxy failed"

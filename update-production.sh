@@ -55,8 +55,11 @@ sudo -u $APP_USER npm install
 echo "5. Building application..."
 sudo -u $APP_USER bash -c "
     export PATH=\$PATH:./node_modules/.bin
-    echo 'Building with npx...'
-    npx vite build
+    echo 'Installing vite dependencies...'
+    npm install --save-dev vite@latest @vitejs/plugin-react@latest @replit/vite-plugin-runtime-error-modal @replit/vite-plugin-cartographer esbuild typescript
+    echo 'Building client with vite...'
+    npx vite build --outDir dist/public --force || npx vite build --outDir dist/public
+    echo 'Building server with proper bundling...'
     npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-runtime-error-modal --external:@replit/vite-plugin-cartographer --external:pg-native
     cat > dist/index.js << 'EOFSERVER'
 import { fileURLToPath } from 'url';
@@ -66,8 +69,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
-import('./server.js').catch(err => {
-  console.error('Server startup error:', err);
+
+console.log('🚀 Starting Action Protection production server...');
+import('./server.js').then(() => {
+  console.log('✅ Action Protection server started successfully');
+}).catch(err => {
+  console.error('❌ Server startup error:', err);
   process.exit(1);
 });
 EOFSERVER

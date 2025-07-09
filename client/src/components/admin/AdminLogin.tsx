@@ -59,7 +59,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
 
   const handleDemoLogin = (type: "admin" | "moderator") => {
     const credentials = type === "admin" 
-      ? { email: "admin@actionprotection.kw", password: "admin123456" }
+      ? { email: "admin@actionprotection.com", password: "admin123456" }
       : { email: "haitham2@hmaserv.com", password: "securepass123" };
     
     setFormData(credentials);
@@ -128,7 +128,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
                   className="text-xs"
                 >
                   <Shield className="h-3 w-3 mr-2" />
-                  {isRTL ? "مدير (admin@latelounge.sa)" : "Admin (admin@latelounge.sa)"}
+                  {isRTL ? "مدير (admin@actionprotection.com)" : "Admin (admin@actionprotection.com)"}
                 </Button>
                 <Button 
                   variant="outline" 
@@ -137,7 +137,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
                   className="text-xs"
                 >
                   <Shield className="h-3 w-3 mr-2" />
-                  {isRTL ? "مشرف (moderator@latelounge.sa)" : "Moderator (moderator@latelounge.sa)"}
+                  {isRTL ? "مشرف (moderator@actionprotection.com)" : "Moderator (moderator@actionprotection.com)"}
                 </Button>
               </div>
             </div>

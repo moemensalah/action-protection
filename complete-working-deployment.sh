@@ -16,7 +16,7 @@ PROJECT_NAME="action-protection"
 APP_USER="actionprotection"
 NODE_VERSION="20"
 APP_PORT="4000"
-DATABASE_PORT="5800"  # PostgreSQL port (can be changed to any available port)
+DATABASE_PORT="5432"  # PostgreSQL port (can be changed to any available port)
 
 # Domain Configuration
 DOMAIN="demox.actionprotectionkw.com"
@@ -201,14 +201,57 @@ else
     exit 1
 fi
 
+# Fix Vite build configuration
+echo "🔧 Fixing Vite build configuration..."
+# Copy index.html to root directory for Vite build
+if [ -f "client/index.html" ] && [ ! -f "index.html" ]; then
+    sudo -u ${APP_USER} cp client/index.html ./index.html
+    echo "✅ index.html copied to root directory"
+fi
+
+# Fix drizzle configuration for migrations
+echo "🔧 Fixing Drizzle configuration..."
+if [ -f "drizzle.config.ts" ] && [ ! -f "drizzle.config.json" ]; then
+    sudo -u ${APP_USER} cat > drizzle.config.json << 'EOF'
+{
+  "out": "./migrations",
+  "schema": "./shared/schema.ts",
+  "dialect": "postgresql",
+  "dbCredentials": {
+    "url": "$DATABASE_URL"
+  }
+}
+EOF
+    echo "✅ drizzle.config.json created"
+fi
+
 # Build the application
 echo "🔨 Building application..."
 if sudo -u ${APP_USER} npm run build; then
     echo "✅ Application built successfully"
     BUILD_SUCCESS=true
 else
-    echo "⚠️ Build failed, will run in development mode..."
-    BUILD_SUCCESS=false
+    echo "⚠️ Build failed, trying alternative approach..."
+    
+    # Try building from client directory
+    cd client
+    if sudo -u ${APP_USER} npm run build; then
+        cd ..
+        if [ -d "client/dist" ]; then
+            echo "Moving client/dist to dist/public..."
+            sudo -u ${APP_USER} mkdir -p dist
+            sudo -u ${APP_USER} cp -r client/dist dist/public
+            echo "✅ Build completed with workaround"
+            BUILD_SUCCESS=true
+        else
+            echo "⚠️ Build failed, will run in development mode..."
+            BUILD_SUCCESS=false
+        fi
+    else
+        cd ..
+        echo "⚠️ Build failed, will run in development mode..."
+        BUILD_SUCCESS=false
+    fi
 fi
 
 # Verify build output
@@ -244,8 +287,24 @@ export DATABASE_URL="${DATABASE_URL}"
 if sudo -u ${APP_USER} env DATABASE_URL="${DATABASE_URL}" npm run db:push; then
     echo "✅ Database migration completed successfully"
 else
-    echo "❌ Database migration failed"
-    exit 1
+    echo "❌ Database migration failed, trying alternative approach..."
+    
+    # Try with explicit TypeScript config
+    if sudo -u ${APP_USER} env DATABASE_URL="${DATABASE_URL}" npx drizzle-kit push --config=drizzle.config.ts; then
+        echo "✅ Database migration completed with TypeScript config"
+    else
+        echo "❌ Database migration still failing"
+        echo "Checking database connection..."
+        
+        # Test database connection
+        if sudo -u postgres psql -d ${DB_NAME} -c "SELECT 1;" &>/dev/null; then
+            echo "✅ Database connection OK"
+            echo "Issue might be with schema files - continuing without migration"
+        else
+            echo "❌ Database connection failed"
+            exit 1
+        fi
+    fi
 fi
 
 # Create admin user

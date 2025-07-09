@@ -1,0 +1,280 @@
+ Enumerating objects: 4014, done.
+remote: Counting objects: 100% (4014/4014), done.
+remote: Compressing objects: 100% (987/987), done.
+remote: Total 4014 (delta 3045), reused 3942 (delta 2973), pack-reused 0 (from 0)
+Receiving objects: 100% (4014/4014), 31.47 MiB | 42.62 MiB/s, done.
+Resolving deltas: 100% (3045/3045), done.
+✅ Successfully cloned repository from https://github.com/moemensalah/action-protection.git
+6. Installing dependencies and building...
+Installing all dependencies (including dev dependencies for build)...
+
+added 439 packages, and audited 440 packages in 11s
+
+58 packages are looking for funding
+  run `npm fund` for details
+
+1 low severity vulnerability
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+Verifying build tools installation...
+Build tools not found in node_modules/.bin
+Checking if vite and esbuild are installed...
+rest-express@1.0.0 /home/actionprotection/action-protection
+└── (empty)
+
+Build tools not listed in dependencies
+Building application with npx (ensuring tools are downloaded)...
+failed to load config from /home/actionprotection/action-protection/vite.config.ts
+error during build:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /home/actionprotection/action-protection/node_modules/.vite-temp/vite.config.ts.timestamp-1752099333021-1f5cad72592.mjs
+    at packageResolve (node:internal/modules/esm/resolve:873:9)
+    at moduleResolve (node:internal/modules/esm/resolve:946:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:642:12)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:591:25)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:574:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:130:49)
+Building server with proper bundling...
+
+  dist/server.js  2.6mb ⚠️
+
+⚡ Done in 251ms
+Creating proper server entry point...
+Verifying build outputs...
+total 2732
+drwxr-xr-x  2 actionprotection actionprotection    4096 Jul  9 22:15 .
+drwxr-xr-x 11 actionprotection actionprotection   12288 Jul  9 22:15 ..
+-rw-rw-r--  1 actionprotection actionprotection     309 Jul  9 22:15 index.js
+-rw-rw-r--  1 actionprotection actionprotection 2775495 Jul  9 22:15 server.js
+Removing dev dependencies after build...
+npm warn config production Use `--omit=dev` instead.
+
+up to date, audited 440 packages in 2s
+
+58 packages are looking for funding
+  run `npm fund` for details
+
+1 low severity vulnerability
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+7. Creating environment configuration...
+NODE_ENV=production
+PORT=4000
+DATABASE_URL=postgresql://actionprotection:ajHQGHgwqhg3ggagdg@localhost:5432/actionprotection_db
+SESSION_SECRET=production_session_secret_1752099337
+8. Creating PM2 configuration...
+module.exports = {
+  apps: [{
+    name: 'action-protection',
+    script: 'dist/index.js',
+    cwd: '/home/actionprotection/action-protection',
+    instances: 1,
+    exec_mode: 'cluster',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 4000,
+      DATABASE_URL: 'postgresql://actionprotection:ajHQGHgwqhg3ggagdg@localhost:5432/actionprotection_db'
+    },
+    error_file: '/home/actionprotection/action-protection/logs/error.log',
+    out_file: '/home/actionprotection/action-protection/logs/out.log',
+    log_file: '/home/actionprotection/action-protection/logs/combined.log',
+    time: true,
+    max_memory_restart: '1G',
+    watch: false,
+    autorestart: true,
+    restart_delay: 5000
+  }]
+};
+9. Starting application with PM2...
+[PM2] Applying action deleteProcessId on app [action-protection](ids: [ 0 ])
+[PM2] [action-protection](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2][WARN] Applications action-protection not running, starting...
+[PM2][WARN] Environment [production] is not defined in process file
+[PM2] App [action-protection] launched (1 instances)
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ action-protection  │ cluster  │ 0    │ online    │ 0%       │ 40.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2] Saving current process list...
+[PM2] Successfully saved in /home/actionprotection/.pm2/dump.pm2
+10. Setting up PM2 startup...
+[PM2] Init System found: systemd
+Platform systemd
+Template
+[Unit]
+Description=PM2 process manager
+Documentation=https://pm2.keymetrics.io/
+After=network.target
+
+[Service]
+Type=forking
+User=actionprotection
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin:/usr/bin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+Environment=PM2_HOME=/home/actionprotection/.pm2
+PIDFile=/home/actionprotection/.pm2/pm2.pid
+Restart=on-failure
+
+ExecStart=/usr/lib/node_modules/pm2/bin/pm2 resurrect
+ExecReload=/usr/lib/node_modules/pm2/bin/pm2 reload all
+ExecStop=/usr/lib/node_modules/pm2/bin/pm2 kill
+
+[Install]
+WantedBy=multi-user.target
+
+Target path
+/etc/systemd/system/pm2-actionprotection.service
+Command list
+[ 'systemctl enable pm2-actionprotection' ]
+[PM2] Writing init configuration in /etc/systemd/system/pm2-actionprotection.service
+[PM2] Making script booting at startup...
+[PM2] [-] Executing: systemctl enable pm2-actionprotection...
+[PM2] [v] Command successfully executed.
++---------------------------------------+
+[PM2] Freeze a process list on reboot via:
+$ pm2 save
+
+[PM2] Remove init script via:
+$ pm2 unstartup systemd
+11. Configuring Nginx...
+server {
+    listen 80;
+    server_name demox.actionprotectionkw.com;
+
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        text/javascript
+        application/javascript
+        application/json
+        application/xml+rss
+        application/atom+xml
+        image/svg+xml;
+
+    # Main application proxy
+    location / {
+        proxy_pass http://localhost:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+
+    # Static file serving
+    location /uploads/ {
+        alias /home/actionprotection/action-protection/uploads/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    location /assets/ {
+        alias /home/actionprotection/action-protection/dist/public/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Error pages
+    error_page 502 503 504 /50x.html;
+    location = /50x.html {
+        root /var/www/html;
+    }
+}
+12. Enabling Nginx site...
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Synchronizing state of nginx.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable nginx
+13. Configuring firewall...
+Skipping adding existing rule
+Skipping adding existing rule (v6)
+Skipping adding existing rule
+Skipping adding existing rule (v6)
+Skipping adding existing rule
+Skipping adding existing rule (v6)
+Firewall is active and enabled on system startup
+14. Waiting for application startup...
+15. Testing deployment...
+Testing application on port 4000:
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (7) Failed to connect to localhost port 4000 after 0 ms: Connection refused
+❌ Application API failed
+Testing nginx proxy:
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0   162    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (22) The requested URL returned error: 404
+❌ Nginx proxy failed
+Testing admin login:
+❌ Admin login failed
+
+🎉 Production deployment completed successfully!
+
+📊 Application Status:
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ action-protection  │ cluster  │ 0    │ online    │ 0%       │ 57.9mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+
+🔧 Service Status:
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2025-07-09 22:15:40 UTC; 17s ago
+
+🌐 Access Information:
+   - Website: http://demox.actionprotectionkw.com
+   - Admin Panel: http://demox.actionprotectionkw.com/admin
+   - Direct App: http://localhost:4000
+
+🔑 Admin Credentials:
+   - Email: admin@actionprotection.com
+   - Password: admin123456
+
+📁 Project Location: /home/actionprotection/action-protection
+🗄️ Database: postgresql://actionprotection:ajHQGHgwqhg3ggagdg@localhost:5432/actionprotection_db
+
+📋 Management Commands:
+   - Check PM2: sudo -u actionprotection pm2 list
+   - View logs: sudo -u actionprotection pm2 logs action-protection
+   - Restart app: sudo -u actionprotection pm2 restart action-protection
+   - Stop app: sudo -u actionprotection pm2 stop action-protection
+   - Nginx logs: sudo tail -f /var/log/nginx/error.log
+   - Database access: psql 'postgresql://actionprotection:ajHQGHgwqhg3ggagdg@localhost:5432/actionprotection_db'
+   - Clean deployment: ./clean-deployment.sh
+
+🚀 Action Protection is now live and ready for production use!

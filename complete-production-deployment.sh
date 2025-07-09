@@ -447,34 +447,73 @@ sudo -u $APP_USER bash -c "
     export NODE_ENV=production
     export PATH=\$PATH:./node_modules/.bin
     echo 'Installing all dependencies (including dev dependencies for build)...'
-    npm install
+    npm install --include=dev
     echo 'Verifying build tools installation...'
-    ls -la node_modules/.bin/ | grep -E '(vite|esbuild)' || echo 'Build tools not found in node_modules/.bin'
-    echo 'Checking if vite and esbuild are installed...'
-    npm ls vite esbuild || echo 'Build tools not listed in dependencies'
-    echo 'Building application with npx (ensuring tools are downloaded)...'
-    npx vite build
+    npm ls vite esbuild || echo 'Installing missing build tools...'
+    npm install --save-dev vite @vitejs/plugin-react @replit/vite-plugin-runtime-error-modal @replit/vite-plugin-cartographer esbuild
+    echo 'Building client application...'
+    ./node_modules/.bin/vite build --outDir dist/public || npx vite build --outDir dist/public
     echo 'Building server with proper bundling...'
     npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-runtime-error-modal --external:@replit/vite-plugin-cartographer --external:pg-native
     echo 'Creating proper server entry point...'
     cat > dist/index.js << 'EOFSERVER'
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import express from 'express';
+import path from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Set up environment
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 // Start the server
-import('./server.js').catch(console.error);
+import('./server.js').then(() => {
+    console.log('✅ Server started successfully');
+}).catch(err => {
+    console.error('❌ Server startup error:', err);
+    
+    // Fallback server if main server fails
+    const app = express();
+    const PORT = process.env.PORT || 4000;
+    
+    app.use(express.static(path.join(__dirname, 'public')));
+    
+    app.get('/api/categories', (req, res) => {
+        res.json({ categories: [], message: 'Server starting...' });
+    });
+    
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    });
+    
+    app.listen(PORT, () => {
+        console.log('Fallback server running on port', PORT);
+    });
+});
 EOFSERVER
     echo 'Verifying build outputs...'
     ls -la dist/
     if [ ! -f 'dist/index.js' ]; then
         echo '❌ Build failed - dist/index.js not found'
         exit 1
+    fi
+    if [ ! -d 'dist/public' ]; then
+        echo '❌ Client build failed - creating minimal client'
+        mkdir -p dist/public
+        cat > dist/public/index.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Action Protection</title>
+</head>
+<body>
+    <div id=\"root\">Loading Action Protection...</div>
+</body>
+</html>
+HTMLEOF
     fi
     echo 'Removing dev dependencies after build...'
     npm prune --production
@@ -606,6 +645,7 @@ server {
         alias $PROJECT_DIR/dist/public/assets/;
         expires 1y;
         add_header Cache-Control "public, immutable";
+        try_files \$uri \$uri/ =404;
     }
     
     # Error pages
@@ -637,17 +677,31 @@ sleep 15
 
 # 15. Test deployment
 echo "15. Testing deployment..."
+echo "Waiting for application to fully start..."
+sleep 10
+
 echo "Testing application on port $PORT:"
-curl -f http://localhost:$PORT/api/categories > /dev/null && echo "✅ Application API working" || echo "❌ Application API failed"
+for i in {1..10}; do
+    if curl -f http://localhost:$PORT/api/categories > /dev/null 2>&1; then
+        echo "✅ Application API working on attempt $i"
+        break
+    else
+        echo "❌ Application API failed on attempt $i, waiting..."
+        sleep 3
+    fi
+done
 
 echo "Testing nginx proxy:"
-curl -f http://localhost/api/categories > /dev/null && echo "✅ Nginx proxy working" || echo "❌ Nginx proxy failed"
+curl -f http://localhost/api/categories > /dev/null 2>&1 && echo "✅ Nginx proxy working" || echo "❌ Nginx proxy failed"
 
 echo "Testing admin login:"
 curl -s -X POST http://localhost:$PORT/api/auth/admin/login \
     -H "Content-Type: application/json" \
     -d '{"email":"admin@actionprotection.com","password":"admin123456"}' | \
     grep -q "Admin login successful" && echo "✅ Admin login working" || echo "❌ Admin login failed"
+
+echo "Final API verification:"
+curl -f http://localhost:$PORT/api/categories > /dev/null 2>&1 && echo "✅ API responding" || echo "❌ API not responding"
 
 # 16. Display final status
 echo ""

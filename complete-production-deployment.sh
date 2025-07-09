@@ -536,8 +536,8 @@ HTMLEOF
         echo '✅ Minimal client fallback created'
     fi
     
-    echo 'Building server with proper bundling...'
-    npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:express --external:pg --external:bcryptjs --external:express-session --external:connect-pg-simple --external:multer --external:nodemailer --external:@neondatabase/serverless --external:drizzle-orm --external:drizzle-zod --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-runtime-error-modal --external:@replit/vite-plugin-cartographer --external:pg-native
+    echo 'Building server with production-only code...'
+    npx esbuild server/production.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:express --external:pg --external:bcryptjs --external:express-session --external:connect-pg-simple --external:multer --external:nodemailer --external:@neondatabase/serverless --external:drizzle-orm --external:drizzle-zod --external:pg-native
     
     echo 'Creating production server entry point...'
     cat > dist/index.js << 'EOFSERVER'

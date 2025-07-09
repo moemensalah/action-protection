@@ -19,8 +19,8 @@ sudo -u $APP_USER pm2 delete action-protection 2>/dev/null || true
 echo "2. Checking server build dependencies..."
 sudo -u $APP_USER npm install --include=dev
 
-echo "3. Rebuilding server with all required externals..."
-sudo -u $APP_USER npx esbuild server/index.ts \
+echo "3. Rebuilding server with production-only code..."
+sudo -u $APP_USER npx esbuild server/production.ts \
   --bundle \
   --platform=node \
   --target=node18 \
@@ -36,10 +36,6 @@ sudo -u $APP_USER npx esbuild server/index.ts \
   --external:@neondatabase/serverless \
   --external:drizzle-orm \
   --external:drizzle-zod \
-  --external:vite \
-  --external:@vitejs/plugin-react \
-  --external:@replit/vite-plugin-runtime-error-modal \
-  --external:@replit/vite-plugin-cartographer \
   --external:pg-native
 
 echo "4. Creating production-ready server entry point..."

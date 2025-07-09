@@ -59,8 +59,8 @@ sudo -u $APP_USER bash -c "
     npm install --save-dev vite@latest @vitejs/plugin-react@latest @replit/vite-plugin-runtime-error-modal @replit/vite-plugin-cartographer esbuild typescript
     echo 'Building client with vite...'
     npx vite build --outDir dist/public
-    echo 'Building server with proper bundling...'
-    npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-runtime-error-modal --external:@replit/vite-plugin-cartographer --external:pg-native
+    echo 'Building server with production-only code...'
+    npx esbuild server/production.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:express --external:pg --external:bcryptjs --external:express-session --external:connect-pg-simple --external:multer --external:nodemailer --external:@neondatabase/serverless --external:drizzle-orm --external:drizzle-zod --external:pg-native
     cat > dist/index.js << 'EOFSERVER'
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -93,7 +93,7 @@ if [ ! -f "dist/index.js" ]; then
     if [ ! -f "dist/index.js" ]; then
         echo "❌ Rebuild failed - attempting emergency fix..."
         npx vite build --force
-        npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+        npx esbuild server/production.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
         if [ ! -f "dist/index.js" ]; then
             echo "❌ Emergency rebuild failed - cannot continue"
             exit 1

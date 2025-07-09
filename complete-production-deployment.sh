@@ -8,7 +8,7 @@ set -e
 
 # Configuration
 PROJECT_DIR="/home/actionprotection/action-protection"
-GIT_REPO="https://github.com/user/action-protection.git"  # Replace with your actual repository
+GIT_REPO="https://github.com/moemensalah/action-protection.git"  # Replace with your actual repository
 GIT_BRANCH="main"
 APP_USER="actionprotection"
 DB_NAME="actionprotection_db"

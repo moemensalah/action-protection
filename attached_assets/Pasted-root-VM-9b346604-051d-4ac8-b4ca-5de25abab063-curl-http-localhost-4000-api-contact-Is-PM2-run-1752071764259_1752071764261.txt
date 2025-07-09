@@ -1,0 +1,35 @@
+root@VM-9b346604-051d-4ac8-b4ca-5de25abab063:~# curl http://localhost:4000/api/contact
+# Is PM2 running?
+sudo -u actionprotection pm2 status
+# Is nginx running?
+systemctl status nginx
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ action-protection  │ fork     │ 0    │ online    │ 0%       │ 94.2mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset:>
+     Active: active (running) since Wed 2025-07-09 14:32:25 UTC; 3min 11s ago
+       Docs: man:nginx(8)
+    Process: 393743 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_pro>
+    Process: 393744 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; >
+   Main PID: 393745 (nginx)
+      Tasks: 9 (limit: 28736)
+     Memory: 7.3M
+        CPU: 30ms
+     CGroup: /system.slice/nginx.service
+             ├─393745 "nginx: master process /usr/sbin/nginx -g daemon on; mast>
+             ├─393746 "nginx: worker process" "" "" "" "" "" "" "" "" "" "" "" >
+             ├─393747 "nginx: worker process" "" "" "" "" "" "" "" "" "" "" "" >
+             ├─393748 "nginx: worker process" "" "" "" "" "" "" "" "" "" "" "" >
+             ├─393749 "nginx: worker process" "" "" "" "" "" "" "" "" "" "" "" >
+             ├─393750 "nginx: worker process" "" "" "" "" "" "" "" "" "" "" "" >
+             ├─393751 "nginx: worker process" "" "" "" "" "" "" "" "" "" "" "" >
+             ├─393752 "nginx: worker process" "" "" "" "" "" "" "" "" "" "" "" >
+             └─393753 "nginx: worker process" "" "" "" "" "" "" "" "" "" "" "" >
+
+Jul 09 14:32:25 VM-9b346604-051d-4ac8-b4ca-5de25abab063 systemd[1]: Starting A >
+Jul 09 14:32:25 VM-9b346604-051d-4ac8-b4ca-5de25abab063 systemd[1]: Started A h>
+lines 1-23
+

@@ -1,0 +1,175 @@
+</html>
+4. Testing with timeout:
+
+5. Checking application logs:
+[TAILING] Tailing last 10 lines for [action-protection] process (change the value with --lines option)
+/home/actionprotection/action-protection/logs/err-0.log last 10 lines:
+0|action-p | 2025-07-09T14:31:44: Warning: connect.session() MemoryStore is not
+0|action-p | 2025-07-09T14:31:44: designed for a production environment, as it will leak
+0|action-p | 2025-07-09T14:31:44: memory, and will not scale past a single process.
+
+/home/actionprotection/action-protection/logs/out-0.log last 10 lines:
+0|action-p | 2025-07-09T14:31:44: 2:31:44 PM [express] Production server running on port 4000
+0|action-p | 2025-07-09T14:31:55: 2:31:55 PM [express] GET /api/contact 200 in 52ms
+0|action-p | 2025-07-09T14:35:20: 2:35:20 PM [express] GET /api/contact 200 in 17ms
+0|action-p | 2025-07-09T14:35:23: 2:35:23 PM [express] GET /api/contact 200 in 3ms
+0|action-p | 2025-07-09T14:35:36: 2:35:36 PM [express] GET /api/contact 200 in 13ms
+0|action-p | 2025-07-09T14:36:51: 2:36:51 PM [express] GET /api/contact 200 in 21ms
+0|action-p | 2025-07-09T14:36:51: 2:36:51 PM [express] GET /api/contact 200 in 4ms
+
+^C
+6. Testing nginx proxy:
+*   Trying 127.0.0.1:80...
+* Connected to localhost (127.0.0.1) port 80 (#0)
+> GET / HTTP/1.1
+> Host: localhost
+> User-Agent: curl/7.81.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Server: nginx/1.18.0 (Ubuntu)
+< Date: Wed, 09 Jul 2025 14:37:20 GMT
+< Content-Type: text/html; charset=UTF-8
+< Content-Length: 2372
+< Connection: keep-alive
+< Vary: Accept-Encoding
+< X-Powered-By: Express
+< Accept-Ranges: bytes
+< Cache-Control: public, max-age=0
+< Last-Modified: Wed, 09 Jul 2025 14:31:32 GMT
+< ETag: W/"944-197ef99530d"
+< Set-Cookie: connect.sid=s%3Au8KfZy97orDXnSikUReewUJlAW7uRMe9.Zxer8N%2BX7n8%2FN
+< X-Frame-Options: SAMEORIGIN
+< X-Content-Type-Options: nosniff
+< X-XSS-Protection: 1; mode=block
+< Referrer-Policy: strict-origin-when-cross-origin
+<
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximu
+    <meta name="theme-color" content="#d97706" />
+    <meta name="msapplication-TileColor" content="#d97706" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Preconnect to improve loading speed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+
+    <!-- Default SEO tags (will be overridden by react-helmet) -->
+    <title>ليت لاونج - LateLounge | Premium Coffee Experience</title>
+    <meta name="description" content="Experience the finest coffee and culinary
+    <meta name="keywords" content="coffee, cafe, premium coffee, LateLounge, ليت
+    <meta name="author" content="LateLounge" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph default tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LateLounge" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="ar_SA" />
+
+    <!-- Twitter Card default tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Favicon and app icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <script type="module" crossorigin src="/assets/index-CFdgrTCN.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DmoMFQy3.css">
+  </head>
+  <body>
+    <div id="root"></div>
+
+
+
+    <!-- This is a replit script which adds a banner on the top of the page when
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-
+  </body>
+* Connection #0 to host localhost left intact
+</html>
+7. Testing domain access:
+*   Trying 2606:4700:3033::6815:4619:80...
+* Connected to demox.actionprotectionkw.com (2606:4700:3033::6815:4619) port 80
+> GET / HTTP/1.1
+> Host: demox.actionprotectionkw.com
+> User-Agent: curl/7.81.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Date: Wed, 09 Jul 2025 14:37:20 GMT
+< Content-Type: text/html; charset=UTF-8
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< Server: cloudflare
+< Nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+< Vary: Accept-Encoding
+< X-Powered-By: Express
+< Cache-Control: public, max-age=0
+< Last-Modified: Wed, 09 Jul 2025 14:31:32 GMT
+< X-Frame-Options: SAMEORIGIN
+< X-Content-Type-Options: nosniff
+< X-Xss-Protection: 1; mode=block
+< Referrer-Policy: strict-origin-when-cross-origin
+< Report-To: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.n
+< Cf-Cache-Status: DYNAMIC
+< Set-Cookie: connect.sid=s%3ACXqJNVHyRwrlm4DQ8lKbGdRDwAVWZlcJ.4sTDz19OtxJy0iHds
+< CF-RAY: 95c88f0beb05a055-FRA
+< alt-svc: h3=":443"; ma=86400
+<
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximu
+    <meta name="theme-color" content="#d97706" />
+    <meta name="msapplication-TileColor" content="#d97706" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Preconnect to improve loading speed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+
+    <!-- Default SEO tags (will be overridden by react-helmet) -->
+    <title>ليت لاونج - LateLounge | Premium Coffee Experience</title>
+    <meta name="description" content="Experience the finest coffee and culinary
+    <meta name="keywords" content="coffee, cafe, premium coffee, LateLounge, ليت
+    <meta name="author" content="LateLounge" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph default tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LateLounge" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="ar_SA" />
+
+    <!-- Twitter Card default tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Favicon and app icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <script type="module" crossorigin src="/assets/index-CFdgrTCN.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DmoMFQy3.css">
+  </head>
+  <body>
+    <div id="root"></div>
+
+
+
+    <!-- This is a replit script which adds a banner on the top of the page when
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-
+  </body>
+* Connection #0 to host demox.actionprotectionkw.com left intact
+</html>

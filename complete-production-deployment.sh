@@ -376,6 +376,29 @@ fi
 
 # 5. Setup project directory and clone repository
 echo "5. Setting up project directory and cloning repository..."
+
+# Handle existing directory
+if [ -d "$PROJECT_DIR" ]; then
+    echo "Existing deployment found at: $PROJECT_DIR"
+    
+    # Create backup
+    BACKUP_DIR="/home/$APP_USER/deployment-backups/$(date +%Y%m%d_%H%M%S)"
+    sudo -u $APP_USER mkdir -p $BACKUP_DIR
+    echo "Creating backup at: $BACKUP_DIR"
+    sudo -u $APP_USER cp -r $PROJECT_DIR $BACKUP_DIR/
+    
+    # Stop existing services
+    echo "Stopping existing services..."
+    sudo -u $APP_USER pm2 stop action-protection 2>/dev/null || true
+    sudo -u $APP_USER pm2 delete action-protection 2>/dev/null || true
+    
+    # Remove existing directory
+    echo "Removing existing directory: $PROJECT_DIR"
+    sudo rm -rf $PROJECT_DIR
+    
+    echo "✅ Backup created and existing deployment removed"
+fi
+
 sudo mkdir -p $PROJECT_DIR
 sudo chown -R $APP_USER:$APP_USER $PROJECT_DIR
 
@@ -390,6 +413,8 @@ if [ -n "$GIT_REPO" ] && [ "$GIT_REPO" != "https://github.com/user/action-protec
         echo "❌ Failed to clone repository, falling back to local files..."
         # Fallback to local files
         if [ -d "client" ] && [ -d "server" ] && [ -d "shared" ]; then
+            sudo rm -rf $PROJECT_DIR
+            sudo mkdir -p $PROJECT_DIR
             sudo cp -r . $PROJECT_DIR/
             sudo chown -R $APP_USER:$APP_USER $PROJECT_DIR
             echo "✅ Local files copied successfully"
@@ -595,6 +620,9 @@ echo "   - Password: admin123456"
 echo ""
 echo "📁 Project Location: $PROJECT_DIR"
 echo "🗄️ Database: $DATABASE_URL"
+if [ -n "$BACKUP_DIR" ]; then
+    echo "💾 Backup Location: $BACKUP_DIR"
+fi
 echo ""
 echo "📋 Management Commands:"
 echo "   - Check PM2: sudo -u $APP_USER pm2 list"
@@ -603,5 +631,6 @@ echo "   - Restart app: sudo -u $APP_USER pm2 restart action-protection"
 echo "   - Stop app: sudo -u $APP_USER pm2 stop action-protection"
 echo "   - Nginx logs: sudo tail -f /var/log/nginx/error.log"
 echo "   - Database access: psql '$DATABASE_URL'"
+echo "   - Clean deployment: ./clean-deployment.sh"
 echo ""
 echo "🚀 Action Protection is now live and ready for production use!"

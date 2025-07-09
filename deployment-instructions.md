@@ -157,24 +157,33 @@ sudo certbot --nginx -d demox.actionprotectionkw.com
 
 ### Common Issues
 
-1. **502 Bad Gateway**
+1. **"Directory already exists" Error**
+   ```bash
+   # Option 1: Use clean deployment script
+   ./clean-deployment.sh
+   
+   # Option 2: The deployment script now automatically backs up and removes existing deployments
+   # Just run the deployment script again - it will handle existing directories
+   ```
+
+2. **502 Bad Gateway**
    ```bash
    sudo -u actionprotection pm2 logs action-protection
    sudo systemctl status nginx
    ```
 
-2. **Database Connection Issues**
+3. **Database Connection Issues**
    ```bash
    sudo systemctl status postgresql
    psql "postgresql://actionprotection:ajHQGHgwqhg3ggagdg@localhost:5432/actionprotection_db" -c "SELECT 1;"
    ```
 
-3. **Permission Issues**
+4. **Permission Issues**
    ```bash
    sudo chown -R actionprotection:actionprotection /home/actionprotection/action-protection
    ```
 
-4. **Port Issues**
+5. **Port Issues**
    ```bash
    sudo netstat -tulpn | grep :4000
    sudo lsof -i :4000

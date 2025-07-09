@@ -1,0 +1,95 @@
+
+6. Installing dependencies and building...
+Installing all dependencies (including dev dependencies for build)...
+
+added 439 packages, and audited 440 packages in 9s
+
+58 packages are looking for funding
+  run `npm fund` for details
+
+1 low severity vulnerability
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+Verifying build tools installation...
+Build tools not found in node_modules/.bin
+Checking if vite and esbuild are installed...
+rest-express@1.0.0 /home/actionprotection/action-protection
+└── (empty)
+
+Build tools not listed in dependencies
+Building application with npx (ensuring tools are downloaded)...
+file:///home/actionprotection/.npm/_npx/9ed06546b0653f96/node_modules/vite/dist/node/cli.js:315
+                        for (const name of Object.keys(options)) if (name !== "--" && !this.hasOption(name) && !globalCommand.hasOption(name)) throw new CACError(`Unknown option \`${name.length > 1 ? `--${name}` : `-${name}`}\``);
+                                                                                                                                                     ^
+
+CACError: Unknown option `--force`
+    at Command.checkUnknownOptions (file:///home/actionprotection/.npm/_npx/9ed06546b0653f96/node_modules/vite/dist/node/cli.js:315:129)
+    at CAC.runMatchedCommand (file:///home/actionprotection/.npm/_npx/9ed06546b0653f96/node_modules/vite/dist/node/cli.js:478:11)
+    at CAC.parse (file:///home/actionprotection/.npm/_npx/9ed06546b0653f96/node_modules/vite/dist/node/cli.js:434:17)
+    at file:///home/actionprotection/.npm/_npx/9ed06546b0653f96/node_modules/vite/dist/node/cli.js:698:5
+    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+
+Node.js v20.19.3
+Building server with proper bundling...
+✘ [ERROR] Could not resolve "vite"
+
+    server/vite.ts:4:63:
+      4 │ import { createServer as createViteServer, createLogger } from "vite";
+        │                                                                ~~~~~~
+        ╵                                                                "./vite"
+
+  Use the relative path "./vite" to reference the file "server/vite.ts". Without
+  the leading "./", the path "vite" is being interpreted as a package path
+  instead.
+
+✘ [ERROR] Could not resolve "vite"
+
+    vite.config.ts:1:29:
+      1 │ import { defineConfig } from "vite";
+        ╵                              ~~~~~~
+
+  You can mark the path "vite" as external to exclude it from the bundle, which
+  will remove this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "@vitejs/plugin-react"
+
+    vite.config.ts:2:18:
+      2 │ import react from "@vitejs/plugin-react";
+        ╵                   ~~~~~~~~~~~~~~~~~~~~~~
+
+  You can mark the path "@vitejs/plugin-react" as external to exclude it from
+  the bundle, which will remove this error and leave the unresolved path in the
+  bundle.
+
+✘ [ERROR] Could not resolve "@replit/vite-plugin-runtime-error-modal"
+
+    vite.config.ts:4:32:
+      4 │ ...runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+        ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  You can mark the path "@replit/vite-plugin-runtime-error-modal" as external to
+  exclude it from the bundle, which will remove this error and leave the
+  unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "@replit/vite-plugin-cartographer"
+
+    vite.config.ts:13:23:
+      13 │ ...      await import("@replit/vite-plugin-cartographer").then((m) =>
+         ╵                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  You can mark the path "@replit/vite-plugin-cartographer" as external to
+  exclude it from the bundle, which will remove this error and leave the
+  unresolved path in the bundle. You can also add ".catch()" here to handle this
+  failure at run-time instead of bundle-time.
+
+5 errors
+Creating proper server entry point...
+bash: line 15: dist/index.js: No such file or directory
+Verifying build outputs...
+ls: cannot access 'dist/': No such file or directory
+❌ Build failed - dist/index.js not found
+root@VM-9b346604-051d-4ac8-b4ca-5de25abab063:/home/actionprotectio

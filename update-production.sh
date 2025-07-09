@@ -56,8 +56,21 @@ echo "5. Building application..."
 sudo -u $APP_USER bash -c "
     export PATH=\$PATH:./node_modules/.bin
     echo 'Building with npx...'
-    npx vite build --force
-    npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+    npx vite build
+    npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-runtime-error-modal --external:@replit/vite-plugin-cartographer --external:pg-native
+    cat > dist/index.js << 'EOFSERVER'
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+import('./server.js').catch(err => {
+  console.error('Server startup error:', err);
+  process.exit(1);
+});
+EOFSERVER
 "
 
 # Verify build was successful

@@ -52,10 +52,10 @@ echo "6. Checking npm configuration..."
 sudo -u $APP_USER npm config list
 
 echo "7. Attempting to build with npx..."
-sudo -u $APP_USER npx vite build --force
+sudo -u $APP_USER npx vite build
 
 echo "8. Building backend with proper bundling..."
-sudo -u $APP_USER npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:pg-native
+sudo -u $APP_USER npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-runtime-error-modal --external:@replit/vite-plugin-cartographer --external:pg-native
 
 echo "8.1. Creating server entry point..."
 sudo -u $APP_USER bash -c "

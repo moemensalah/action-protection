@@ -1,0 +1,29 @@
+------------------------------+----------------------------+----------+---------                                                                                                                                                                                                                                             ------+-----------+-----------------+-----------------+-------------------------                                                                                                                                                                                                                                             ---+----------------------------
+ admin_user_1752080976.752384 | admin@actionprotection.com | admin    | administ                                                                                                                                                                                                                                             rator | t         | PRESENT         |              60 | 2025-07-09 17:09:36.7523                                                                                                                                                                                                                                             84 | 2025-07-09 17:09:36.752384
+(1 row)
+
+
+2. Generating test password hash for 'admin123456'...
+Password: admin123456
+Hash: $2b$10$IcCrLTZlOWmRQr2PzWeu5eBEygJoMDQkJWEPUOap1gVf8EaCvLMQy
+Length: 60
+Self-verification: true
+
+3. Creating/updating admin user with correct hash...
+DELETE 1
+INSERT 0 1
+          id           |           email            | username |     role      |                                                                                                                                                                                                                                              is_active | password_status | password_length |         created_at
+-----------------------+----------------------------+----------+---------------+                                                                                                                                                                                                                                             -----------+-----------------+-----------------+----------------------------
+ admin_user_production | admin@actionprotection.com | admin    | administrator |                                                                                                                                                                                                                                              t         | PRESENT         |              60 | 2025-07-09 17:23:10.855475
+(1 row)
+
+
+4. Testing admin login via API...
+Login test response:
+{"message":"Invalid credentials"}
+
+🎉 Admin user database check complete!
+🔐 Admin credentials:
+   Email: admin@actionprotection.com
+   Password: admin123456
+root@VM-9b346604-051d-4ac8-b4ca-5de25abab063:/home/actionprotection/action-protection#          

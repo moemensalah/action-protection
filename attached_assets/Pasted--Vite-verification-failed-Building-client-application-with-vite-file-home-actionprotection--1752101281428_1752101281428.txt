@@ -1,0 +1,35 @@
+
+Vite verification failed
+Building client application with vite...
+file:///home/actionprotection/action-protection/node_modules/vite/dist/node/cli.js:445
+          throw new CACError(`Unknown option \`${name.length > 1 ? `--${name}` : `-${name}`}\``);
+                ^
+
+CACError: Unknown option `--force`
+    at Command.checkUnknownOptions (file:///home/actionprotection/action-protection/node_modules/vite/dist/node/cli.js:445:17)
+    at CAC.runMatchedCommand (file:///home/actionprotection/action-protection/node_modules/vite/dist/node/cli.js:643:13)
+    at CAC.parse (file:///home/actionprotection/action-protection/node_modules/vite/dist/node/cli.js:582:12)
+    at file:///home/actionprotection/action-protection/node_modules/vite/dist/node/cli.js:915:5
+    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+
+Node.js v20.19.3
+Primary vite build failed, trying alternative approach...
+vite v5.4.19 building for production...
+Browserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1802 modules transformed.
+dist/public/index.html                          2.34 kB │ gzip:   1.03 kB
+dist/public/assets/useorca_logo-CWgwq5GM.png  164.39 kB
+dist/public/assets/index-DGA-T9Qa.css         133.46 kB │ gzip:  20.75 kB
+dist/public/assets/index-7F6bkVFj.js          855.33 kB │ gzip: 234.05 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 10.81s
+Verifying client build...
+❌ Client build verification failed
+root@VM-9b346604-051d-4ac8-b4ca-5de25abab063:/home/actionprotection#

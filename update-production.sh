@@ -58,7 +58,7 @@ sudo -u $APP_USER bash -c "
     echo 'Installing vite dependencies...'
     npm install --save-dev vite@latest @vitejs/plugin-react@latest @replit/vite-plugin-runtime-error-modal @replit/vite-plugin-cartographer esbuild typescript
     echo 'Building client with vite...'
-    npx vite build --outDir dist/public --force || npx vite build --outDir dist/public
+    npx vite build --outDir dist/public
     echo 'Building server with proper bundling...'
     npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-runtime-error-modal --external:@replit/vite-plugin-cartographer --external:pg-native
     cat > dist/index.js << 'EOFSERVER'

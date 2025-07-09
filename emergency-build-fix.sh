@@ -54,8 +54,22 @@ sudo -u $APP_USER npm config list
 echo "7. Attempting to build with npx..."
 sudo -u $APP_USER npx vite build --force
 
-echo "8. Building backend with npx..."
-sudo -u $APP_USER npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+echo "8. Building backend with proper bundling..."
+sudo -u $APP_USER npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:pg-native
+
+echo "8.1. Creating server entry point..."
+sudo -u $APP_USER bash -c "
+cat > dist/index.js << 'EOFSERVER'
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+import('./server.js').catch(console.error);
+EOFSERVER
+"
 
 echo "9. Verifying build outputs..."
 if [ -f "dist/index.js" ]; then

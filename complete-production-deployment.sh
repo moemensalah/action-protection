@@ -454,7 +454,22 @@ sudo -u $APP_USER bash -c "
     npm ls vite esbuild || echo 'Build tools not listed in dependencies'
     echo 'Building application with npx (ensuring tools are downloaded)...'
     npx vite build --force
-    npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+    echo 'Building server with proper bundling...'
+    npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:pg-native
+    echo 'Creating proper server entry point...'
+    cat > dist/index.js << 'EOFSERVER'
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Set up environment
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+
+// Start the server
+import('./server.js').catch(console.error);
+EOFSERVER
     echo 'Verifying build outputs...'
     ls -la dist/
     if [ ! -f 'dist/index.js' ]; then

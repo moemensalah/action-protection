@@ -255,8 +255,11 @@ else
 fi
 
 # Verify build output
-if [ "$BUILD_SUCCESS" = true ] && [ -f "dist/index.js" ]; then
-    echo "✅ Production build verified: dist/index.js exists"
+if [ "$BUILD_SUCCESS" = true ] && [ -f "dist/server/index.js" ]; then
+    echo "✅ Production build verified: dist/server/index.js exists"
+    PRODUCTION_MODE=true
+elif [ "$BUILD_SUCCESS" = true ] && [ -f "dist/public/index.html" ]; then
+    echo "✅ Production build verified: dist/public/index.html exists"
     PRODUCTION_MODE=true
 else
     echo "⚠️ Production build not available, using development mode"
@@ -371,6 +374,10 @@ sudo lsof -ti:${APP_PORT} | xargs sudo kill -9 2>/dev/null || echo "No processes
 sudo -u ${APP_USER} pm2 delete all 2>/dev/null || echo "No PM2 processes to stop"
 sleep 3
 
+# Create logs directory
+echo "📁 Creating logs directory..."
+sudo -u ${APP_USER} mkdir -p logs
+
 # Create PM2 ecosystem config
 echo "⚙️ Creating PM2 configuration..."
 if [ "$PRODUCTION_MODE" = true ]; then
@@ -404,12 +411,13 @@ module.exports = {
 };
 PM2_CONFIG_EOF
 else
-    # Development mode config
+    # Development mode config - fallback to npm start
     sudo -u ${APP_USER} tee ecosystem.config.js << PM2_CONFIG_EOF
 module.exports = {
   apps: [{
     name: '${PROJECT_NAME}',
-    script: './dist/server/index.js',
+    script: 'npm',
+    args: 'start',
     instances: 1,
     exec_mode: 'fork',
     env_production: {

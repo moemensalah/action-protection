@@ -37,7 +37,31 @@ server {
         application/atom+xml
         image/svg+xml;
     
-    # Static assets
+    # Static assets from application
+    location /assets/ {
+        alias /home/actionprotection/action-protection/client/public/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri @app;
+    }
+    
+    # Uploaded files
+    location /uploads/ {
+        alias /home/actionprotection/action-protection/uploads/;
+        expires 1y;
+        add_header Cache-Control "public";
+        try_files $uri @app;
+    }
+    
+    # Built static files (if in production mode)
+    location /dist/ {
+        alias /home/actionprotection/action-protection/dist/public/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri @app;
+    }
+    
+    # Static files (general)
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";

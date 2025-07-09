@@ -8,6 +8,8 @@ set -e
 
 # Configuration
 PROJECT_DIR="/home/actionprotection/action-protection"
+GIT_REPO="https://github.com/user/action-protection.git"  # Replace with your actual repository
+GIT_BRANCH="main"
 APP_USER="actionprotection"
 DB_NAME="actionprotection_db"
 DB_USER="actionprotection"
@@ -45,6 +47,11 @@ fi
 if ! command -v nginx &> /dev/null; then
     echo "Installing Nginx..."
     sudo apt install -y nginx
+fi
+
+if ! command -v git &> /dev/null; then
+    echo "Installing Git..."
+    sudo apt install -y git
 fi
 
 # 2. Create application user if doesn't exist
@@ -367,20 +374,45 @@ ON CONFLICT DO NOTHING;
 EOF
 fi
 
-# 5. Setup project directory and files
-echo "5. Setting up project directory..."
+# 5. Setup project directory and clone repository
+echo "5. Setting up project directory and cloning repository..."
 sudo mkdir -p $PROJECT_DIR
 sudo chown -R $APP_USER:$APP_USER $PROJECT_DIR
 
-# Copy project files (assuming they're in current directory)
-echo "Copying project files..."
-if [ -d "client" ] && [ -d "server" ] && [ -d "shared" ]; then
-    sudo cp -r . $PROJECT_DIR/
-    sudo chown -R $APP_USER:$APP_USER $PROJECT_DIR
+# Clone repository or copy local files
+echo "Cloning project from repository..."
+if [ -n "$GIT_REPO" ] && [ "$GIT_REPO" != "https://github.com/user/action-protection.git" ]; then
+    # Clone from git repository
+    sudo -u $APP_USER git clone -b $GIT_BRANCH $GIT_REPO $PROJECT_DIR
+    if [ $? -eq 0 ]; then
+        echo "✅ Successfully cloned repository from $GIT_REPO"
+    else
+        echo "❌ Failed to clone repository, falling back to local files..."
+        # Fallback to local files
+        if [ -d "client" ] && [ -d "server" ] && [ -d "shared" ]; then
+            sudo cp -r . $PROJECT_DIR/
+            sudo chown -R $APP_USER:$APP_USER $PROJECT_DIR
+            echo "✅ Local files copied successfully"
+        else
+            echo "ERROR: Neither git repository nor local files are available"
+            echo "Please either:"
+            echo "1. Update GIT_REPO variable with correct repository URL"
+            echo "2. Run this script from the project root directory with local files"
+            exit 1
+        fi
+    fi
 else
-    echo "ERROR: Project files not found in current directory"
-    echo "Please run this script from the project root directory"
-    exit 1
+    # Use local files (fallback mode)
+    echo "Using local files (GIT_REPO not configured)..."
+    if [ -d "client" ] && [ -d "server" ] && [ -d "shared" ]; then
+        sudo cp -r . $PROJECT_DIR/
+        sudo chown -R $APP_USER:$APP_USER $PROJECT_DIR
+        echo "✅ Local files copied successfully"
+    else
+        echo "ERROR: Project files not found in current directory"
+        echo "Please run this script from the project root directory"
+        exit 1
+    fi
 fi
 
 # 6. Install dependencies and build

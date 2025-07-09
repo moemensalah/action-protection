@@ -11,21 +11,49 @@ This guide provides step-by-step instructions for deploying Action Protection to
 
 ## Quick Deployment (Recommended)
 
-### 1. Upload Files to Server
+### 1. Configure Deployment (Local Machine)
 ```bash
-# Copy all project files to your server
-scp -r . root@your-server-ip:/root/action-protection-deploy/
+# Configure your repository and domain settings
+./setup-deployment-config.sh
 ```
 
-### 2. Run Complete Deployment Script
+### 2. Upload Files to Server
+```bash
+# Copy deployment script to your server
+scp complete-production-deployment.sh root@your-server-ip:/root/
+```
+
+### 3. Run Complete Deployment Script
 ```bash
 # SSH into your server
 ssh root@your-server-ip
 
-# Navigate to project directory
-cd /root/action-protection-deploy/
-
 # Make script executable and run
+chmod +x complete-production-deployment.sh
+sudo ./complete-production-deployment.sh
+```
+
+## Alternative: Manual Configuration
+
+If you prefer to manually configure the deployment script:
+
+### 1. Edit Deployment Script
+```bash
+# Open the deployment script
+nano complete-production-deployment.sh
+
+# Update these variables at the top:
+GIT_REPO="https://github.com/yourusername/action-protection.git"
+GIT_BRANCH="main"
+DOMAIN="your-domain.com"
+PORT=4000
+```
+
+### 2. Deploy
+```bash
+# Upload and run the script
+scp complete-production-deployment.sh root@your-server-ip:/root/
+ssh root@your-server-ip
 chmod +x complete-production-deployment.sh
 sudo ./complete-production-deployment.sh
 ```

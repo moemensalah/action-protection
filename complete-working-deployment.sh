@@ -39,7 +39,7 @@ ISSUER_URL="https://replit.com/oidc"
 # Admin User Configuration
 ADMIN_USERNAME="admin"
 ADMIN_PASSWORD="admin123456"  # CHANGE THIS IMMEDIATELY
-ADMIN_EMAIL="admin@your-domain.com"
+ADMIN_EMAIL="admin@actionprotection.com"
 ADMIN_FIRST_NAME="System"
 ADMIN_LAST_NAME="Administrator"
 
@@ -489,7 +489,7 @@ BEGIN
             'admin_user',
             '${ADMIN_USERNAME}',
             '${ADMIN_EMAIL}',
-            '\$2b\$10\$RceGzkZgix24g9Y1BkYX6O5mp7en3Q4fIX1gvcc1DdMIOC2EWngIm',
+            '\$2b\$10\$.JPATlNSGmefInSXAlToIeJ9bAM7EjpDiFeUhHuTyO3T0XxDkfUdu',
             '${ADMIN_FIRST_NAME}',
             '${ADMIN_LAST_NAME}',
             'administrator',

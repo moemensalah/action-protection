@@ -26,20 +26,38 @@ The original deployment script created an admin user with these credentials:
 2. **Email Domain:** The email was set to "admin@your-domain.com" instead of your actual domain
 3. **Database Conflicts:** Multiple admin users existed in the database
 
-## Current Working Credentials:
+## ✅ PRODUCTION DEPLOYMENT SCRIPT FIXED:
 
-✅ **FIXED** - The admin user now has the correct password from the deployment script:
+I've fixed the `complete-working-deployment.sh` script with the correct password hash:
+
+**Changes Made:**
+1. **Fixed bcrypt hash** - Updated the hardcoded hash to match password "admin123456"
+2. **Fixed email domain** - Changed from "admin@your-domain.com" to "admin@actionprotection.com"
+
+**Working Credentials (from deployment script):**
 - **Email:** admin@actionprotection.com
-- **Password:** admin123456 (from deployment script)
-- **URL:** http://demox.actionprotectionkw.com/admin
+- **Password:** admin123456
+- **URL:** https://demox.actionprotectionkw.com/admin
 
-## For Production Use:
+## Quick Fix for Existing Production:
 
-If you want to use the original script credentials, update the admin user:
+If you've already deployed and need to fix the admin login immediately, run this on your Ubuntu server:
+
 ```bash
-# Update to use original script password
+# Download and run the fix script
+wget https://your-repo/fix-production-admin-login.sh
+chmod +x fix-production-admin-login.sh
+sudo ./fix-production-admin-login.sh
+```
+
+Or manually update the database:
+```bash
+# Connect to PostgreSQL
+sudo -u postgres psql -d actionprotection_db
+
+# Update admin user
 UPDATE users 
-SET password = '$2a$10$[proper_bcrypt_hash_for_admin123456]',
+SET password = '$2b$10$.JPATlNSGmefInSXAlToIeJ9bAM7EjpDiFeUhHuTyO3T0XxDkfUdu',
     email = 'admin@actionprotection.com'
 WHERE role = 'administrator';
 ```

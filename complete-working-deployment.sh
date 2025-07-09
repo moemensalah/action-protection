@@ -377,30 +377,48 @@ if sudo -u ${APP_USER} npm run build; then
 else
     echo "⚠️ Build failed, trying alternative approach..."
     
-    # Try building from client directory
-    cd client
-    if sudo -u ${APP_USER} npm run build; then
-        cd ..
-        if [ -d "client/dist" ]; then
-            echo "Moving client/dist to dist/public..."
-            sudo -u ${APP_USER} mkdir -p dist
-            sudo -u ${APP_USER} cp -r client/dist dist/public
-            echo "✅ Build completed with workaround"
+    # Try building components separately
+    echo "Building frontend with Vite..."
+    if sudo -u ${APP_USER} npx vite build; then
+        echo "✅ Frontend build completed"
+        
+        # Build backend with esbuild
+        echo "Building backend with esbuild..."
+        if sudo -u ${APP_USER} npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist; then
+            echo "✅ Backend build completed"
             BUILD_SUCCESS=true
         else
-            echo "⚠️ Build failed, will run in development mode..."
+            echo "⚠️ Backend build failed, will run in development mode..."
             BUILD_SUCCESS=false
         fi
     else
-        cd ..
-        echo "⚠️ Build failed, will run in development mode..."
-        BUILD_SUCCESS=false
+        echo "⚠️ Frontend build failed, trying client directory approach..."
+        
+        # Try building from client directory
+        cd client
+        if sudo -u ${APP_USER} npm run build; then
+            cd ..
+            if [ -d "client/dist" ]; then
+                echo "Moving client/dist to dist/public..."
+                sudo -u ${APP_USER} mkdir -p dist
+                sudo -u ${APP_USER} cp -r client/dist dist/public
+                echo "✅ Build completed with workaround"
+                BUILD_SUCCESS=true
+            else
+                echo "⚠️ Build failed, will run in development mode..."
+                BUILD_SUCCESS=false
+            fi
+        else
+            cd ..
+            echo "⚠️ Build failed, will run in development mode..."
+            BUILD_SUCCESS=false
+        fi
     fi
 fi
 
 # Verify build output
-if [ "$BUILD_SUCCESS" = true ] && [ -f "dist/server/index.js" ]; then
-    echo "✅ Production build verified: dist/server/index.js exists"
+if [ "$BUILD_SUCCESS" = true ] && [ -f "dist/index.js" ]; then
+    echo "✅ Production build verified: dist/index.js exists"
     PRODUCTION_MODE=true
 elif [ "$BUILD_SUCCESS" = true ] && [ -f "dist/public/index.html" ]; then
     echo "✅ Production build verified: dist/public/index.html exists"
@@ -530,7 +548,7 @@ if [ "$PRODUCTION_MODE" = true ]; then
 module.exports = {
   apps: [{
     name: '${PROJECT_NAME}',
-    script: './dist/server/index.js',
+    script: './dist/index.js',
     instances: 1,
     exec_mode: 'fork',
     env_production: {

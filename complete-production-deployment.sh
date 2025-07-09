@@ -537,12 +537,13 @@ HTMLEOF
     fi
     
     echo 'Building server with proper bundling...'
-    npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-runtime-error-modal --external:@replit/vite-plugin-cartographer --external:pg-native
+    npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --external:express --external:pg --external:bcryptjs --external:express-session --external:connect-pg-simple --external:multer --external:nodemailer --external:@neondatabase/serverless --external:drizzle-orm --external:drizzle-zod --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-runtime-error-modal --external:@replit/vite-plugin-cartographer --external:pg-native
     
     echo 'Creating production server entry point...'
     cat > dist/index.js << 'EOFSERVER'
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import path from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -550,15 +551,19 @@ const __dirname = dirname(__filename);
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 console.log('🚀 Starting Action Protection production server...');
+console.log('Environment:', process.env.NODE_ENV);
+console.log('Working directory:', process.cwd());
 
-// Start the server
-import('./server.js').then(() => {
+// Start the server with proper error handling
+try {
+    const serverModule = await import('./server.js');
     console.log('✅ Action Protection server started successfully on port 4000');
-}).catch(err => {
+} catch (err) {
     console.error('❌ Server startup error:', err);
-    console.log('🔄 Server will restart automatically via PM2');
+    console.error('Error details:', err.message);
+    console.error('Error stack:', err.stack);
     process.exit(1);
-});
+}
 EOFSERVER
     
     echo 'Verifying all build outputs...'
